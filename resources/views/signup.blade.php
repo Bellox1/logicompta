@@ -218,21 +218,23 @@
             <img src="{{ asset('images/ChatGPT Image 11 mars 2026, 10_41_49.png') }}" alt="Comptafriq Logo" class="logo">
             <div class="welcome-text">
                 <h2>Créer un compte</h2>
-                <p>Rejoignez Comptafriq et simplifiez votre gestion comptable</p>
             </div>
         </div>
         
         <!-- Formulaire d'inscription -->
         <div class="form-container">
-            <form id="signupForm">
+            <form action="{{ route('signup.post') }}" method="POST">
+                @csrf
                 <div class="form-group">
                     <label for="name">Nom complet</label>
-                    <input type="text" id="name" name="name" placeholder="Votre nom" required>
+                    <input type="text" id="name" name="name" placeholder="Votre nom" value="{{ old('name') }}" required>
+                    @error('name')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
                 
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input type="email" id="email" name="email" placeholder="votre@email.com" required>
+                    <input type="email" id="email" name="email" placeholder="votre@email.com" value="{{ old('email') }}" required>
+                    @error('email')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
                 
                 <div class="form-group">
@@ -241,8 +243,9 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="passwordConfirm">Confirmer mot de passe</label>
-                    <input type="password" id="passwordConfirm" name="passwordConfirm" placeholder="•••••••" required>
+                    <label for="password_confirmation">Confirmer mot de passe</label>
+                    <input type="password" id="password_confirmation" name="password_confirmation" placeholder="•••••••" required>
+                    @error('password')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
                 
                 <button type="submit" class="btn-primary">S'inscrire</button>
@@ -250,102 +253,13 @@
             
             <button class="btn-secondary" onclick="window.location.href='{{ url('/login') }}'">Se connecter</button>
             
-            <div id="message" class="message"></div>
+            @if(session('error'))
+                <div class="mt-4 p-3 bg-red-100 text-red-700 text-sm rounded-lg">
+                    {{ session('error') }}
+                </div>
+            @endif
         </div>
     </div>
 
-    <script>
-        const API_BASE = '{{ url('/api') }}';
-
-        // Fonctions d'affichage
-        function showMessage(message, type = 'success') {
-            const messageEl = document.getElementById('message');
-            messageEl.textContent = message;
-            messageEl.className = `message ${type}`;
-            messageEl.style.display = 'block';
-            
-            setTimeout(() => {
-                hideMessage();
-            }, 5000);
-        }
-
-        function hideMessage() {
-            document.getElementById('message').style.display = 'none';
-        }
-
-        // Inscription
-        async function signup(event) {
-            event.preventDefault();
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const passwordConfirm = document.getElementById('passwordConfirm').value;
-
-            if (!name || !email || !password || !passwordConfirm) {
-                showMessage('Veuillez remplir tous les champs', 'error');
-                return;
-            }
-
-            if (password !== passwordConfirm) {
-                showMessage('Les mots de passe ne correspondent pas', 'error');
-                return;
-            }
-
-            if (password.length < 8) {
-                showMessage('Le mot de passe doit contenir au moins 8 caractères', 'error');
-                return;
-            }
-
-            const btn = event.target.querySelector('button[type="submit"]');
-            btn.textContent = 'Inscription...';
-            btn.disabled = true;
-
-            try {
-                const response = await fetch(`${API_BASE}/register`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ 
-                        name, 
-                        email, 
-                        password, 
-                        password_confirmation: passwordConfirm,
-                        role: 'utilisateur'
-                    })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    showMessage('✅ Inscription réussie ! Redirection vers la connexion...', 'success');
-                    
-                    // Vider les champs
-                    document.getElementById('name').value = '';
-                    document.getElementById('email').value = '';
-                    document.getElementById('password').value = '';
-                    document.getElementById('passwordConfirm').value = '';
-                    
-                    // Attendre 2 secondes avant de rediriger
-                    setTimeout(() => {
-                        window.location.href = '{{ url('/login') }}';
-                    }, 2000);
-                } else {
-                    showMessage(data.message || 'Erreur d\'inscription', 'error');
-                }
-            } catch (error) {
-                showMessage('Erreur de connexion au serveur', 'error');
-                console.error('Erreur:', error);
-            } finally {
-                if (btn.textContent !== '✓ Inscription réussie!') {
-                    btn.textContent = 'S\'inscrire';
-                    btn.disabled = false;
-                }
-            }
-        }
-
-        // Event listener
-        document.getElementById('signupForm').addEventListener('submit', signup);
-    </script>
 </body>
 </html>

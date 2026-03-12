@@ -15,9 +15,9 @@ class DatabaseSeeder extends Seeder
         // Appel des seeders comptables
         $this->call([
             AccountSeeder::class,
+            JournalSeeder::class,
             EntrepriseSeeder::class,
             UserSeeder::class,
-            JournalSeeder::class,
             JournalEntrySeeder::class,
         ]);
     }

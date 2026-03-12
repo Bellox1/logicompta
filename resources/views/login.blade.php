@@ -253,13 +253,13 @@
             <img src="{{ asset('images/ChatGPT Image 11 mars 2026, 10_41_49.png') }}" alt="Comptafriq Logo" class="logo">
             <div class="welcome-text">
                 <h2>Connectez-vous</h2>
-                <p>Accédez à votre espace Comptafriq</p>
             </div>
         </div>
         
         <!-- Formulaire -->
         <div class="form-container">
-            <form id="loginForm">
+            <form action="{{ route('login.post') }}" method="POST">
+                @csrf
                 <div class="form-group">
                     <label for="email">Email</label>
                     <input type="email" id="email" name="email" placeholder="votre@email.com" required>
@@ -279,80 +279,18 @@
             
             <button class="btn-secondary" onclick="window.location.href='{{ url('/forgot-password') }}'">Mot de passe oublié ?</button>
             
-            <div id="message" class="message"></div>
+            @if(session('error'))
+                <div class="mt-4 p-3 bg-red-100 text-red-700 text-sm rounded-lg">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            <p style="margin-top: 1.5rem; color: #9CA3AF; font-size: 0.9rem;">
+                Pas encore de compte ? 
+                <a href="{{ route('signup') }}" style="color: #3B82F6; text-decoration: none; font-weight: 600; cursor: pointer;">S'inscrire</a>
+            </p>
         </div>
     </div>
 
-    <script>
-        const API_BASE = '{{ url('/api') }}';
-        let currentToken = null;
-
-        // Fonctions d'affichage
-        function showMessage(message, type = 'success') {
-            const messageEl = document.getElementById('message');
-            messageEl.textContent = message;
-            messageEl.className = `message ${type}`;
-            messageEl.style.display = 'block';
-            
-            setTimeout(() => {
-                hideMessage();
-            }, 5000);
-        }
-
-        function hideMessage() {
-            document.getElementById('message').style.display = 'none';
-        }
-
-        // Connexion
-        async function login(event) {
-            event.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            if (!email || !password) {
-                showMessage('Veuillez remplir tous les champs', 'error');
-                return;
-            }
-
-            const btn = event.target.querySelector('button[type="submit"]');
-            btn.textContent = 'Connexion...';
-            btn.disabled = true;
-
-            try {
-                const response = await fetch(`${API_BASE}/login`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ email, password })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    // Pas de stockage localStorage - session gérée côté serveur
-                    
-                    // Redirection immédiate vers le dashboard
-                    window.location.href = '{{ url('/dashbord') }}';
-                } else {
-                    // showMessage(data.message || 'Erreur de connexion', 'error'); // Désactivé
-                }
-            } catch (error) {
-                // showMessage('Erreur de connexion au serveur', 'error'); // Désactivé
-                console.error('Erreur:', error);
-            } finally {
-                btn.textContent = 'Se connecter';
-                btn.disabled = false;
-            }
-        }
-
-        // Initialisation
-        window.onload = function() {
-            // Pas d'initialisation spéciale nécessaire
-        };
-        
-        // Event listener
-        document.getElementById('loginForm').addEventListener('submit', login);
-    </script>
 </body>
 </html>

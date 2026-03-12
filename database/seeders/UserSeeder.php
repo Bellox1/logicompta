@@ -13,6 +13,9 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        $entreprise = \App\Models\Entreprise::first();
+        $entrepriseId = $entreprise ? $entreprise->id : null;
+
         // Création de l'administrateur
         User::updateOrCreate(
             ['email' => 'admin@logicompta.com'],
@@ -21,6 +24,7 @@ class UserSeeder extends Seeder
                 'prenom' => 'Logicompta',
                 'password' => Hash::make('password'),
                 'role' => 'admin',
+                'entreprise_id' => $entrepriseId,
             ]
         );
         //création de comptable
@@ -31,6 +35,7 @@ class UserSeeder extends Seeder
                 'prenom' => 'Logicompta',
                 'password' => Hash::make('password'),
                 'role' => 'comptable',
+                'entreprise_id' => $entrepriseId,
             ]
         );
 
@@ -43,6 +48,7 @@ class UserSeeder extends Seeder
                 'prenom' => 'Test',
                 'password' => Hash::make('password'),
                 'role' => 'utilisateur',
+                'entreprise_id' => $entrepriseId,
             ]
         );
 

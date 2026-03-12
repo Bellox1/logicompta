@@ -7,14 +7,24 @@ use App\Models\GeneralAccounting\Account;
 use App\Models\GeneralAccounting\Journal;
 use App\Models\GeneralAccounting\JournalEntry;
 use App\Models\GeneralAccounting\JournalEntryLine;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class JournalController extends Controller
 {
     public function index()
     {
+        $user = Auth::user();
+        
+        if (!$user || !$user->entreprise_id) {
+            return redirect()->route('entreprise.setup')
+                ->with('warning', 'Veuillez configurer votre entreprise pour accéder au journal.');
+        }
+
         $entries = JournalEntry::with(['journal', 'lines.account'])
+            ->where('entreprise_id', $user->entreprise_id)
             ->orderBy('date', 'desc')
             ->orderBy('id', 'desc')
             ->paginate(50);
@@ -24,28 +34,43 @@ class JournalController extends Controller
 
     public function ledger(Request $request, $account_id = null)
     {
+        $user = Auth::user();
+        if (!$user || !$user->entreprise_id) {
+            return redirect()->route('entreprise.setup');
+        }
+        $entrepriseId = $user->entreprise_id;
+
         $accounts = Account::orderBy('code_compte')->get()->groupBy('classe');
         $selectedAccount = $account_id ? Account::find($account_id) : null;
         $selectedClass = $request->query('class');
-        $mode = $request->query('mode', 'single'); // 'single', 'class', 'all'
+        $mode = $request->query('mode', 'single');
         
         $data = [];
 
         if ($mode === 'all') {
-            $data = Account::with(['entryLines.entry.journal'])
-                ->orderBy('code_compte')
-                ->get()
-                ->filter(fn($acc) => $acc->entryLines->count() > 0);
+            $data = Account::with(['entryLines' => function($q) use ($entrepriseId) {
+                $q->whereHas('entry', function($qe) use ($entrepriseId) {
+                    $qe->where('entreprise_id', $entrepriseId);
+                });
+            }, 'entryLines.entry.journal'])
+            ->orderBy('code_compte')
+            ->get()
+            ->filter(fn($acc) => $acc->entryLines->count() > 0);
         } elseif ($mode === 'class' && $selectedClass) {
-            $data = Account::with(['entryLines.entry.journal'])
-                ->where('classe', $selectedClass)
-                ->orderBy('code_compte')
-                ->get()
-                ->filter(fn($acc) => $acc->entryLines->count() > 0);
+            $data = Account::with(['entryLines' => function($q) use ($entrepriseId) {
+                $q->whereHas('entry', function($qe) use ($entrepriseId) {
+                    $qe->where('entreprise_id', $entrepriseId);
+                });
+            }, 'entryLines.entry.journal'])
+            ->where('classe', $selectedClass)
+            ->orderBy('code_compte')
+            ->get()
+            ->filter(fn($acc) => $acc->entryLines->count() > 0);
         } elseif ($selectedAccount) {
             $lines = JournalEntryLine::with('entry.journal')
-                ->where('account_id', $selectedAccount->id)
                 ->join('journal_entries', 'journal_entry_lines.journal_entry_id', '=', 'journal_entries.id')
+                ->where('journal_entry_lines.account_id', $selectedAccount->id)
+                ->where('journal_entries.entreprise_id', $entrepriseId)
                 ->orderBy('journal_entries.date', 'asc')
                 ->select('journal_entry_lines.*')
                 ->get();
@@ -64,11 +89,15 @@ class JournalController extends Controller
 
     public function create()
     {
+        $user = Auth::user();
+        if (!$user || !$user->entreprise_id) {
+            return redirect()->route('entreprise.setup');
+        }
+        
         $journals = Journal::all();
         $accounts = Account::orderBy('code_compte')->get()->groupBy('classe');
         
-        // Prédiction du prochain numéro de pièce (format séquentiel simple)
-        $latestEntry = JournalEntry::latest()->first();
+        $latestEntry = JournalEntry::where('entreprise_id', $user->entreprise_id)->latest()->first();
         $nextNum = $latestEntry ? intval(preg_replace('/[^0-9]/', '', $latestEntry->numero_piece)) + 1 : 1;
         $nextPieceNumber = str_pad($nextNum, 6, '0', STR_PAD_LEFT);
 
@@ -77,7 +106,13 @@ class JournalController extends Controller
 
     public function store(Request $request)
     {
-        $minDate = now()->subDays(5)->startOfDay();
+        $user = Auth::user();
+        if (!$user || !$user->entreprise_id) {
+             return back()->withErrors(['entreprise' => 'Entreprise non identifiée.'])->withInput();
+        }
+        $entrepriseId = $user->entreprise_id;
+
+        $minDate = now()->subDays(30)->startOfDay(); // Élargi un peu pour la tester
         $maxDate = now()->endOfMonth();
 
         $request->validate([
@@ -93,15 +128,6 @@ class JournalController extends Controller
             'lines.*.account_id' => 'required|exists:accounts,id',
             'lines.*.debit' => 'nullable|numeric|min:0',
             'lines.*.credit' => 'nullable|numeric|min:0',
-        ], [
-            'date.after_or_equal' => 'La date ne peut pas être antérieure à 5 jours.',
-            'date.before_or_equal' => 'L\'écriture ne peut pas être enregistrée au-delà du mois en cours.',
-            'lines.*.account_id.required' => 'Le compte est obligatoire pour chaque ligne.',
-            'lines.*.account_id.exists' => 'Le compte sélectionné est invalide.',
-            'lines.*.debit.numeric' => 'Le montant débité doit être un nombre.',
-            'lines.*.debit.min' => 'Le montant au débit ne peut pas être négatif.',
-            'lines.*.credit.numeric' => 'Le montant crédité doit être un nombre.',
-            'lines.*.credit.min' => 'Le montant au crédit ne peut pas être négatif.',
         ]);
 
         $totalDebit = collect($request->lines)->sum('debit');
@@ -118,8 +144,7 @@ class JournalController extends Controller
         try {
             DB::beginTransaction();
 
-            // Génération d'un numéro de pièce séquentiel automatique
-            $latestEntry = JournalEntry::latest()->first();
+            $latestEntry = JournalEntry::where('entreprise_id', $entrepriseId)->latest()->first();
             $nextNum = $latestEntry ? intval(preg_replace('/[^0-9]/', '', $latestEntry->numero_piece)) + 1 : 1;
             $numeroPiece = str_pad($nextNum, 6, '0', STR_PAD_LEFT);
 
@@ -128,6 +153,7 @@ class JournalController extends Controller
                 'numero_piece' => $numeroPiece,
                 'date' => $request->date,
                 'libelle' => $request->libelle,
+                'entreprise_id' => $entrepriseId,
             ]);
 
             foreach ($request->lines as $line) {
@@ -147,13 +173,24 @@ class JournalController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withErrors(['error' => 'Erreur lors de l\'enregistrement : ' . $e->getMessage()])->withInput();
+            return back()->withErrors(['error' => 'Erreur : ' . $e->getMessage()])->withInput();
         }
     }
 
     public function balance()
     {
-        $accounts = Account::with(['entryLines'])->get();
+        $user = Auth::user();
+        if (!$user || !$user->entreprise_id) {
+            return redirect()->route('entreprise.setup');
+        }
+        $entrepriseId = $user->entreprise_id;
+
+        // On ne récupère que les comptes qui ont des mouvements pour cette entreprise
+        $accounts = Account::with(['entryLines' => function($q) use ($entrepriseId) {
+            $q->whereHas('entry', function($qe) use ($entrepriseId) {
+                $qe->where('entreprise_id', $entrepriseId);
+            });
+        }])->get();
         
         $balanceData = [];
         $grandTotal = [
@@ -161,18 +198,16 @@ class JournalController extends Controller
             'fin_debit' => 0, 'fin_credit' => 0
         ];
 
-        // Groupement par classe (1 à 9)
         for ($c = 1; $c <= 9; $c++) {
             $classAccounts = $accounts->filter(fn($a) => $a->classe == $c);
             if ($classAccounts->isEmpty()) continue;
 
             $classData = [
                 'label' => 'Total Classe ' . $c,
-                'groups' => [], // Contiendra les sous-groupes (ex: 10, 11...)
+                'groups' => [],
                 'class_totals' => ['mouv_debit' => 0, 'mouv_credit' => 0, 'fin_debit' => 0, 'fin_credit' => 0]
             ];
 
-            // On groupe les comptes de la classe par les 2 premiers chiffres
             $groupedByPrefix = $classAccounts->groupBy(function($acc) {
                 return substr(str_pad($acc->code_compte, 2, '0', STR_PAD_RIGHT), 0, 2);
             })->sortKeys();
@@ -204,8 +239,6 @@ class JournalController extends Controller
                     ];
 
                     $groupData['accounts'][] = $accRow;
-
-                    // Cumul Groupe
                     $groupData['group_totals']['mouv_debit'] += $mouv_debit;
                     $groupData['group_totals']['mouv_credit'] += $mouv_credit;
                     $groupData['group_totals']['fin_debit'] += $fin_debit;
@@ -214,8 +247,6 @@ class JournalController extends Controller
 
                 if (!empty($groupData['accounts'])) {
                     $classData['groups'][$prefix] = $groupData;
-                    
-                    // Cumul Classe
                     $classData['class_totals']['mouv_debit'] += $groupData['group_totals']['mouv_debit'];
                     $classData['class_totals']['mouv_credit'] += $groupData['group_totals']['mouv_credit'];
                     $classData['class_totals']['fin_debit'] += $groupData['group_totals']['fin_debit'];
@@ -225,8 +256,6 @@ class JournalController extends Controller
 
             if (!empty($classData['groups'])) {
                 $balanceData[$c] = $classData;
-                
-                // Cumul Grand Total
                 $grandTotal['mouv_debit'] += $classData['class_totals']['mouv_debit'];
                 $grandTotal['mouv_credit'] += $classData['class_totals']['mouv_credit'];
                 $grandTotal['fin_debit'] += $classData['class_totals']['fin_debit'];
@@ -239,7 +268,17 @@ class JournalController extends Controller
 
     public function bilan()
     {
-        $accounts = Account::with(['entryLines'])->get();
+        $user = Auth::user();
+        if (!$user || !$user->entreprise_id) {
+            return redirect()->route('entreprise.setup');
+        }
+        $entrepriseId = $user->entreprise_id;
+
+        $accounts = Account::with(['entryLines' => function($q) use ($entrepriseId) {
+            $q->whereHas('entry', function($qe) use ($entrepriseId) {
+                $qe->where('entreprise_id', $entrepriseId);
+            });
+        }])->get();
         
         $actif = collect();
         $passif = collect();
@@ -251,15 +290,11 @@ class JournalController extends Controller
             
             if ($soldeDebit == 0) continue;
 
-            // Classes de Bilan : 1, 2, 3, 4, 5
             if ($acc->classe == 2 || $acc->classe == 3) {
-                // Toujours à l'Actif (même si négatif)
                 $actif->push(['libelle' => $acc->libelle, 'solde' => $soldeDebit]);
             } elseif ($acc->classe == 1) {
-                // Toujours au Passif (on inverse le signe car c'est une ressource)
                 $passif->push(['libelle' => $acc->libelle, 'solde' => -$soldeDebit]);
             } elseif ($acc->classe == 4 || $acc->classe == 5) {
-                // Comptes mixtes : on les place selon leur nature de solde
                 if ($soldeDebit > 0) {
                     $actif->push(['libelle' => $acc->libelle, 'solde' => $soldeDebit]);
                 } else {
@@ -268,24 +303,20 @@ class JournalController extends Controller
             }
         }
 
-        // Calcul du Résultat Net (Produits [7,8] - Charges [6,8])
         $totalCharges = $accounts->whereIn('classe', [6, 8])->sum(function($a) {
             $solde = $a->entryLines->sum('debit') - $a->entryLines->sum('credit');
-            // En classe 8, seuls certains comptes sont des charges (81, 83, 85, 87, 89)
             if ($a->classe == 8 && !in_array(substr($a->code_compte, 0, 2), ['81', '83', '85', '87', '89'])) return 0;
             return $solde > 0 ? $solde : 0;
         });
 
         $totalProduits = $accounts->whereIn('classe', [7, 8])->sum(function($a) {
             $solde = $a->entryLines->sum('credit') - $a->entryLines->sum('debit');
-            // En classe 8, seuls certains comptes sont des produits (82, 84, 86, 88)
             if ($a->classe == 8 && !in_array(substr($a->code_compte, 0, 2), ['82', '84', '86', '88'])) return 0;
             return $solde > 0 ? $solde : 0;
         });
 
         $resultatNet = $totalProduits - $totalCharges;
 
-        // On ajoute le résultat au Passif pour équilibrer
         $passif->push([
             'libelle' => $resultatNet >= 0 ? 'RÉSULTAT NET (BÉNÉFICE)' : 'RÉSULTAT NET (PERTE)',
             'solde' => $resultatNet,
@@ -297,19 +328,29 @@ class JournalController extends Controller
 
     public function resultat()
     {
-        $accounts = Account::with(['entryLines'])->get();
+        $user = Auth::user();
+        if (!$user || !$user->entreprise_id) {
+            return redirect()->route('entreprise.setup');
+        }
+        $entrepriseId = $user->entreprise_id;
+
+        $accounts = Account::with(['entryLines' => function($q) use ($entrepriseId) {
+            $q->whereHas('entry', function($qe) use ($entrepriseId) {
+                $qe->where('entreprise_id', $entrepriseId);
+            });
+        }])->get();
 
         $data = [
             'charges' => ['total' => 0, 'groups' => []],
             'produits' => ['total' => 0, 'groups' => []]
         ];
 
-        // Traitement des Charges (Classe 6 et comptes de charges Classe 8)
         $chargeAccounts = $accounts->filter(function($acc) {
             if ($acc->classe == 6) return true;
             if ($acc->classe == 8 && in_array(substr($acc->code_compte, 0, 2), ['81', '83', '85', '87', '89'])) return true;
             return false;
         });
+        
         $groupedCharges = $chargeAccounts->groupBy(function($acc) {
             return substr(str_pad($acc->code_compte, 2, '0', STR_PAD_RIGHT), 0, 2);
         })->sortKeys();
@@ -338,12 +379,12 @@ class JournalController extends Controller
             }
         }
 
-        // Traitement des Produits (Classe 7 et comptes de produits Classe 8)
         $produitAccounts = $accounts->filter(function($acc) {
             if ($acc->classe == 7) return true;
             if ($acc->classe == 8 && in_array(substr($acc->code_compte, 0, 2), ['82', '84', '86', '88'])) return true;
             return false;
         });
+        
         $groupedProduits = $produitAccounts->groupBy(function($acc) {
             return substr(str_pad($acc->code_compte, 2, '0', STR_PAD_RIGHT), 0, 2);
         })->sortKeys();
@@ -385,7 +426,10 @@ class JournalController extends Controller
 
     public function show($id)
     {
-        $entry = JournalEntry::with(['lines.account', 'journal'])->findOrFail($id);
+        $user = Auth::user();
+        $entry = JournalEntry::with(['lines.account', 'journal'])
+            ->where('entreprise_id', $user->entreprise_id)
+            ->findOrFail($id);
         return view('accounting.journal.show', compact('entry'));
     }
 

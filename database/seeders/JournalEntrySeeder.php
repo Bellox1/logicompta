@@ -17,6 +17,13 @@ class JournalEntrySeeder extends Seeder
         $CAI = Journal::where('code', 'CAI')->first();
         $BNQ = Journal::where('code', 'BNQ')->first();
         $OD  = Journal::where('code', 'OD')->first();
+        
+        // Récupérer l'entreprise par défaut
+        $entreprise = \App\Models\Entreprise::first();
+        if (!$entreprise) {
+            $this->command->error("Aucune entreprise trouvée. Veuillez exécuter EntrepriseSeeder d'abord.");
+            return;
+        }
 
         // CLASSE 1 & 5 — Apport en capital
         $this->entry($BNQ, '2026-01-02', 'Apport initial en capital', [
@@ -102,6 +109,10 @@ class JournalEntrySeeder extends Seeder
     private function entry($journal, string $date, string $libelle, array $lines): void
     {
         if (!$journal) return;
+        
+        // Récupérer l'entreprise par défaut
+        $entreprise = \App\Models\Entreprise::first();
+        if (!$entreprise) return;
 
         $num = 'SD-' . str_pad($this->counter, 5, '0', STR_PAD_LEFT);
         $this->counter++;
@@ -111,6 +122,7 @@ class JournalEntrySeeder extends Seeder
             'numero_piece'  => $num,
             'date'          => $date,
             'libelle'       => $libelle,
+            'entreprise_id' => $entreprise->id,
         ]);
 
         foreach ($lines as $line) {

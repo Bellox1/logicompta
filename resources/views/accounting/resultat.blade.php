@@ -28,8 +28,8 @@
             <div class="bg-white/10 px-3 py-1 rounded-lg text-[10px] uppercase font-bold">Nature des dépenses</div>
         </div>
         
-    <div class="overflow-x-auto" id="resultat-charges">
-            <table class="w-full text-left border-collapse">
+        <div class="table-responsive flex-1" id="resultat-charges">
+            <table class="w-full text-left border-collapse min-w-[600px]">
                 <thead>
                     <tr class="bg-gray-50 text-[10px] uppercase font-black text-gray-400 border-b border-gray-100">
                         <th class="px-4 py-3 border-r border-gray-200">Compte</th>
@@ -43,13 +43,13 @@
                             <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
                                 <td class="px-4 py-3 font-mono font-bold text-gray-900 border-r border-gray-200">{{ $acc['code'] }}</td>
                                 <td class="px-4 py-3 text-gray-600 border-r border-gray-200 uppercase">{{ $acc['libelle'] }}</td>
-                                <td class="px-4 py-3 text-right font-semibold text-gray-900">{{ number_format($acc['montant'], 2, ',', ' ') }}</td>
+                                <td class="px-4 py-3 text-right font-semibold text-gray-900 whitespace-nowrap">{{ number_format($acc['montant'], 2, ',', ' ') }}</td>
                             </tr>
                         @endforeach
                         <!-- Sous Total Groupe -->
                         <tr class="bg-gray-50/50 border-b border-gray-100 italic font-bold text-gray-500">
                             <td colspan="2" class="px-4 py-2 border-r border-gray-200">Sous Total {{ $group['prefix'] }}</td>
-                            <td class="px-4 py-2 text-right">{{ number_format($group['total'], 2, ',', ' ') }}</td>
+                            <td class="px-4 py-2 text-right whitespace-nowrap">{{ number_format($group['total'], 2, ',', ' ') }}</td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -58,7 +58,7 @@
         
         <div class="p-6 bg-primary text-white flex justify-between items-center mt-auto border-t-4 border-white/10">
             <span class="text-xs font-black uppercase tracking-widest leading-none">Total des Charges (VI)</span>
-            <span class="text-2xl font-black italic">{{ number_format($totalCharges, 2, ',', ' ') }} F</span>
+            <span class="text-2xl font-black italic whitespace-nowrap">{{ number_format($totalCharges, 2, ',', ' ') }} F</span>
         </div>
     </div>
 
@@ -69,8 +69,8 @@
             <div class="bg-white/10 px-3 py-1 rounded-lg text-[10px] uppercase font-bold">Nature des revenus</div>
         </div>
         
-    <div class="overflow-x-auto" id="resultat-produits">
-            <table class="w-full text-left border-collapse">
+        <div class="table-responsive flex-1" id="resultat-produits">
+            <table class="w-full text-left border-collapse min-w-[600px]">
                 <thead>
                     <tr class="bg-gray-50 text-[10px] uppercase font-black text-gray-400 border-b border-gray-100">
                         <th class="px-4 py-3 border-r border-gray-200">Compte</th>
@@ -99,7 +99,7 @@
         
         <div class="p-6 bg-primary text-white flex justify-between items-center mt-auto border-t-4 border-white/10">
             <span class="text-xs font-black uppercase tracking-widest leading-none">Total des Produits (VII)</span>
-            <span class="text-2xl font-black italic">{{ number_format($totalProduits, 2, ',', ' ') }} F</span>
+            <span class="text-2xl font-black italic whitespace-nowrap">{{ number_format($totalProduits, 2, ',', ' ') }} F</span>
         </div>
     </div>
 </div>
@@ -112,8 +112,8 @@
 
     <div class="relative z-10">
         <h3 class="text-sm font-black uppercase tracking-[0.5em] mb-6 text-primary">RÉSULTAT NET DE L'EXERCICE</h3>
-        <div class="text-7xl md:text-8xl font-black tracking-tighter italic mb-6 {{ $profit >= 0 ? 'text-green-700' : 'text-red-700' }}">
-            {{ number_format(abs($profit), 2, ',', ' ') }} <span class="text-2xl font-normal not-italic opacity-40">FCFA</span>
+        <div class="text-4xl md:text-8xl font-black tracking-tighter italic mb-6 {{ $profit >= 0 ? 'text-green-700' : 'text-red-700' }} whitespace-nowrap overflow-hidden text-ellipsis">
+            {{ number_format(abs($profit), 2, ',', ' ') }} <span class="text-sm md:text-2xl font-normal not-italic opacity-40">FCFA</span>
         </div>
         
         <div class="mt-8 flex justify-center">

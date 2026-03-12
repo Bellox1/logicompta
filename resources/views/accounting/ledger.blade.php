@@ -78,27 +78,29 @@
 
 @if(count($data) > 0)
     @foreach($data as $account)
-        <div class="bg-card-bg border border-border rounded-2xl shadow-sm overflow-hidden mb-8 page-break-after">
+        <div class="bg-card-bg border border-border rounded-3xl shadow-sm mb-8 page-break-after">
+            <!-- Informations Compte -->
+            <div class="grid grid-cols-1 md:grid-cols-3 bg-gray-50 border-b border-border p-5 gap-4">
+                <div class="flex flex-col">
+                    <span class="text-[10px] uppercase font-bold text-gray-400">Intitulé du compte</span>
+                    <span class="text-sm font-bold uppercase italic text-gray-900 leading-tight">{{ $account->libelle }}</span>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-[10px] uppercase font-bold text-gray-400">Numéro de compte</span>
+                    <span class="text-lg font-mono font-bold tracking-widest text-primary leading-none">
+                        {{ str_pad($account->code_compte, 9, '0', STR_PAD_RIGHT) }}
+                    </span>
+                </div>
+                <div class="flex flex-col md:items-end">
+                    <span class="text-[10px] uppercase font-bold text-gray-400">Date d'impression</span>
+                    <span class="text-sm font-bold text-gray-700 italic">{{ date('d/m/Y H:i') }}</span>
+                </div>
+            </div>
+
             <div class="table-responsive">
-                <table class="w-full border-collapse" style="table-layout: fixed;">
+                <table class="w-full border-separate border-spacing-0 min-w-[800px] sticky-thead" data-ledger-table data-account="{{ $account->code_compte }} - {{ $account->libelle }}">
                     <thead>
-                        <!-- LIGNE 1 : LIBELLÉS DES INFORMATIONS -->
-                        <tr class="bg-gray-50 text-gray-400 border-b border-gray-100">
-                            <th colspan="2" class="px-6 py-3 text-[10px] uppercase font-bold text-left border-r border-gray-200" style="width: 30%;">INTITULÉ DU COMPTE</th>
-                            <th class="px-6 py-3 text-[10px] uppercase font-bold text-left border-r border-gray-200" style="width: 50%;">NUMÉRO DE COMPTE</th>
-                            <th colspan="2" class="px-6 py-3 text-[10px] uppercase font-bold text-left" style="width: 20%;">DATE D'IMPRESSION DU GL</th>
-                        </tr>
-                        <!-- LIGNE 2 : VALEURS DES INFORMATIONS -->
-                        <tr class="bg-gray-50 text-gray-900 border-b-2 border-primary/20">
-                            <td colspan="2" class="px-6 py-4 text-sm font-bold uppercase italic border-r border-gray-200">{{ $account->libelle }}</td>
-                            <td class="px-6 py-4 text-lg font-mono font-bold tracking-widest text-primary border-r border-gray-200">
-                                {{ str_pad($account->code_compte, 9, '0', STR_PAD_RIGHT) }}
-                            </td>
-                            <td colspan="2" class="px-6 py-4 text-sm font-bold text-gray-700 italic">
-                                {{ date('d/m/Y H:i') }}
-                            </td>
-                        </tr>
-                        <!-- LIGNE 3 : EN-TÊTE DES COLONNES -->
+                        <!-- EN-TÊTE DES COLONNES STICKY -->
                         <tr class="bg-primary text-white">
                             <th class="px-6 py-4 text-xs font-extrabold tracking-wider text-left">DATES</th>
                             <th class="px-6 py-4 text-xs font-extrabold tracking-wider text-left border-r border-white/20">Num PC</th>
@@ -124,11 +126,11 @@
                                 <td class="px-6 py-4 text-gray-700 italic text-xs border-r border-gray-100">
                                     {{ $line->libelle }}
                                 </td>
-                                <td class="px-6 py-4 text-right font-semibold text-gray-900 bg-gray-50/5">
-                                    {{ $line->debit > 0 ? number_format($line->debit, 2, ',', ' ') : '-' }}
+                                <td class="px-6 py-4 text-right font-semibold text-gray-900 bg-gray-50/5 whitespace-nowrap">
+                                    {{ number_format($line->debit, 2, ',', ' ') }}
                                 </td>
-                                <td class="px-6 py-4 text-right font-semibold text-gray-900 bg-gray-50/5">
-                                    {{ $line->credit > 0 ? number_format($line->credit, 2, ',', ' ') : '-' }}
+                                <td class="px-6 py-4 text-right font-semibold text-gray-900 bg-gray-50/5 whitespace-nowrap">
+                                    {{ number_format($line->credit, 2, ',', ' ') }}
                                 </td>
                             </tr>
                         @empty
@@ -144,15 +146,15 @@
                         <tfoot class="bg-gray-50/50">
                             <tr class="border-t-2 border-primary/20 font-bold bg-primary/5">
                                 <td colspan="3" class="px-6 py-5 text-right text-[10px] uppercase tracking-widest text-primary">Sous-total {{ $account->code_compte }}</td>
-                                <td class="px-6 py-5 text-right text-base text-primary">{{ number_format($account->entryLines->sum('debit'), 2, ',', ' ') }}</td>
-                                <td class="px-6 py-5 text-right text-base text-primary">{{ number_format($account->entryLines->sum('credit'), 2, ',', ' ') }}</td>
+                                <td class="px-6 py-5 text-right text-base text-primary whitespace-nowrap">{{ number_format($account->entryLines->sum('debit'), 2, ',', ' ') }}</td>
+                                <td class="px-6 py-5 text-right text-base text-primary whitespace-nowrap">{{ number_format($account->entryLines->sum('credit'), 2, ',', ' ') }}</td>
                             </tr>
                             <tr class="bg-white border-t border-gray-100">
                                 <td colspan="3"></td>
                                 <td colspan="2" class="px-6 py-4 text-right">
-                                    <div class="inline-flex items-center gap-4">
-                                        <span class="text-[10px] uppercase font-bold text-gray-400">Solde Net :</span>
-                                        <span class="text-xl font-black {{ $runningSolde >= 0 ? 'text-green-600' : 'text-red-600' }}">
+                                    <div class="inline-flex items-center gap-2 md:gap-4 whitespace-nowrap">
+                                        <span class="text-[9px] md:text-[10px] uppercase font-bold text-gray-400">Solde Net :</span>
+                                        <span class="text-sm md:text-xl font-black {{ $runningSolde >= 0 ? 'text-green-600' : 'text-red-600' }}">
                                             {{ number_format(abs($runningSolde), 2, ',', ' ') }} {{ $runningSolde >= 0 ? 'D' : 'C' }}
                                         </span>
                                     </div>
@@ -191,26 +193,59 @@
 @section('scripts')
 <script>
 function exportLedgerToExcel() {
+    const sep = ';';
+    const q = (v) => '"' + String(v).replace(/"/g, '""').trim() + '"';
     let csv = [];
-    csv.push('"Compte";"Date";"N° Pièce";"Journal";"Libellé";"Débit";"Crédit";"Solde"');
-
+    
+    // Headers - Unifié avec le style "Journal" qui plaît à l'utilisateur
+    csv.push(['COMPTE', 'INTITULÉ', 'DATES', 'Num PC', 'LIBELLÉ DES OPERATIONS', 'DÉBIT', 'CRÉDIT'].map(h => q(h)).join(sep));
+    
     document.querySelectorAll('[data-ledger-table]').forEach(table => {
-        const accountName = table.getAttribute('data-account');
-        csv.push('"' + accountName + '";;;;;;;');
+        const accountInfo = table.getAttribute('data-account'); // "Code - Label"
+        const parts = accountInfo.split(' - ');
+        const codeCompte = parts[0] || '';
+        const libelleCompte = parts[1] || '';
+        
         table.querySelectorAll('tbody tr').forEach(row => {
             const cols = row.querySelectorAll('td');
-            if (cols.length < 4) return;
-            const rowData = Array.from(cols).map(col => '"' + col.innerText.replace(/\n/g, ' ').trim().replace(/"/g, '""') + '"');
-            csv.push(rowData.join(';'));
+            if (cols.length < 5) return; // Ignore les lignes vides ou de message
+            
+            const rowData = [
+                q(codeCompte),
+                q(libelleCompte),
+                q(cols[0].innerText.trim()),
+                q(cols[1].innerText.trim()),
+                q(cols[2].innerText.trim()),
+                q(cols[3].innerText.trim()),
+                q(cols[4].innerText.trim())
+            ];
+            csv.push(rowData.join(sep));
         });
-        csv.push(';;;;;;;');
+        
+        // Optionnel : Ligne de totalisation pour le compte
+        const foot = table.querySelector('tfoot');
+        if (foot) {
+            const totalRow = foot.querySelector('tr');
+            if (totalRow) {
+                const totalCols = totalRow.querySelectorAll('td');
+                if (totalCols.length >= 5) {
+                    csv.push([
+                        q(codeCompte),
+                        q('TOTAL ' + libelleCompte),
+                        '', '', '',
+                        q(totalCols[3].innerText.trim()),
+                        q(totalCols[4].innerText.trim())
+                    ].join(sep));
+                }
+            }
+        }
     });
 
     const csvContent = '\uFEFF' + csv.join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.setAttribute('download', 'Grand_Livre_' + new Date().toISOString().slice(0,10) + '.csv');
+    link.setAttribute('download', 'Grand_Livre_Complet_' + new Date().toISOString().slice(0, 10) + '.csv');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

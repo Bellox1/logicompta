@@ -19,22 +19,22 @@
 <div class="bg-card-bg border border-border rounded-2xl shadow-sm overflow-hidden mb-12">
     
     <!-- En-tête de l'état -->
-    <div class="bg-primary/5 border-b border-primary/10 px-8 py-8 text-center">
-        <h1 class="text-2xl font-black text-gray-900 uppercase">BALANCE GÉNÉRALE DES COMPTES AU {{ date('d/m/y') }}</h1>
+    <div class="bg-primary/5 border-b border-primary/10 px-4 md:px-8 py-4 md:py-8 text-center">
+        <h1 class="text-base md:text-2xl font-black text-gray-900 uppercase">BALANCE GÉNÉRALE DES COMPTES AU {{ date('d/m/y') }}</h1>
     </div>
 
     <div class="table-responsive" id="balance-table">
-        <table class="w-full border-collapse">
+        <table class="w-full border-separate border-spacing-0 min-w-[1000px] sticky-thead">
             <thead>
                 <!-- Groupement des colonnes - Tout en bleu primaire -->
-                <tr class="bg-primary text-white text-[10px] uppercase font-black tracking-widest border-b border-white/10">
+                <tr class="bg-primary text-white text-[10px] uppercase font-black tracking-widest border-b border-white/10 row-sticky-1">
                     <th rowspan="2" class="px-4 py-4 text-left border-r border-white/10">NUM DE COMPTES</th>
                     <th rowspan="2" class="px-4 py-4 text-left border-r border-white/10">INTITULÉ DES COMPTES</th>
                     <th colspan="2" class="px-4 py-3 text-center border-r border-white/10">SOLDES DEBUT PERIODE</th>
                     <th colspan="2" class="px-4 py-3 text-center border-r border-white/10">MOUVEMENTS DE LA PERIODE</th>
                     <th colspan="2" class="px-4 py-3 text-center">SOLDES EN FIN DE PERIODE</th>
                 </tr>
-                <tr class="bg-primary text-white text-[9px] uppercase font-bold tracking-widest">
+                <tr class="bg-primary text-white text-[9px] uppercase font-bold tracking-widest row-sticky-2">
                     <!-- Soldes Début -->
                     <th class="px-4 py-2 text-right border-r border-white/20">DÉBIT</th>
                     <th class="px-4 py-2 text-right border-r border-white/20">CRÉDIT</th>
@@ -56,20 +56,20 @@
                                 <td class="px-4 py-3 font-mono font-bold text-gray-900 border-r border-gray-200 italic">{{ $acc['code'] }}</td>
                                 <td class="px-4 py-3 text-gray-700 border-r border-gray-200 font-medium uppercase">{{ $acc['libelle'] }}</td>
                                 
-                                <td class="px-4 py-3 text-right text-gray-400 border-r border-gray-200 font-mono">0,00</td>
-                                <td class="px-4 py-3 text-right text-gray-400 border-r border-gray-200 font-mono">0,00</td>
+                                <td class="px-4 py-3 text-right text-gray-400 border-r border-gray-200 font-mono whitespace-nowrap">0,00</td>
+                                <td class="px-4 py-3 text-right text-gray-400 border-r border-gray-200 font-mono whitespace-nowrap">0,00</td>
                                 
-                                <td class="px-4 py-3 text-right font-semibold text-gray-900 border-r border-gray-200">
+                                <td class="px-4 py-3 text-right font-semibold text-gray-900 border-r border-gray-200 whitespace-nowrap">
                                     {{ $acc['mouv_debit'] > 0 ? number_format($acc['mouv_debit'], 2, ',', ' ') : '0,00' }}
                                 </td>
-                                <td class="px-4 py-3 text-right font-semibold text-gray-900 border-r border-gray-200">
+                                <td class="px-4 py-3 text-right font-semibold text-gray-900 border-r border-gray-200 whitespace-nowrap">
                                     {{ $acc['mouv_credit'] > 0 ? number_format($acc['mouv_credit'], 2, ',', ' ') : '0,00' }}
                                 </td>
                                 
-                                <td class="px-4 py-3 text-right font-bold text-green-700 bg-green-50/10 border-r border-gray-200">
+                                <td class="px-4 py-3 text-right font-bold text-green-700 bg-green-50/10 border-r border-gray-200 whitespace-nowrap">
                                     {{ $acc['fin_debit'] > 0 ? number_format($acc['fin_debit'], 2, ',', ' ') : '0,00' }}
                                 </td>
-                                <td class="px-4 py-3 text-right font-bold text-red-700 bg-red-50/10 border-r border-gray-200">
+                                <td class="px-4 py-3 text-right font-bold text-red-700 bg-red-50/10 border-r border-gray-200 whitespace-nowrap">
                                     {{ $acc['fin_credit'] > 0 ? number_format($acc['fin_credit'], 2, ',', ' ') : '0,00' }}
                                 </td>
                             </tr>
@@ -78,12 +78,12 @@
                         <!-- Sous-Total du Groupe (S'affiche après chaque groupe) -->
                         <tr class="bg-gray-100/50 border-b border-gray-200 font-bold italic text-gray-800">
                             <td colspan="2" class="px-4 py-3 border-r border-gray-200 uppercase text-[10px]">Sous Total {{ $group['prefix'] }}</td>
-                            <td class="px-4 py-3 text-right border-r border-gray-200 font-mono text-gray-400">0,00</td>
-                            <td class="px-4 py-3 text-right border-r border-gray-200 font-mono text-gray-400">0,00</td>
-                            <td class="px-4 py-3 text-right border-r border-gray-200">{{ number_format($group['group_totals']['mouv_debit'], 2, ',', ' ') }}</td>
-                            <td class="px-4 py-3 text-right border-r border-gray-200">{{ number_format($group['group_totals']['mouv_credit'], 2, ',', ' ') }}</td>
-                            <td class="px-4 py-3 text-right border-r border-gray-200 text-green-800">{{ number_format($group['group_totals']['fin_debit'], 2, ',', ' ') }}</td>
-                            <td class="px-4 py-3 text-right border-r border-gray-200 text-red-800">{{ number_format($group['group_totals']['fin_credit'], 2, ',', ' ') }}</td>
+                            <td class="px-4 py-3 text-right border-r border-gray-200 font-mono text-gray-400 whitespace-nowrap">0,00</td>
+                            <td class="px-4 py-3 text-right border-r border-gray-200 font-mono text-gray-400 whitespace-nowrap">0,00</td>
+                            <td class="px-4 py-3 text-right border-r border-gray-200 whitespace-nowrap">{{ number_format($group['group_totals']['mouv_debit'], 2, ',', ' ') }}</td>
+                            <td class="px-4 py-3 text-right border-r border-gray-200 whitespace-nowrap">{{ number_format($group['group_totals']['mouv_credit'], 2, ',', ' ') }}</td>
+                            <td class="px-4 py-3 text-right border-r border-gray-200 text-green-800 whitespace-nowrap">{{ number_format($group['group_totals']['fin_debit'], 2, ',', ' ') }}</td>
+                            <td class="px-4 py-3 text-right border-r border-gray-200 text-red-800 whitespace-nowrap">{{ number_format($group['group_totals']['fin_credit'], 2, ',', ' ') }}</td>
                         </tr>
                     @endforeach
 
@@ -91,14 +91,14 @@
                     <tr class="bg-primary/10 border-b-2 border-primary/30 font-black">
                         <td colspan="2" class="px-4 py-5 text-primary text-[11px] uppercase tracking-[0.2em] border-r border-primary/20">Total Classe {{ $classId }}</td>
                         
-                        <td class="px-4 py-5 text-right border-r border-primary/20 font-mono text-gray-400">0,00</td>
-                        <td class="px-4 py-5 text-right border-r border-primary/20 font-mono text-gray-400">0,00</td>
+                        <td class="px-4 py-5 text-right border-r border-primary/20 font-mono text-gray-400 whitespace-nowrap">0,00</td>
+                        <td class="px-4 py-5 text-right border-r border-primary/20 font-mono text-gray-400 whitespace-nowrap">0,00</td>
                         
-                        <td class="px-4 py-5 text-right text-primary border-r border-primary/20">{{ number_format($class['class_totals']['mouv_debit'], 2, ',', ' ') }}</td>
-                        <td class="px-4 py-5 text-right text-primary border-r border-primary/20">{{ number_format($class['class_totals']['mouv_credit'], 2, ',', ' ') }}</td>
+                        <td class="px-4 py-5 text-right text-primary border-r border-primary/20 whitespace-nowrap">{{ number_format($class['class_totals']['mouv_debit'], 2, ',', ' ') }}</td>
+                        <td class="px-4 py-5 text-right text-primary border-r border-primary/20 whitespace-nowrap">{{ number_format($class['class_totals']['mouv_credit'], 2, ',', ' ') }}</td>
                         
-                        <td class="px-4 py-5 text-right text-green-900 bg-green-600/10 border-r border-primary/20">{{ number_format($class['class_totals']['fin_debit'], 2, ',', ' ') }}</td>
-                        <td class="px-4 py-5 text-right text-red-900 bg-red-600/10 border-r border-primary/20">{{ number_format($class['class_totals']['fin_credit'], 2, ',', ' ') }}</td>
+                        <td class="px-4 py-5 text-right text-green-900 bg-green-600/10 border-r border-primary/20 whitespace-nowrap">{{ number_format($class['class_totals']['fin_debit'], 2, ',', ' ') }}</td>
+                        <td class="px-4 py-5 text-right text-red-900 bg-red-600/10 border-r border-primary/20 whitespace-nowrap">{{ number_format($class['class_totals']['fin_credit'], 2, ',', ' ') }}</td>
                     </tr>
                 @empty
                     <tr>
@@ -116,16 +116,16 @@
                         <td colspan="2" class="px-6 py-6 tracking-[0.2em] border-r border-white/10">Total Balance Générale</td>
                         
                         <!-- Totaux Début -->
-                        <td class="px-4 py-6 text-right border-r border-white/10 opacity-40">-</td>
-                        <td class="px-4 py-6 text-right border-r border-white/10 opacity-40">-</td>
+                        <td class="px-4 py-6 text-right border-r border-white/10 opacity-40 whitespace-nowrap">0,00</td>
+                        <td class="px-4 py-6 text-right border-r border-white/10 opacity-40 whitespace-nowrap">0,00</td>
                         
                         <!-- Totaux Mouvements -->
-                        <td class="px-4 py-6 text-right border-r border-white/10 font-mono text-white">{{ number_format($grandTotal['mouv_debit'], 2, ',', ' ') }}</td>
-                        <td class="px-4 py-6 text-right border-r border-white/10 font-mono text-white">{{ number_format($grandTotal['mouv_credit'], 2, ',', ' ') }}</td>
+                        <td class="px-4 py-6 text-right border-r border-white/10 font-mono text-white whitespace-nowrap">{{ number_format($grandTotal['mouv_debit'], 2, ',', ' ') }}</td>
+                        <td class="px-4 py-6 text-right border-r border-white/10 font-mono text-white whitespace-nowrap">{{ number_format($grandTotal['mouv_credit'], 2, ',', ' ') }}</td>
                         
                         <!-- Totaux Fin -->
-                        <td class="px-4 py-6 text-right border-r border-white/10 font-mono text-white">{{ number_format($grandTotal['fin_debit'], 2, ',', ' ') }}</td>
-                        <td class="px-4 py-6 text-right font-mono text-white">{{ number_format($grandTotal['fin_credit'], 2, ',', ' ') }}</td>
+                        <td class="px-4 py-6 text-right border-r border-white/10 font-mono text-white whitespace-nowrap">{{ number_format($grandTotal['fin_debit'], 2, ',', ' ') }}</td>
+                        <td class="px-4 py-6 text-right font-mono text-white whitespace-nowrap">{{ number_format($grandTotal['fin_credit'], 2, ',', ' ') }}</td>
                     </tr>
                 </tfoot>
             @endif
@@ -144,8 +144,17 @@ function exportTableToExcel(tableWrapperId, filename) {
 
     let rows = [];
 
-    // En-tête
-    rows.push([q('NUM COMPTE'), q('INTITULÉ'), q('SOL.DEB DÉBIT'), q('SOL.DEB CRÉDIT'), q('MOUV DÉBIT'), q('MOUV CRÉDIT'), q('FIN DÉBIT'), q('FIN CRÉDIT')].join(sep));
+    // En-tête (Exactement comme la vue)
+    rows.push([
+        q('NUM DE COMPTES'), 
+        q('INTITULÉ DES COMPTES'), 
+        q('SOLDES DEBUT PERIODE (DÉBIT)'), 
+        q('SOLDES DEBUT PERIODE (CRÉDIT)'), 
+        q('MOUVEMENTS DE LA PERIODE (DÉBIT)'), 
+        q('MOUVEMENTS DE LA PERIODE (CRÉDIT)'), 
+        q('SOLDES EN FIN DE PERIODE (DÉBIT)'), 
+        q('SOLDES EN FIN DE PERIODE (CRÉDIT)')
+    ].join(sep));
 
     for (const [classId, classData] of Object.entries(balanceDataJson)) {
         for (const [prefix, group] of Object.entries(classData.groups)) {

@@ -25,37 +25,37 @@
         </div>
     @endif
 
-    <div class="bg-card-bg border border-border rounded-2xl p-6 shadow-sm mb-8">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2 px-1 uppercase tracking-wider">N° Pièce</label>
-                <input type="text" value="{{ $nextPieceNumber }}" disabled class="w-full bg-gray-100 border border-border rounded-xl px-4 py-3 text-gray-500 font-bold cursor-not-allowed">
+    <div class="bg-card-bg border border-border rounded-2xl p-3 md:p-6 shadow-sm mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6">
+            <div class="min-w-0">
+                <label class="block text-[10px] md:text-sm font-semibold text-gray-700 mb-1 md:mb-2 px-1 uppercase tracking-wider">N° Pièce</label>
+                <input type="text" value="{{ $nextPieceNumber }}" disabled class="w-full max-w-full bg-gray-100 border border-border rounded-xl px-3 py-2 md:px-4 md:py-3 text-gray-500 font-bold cursor-not-allowed">
             </div>
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2 px-1 uppercase tracking-wider">Journal</label>
+            <div class="min-w-0">
+                <label class="block text-[10px] md:text-sm font-semibold text-gray-700 mb-1 md:mb-2 px-1 uppercase tracking-wider">Journal</label>
                 <div class="relative">
-                    <select name="journal_id" required class="w-full bg-gray-50 border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all appearance-none cursor-pointer">
+                    <select name="journal_id" required class="w-full max-w-full bg-gray-50 border border-border rounded-xl px-3 py-2 md:px-4 md:py-3 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all appearance-none cursor-pointer text-sm md:text-base">
                         @foreach($journals as $journal)
                             <option value="{{ $journal->id }}" {{ old('journal_id') == $journal->id ? 'selected' : '' }}>{{ $journal->code }} - {{ $journal->name }}</option>
                         @endforeach
                     </select>
-                    <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                        <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                    <div class="absolute right-3 md:right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                        <i data-lucide="chevron-down" class="w-4 h-4 md:w-5 md:h-5"></i>
                     </div>
                 </div>
             </div>
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2 px-1 uppercase tracking-wider">Date d'opération</label>
+            <div class="min-w-0">
+                <label class="block text-[10px] md:text-sm font-semibold text-gray-700 mb-1 md:mb-2 px-1 uppercase tracking-wider">Date d'opération</label>
                 <input type="date" name="date" 
                     value="{{ old('date', date('Y-m-d')) }}" 
                     min="{{ date('Y-m-d', strtotime('-5 days')) }}"
                     max="{{ date('Y-m-t') }}"
                     required 
-                    class="w-full bg-gray-50 border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all">
+                    class="w-full max-w-full bg-gray-50 border border-border rounded-xl px-3 py-2 md:px-4 md:py-3 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-sm md:text-base">
             </div>
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2 px-1 uppercase tracking-wider">Libellé général</label>
-                <input type="text" name="libelle" value="{{ old('libelle') }}" placeholder="Ex: Règlement facture n°123" required class="w-full bg-gray-50 border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all">
+            <div class="min-w-0">
+                <label class="block text-[10px] md:text-sm font-semibold text-gray-700 mb-1 md:mb-2 px-1 uppercase tracking-wider">Libellé général</label>
+                <input type="text" name="libelle" value="{{ old('libelle') }}" placeholder="Ex: Règlement..." required class="w-full max-w-full bg-gray-50 border border-border rounded-xl px-3 py-2 md:px-4 md:py-3 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-sm md:text-base">
             </div>
         </div>
     </div>
@@ -120,23 +120,23 @@
             </table>
         </div>
 
-        <div class="bg-gray-50 p-6 border-t border-border mt-auto">
+        <div class="bg-gray-50 p-3 md:p-6 border-t border-border mt-auto">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div class="flex flex-wrap gap-8">
+                <div class="flex flex-wrap gap-4 md:gap-8">
                     <div>
                         <div class="text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-1">Total Débit</div>
-                        <div class="text-xl font-bold text-gray-900"><span id="total-debit">0.00</span> F</div>
+                        <div class="text-xl font-bold text-gray-900"><span id="total-debit">0,00</span> F</div>
                     </div>
                     <div>
                         <div class="text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-1">Total Crédit</div>
-                        <div class="text-xl font-bold text-gray-900"><span id="total-credit">0.00</span> F</div>
+                        <div class="text-xl font-bold text-gray-900"><span id="total-credit">0,00</span> F</div>
                     </div>
                     <div id="balance-container">
                         <div class="text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-1">État d'Équilibre</div>
-                        <div id="balance-status" class="text-sm font-bold text-red-600 italic">Déséquilibre: 0.00 F</div>
+                        <div id="balance-status" class="text-sm font-bold text-red-600 italic">Déséquilibre: 0,00 F</div>
                     </div>
                 </div>
-                <button type="submit" id="submit-btn" disabled class="px-8 py-4 bg-primary text-white font-bold rounded-2xl hover:bg-primary-light disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-lg flex items-center justify-center gap-2">
+                <button type="submit" id="submit-btn" disabled class="w-full md:w-auto px-8 py-4 bg-primary text-white font-bold rounded-2xl hover:bg-primary-light disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-lg flex items-center justify-center gap-2">
                     <i data-lucide="save" class="w-5 h-5"></i>
                     Enregistrer l'écriture
                 </button>
@@ -234,6 +234,31 @@
         }
 
         document.querySelectorAll('.line-row').forEach(attachListeners);
+        
+        // Date validation for mobile browsers that ignore min/max
+        const dateInput = document.querySelector('input[name="date"]');
+        if (dateInput) {
+            dateInput.addEventListener('change', function() {
+                const selectedDate = new Date(this.value);
+                const today = new Date();
+                today.setHours(0,0,0,0);
+                
+                const minDate = new Date();
+                minDate.setDate(today.getDate() - 5);
+                minDate.setHours(0,0,0,0);
+                
+                const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                
+                if (selectedDate < minDate) {
+                    alert('La date ne peut pas remonter à plus de 5 jours.');
+                    this.value = minDate.toISOString().split('T')[0];
+                } else if (selectedDate > lastDayOfMonth) {
+                    alert('La date ne peut pas dépasser le mois en cours.');
+                    this.value = today.toISOString().split('T')[0];
+                }
+            });
+        }
+
         calculate(); // Initial call
     });
 </script>

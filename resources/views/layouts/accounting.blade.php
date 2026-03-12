@@ -2,7 +2,11 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#161615" media="(prefers-color-scheme: dark)">
     <title>Comptabilité - @yield('title')</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,6 +21,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'media',
             theme: {
                 extend: {
                     fontFamily: {
@@ -26,9 +31,9 @@
                         primary: '#003366',
                         'primary-light': '#0055aa',
                         accent: '#f53003',
-                        bg: '#FDFDFC',
-                        'card-bg': '#FFFFFF',
-                        border: '#e3e3e0',
+                        bg: 'var(--bg)',
+                        'card-bg': 'var(--card-bg)',
+                        border: 'var(--border-color)',
                     }
                 }
             }
@@ -36,15 +41,138 @@
     </script>
     
     <style>
-        body { font-family: 'Outfit', sans-serif; overflow-x: hidden; }
-        .sidebar-transition { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        
-        /* Table Responsive Wrapper */
+        :root {
+            --bg: #FFFFFF;
+            --card-bg: #FFFFFF;
+            --border-color: #e3e3e0;
+            --text-main: #1f2937; /* gray-800 */
+        }
+
+        /* Table Responsive Wrapper - Scroll horizontal local au cadre blanc */
         .table-responsive {
             width: 100%;
+            max-width: 100%;
             overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
+            overflow-y: visible;
+            position: relative;
+            background: var(--card-bg);
             border-radius: 0.75rem;
+            display: block;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #0a0a0a;
+                --card-bg: #161615;
+                --border-color: #262624;
+                --text-main: #f3f4f6; /* gray-100 */
+            }
+            
+            .table-responsive {
+                border-color: rgba(255,255,255,0.1) !important;
+            }
+            h1, h2, h3, h4, .text-gray-950, .text-gray-900, .text-gray-800, .text-black {
+                color: var(--text-main) !important;
+            }
+            .text-gray-700, .text-gray-600 {
+                color: #d1d5db !important; /* gray-300 */
+            }
+            
+            .bg-white, .bg-card-bg {
+                background-color: var(--card-bg) !important;
+            }
+            .bg-gray-50, .bg-bg {
+                background-color: var(--bg) !important;
+            }
+            
+            /* Form elements */
+            select, input {
+                background-color: #1c1c1b !important;
+                color: #f3f4f6 !important;
+                border-color: #262624 !important;
+            }
+        }
+
+        html { 
+            background-color: var(--bg) !important;
+            overflow-x: hidden; 
+            height: 100%;
+            overscroll-behavior: none;
+        }
+
+        body { 
+            background-color: var(--bg) !important;
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            min-height: 100dvh;
+            font-family: 'Outfit', sans-serif; 
+            overflow-x: hidden; 
+            position: relative; 
+            width: 100%;
+            overscroll-behavior: none;
+        }
+        
+        .sidebar-transition { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        
+        /* iOS Specific fixes */
+        input, select, textarea {
+            -webkit-appearance: none;
+            appearance: none;
+            box-sizing: border-box;
+            font-size: 16px; /* Global fix for iOS zoom */
+        }
+
+        /* Sticky Table Headers - JS Powered Version */
+        .sticky-thead {
+            border-collapse: separate !important;
+            border-spacing: 0;
+            width: 100%;
+        }
+        
+        /* thead will be translated via JS */
+        .sticky-thead thead {
+            position: relative;
+            z-index: 100 !important;
+        }
+
+        .sticky-thead thead th {
+            background-color: #003366 !important;
+            color: #ffffff !important;
+            padding: 1.25rem 1.5rem !important;
+            border: none !important;
+            box-shadow: inset 0 -1px 0 rgba(255,255,255,0.1);
+            text-transform: uppercase;
+            font-weight: 800;
+            font-size: 11px;
+            white-space: nowrap;
+        }
+
+        /* Support Balance (2 niveaux de titres) */
+        .sticky-thead thead tr.row-sticky-2 th {
+            padding: 0.5rem 1.25rem !important;
+            font-size: 10px;
+        }
+
+        /* Scroll Principal de la page - Vertical uniquement */
+        .main-content {
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            position: relative;
+        }
+
+        @media (max-width: 768px) {
+            html, body { overflow-x: hidden !important; width: 100%; position: relative; }
+            .main-content {
+                padding: 0 0.5rem 1rem 0.5rem !important;
+                flex: 1;
+                min-width: 0;
+                width: 100%;
+                display: block;
+            }
+            input, select, textarea {
+                font-size: 16px !important;
+            }
         }
 
         /* Sidebar Collapsed State (Initial) */
@@ -55,19 +183,53 @@
         .sidebar-collapsed .sidebar-header-text {
             display: none !important;
         }
+        .rotate-180, 
+        .sidebar-collapsed #toggle-chevron {
+            transform: rotate(180deg);
+        }
+        #toggle-chevron {
+            transition: transform 0.3s ease;
+            display: inline-block;
+        }
         
         @media (max-width: 768px) {
             .sidebar {
                 position: fixed;
-                left: -260px;
-                height: 100vh;
-                z-index: 50;
+                top: 0;
+                left: 0;
+                width: 260px;
+                height: 100dvh;
+                z-index: 2000; 
+                transform: translateX(-100%);
+                padding-top: calc(1rem + env(safe-area-inset-top, 0));
+                padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0));
             }
             .sidebar.mobile-open {
-                left: 0;
+                transform: translateX(0);
             }
-            .main-content {
-                padding: 1.5rem !important;
+            
+            /* Orientation de la transition vers le transform */
+            .sidebar-transition {
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            
+            #sidebar-overlay {
+                transition: opacity 0.3s ease, visibility 0.3s;
+                visibility: hidden;
+                opacity: 0;
+                display: block !important; /* On gère par visibility/opacity pour la fluidité */
+            }
+            #sidebar-overlay.active {
+                visibility: visible;
+                opacity: 1;
+            }
+            
+            /* Propagation de la couleur du header vers le haut (encoche) */
+            header.md\:hidden {
+                padding-top: env(safe-area-inset-top, 0) !important;
+                height: calc(4rem + env(safe-area-inset-top, 0)) !important;
+                display: flex !important;
+                align-items: center !important;
             }
         }
     </style>
@@ -81,13 +243,13 @@
         })();
     </script>
 </head>
-<body class="bg-[#FDFDFC] dark:bg-[#0a0a0a] min-h-screen">
-    <!-- Overlay for mobile -->
-    <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden"></div>
+<body class="bg-bg min-h-screen">
+    <!-- Overlay for mobile (Visibility managed by JS) -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-gray-900/40 dark:bg-black/80 z-[1999] md:hidden"></div>
 
-    <div class="flex min-h-screen relative">
+    <div class="flex h-[100dvh] overflow-hidden relative">
         <!-- Sidebar -->
-        <aside id="sidebar" class="sidebar sidebar-transition w-[260px] md:sticky md:top-0 md:h-screen bg-white dark:bg-[#161615] border-r border-border flex flex-shrink-0 flex-col py-3 px-4 shadow-sm z-50 overflow-y-auto">
+        <aside id="sidebar" class="sidebar sidebar-transition w-[260px] h-full bg-white dark:bg-[#161615] border-r border-border flex flex-shrink-0 flex-col py-3 px-4 shadow-sm z-[2000] overflow-y-auto">
             <script>
                 // Appliquer la classe si nécessaire avant que l'élément soit affiché
                 if (localStorage.getItem('sidebar-collapsed') === 'true' && window.innerWidth > 768) {
@@ -96,7 +258,7 @@
                 }
             </script>
             <!-- Toggle Button (Floating) -->
-            <button id="toggle-sidebar" class="fixed left-[244px] top-10 sidebar-transition bg-accent text-white border-[3px] border-[#FDFDFC] dark:border-[#0a0a0a] w-8 h-8 rounded-full flex items-center justify-center shadow-lg hover:scale-110 hover:bg-primary transition-all z-[60] hidden md:flex">
+            <button id="toggle-sidebar" class="fixed left-[244px] top-10 sidebar-transition bg-accent text-white border-[3px] border-[#FDFDFC] dark:border-[#0a0a0a] w-8 h-8 rounded-full flex items-center justify-center shadow-lg hover:scale-110 hover:bg-primary transition-all z-[2001] hidden md:flex">
                 <script>
                     if (localStorage.getItem('sidebar-collapsed') === 'true' && window.innerWidth > 768) {
                         document.currentScript.parentElement.style.left = '64px';
@@ -106,12 +268,12 @@
             </button>
 
             <!-- Mobile Close Button -->
-            <button id="close-mobile-sidebar" class="md:hidden absolute top-4 right-4 text-text-muted">
+            <button id="close-mobile-sidebar" class="md:hidden absolute top-4 right-4 text-text-muted dark:text-gray-300">
                 <i data-lucide="x"></i>
             </button>
 
-            <div class="flex items-center h-10 mb-6 px-2 opacity-100 sidebar-header-text overflow-hidden transition-all duration-300">
-                <h2 class="text-xl font-extrabold text-accent whitespace-nowrap">Logicompta</h2>
+            <div class="flex items-center mb-8 px-2 transition-all duration-300">
+                <img src="{{ asset('images/ChatGPT Image 11 mars 2026, 10_41_49.png') }}" alt="Comptafriq Logo" class="h-24 w-auto object-contain">
             </div>
             
             <nav class="flex flex-col gap-1">
@@ -156,26 +318,33 @@
             </nav>
         </aside>
 
-        <!-- Main Content -->
-        <main class="main-content flex-1 min-w-0 p-6 md:p-10 transition-all">
-            <!-- Mobile Top Bar -->
-            <header class="md:hidden flex items-center justify-between mb-6">
-                <button id="open-mobile-sidebar" class="p-2 bg-white rounded-lg border border-border shadow-sm">
-                    <i data-lucide="menu"></i>
+        <!-- Main Content Wrapper -->
+        <div class="flex-1 flex flex-col h-full overflow-hidden">
+            <!-- Mobile Top Bar (Opaque background to avoid bleed-through) -->
+            <header class="md:hidden flex items-center justify-between px-4 bg-white dark:bg-[#161615] border-b border-border dark:border-white/10 shadow-sm flex-shrink-0 relative">
+                <button id="open-mobile-sidebar" class="p-2 bg-white dark:bg-white/5 rounded-lg border border-border dark:border-white/10 z-10">
+                    <i data-lucide="menu" class="w-5 h-5 dark:text-gray-300"></i>
                 </button>
-                <h2 class="text-xl font-bold">Logicompta</h2>
-                <div class="w-10"></div> <!-- Spacer -->
+                
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <img src="{{ asset('images/ChatGPT Image 11 mars 2026, 10_41_49.png') }}" alt="Comptafriq Logo" class="h-20 w-auto object-contain pointer-events-auto">
+                </div>
+                
+                <div class="w-10"></div>
             </header>
 
-            @if(session('success'))
-                <div class="mb-6 p-4 rounded-xl bg-green-50 border border-green-200 text-green-700 flex items-center gap-3">
-                    <i class="w-5 h-5" data-lucide="check-circle"></i>
-                    {{ session('success') }}
-                </div>
-            @endif
+            <!-- Scrollable Content Area - Enable full auto overflow for sticky headers -->
+            <main class="main-content flex-1 overflow-auto p-6 md:p-10 transition-all scroll-smooth relative">
+                @if(session('success'))
+                    <div class="mb-6 p-4 rounded-xl bg-green-50 border border-green-200 text-green-700 flex items-center gap-3">
+                        <i class="w-5 h-5" data-lucide="check-circle"></i>
+                        {{ session('success') }}
+                    </div>
+                @endif
 
-            @yield('content')
-        </main>
+                @yield('content')
+            </main>
+        </div>
     </div>
 
     <script>
@@ -195,14 +364,11 @@
                 sidebar.classList.replace('w-[260px]', 'w-[80px]');
                 sidebar.classList.add('sidebar-collapsed');
                 if (toggleBtn) toggleBtn.style.left = '64px';
-                if (toggleChevron) toggleChevron.setAttribute('data-lucide', 'chevron-right');
             } else {
                 sidebar.classList.replace('w-[80px]', 'w-[260px]');
                 sidebar.classList.remove('sidebar-collapsed');
                 if (toggleBtn) toggleBtn.style.left = '244px';
-                if (toggleChevron) toggleChevron.setAttribute('data-lucide', 'chevron-left');
             }
-            lucide.createIcons();
             localStorage.setItem('sidebar-collapsed', collapsed);
         };
 
@@ -214,25 +380,100 @@
             });
         }
 
-        // Mobile Sidebar
-        const toggleMobile = () => {
-            sidebar.classList.toggle('mobile-open');
-            sidebarOverlay.classList.toggle('hidden');
+        // Mobile Sidebar Toggle
+        const toggleMobile = (forceState) => {
+            const isOpen = forceState !== undefined ? forceState : !sidebar.classList.contains('mobile-open');
+            
+            if (isOpen) {
+                sidebar.classList.add('mobile-open');
+                sidebarOverlay.classList.add('active');
+            } else {
+                sidebar.classList.remove('mobile-open');
+                sidebarOverlay.classList.remove('active');
+            }
         };
 
-        if (openMobileBtn) openMobileBtn.addEventListener('click', toggleMobile);
-        if (closeMobileBtn) closeMobileBtn.addEventListener('click', toggleMobile);
-        if (sidebarOverlay) sidebarOverlay.addEventListener('click', toggleMobile);
+        if (openMobileBtn) openMobileBtn.addEventListener('click', () => toggleMobile(true));
+        if (closeMobileBtn) closeMobileBtn.addEventListener('click', () => toggleMobile(false));
+        if (sidebarOverlay) sidebarOverlay.addEventListener('click', () => toggleMobile(false));
+
+        // --- Système de Swipe Fluide (Optimisé) ---
+        let touchStartX = 0;
+        let touchCurrentX = 0;
+        let isSwiping = false;
+
+        sidebar.addEventListener('touchstart', e => {
+            if (window.innerWidth > 768 || !sidebar.classList.contains('mobile-open')) return;
+            touchStartX = e.touches[0].clientX;
+            isSwiping = true;
+            sidebar.style.transition = 'none'; // Désactive transition CSS
+            sidebarOverlay.style.transition = 'none';
+        }, { passive: true });
+
+        sidebar.addEventListener('touchmove', e => {
+            if (!isSwiping) return;
+            touchCurrentX = e.touches[0].clientX;
+            let deltaX = touchStartX - touchCurrentX;
+            
+            if (deltaX > 0) { // On pousse vers la gauche
+                sidebar.style.transform = `translateX(${-deltaX}px)`;
+                let progress = Math.min(deltaX / 260, 1);
+                sidebarOverlay.style.opacity = (0.8 - (progress * 0.8)).toString(); // 0.8 est l'opacité max du black/80
+            }
+        }, { passive: true });
+
+        sidebar.addEventListener('touchend', e => {
+            if (!isSwiping) return;
+            isSwiping = false;
+            
+            sidebar.style.transition = ''; // Restore CSS transitions
+            sidebarOverlay.style.transition = '';
+            sidebarOverlay.style.opacity = '';
+            
+            let deltaX = touchStartX - touchCurrentX;
+            sidebar.style.transform = ''; 
+            
+            if (deltaX > 70) { // Seuil de fermeture
+                toggleMobile(false);
+            }
+        }, { passive: true });
 
         // Load Initial State
         const savedState = localStorage.getItem('sidebar-collapsed');
         if (savedState === 'true' && window.innerWidth > 768) {
             setSidebarState(true);
-            // S'assurer que l'icône est correcte après le rendu initial
-            if (toggleChevron) {
-                toggleChevron.setAttribute('data-lucide', 'chevron-right');
-                lucide.createIcons();
-            }
+        }
+
+        // JS STICKY HEADERS SYSTEM
+        const mainContent = document.querySelector('.main-content');
+        
+        const updateStickyHeaders = () => {
+            const tables = document.querySelectorAll('.sticky-thead');
+            
+            tables.forEach(table => {
+                const thead = table.querySelector('thead');
+                const tableRect = table.getBoundingClientRect();
+                const mainRect = mainContent.getBoundingClientRect();
+                
+                // Différence entre le haut du main et le haut du tableau
+                const offset = mainRect.top - tableRect.top;
+                
+                if (offset > 0) {
+                    // Limiter pour ne pas sortir du tableau par le bas
+                    const stopPoint = tableRect.height - thead.offsetHeight - 5;
+                    const translateVal = Math.min(offset, stopPoint);
+                    thead.style.transform = `translateY(${translateVal}px)`;
+                } else {
+                    thead.style.transform = 'translateY(0px)';
+                }
+            });
+        };
+
+        if (mainContent) {
+            mainContent.addEventListener('scroll', updateStickyHeaders);
+            // also update on resize or initial load
+            window.addEventListener('resize', updateStickyHeaders);
+            updateStickyHeaders();
         }
     </script>
     @yield('scripts')

@@ -50,10 +50,10 @@
                             <div class="text-xs opacity-70">{{ $line->libelle }}</div>
                         </td>
                         <td class="px-6 py-5 text-sm text-right font-bold text-gray-900 border-r border-gray-100 bg-gray-50/10 not-italic">
-                            {{ $line->debit > 0 ? number_format($line->debit, 2, ',', ' ') : '-' }}
+                            {{ number_format($line->debit, 2, ',', ' ') }}
                         </td>
                         <td class="px-6 py-5 text-sm text-right font-bold text-gray-900 bg-gray-50/10 not-italic">
-                            {{ $line->credit > 0 ? number_format($line->credit, 2, ',', ' ') : '-' }}
+                            {{ number_format($line->credit, 2, ',', ' ') }}
                         </td>
                     </tr>
                     @endforeach

@@ -330,16 +330,15 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    currentToken = data.token;
-                    localStorage.setItem('comptafriq_token', currentToken);
+                    // Pas de stockage localStorage - session gérée côté serveur
                     
                     // Redirection immédiate vers le dashboard
                     window.location.href = '{{ url('/dashbord') }}';
                 } else {
-                    showMessage(data.message || 'Erreur de connexion', 'error');
+                    // showMessage(data.message || 'Erreur de connexion', 'error'); // Désactivé
                 }
             } catch (error) {
-                showMessage('Erreur de connexion au serveur', 'error');
+                // showMessage('Erreur de connexion au serveur', 'error'); // Désactivé
                 console.error('Erreur:', error);
             } finally {
                 btn.textContent = 'Se connecter';

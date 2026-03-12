@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Str;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\PasswordResetToken;
 use App\Mail\ProfileAccessMail;
@@ -82,14 +83,14 @@ class AuthController extends Controller
             ], 401);
         }
 
-        // Création du token
-        $token = $user->createToken('comptafriq_token')->plainTextToken;
+        // Connexion avec session web
+        Auth::login($user);
+        session()->regenerate();
 
         return response()->json([
             'success' => true,
             'message' => 'Connexion réussie',
-            'user' => $user,
-            'token' => $token
+            'user' => $user
         ]);
     }
 
@@ -98,8 +99,10 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        // Suppression du token actuel
-        $request->user()->currentAccessToken()->delete();
+        // Invalidation de la session web
+        Auth::logout();
+        session()->invalidate();
+        session()->regenerateToken();
 
         return response()->json([
             'success' => true,

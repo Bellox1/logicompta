@@ -7,6 +7,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#161615" media="(prefers-color-scheme: dark)">
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Comptabilité - @yield('title')</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -315,6 +317,12 @@
                     <i class="w-5 h-5" data-lucide="help-circle"></i>
                     <span class="sidebar-label transition-all duration-300">Guide & Aide</span>
                 </a>
+
+                <div class="sidebar-label text-[10px] uppercase font-bold text-gray-400 mt-6 px-4 mb-2 tracking-widest hidden md:block">Compte</div>
+                <button id="logout-btn" class="flex items-center gap-4 px-4 py-3 rounded-xl font-medium transition-all text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 w-full text-left">
+                    <i class="w-5 h-5" data-lucide="log-out"></i>
+                    <span class="sidebar-label transition-all duration-300">Déconnexion</span>
+                </button>
             </nav>
         </aside>
 
@@ -475,6 +483,27 @@
             window.addEventListener('resize', updateStickyHeaders);
             updateStickyHeaders();
         }
+
+        // Gestion de la déconnexion
+        document.getElementById('logout-btn').addEventListener('click', async function() {
+            try {
+                // Appel à l'API de déconnexion (gérée côté serveur)
+                const response = await fetch('/api/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+                    }
+                });
+
+                // Redirection vers la page de connexion (que ce soit succès ou erreur)
+                window.location.href = '/login';
+            } catch (error) {
+                console.error('Erreur lors de la déconnexion:', error);
+                // En cas d'erreur réseau, redirection vers login
+                window.location.href = '/login';
+            }
+        });
     </script>
     @yield('scripts')
 </body>

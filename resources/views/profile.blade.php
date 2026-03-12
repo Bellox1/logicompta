@@ -172,17 +172,11 @@
                     return;
                 }
                 
-                // Normal authentication check
-                const storedToken = localStorage.getItem('token');
-                if (!storedToken) {
-                    window.location.href = '{{ url("/login") }}';
-                    return;
-                }
-
+                // Normal authentication check - utiliser session web
                 const response = await fetch('{{ url("/api/user") }}', {
                     headers: {
-                        'Authorization': `Bearer ${storedToken}`,
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
                     }
                 });
 
@@ -195,7 +189,7 @@
                 }
             } catch (error) {
                 console.error('Erreur:', error);
-                showMessage('Erreur lors du chargement du profil', 'error');
+                // showMessage('Erreur lors du chargement du profil', 'error'); // Désactivé
             }
         }
 
@@ -217,13 +211,13 @@
                     
                     // Show temporary access alert
                     document.getElementById('tempAccessAlert').classList.remove('hidden');
-                    showMessage('🔑 Accès temporaire activé - Pensez à définir un nouveau mot de passe', 'success');
+                    // showMessage('🔑 Accès temporaire activé - Pensez à définir un nouveau mot de passe', 'success'); // Désactivé
                 } else {
                     throw new Error('Token invalide ou expiré');
                 }
             } catch (error) {
                 console.error('Erreur token:', error);
-                showMessage('Token invalide. Veuillez vous connecter normalement.', 'error');
+                // showMessage('Token invalide. Veuillez vous connecter normalement.', 'error'); // Désactivé
                 setTimeout(() => {
                     window.location.href = '{{ url("/login") }}';
                 }, 3000);
@@ -285,16 +279,15 @@
                         body: JSON.stringify({ token, email, name, new_email: userEmail })
                     });
                 } else {
-                    // Normal authenticated update
-                    const storedToken = localStorage.getItem('token');
+                    // Normal authenticated update - utiliser session web
                     const name = document.getElementById('editName').value;
                     const userEmail = document.getElementById('editEmail').value;
 
                     response = await fetch('{{ url("/api/user") }}', {
                         method: 'PUT',
                         headers: {
-                            'Authorization': `Bearer ${storedToken}`,
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
                         },
                         body: JSON.stringify({ name, email: userEmail })
                     });
@@ -305,30 +298,24 @@
                     currentUser = data.user;
                     displayProfile();
                     toggleEditMode();
-                    showMessage('Profil mis à jour avec succès', 'success');
+                    // showMessage('Profil mis à jour avec succès', 'success'); // Désactivé
                 } else {
                     throw new Error('Erreur lors de la mise à jour');
                 }
             } catch (error) {
                 console.error('Erreur:', error);
-                showMessage('Erreur lors de la mise à jour du profil', 'error');
+                // showMessage('Erreur lors de la mise à jour du profil', 'error'); // Désactivé
             }
         }
 
         function showPasswordModal() {
-            showMessage('Fonctionnalité de changement de mot de passe bientôt disponible', 'info');
+            // showMessage('Fonctionnalité de changement de mot de passe bientôt disponible', 'info'); // Désactivé
         }
 
         function showDeleteModal() {
             if (confirm('Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irreversible.')) {
-                showMessage('Fonctionnalité de suppression bientôt disponible', 'info');
+                // showMessage('Fonctionnalité de suppression bientôt disponible', 'info'); // Désactivé
             }
-        }
-
-        function logout() {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            window.location.href = '{{ url("/") }}';
         }
 
         function showMessage(message, type = 'success') {

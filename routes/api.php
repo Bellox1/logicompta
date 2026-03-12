@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 // Routes publiques d'authentification
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout']);
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
 Route::post('/user-by-token', [AuthController::class, 'getUserByToken']); // Accès direct via token
 Route::put('/update-profile-by-token', [AuthController::class, 'updateProfileByToken']); // Mise à jour via token
@@ -14,7 +15,6 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword']); // Ré
 
 // Routes protégées (nécessitent un token valide)
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
     Route::put('/user', [AuthController::class, 'updateProfile']); // Mettre à jour le profil
     Route::get('/users', [AuthController::class, 'users']); // Liste des utilisateurs

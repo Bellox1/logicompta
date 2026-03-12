@@ -332,13 +332,9 @@
                 if (data.success) {
                     currentToken = data.token;
                     localStorage.setItem('comptafriq_token', currentToken);
-                    showMessage('Connexion réussie !', 'success');
                     
-                    // Vider les champs et réinitialiser
-                    document.getElementById('email').value = '';
-                    document.getElementById('password').value = '';
-                    btn.textContent = 'Se connecter';
-                    btn.disabled = false;
+                    // Redirection immédiate vers le dashboard
+                    window.location.href = '{{ url('/dashbord') }}';
                 } else {
                     showMessage(data.message || 'Erreur de connexion', 'error');
                 }

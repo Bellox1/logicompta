@@ -5,7 +5,7 @@ use App\Http\Controllers\GeneralAccounting\JournalController;
 
 // Route principale vers la page d'accueil
 Route::get('/', function () {
-    return view('dashbord');
+    return view('home');
 });
 
 // Route pour la page de connexion
@@ -31,6 +31,11 @@ Route::get('/profile', function () {
 // Route pour la page de réinitialisation de mot de passe
 Route::get('/reset-password', function () {
     return view('reset-password');
+});
+
+// Route pour le dashboard
+Route::get('/dashbord', function () {
+    return view('dashbord');
 });
 
 Route::prefix('accounting')->name('accounting.')->group(function () {

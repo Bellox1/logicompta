@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('journal_entries', function (Blueprint $table) {
             $table->id();
             $table->foreignId('journal_id')->constrained()->onDelete('cascade');
+            $table->foreignId('entreprise_id')->constrained()->onDelete('cascade');
             $table->string('numero_piece')->unique(); // Numéro auto-incrémenté ou formaté
             $table->date('date');
             $table->string('libelle');

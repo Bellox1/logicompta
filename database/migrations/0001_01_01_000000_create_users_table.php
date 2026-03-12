@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('telephone', 20)->nullable();
             $table->string('role')->default('utilisateur'); // admin, comptable, utilisateur
-            $table->foreignId('entreprise_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('entreprise_id')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

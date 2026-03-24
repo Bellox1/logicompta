@@ -59,12 +59,20 @@ Route::prefix('accounting')->name('accounting.')->middleware(['web', 'auth'])->g
     Route::post('/entreprise/create', [EntrepriseController::class, 'webCreate'])->name('entreprise.create');
 
     Route::get('/journal', [JournalController::class, 'index'])->name('journal.index');
+    Route::get('/journal/export-pdf', [JournalController::class, 'exportPdf'])->name('journal.export.pdf');
     Route::get('/journal/create', [JournalController::class, 'create'])->name('journal.create');
     Route::post('/journal/store', [JournalController::class, 'store'])->name('journal.store');
+    Route::get('/journal/import', [JournalController::class, 'importForm'])->name('journal.import');
+    Route::post('/journal/import', [JournalController::class, 'importProcess'])->name('journal.import.process');
     Route::get('/journal/{id}', [JournalController::class, 'show'])->name('journal.show');
+    Route::get('/journal/{id}/pdf', [JournalController::class, 'showPdf'])->name('journal.show.pdf');
     Route::get('/ledger/{account_id?}', [JournalController::class, 'ledger'])->name('ledger');
+    Route::get('/ledger-pdf/{account_id?}', [JournalController::class, 'ledgerPdf'])->name('ledger.pdf');
     Route::get('/balance', [JournalController::class, 'balance'])->name('balance');
+    Route::get('/balance-pdf', [JournalController::class, 'balancePdf'])->name('balance.pdf');
     Route::get('/bilan', [JournalController::class, 'bilan'])->name('bilan');
+    Route::get('/bilan-pdf', [JournalController::class, 'bilanPdf'])->name('bilan.pdf');
     Route::get('/resultat', [JournalController::class, 'resultat'])->name('resultat');
+    Route::get('/resultat-pdf', [JournalController::class, 'resultatPdf'])->name('resultat.pdf');
     Route::get('/help', [JournalController::class, 'help'])->name('help');
 });

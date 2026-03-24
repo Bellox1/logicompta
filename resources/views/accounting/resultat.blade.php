@@ -8,7 +8,11 @@
         <h1 class="text-3xl font-black text-gray-900 tracking-tight uppercase">Compte de Résultat</h1>
         <p class="text-sm text-gray-500 font-bold tracking-[0.2em] uppercase opacity-70">Performance de l'exercice au {{ date('d/m/Y') }}</p>
     </div>
-    <div class="flex gap-4">
+    <div class="flex flex-wrap gap-4">
+        <a href="{{ route('accounting.resultat.pdf') }}" target="_blank" class="inline-flex items-center justify-center px-4 py-2 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-all shadow text-xs">
+            <i data-lucide="file-text" class="w-4 h-4 mr-2"></i>
+            Exporter PDF
+        </a>
         <button onclick="exportResultatToExcel('charges', 'Compte_Resultat_Charges')" class="inline-flex items-center justify-center px-4 py-2 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition-all shadow text-xs">
             <i data-lucide="file-spreadsheet" class="w-4 h-4 mr-2"></i>
             Export Charges

@@ -3,21 +3,28 @@
 @section('title', 'Grand Livre')
 
 @section('content')
-<div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+<div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-50">
     <div>
-        <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Grand Livre</h1>
+        <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+            Grand Livre {{ $selectedClass ? '- CLASSE ' . $selectedClass : '' }}
+        </h1>
         <p class="text-sm text-gray-500 italic">Détail des mouvements par compte comptable</p>
     </div>
     <div class="flex flex-wrap gap-3">
-        <a href="{{ route('accounting.ledger', ['mode' => 'all']) }}" class="px-4 py-2 {{ $mode === 'all' ? 'bg-primary text-white' : 'bg-white text-gray-700' }} border border-border rounded-xl text-xs font-bold uppercase transition-all shadow-sm">Tout le Grand Livre</a>
-        <div class="relative">
-            <button id="class-dropdown-btn" class="px-4 py-2 {{ $mode === 'class' ? 'bg-primary text-white' : 'bg-white text-gray-700' }} border border-border rounded-xl text-xs font-bold uppercase transition-all shadow-sm flex items-center gap-2">
-                Par Classe
+        <a href="{{ route('accounting.ledger', ['mode' => 'all']) }}" class="px-4 py-2 {{ $mode === 'all' && !$selectedClass ? 'bg-primary text-white' : 'bg-white text-gray-700' }} border border-border rounded-xl text-xs font-bold uppercase transition-all shadow-sm">Tout le Grand Livre</a>
+        <div class="relative z-[2000]">
+            <button id="class-dropdown-btn" class="px-4 py-2 {{ $selectedClass ? 'bg-primary text-white' : 'bg-white text-gray-700' }} border border-border rounded-xl text-xs font-bold uppercase transition-all shadow-sm flex items-center gap-2">
+                {{ $selectedClass ? 'Classe ' . $selectedClass : 'Par Classe' }}
                 <i data-lucide="chevron-down" class="w-3 h-3"></i>
             </button>
-            <div id="class-dropdown-menu" class="absolute right-0 mt-2 w-48 bg-white border border-border rounded-xl shadow-xl z-20 hidden">
+            <div id="class-dropdown-menu" class="absolute right-0 mt-2 w-48 bg-white border border-border rounded-xl shadow-xl z-[2001] hidden text-[11px]">
                 @foreach(range(1, 9) as $class)
-                    <a href="{{ route('accounting.ledger', ['mode' => 'class', 'class' => $class]) }}" class="block px-4 py-2 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-0 border-r-0 border-l-0 border-t-0">Classe {{ $class }}</a>
+                    <a href="{{ route('accounting.ledger', ['mode' => 'class', 'class' => $class]) }}" class="flex items-center justify-between px-4 py-1.5 font-bold text-gray-700 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-0 border-r-0 border-l-0 border-t-0">
+                        Classe {{ $class }}
+                        @if($selectedClass == $class)
+                            <i data-lucide="check" class="w-3 h-3 text-primary"></i>
+                        @endif
+                    </a>
                 @endforeach
             </div>
         </div>
@@ -68,10 +75,16 @@
             </div>
         </div>
         @if(count($data) > 0)
-            <button onclick="exportLedgerToExcel()" class="bg-green-600 text-white font-semibold px-6 py-3 rounded-xl hover:bg-green-700 transition-all flex items-center justify-center gap-2 shadow-sm whitespace-nowrap">
-                <i data-lucide="file-spreadsheet" class="w-5 h-5"></i>
-                Exporter Excel
-            </button>
+            <div class="flex items-center gap-3">
+                <a href="{{ route('accounting.ledger.pdf', ['account_id' => $selectedAccount ? $selectedAccount->id : null, 'mode' => $mode, 'class' => $selectedClass]) }}" target="_blank" class="bg-red-600 text-white font-semibold px-6 py-3 rounded-xl hover:bg-red-700 transition-all flex items-center justify-center gap-2 shadow-sm whitespace-nowrap">
+                    <i data-lucide="file-text" class="w-5 h-5"></i>
+                    PDF
+                </a>
+                <button onclick="exportLedgerToExcel()" class="bg-green-600 text-white font-semibold px-6 py-3 rounded-xl hover:bg-green-700 transition-all flex items-center justify-center gap-2 shadow-sm whitespace-nowrap">
+                    <i data-lucide="file-spreadsheet" class="w-5 h-5"></i>
+                    Exporter Excel
+                </button>
+            </div>
         @endif
     </div>
 </div>

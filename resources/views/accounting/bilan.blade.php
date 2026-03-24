@@ -9,6 +9,10 @@
         <p class="text-sm text-gray-500 font-medium tracking-wide">État de santé financière au {{ date('d/m/Y') }}</p>
     </div>
     <div class="flex flex-wrap gap-4">
+        <a href="{{ route('accounting.bilan.pdf') }}" target="_blank" class="flex-1 lg:flex-none inline-flex items-center justify-center px-6 py-3 bg-red-600 text-white font-bold rounded-2xl hover:bg-red-700 transition-all shadow-sm">
+            <i data-lucide="file-text" class="w-5 h-5 mr-3"></i>
+            Exporter PDF
+        </a>
         <button onclick="exportBilanComplete()" class="flex-1 lg:flex-none inline-flex items-center justify-center px-6 py-3 bg-green-600 text-white font-bold rounded-2xl hover:bg-green-700 transition-all shadow-sm">
             <i data-lucide="file-spreadsheet" class="w-5 h-5 mr-3"></i>
             Exporter Bilan Complet
@@ -142,16 +146,6 @@
         <p class="text-sm font-medium opacity-80 leading-relaxed italic">
             Une différence de <strong class="whitespace-nowrap">{{ number_format(abs($difference), 2, ',', ' ') }} F</strong> a été identifiée entre l'Actif et le Passif. Vérifiez vos saisies dans le journal.
         </p>
-    </div>
-</div>
-@else
-<div class="bg-green-50 border-2 border-green-200 rounded-2xl p-6 flex items-center gap-6 text-green-700">
-    <div class="bg-green-100 p-4 rounded-full shadow-inner">
-        <i data-lucide="shield-check" class="w-8 h-8"></i>
-    </div>
-    <div>
-        <h4 class="text-lg font-bold uppercase tracking-wider leading-none mb-1">Bilan Équilibré</h4>
-        <p class="text-sm font-medium opacity-80 leading-relaxed italic">Situation arithmétique parfaite. Votre comptabilité est saine.</p>
     </div>
 </div>
 @endif

@@ -12,11 +12,6 @@ class EntrepriseSeeder extends Seeder
      */
     public function run(): void
     {
-        Entreprise::updateOrCreate(
-            ['code' => 'LOGICOMPTA01'],
-            ['name' => 'Logicompta SARL']
-        );
-
-        $this->command->info("Entreprise par défaut créée !");
+        // 
     }
 }

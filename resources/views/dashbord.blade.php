@@ -30,42 +30,43 @@
 
     {{-- Bandeau Alerte : pas d'entreprise --}}
     @if(!$user->entreprise)
-    <div>
-        <div class="bg-amber-50 dark:bg-amber-950/30 border-2 border-amber-200 dark:border-amber-700 rounded-2xl p-6">
-            <div class="flex flex-col md:flex-row md:items-center gap-6">
-                <div class="flex items-start gap-4 flex-1">
-                    <div class="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 text-amber-600 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <i data-lucide="building-2" class="w-6 h-6"></i>
+    <div class="animate-fade-up">
+        <div class="bg-blue-500/5 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-900/50 rounded-[2.5rem] p-8">
+            <div class="flex flex-col lg:flex-row lg:items-center gap-8">
+                <div class="flex items-start gap-6 flex-1">
+                    <div class="w-16 h-16 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-2xl flex items-center justify-center flex-shrink-0 animate-float">
+                        <i data-lucide="building-2" class="w-8 h-8"></i>
                     </div>
                     <div>
-                        <h3 class="font-bold text-amber-900 dark:text-amber-200">Aucune entreprise associée</h3>
-                        <p class="text-black dark:text-amber-400 text-sm mt-1">Associez votre compte à une entreprise pour accéder à toutes les fonctionnalités comptables.</p>
+                        <h3 class="text-xl font-black text-gray-900 dark:text-white">Aucune entreprise associée</h3>
+                        <p class="text-gray-500 dark:text-blue-200/60 text-sm mt-1 leading-relaxed max-w-xl">
+                            Démarez votre expérience complète en associant votre compte à une structure existante ou en créant la vôtre dès maintenant.
+                        </p>
                     </div>
                 </div>
 
-                {{-- Formulaire rapide de liaison --}}
-                <div class="flex flex-col sm:flex-row gap-3 flex-shrink-0">
+                <div class="flex flex-col sm:flex-row gap-4 flex-shrink-0">
                     <form action="{{ route('accounting.entreprise.join') }}" method="POST" class="flex gap-2">
                         @csrf
-                        <input type="text" name="code" placeholder="Code entreprise..." required
-                               class="px-4 py-2.5 border-2 border-amber-200 dark:border-amber-700 rounded-xl bg-white dark:bg-amber-950/50 text-gray-800 dark:text-white font-mono text-sm uppercase focus:outline-none focus:border-primary transition-all w-44"
-                               oninput="this.value=this.value.toUpperCase()">
+                        <div class="relative group">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-blue-500/50 group-focus-within:text-blue-500 transition-colors">
+                                <i data-lucide="hash" class="w-4 h-4"></i>
+                            </span>
+                            <input type="text" name="code" placeholder="CODE..." required
+                                   class="pl-10 pr-4 py-3 border border-gray-200 dark:border-blue-900/50 rounded-2xl bg-white dark:bg-[#0a0f1e] text-gray-800 dark:text-white font-mono text-sm uppercase focus:outline-none focus:border-blue-500 transition-all w-48"
+                                   oninput="this.value=this.value.toUpperCase()">
+                        </div>
                         <button type="submit"
-                                class="px-4 py-2.5 bg-primary text-white font-bold rounded-xl hover:bg-primary-light transition-all text-sm flex items-center gap-2 whitespace-nowrap">
-                            <i data-lucide="link" class="w-4 h-4"></i> Lier
+                                class="px-6 py-3 bg-primary text-white font-black rounded-2xl hover:bg-primary-light transition-all text-xs uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-primary/20">
+                            Rejoindre
                         </button>
                     </form>
-                    <a href="{{ url('/entreprise-setup') }}"
-                       class="px-4 py-2.5 border-2 border-amber-300 dark:border-amber-600 text-amber-800 dark:text-amber-300 font-bold rounded-xl hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-all text-sm text-center flex items-center gap-2 whitespace-nowrap">
-                        <i data-lucide="plus-circle" class="w-4 h-4"></i> Créer une entreprise
+                    <a href="{{ url('/entreprise-setup?action=create') }}"
+                       class="px-6 py-3 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white font-black rounded-2xl hover:bg-gray-50 dark:hover:bg-white/10 transition-all text-xs uppercase tracking-widest flex items-center gap-2 text-center justify-center">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i> Créer
                     </a>
                 </div>
             </div>
-            @if(session('error'))
-                <div class="mt-3 text-sm font-medium rounded-lg px-4 py-2 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300">
-                    ❌ {{ session('error') }}
-                </div>
-            @endif
         </div>
     </div>
     @endif

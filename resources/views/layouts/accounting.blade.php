@@ -14,7 +14,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Tom Select -->
@@ -30,7 +30,7 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Outfit', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
                     },
                     colors: {
                         primary: 'var(--primary)',
@@ -497,10 +497,22 @@
             <!-- Scrollable Content Area - Enable full auto overflow for sticky headers -->
             <main class="main-content flex-1 overflow-auto p-6 md:p-10 transition-all scroll-smooth relative">
                 @if (session('success'))
-                    <div
-                        class="mb-6 p-4 rounded-xl bg-green-50 border border-green-200 text-green-700 flex items-center gap-3">
-                        <i class="w-5 h-5" data-lucide="check-circle"></i>
-                        {{ session('success') }}
+                    <div class="mb-6 p-4 rounded-xl bg-green-500/10 border border-green-500/30 text-green-700 dark:text-green-400 flex items-center gap-3 animate-fade-up">
+                        <i data-lucide="check-circle" class="w-5 h-5 flex-shrink-0"></i>
+                        <span class="flex-1">{{ session('success') }}</span>
+                        <button onclick="this.parentElement.remove()" class="p-1 hover:bg-black/5 rounded-lg transition-colors">
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                @endif
+
+                @if (session('error'))
+                    <div class="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-700 dark:text-red-400 flex items-center gap-3 animate-fade-up">
+                        <i data-lucide="alert-circle" class="w-5 h-5 flex-shrink-0"></i>
+                        <span class="flex-1">{{ session('error') }}</span>
+                        <button onclick="this.parentElement.remove()" class="p-1 hover:bg-black/5 rounded-lg transition-colors">
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                        </button>
                     </div>
                 @endif
 

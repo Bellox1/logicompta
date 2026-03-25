@@ -61,20 +61,20 @@
 
 <div class="flex flex-col xl:flex-row gap-8 mb-12">
     <!-- ACTIF -->
-    <div class="flex-1 min-w-0 bg-card-bg border border-border rounded-none shadow-sm overflow-hidden flex flex-col">
-        <div class="bg-gradient-to-r from-green-600 to-green-700 p-6 flex items-center justify-between text-white border-b border-green-800">
+    <div class="flex-1 min-w-0 bg-card-bg border border-border rounded-3xl shadow-sm overflow-hidden flex flex-col">
+        <div class="bg-gray-900 dark:bg-black p-6 flex items-center justify-between text-white border-b border-white/10">
             <div class="flex items-center gap-4">
-                <div class="bg-white/20 p-2.5 rounded-xl shadow-inner">
-                    <i data-lucide="trending-up" class="w-6 h-6"></i>
+                <div class="bg-white/10 p-2.5 rounded-xl shadow-inner">
+                    <i data-lucide="trending-up" class="w-6 h-6 text-green-400"></i>
                 </div>
                 <div>
-                    <h2 class="text-xl font-bold uppercase tracking-widest leading-none mb-1">Actif</h2>
-                    <p class="text-xs font-bold text-green-100 uppercase tracking-tighter opacity-80">Emplois de l'entreprise</p>
+                    <h2 class="text-xl font-black uppercase tracking-widest leading-none mb-1">Actif</h2>
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-tighter opacity-80">Emplois de l'entreprise</p>
                 </div>
             </div>
             <div class="text-right">
-                <div class="text-[10px] uppercase font-bold tracking-widest leading-none opacity-60">Total Actif</div>
-                <div class="text-2xl font-bold italic whitespace-nowrap">{{ number_format($actif->sum('solde'), 2, ',', ' ') }} F</div>
+                <div class="text-[10px] uppercase font-bold tracking-widest leading-none opacity-40">Total Actif</div>
+                <div class="text-2xl font-black italic whitespace-nowrap">{{ number_format($actif->sum('solde'), 2, ',', ' ') }} F</div>
             </div>
         </div>
         
@@ -109,27 +109,27 @@
             </table>
         </div>
         
-        <div class="p-6 bg-green-50 border-t border-green-100 flex justify-between items-center">
-            <span class="text-xs font-bold uppercase tracking-widest text-green-800">Total Bilan (Actif)</span>
-            <span class="text-2xl font-bold text-green-700 italic underline decoration-green-200 decoration-4 underline-offset-4 whitespace-nowrap">{{ number_format($actif->sum('solde'), 2, ',', ' ') }} F</span>
+        <div class="p-6 bg-gray-50 dark:bg-black/20 border-t border-border flex justify-between items-center">
+            <span class="text-xs font-black uppercase tracking-widest text-gray-500">Total Bilan (Actif)</span>
+            <span class="text-2xl font-black text-gray-900 dark:text-white italic underline decoration-green-500/30 decoration-4 underline-offset-4 whitespace-nowrap">{{ number_format($actif->sum('solde'), 2, ',', ' ') }} F</span>
         </div>
     </div>
 
     <!-- PASSIF -->
-    <div class="flex-1 min-w-0 bg-card-bg border border-border rounded-none shadow-sm overflow-hidden flex flex-col">
-        <div class="bg-gradient-to-r from-primary to-primary-light p-6 flex items-center justify-between text-white border-b border-blue-900">
+    <div class="flex-1 min-w-0 bg-card-bg border border-border rounded-3xl shadow-sm overflow-hidden flex flex-col">
+        <div class="bg-gray-900 dark:bg-black p-6 flex items-center justify-between text-white border-b border-white/10">
             <div class="flex items-center gap-4">
-                <div class="bg-white/20 p-2.5 rounded-xl shadow-inner">
-                    <i data-lucide="trending-down" class="w-6 h-6"></i>
+                <div class="bg-white/10 p-2.5 rounded-xl shadow-inner">
+                    <i data-lucide="trending-down" class="w-6 h-6 text-blue-400"></i>
                 </div>
                 <div>
-                    <h2 class="text-xl font-bold uppercase tracking-widest leading-none mb-1">Passif</h2>
-                    <p class="text-xs font-bold text-blue-100 uppercase tracking-tighter opacity-80">Ressources de l'entreprise</p>
+                    <h2 class="text-xl font-black uppercase tracking-widest leading-none mb-1">Passif</h2>
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-tighter opacity-80">Ressources de l'entreprise</p>
                 </div>
             </div>
             <div class="text-right">
-                <div class="text-[10px] uppercase font-bold tracking-widest leading-none opacity-60">Total Passif</div>
-                <div class="text-2xl font-bold italic whitespace-nowrap">{{ number_format($passif->sum('solde'), 2, ',', ' ') }} F</div>
+                <div class="text-[10px] uppercase font-bold tracking-widest leading-none opacity-40">Total Passif</div>
+                <div class="text-2xl font-black italic whitespace-nowrap">{{ number_format($passif->sum('solde'), 2, ',', ' ') }} F</div>
             </div>
         </div>
         
@@ -164,9 +164,9 @@
             </table>
         </div>
         
-        <div class="p-6 bg-blue-50 border-t border-blue-100 flex justify-between items-center">
-            <span class="text-xs font-bold uppercase tracking-widest text-primary">Total Bilan (Passif)</span>
-            <span class="text-2xl font-bold text-primary italic underline decoration-blue-200 decoration-4 underline-offset-4 whitespace-nowrap">{{ number_format($passif->sum('solde'), 2, ',', ' ') }} F</span>
+        <div class="p-6 bg-gray-50 dark:bg-black/20 border-t border-border flex justify-between items-center">
+            <span class="text-xs font-black uppercase tracking-widest text-gray-500">Total Bilan (Passif)</span>
+            <span class="text-2xl font-black text-gray-900 dark:text-white italic underline decoration-blue-500/30 decoration-4 underline-offset-4 whitespace-nowrap">{{ number_format($passif->sum('solde'), 2, ',', ' ') }} F</span>
         </div>
     </div>
 </div>
@@ -176,9 +176,9 @@
 @endphp
 
 @if(abs($difference) > 0.001)
-<div class="bg-red-50 border-2 border-red-200 rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6 text-red-700 animate-pulse">
-    <div class="bg-red-100 p-4 rounded-full">
-        <i data-lucide="octagon-alert" class="w-8 h-8"></i>
+<div class="bg-red-500/10 border border-red-500/20 rounded-3xl p-8 flex flex-col md:flex-row items-center gap-8 text-red-700 dark:text-red-400 animate-pulse mt-8">
+    <div class="bg-red-500/20 p-5 rounded-2xl shadow-lg">
+        <i data-lucide="octagon-alert" class="w-10 h-10"></i>
     </div>
     <div class="flex-1 text-center md:text-left">
         <h4 class="text-lg font-bold uppercase tracking-wider leading-none mb-1">Déséquilibre détecté !</h4>

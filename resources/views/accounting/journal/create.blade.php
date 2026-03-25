@@ -147,49 +147,125 @@
 @endsection
 
 @section('scripts')
+<style>
+    .debit-input::placeholder, .credit-input::placeholder {
+        color: #8B4513 !important; /* Marron */
+        font-weight: bold;
+        opacity: 0.5;
+    }
+    .magical-balance {
+        color: #8B4513;
+        font-weight: 900;
+    }
+</style>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        let lineCount = 2;
+        let lineCount = {{ count($oldLines) }};
         const body = document.getElementById('lines-body');
         const totalDebitEl = document.getElementById('total-debit');
         const totalCreditEl = document.getElementById('total-credit');
         const balanceStatusEl = document.getElementById('balance-status');
         const submitBtn = document.getElementById('submit-btn');
 
+        let equilibre_first = false;
+
         function calculate() {
             let totalDebit = 0;
             let totalCredit = 0;
 
-            document.querySelectorAll('.debit-input').forEach(input => {
+            const debits = document.querySelectorAll('.debit-input');
+            const credits = document.querySelectorAll('.credit-input');
+
+            debits.forEach(input => {
                 totalDebit += parseFloat(input.value || 0);
             });
-            document.querySelectorAll('.credit-input').forEach(input => {
+            credits.forEach(input => {
                 totalCredit += parseFloat(input.value || 0);
             });
 
             if (totalDebitEl) totalDebitEl.innerText = totalDebit.toLocaleString('fr-FR', { minimumFractionDigits: 2 });
             if (totalCreditEl) totalCreditEl.innerText = totalCredit.toLocaleString('fr-FR', { minimumFractionDigits: 2 });
 
-            const diff = Math.abs(totalDebit - totalCredit);
+            const diff = totalDebit - totalCredit;
+            const absDiff = Math.abs(diff);
+            
+            debits.forEach(i => i.placeholder = '0.00');
+            credits.forEach(i => i.placeholder = '0.00');
+
             if (balanceStatusEl) {
-                if (diff < 0.001 && totalDebit > 0) {
-                    balanceStatusEl.innerText = "Écriture équilibrée ✅";
+                if (absDiff < 0.001 && totalDebit > 0) {
+                    balanceStatusEl.innerHTML = "Écriture équilibrée ✅";
                     balanceStatusEl.classList.remove('text-red-600');
                     balanceStatusEl.classList.add('text-green-600');
                     submitBtn.disabled = false;
+                    
+                    // User's logic: if balanced once, mark it
+                    equilibre_first = true;
                 } else {
-                    balanceStatusEl.innerText = `Déséquilibre: ${diff.toLocaleString('fr-FR', { minimumFractionDigits: 2 })} F`;
+                    let message = "Déséquilibre";
+                    if (totalDebit > 0 || totalCredit > 0) {
+                        const sideNeeded = (diff > 0) ? 'Crédit' : 'Débit';
+                        message += ` (${sideNeeded})`;
+                    }
+                    balanceStatusEl.innerHTML = `${message}: <span class="magical-balance">${absDiff.toLocaleString('fr-FR', { minimumFractionDigits: 2 })}</span> F`;
                     balanceStatusEl.classList.remove('text-green-600');
                     balanceStatusEl.classList.add('text-red-600');
                     submitBtn.disabled = true;
+
+                    const hintValue = absDiff.toFixed(2);
+                    if (diff > 0) {
+                        credits.forEach(i => { if(parseFloat(i.value || 0) === 0) i.placeholder = hintValue; });
+                    } else if (diff < 0) {
+                        debits.forEach(i => { if(parseFloat(i.value || 0) === 0) i.placeholder = hintValue; });
+                    }
                 }
             }
+            return diff;
+        }
+
+        function smartFillImbalance(input) {
+            // User's logic: if balanced once, stop automatic filling
+            if (equilibre_first) return; 
+            
+            if (parseFloat(input.value || 0) !== 0) return;
+            
+            const diff = calculate();
+            const absDiff = Math.abs(diff);
+            if (absDiff < 0.01) return;
+
+            if ((input.classList.contains('debit-input') && diff < 0) || 
+                (input.classList.contains('credit-input') && diff > 0)) {
+                input.value = absDiff.toFixed(2);
+                input.classList.add('bg-blue-50', 'dark:bg-blue-900/10');
+                setTimeout(() => input.classList.remove('bg-blue-50', 'dark:bg-blue-900/10'), 500);
+                calculate();
+            }
+        }
+
+        function handleInput(e) {
+            const input = e.target;
+            const row = input.closest('tr');
+            const val = parseFloat(input.value || 0);
+            
+            // Only zero-out the opposite side BEFORE the first total balance is reached.
+            // After equilibre_first is true, we "touch nothing" automatically.
+            if (!equilibre_first && val > 0) {
+                if (input.classList.contains('debit-input')) {
+                    row.querySelector('.credit-input').value = '0.00';
+                } else {
+                    row.querySelector('.debit-input').value = '0.00';
+                }
+            }
+            calculate();
         }
 
         function attachListeners(row) {
             row.querySelectorAll('input').forEach(input => {
-                input.addEventListener('input', calculate);
-                input.addEventListener('change', calculate);
+                input.addEventListener('input', handleInput);
+                input.addEventListener('focus', function() {
+                    smartFillImbalance(this);
+                });
             });
             row.querySelectorAll('select').forEach(select => {
                 select.addEventListener('change', calculate);
@@ -211,42 +287,38 @@
                     if (name) {
                         input.setAttribute('name', name.replace(/\[\d+\]/, `[${lineCount}]`));
                     }
-                    if(input.tagName === 'INPUT' && input.type === 'number') input.value = '0.00';
-                    else if(input.tagName === 'INPUT') input.value = '';
-                    else if(input.tagName === 'SELECT') input.selectedIndex = 0;
+                    
+                    if(input.classList.contains('debit-input') || input.classList.contains('credit-input')) {
+                        input.value = '0.00';
+                    } else if(input.tagName === 'INPUT') {
+                        input.value = '';
+                    } else if(input.tagName === 'SELECT') {
+                        input.selectedIndex = 0;
+                    }
                 });
 
                 const deleteCell = newRow.cells[newRow.cells.length - 1];
-                deleteCell.innerHTML = '<button type="button" class="text-red-400 hover:text-red-600 transition-colors p-1"><i data-lucide="trash-2" class="w-5 h-5"></i></button>';
+                deleteCell.innerHTML = '<button type="button" class="text-red-400 hover:text-red-600 transition-colors p-1" onclick="this.closest(\'tr\').remove(); calculate();"><i data-lucide="trash-2" class="w-5 h-5"></i></button>';
                 
-                deleteCell.querySelector('button').addEventListener('click', () => {
-                    newRow.remove();
-                    calculate();
-                });
-
                 body.appendChild(newRow);
                 lineCount++;
                 attachListeners(newRow);
-                if (typeof lucide !== 'undefined') {
-                    lucide.createIcons();
-                }
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+                calculate();
             });
         }
 
         document.querySelectorAll('.line-row').forEach(attachListeners);
         
-        // Date validation for mobile browsers that ignore min/max
         const dateInput = document.querySelector('input[name="date"]');
         if (dateInput) {
             dateInput.addEventListener('change', function() {
                 const selectedDate = new Date(this.value);
                 const today = new Date();
                 today.setHours(0,0,0,0);
-                
                 const minDate = new Date();
                 minDate.setDate(today.getDate() - 5);
                 minDate.setHours(0,0,0,0);
-                
                 const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
                 
                 if (selectedDate < minDate) {
@@ -259,7 +331,7 @@
             });
         }
 
-        calculate(); // Initial call
+        calculate();
     });
 </script>
 @endsection

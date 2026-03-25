@@ -8,21 +8,60 @@
         <h1 class="text-3xl font-bold text-gray-800 tracking-tight">Bilan Patrimonial</h1>
         <p class="text-sm text-gray-500 font-medium tracking-wide">État de santé financière au {{ date('d/m/Y') }}</p>
     </div>
-    <div class="flex flex-wrap gap-4">
-        <a href="{{ route('accounting.bilan.pdf') }}" target="_blank" class="flex-1 lg:flex-none inline-flex items-center justify-center px-6 py-3 bg-red-600 text-white font-bold rounded-2xl hover:bg-red-700 transition-all shadow-sm">
-            <i data-lucide="file-text" class="w-5 h-5 mr-3"></i>
-            Exporter PDF
-        </a>
-        <button onclick="exportBilanComplete()" class="flex-1 lg:flex-none inline-flex items-center justify-center px-6 py-3 bg-green-600 text-white font-bold rounded-2xl hover:bg-green-700 transition-all shadow-sm">
-            <i data-lucide="file-spreadsheet" class="w-5 h-5 mr-3"></i>
-            Exporter Bilan Complet
-        </button>
+    <div class="flex flex-wrap gap-4 no-print">
+        <div class="relative group">
+            <button id="bilan-actions-dropdown-btn" class="flex-1 lg:flex-none inline-flex items-center justify-center px-6 py-3 bg-gray-800 text-white font-bold shadow-sm gap-3">
+                <i data-lucide="download" class="w-5 h-5"></i>
+                OPTIONS D'EXPORT
+                <i data-lucide="chevron-down" class="w-3 h-3"></i>
+            </button>
+            <div id="bilan-actions-dropdown-menu" class="absolute right-0 mt-2 w-64 bg-white border border-border shadow-xl z-[2000] hidden">
+                <a href="{{ route('accounting.bilan.pdf') }}" target="_blank" class="flex items-center gap-3 px-4 py-3 text-[11px] font-black text-gray-700 hover:bg-gray-50 border-b border-gray-100">
+                    <i data-lucide="file-text" class="w-4 h-4 text-red-600"></i>
+                    TÉLÉCHARGER PDF
+                </a>
+                <button onclick="exportBilanComplete()" class="flex items-center gap-3 px-4 py-3 text-[11px] font-black text-gray-700 hover:bg-gray-50 w-full text-left">
+                    <i data-lucide="file-spreadsheet" class="w-4 h-4 text-green-600"></i>
+                    EXPORTER BILAN COMPLET (CSV)
+                </button>
+            </div>
+        </div>
     </div>
+</div>
+
+<!-- Filtre par période -->
+<div class="mb-10 no-print">
+    <form action="{{ request()->url() }}" method="GET" class="flex flex-wrap items-end gap-5 bg-card-bg p-8 border border-border shadow-sm">
+        <div class="flex-1 min-w-[200px]">
+            <label class="block text-[10px] uppercase font-bold text-gray-400 mb-3 tracking-widest px-1 flex items-center gap-2">
+                <i data-lucide="calendar" class="w-3 h-3"></i> Période du
+            </label>
+            <input type="date" name="start_date" value="{{ request('start_date') }}" 
+                   class="w-full bg-bg border border-border px-4 py-3 text-sm font-bold outline-none focus:border-primary transition-all">
+        </div>
+        <div class="flex-1 min-w-[200px]">
+            <label class="block text-[10px] uppercase font-bold text-gray-400 mb-3 tracking-widest px-1 flex items-center gap-2">
+                <i data-lucide="calendar" class="w-3 h-3"></i> Au
+            </label>
+            <input type="date" name="end_date" value="{{ request('end_date') }}" 
+                   class="w-full bg-bg border border-border px-4 py-3 text-sm font-bold outline-none focus:border-primary transition-all">
+        </div>
+        <div class="flex gap-3">
+            <button type="submit" class="px-10 py-3 bg-primary text-white text-[11px] font-black uppercase tracking-[0.2em] hover:bg-primary-light transition-all shadow-lg flex items-center gap-3">
+                <i data-lucide="refresh-cw" class="w-4 h-4"></i> Actualiser
+            </button>
+            @if(request()->hasAny(['start_date', 'end_date']))
+                <a href="{{ request()->url() }}" class="px-8 py-3 bg-gray-100 text-gray-500 text-[11px] font-black uppercase tracking-[0.2em] hover:bg-gray-200 transition-all flex items-center gap-2 border border-gray-200">
+                    <i data-lucide="x" class="w-4 h-4"></i> Effacer
+                </a>
+            @endif
+        </div>
+    </form>
 </div>
 
 <div class="flex flex-col xl:flex-row gap-8 mb-12">
     <!-- ACTIF -->
-    <div class="flex-1 min-w-0 bg-card-bg border border-border rounded-3xl shadow-sm overflow-hidden flex flex-col">
+    <div class="flex-1 min-w-0 bg-card-bg border border-border rounded-none shadow-sm overflow-hidden flex flex-col">
         <div class="bg-gradient-to-r from-green-600 to-green-700 p-6 flex items-center justify-between text-white border-b border-green-800">
             <div class="flex items-center gap-4">
                 <div class="bg-white/20 p-2.5 rounded-xl shadow-inner">
@@ -77,7 +116,7 @@
     </div>
 
     <!-- PASSIF -->
-    <div class="flex-1 min-w-0 bg-card-bg border border-border rounded-3xl shadow-sm overflow-hidden flex flex-col">
+    <div class="flex-1 min-w-0 bg-card-bg border border-border rounded-none shadow-sm overflow-hidden flex flex-col">
         <div class="bg-gradient-to-r from-primary to-primary-light p-6 flex items-center justify-between text-white border-b border-blue-900">
             <div class="flex items-center gap-4">
                 <div class="bg-white/20 p-2.5 rounded-xl shadow-inner">

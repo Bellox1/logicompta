@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Str;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -199,12 +199,14 @@ class AuthController extends Controller
         // Générer un token de réinitialisation (valide 20 minutes)
         $resetToken = Str::random(60);
         
-        // Stocker le token dans la base de données
-        PasswordResetToken::create([
-            'email' => $user->email,
-            'token' => $resetToken,
-            'expires_at' => now()->addMinutes(20),
-        ]);
+        // Stocker le token dans la base de données (met à jour si déjà existant)
+        PasswordResetToken::updateOrCreate(
+            ['email' => $user->email],
+            [
+                'token' => $resetToken,
+                'expires_at' => now()->addMinutes(20),
+            ]
+        );
         
         try {
             // Envoyer l'email d'accès au profil

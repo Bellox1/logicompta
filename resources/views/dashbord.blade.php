@@ -6,7 +6,7 @@
 <div class="flex flex-col gap-8">
 
     {{-- Hero Header --}}
-    <div class="relative overflow-hidden bg-gradient-to-r from-primary to-primary-light rounded-3xl p-8 text-white shadow-xl">
+    <div class="relative overflow-hidden bg-gradient-to-r from-primary to-primary-light p-8 text-white shadow-xl" style="border-radius: 1.5rem !important;">
         <div class="absolute inset-0 opacity-10 pointer-events-none">
             <svg viewBox="0 0 400 200" class="w-full h-full"><circle cx="350" cy="50" r="120" fill="white"/><circle cx="50" cy="180" r="80" fill="white"/></svg>
         </div>
@@ -19,7 +19,7 @@
                 </p>
             </div>
             @if($user->entreprise)
-            <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-5 py-3 text-center min-w-[180px]">
+            <div class="px-2 py-1 text-center min-w-[180px]">
                 <p class="text-[10px] uppercase font-bold tracking-widest text-blue-200 mb-0.5">Entreprise</p>
                 <p class="font-bold text-white">{{ $user->entreprise->name }}</p>
                 <p class="text-[10px] text-blue-300 mt-0.5 font-mono">ID: {{ $user->entreprise->code }}</p>

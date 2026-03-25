@@ -62,39 +62,102 @@
             <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Journal des écritures</h1>
             <p class="text-sm text-gray-500">Historique complet des opérations comptables</p>
         </div>
-        <div class="flex flex-wrap items-center gap-3">
-            <a href="{{ route('accounting.journal.export.pdf') }}" target="_blank"
-                class="flex-1 sm:flex-none inline-flex items-center justify-center px-5 py-2.5 bg-red-600 text-white font-semibold rounded-xl hover:bg-red-700 transition-all shadow-sm text-xs">
-                <i data-lucide="file-text" class="w-4 h-4 mr-2"></i>
-                PDF
-            </a>
-            <button onclick="exportJournalToCSV()"
-                class="flex-1 sm:flex-none inline-flex items-center justify-center px-5 py-2.5 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition-all shadow-sm text-xs">
-                <i data-lucide="download" class="w-4 h-4 mr-2"></i>
-                EXCEL
-            </button>
-            <a href="{{ route('accounting.journal.import') }}"
-                class="flex-1 sm:flex-none inline-flex items-center justify-center px-5 py-2.5 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition-all shadow-sm text-xs">
-                <i data-lucide="upload" class="w-4 h-4 mr-2"></i>
-                IMPORTER
-            </a>
+        <div class="flex flex-wrap items-center gap-3 no-print">
+            <div class="relative group">
+                <button id="actions-dropdown-btn"
+                    class="flex-1 sm:flex-none inline-flex items-center justify-center px-5 py-2.5 bg-gray-800 text-white font-semibold shadow-sm text-xs gap-2">
+                    <i data-lucide="settings-2" class="w-4 h-4"></i>
+                    EXPORTS & OPTIONS
+                    <i data-lucide="chevron-down" class="w-3 h-3"></i>
+                </button>
+                <div id="actions-dropdown-menu"
+                    class="absolute right-0 mt-2 w-56 bg-white border border-border shadow-xl z-[2000] hidden">
+                    <a href="{{ route('accounting.journal.export.pdf') }}" target="_blank"
+                        class="flex items-center gap-3 px-4 py-3 text-xs font-bold text-gray-700 hover:bg-gray-50 border-b border-gray-100">
+                        <i data-lucide="file-text" class="w-4 h-4 text-red-600"></i>
+                        Exporter en PDF
+                    </a>
+                    <button onclick="exportJournalToCSV()"
+                        class="flex items-center gap-3 px-4 py-3 text-xs font-bold text-gray-700 hover:bg-gray-50 border-b border-gray-100 w-full text-left">
+                        <i data-lucide="file-spreadsheet" class="w-4 h-4 text-green-600"></i>
+                        Exporter en EXCEL
+                    </button>
+                    <a href="{{ route('accounting.journal.import') }}"
+                        class="flex items-center gap-3 px-4 py-3 text-xs font-bold text-gray-700 hover:bg-gray-50">
+                        <i data-lucide="upload" class="w-4 h-4 text-indigo-600"></i>
+                        Importer données
+                    </a>
+                </div>
+            </div>
+
             <a href="{{ route('accounting.journal.create') }}"
-                class="flex-1 sm:flex-none inline-flex items-center justify-center px-5 py-2.5 bg-primary text-white font-semibold rounded-xl hover:bg-primary-light transition-all shadow-sm text-xs">
+                class="flex-1 sm:flex-none inline-flex items-center justify-center px-5 py-2.5 bg-primary text-white font-semibold shadow-sm text-xs">
                 <i data-lucide="plus-circle" class="w-4 h-4 mr-2"></i>
-                NOUVELLE
+                NOUVELLE ÉCRITURE
             </a>
         </div>
     </div>
 
-    <div class="bg-card-bg border border-border rounded-2xl shadow-sm mb-8">
+    <!-- Filtre par période -->
+    <form action="{{ request()->url() }}" method="GET"
+        class="mb-10 flex flex-wrap items-end gap-5 bg-card-bg p-8 border border-border shadow-sm no-print">
+        <div class="flex-1 min-w-[200px]">
+            <label
+                class="block text-[10px] uppercase font-bold text-gray-400 mb-3 tracking-widest px-1 flex items-center gap-2">
+                <i data-lucide="calendar" class="w-3 h-3"></i> Période du
+            </label>
+            <input type="date" name="start_date" value="{{ request('start_date') }}"
+                class="w-full bg-bg border border-border px-4 py-3 text-sm font-bold outline-none focus:border-primary transition-all">
+        </div>
+        <div class="flex-1 min-w-[200px]">
+            <label
+                class="block text-[10px] uppercase font-bold text-gray-400 mb-3 tracking-widest px-1 flex items-center gap-2">
+                <i data-lucide="calendar" class="w-3 h-3"></i> Au
+            </label>
+            <input type="date" name="end_date" value="{{ request('end_date') }}"
+                class="w-full bg-bg border border-border px-4 py-3 text-sm font-bold outline-none focus:border-primary transition-all">
+        </div>
+        <div class="flex gap-3">
+            <button type="submit"
+                class="px-10 py-3 bg-primary text-white text-[11px] font-black uppercase tracking-[0.2em] hover:bg-primary-light transition-all shadow-lg flex items-center gap-3">
+                <i data-lucide="refresh-cw" class="w-4 h-4"></i> Actualiser
+            </button>
+            @if (request()->hasAny(['start_date', 'end_date']))
+                <a href="{{ request()->url() }}"
+                    class="px-8 py-3 bg-gray-100 text-gray-500 text-[11px] font-black uppercase tracking-[0.2em] hover:bg-gray-200 transition-all flex items-center gap-2 border border-gray-200">
+                    <i data-lucide="x" class="w-4 h-4"></i> Effacer
+                </a>
+            @endif
+        </div>
+    </form>
+
+    <div class="bg-card-bg border border-border rounded-none shadow-sm mb-8">
         <div class="table-responsive">
             <table class="w-full text-left border-collapse min-w-[1000px] sticky-thead">
                 <thead>
                     <tr class="bg-primary text-white">
-                        <th class="px-4 py-4 font-bold text-[11px] uppercase tracking-widest text-center border-r border-white/10"
-                            style="width: 100px;">DATE</th>
-                        <th class="px-4 py-4 font-bold text-[11px] uppercase tracking-widest text-center border-r border-white/10"
-                            style="width: 100px;">Num PC</th>
+                        <th class="group p-0 font-bold text-[11px] uppercase tracking-widest text-center border-r border-white/10"
+                            style="width: 140px;">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'date', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}"
+                                class="flex items-center justify-center gap-2 w-full px-4 py-4 text-white hover:bg-white/5 transition-colors">
+                                <span>DATE</span>
+                                <div class="flex flex-col opacity-20 group-hover:opacity-100 transition-opacity">
+                                    <i data-lucide="chevron-up" class="w-3 h-3 {{ request('sort', 'date') == 'date' && request('order') == 'asc' ? 'text-white opacity-100 scale-125' : '' }}"></i>
+                                    <i data-lucide="chevron-down" class="w-3 h-3 -mt-1 {{ (request('sort', 'date') == 'date' && request('order', 'desc') == 'desc') ? 'text-white opacity-100 scale-125' : '' }}"></i>
+                                </div>
+                            </a>
+                        </th>
+                        <th class="group p-0 font-bold text-[11px] uppercase tracking-widest text-center border-r border-white/10"
+                            style="width: 120px;">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'numero_piece', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}"
+                                class="flex items-center justify-center gap-2 w-full px-4 py-4 text-white hover:bg-white/5 transition-colors">
+                                <span>Num PC</span>
+                                <div class="flex flex-col opacity-20 group-hover:opacity-100 transition-opacity">
+                                    <i data-lucide="chevron-up" class="w-3 h-3 {{ request('sort') == 'numero_piece' && request('order') == 'asc' ? 'text-white opacity-100 scale-125' : '' }}"></i>
+                                    <i data-lucide="chevron-down" class="w-3 h-3 -mt-1 {{ request('sort') == 'numero_piece' && request('order') == 'desc' ? 'text-white opacity-100 scale-125' : '' }}"></i>
+                                </div>
+                            </a>
+                        </th>
                         <th class="px-4 py-4 font-bold text-[11px] uppercase tracking-widest border-r border-white/10"
                             style="width: 120px;">N° DE COMPTE</th>
                         <th class="px-4 py-4 font-bold text-[11px] uppercase tracking-widest border-r border-white/10">
@@ -153,11 +216,13 @@
                                         class="px-4 py-4 text-center align-middle not-italic transition-all border-b-2 border-gray-400">
                                         <div class="flex items-center justify-center gap-4">
                                             <a href="{{ route('accounting.journal.show', $entry->id) }}"
-                                                class="p-2 text-gray-300 hover:text-primary transition-all" title="Détails">
+                                                class="p-2 text-gray-300 hover:text-primary transition-all"
+                                                title="Détails">
                                                 <i data-lucide="eye" class="w-6 h-6"></i>
                                             </a>
                                             <a href="{{ route('accounting.journal.show.pdf', $entry->id) }}"
-                                                target="_blank" class="p-2 text-gray-300 hover:text-red-500 transition-all"
+                                                target="_blank"
+                                                class="p-2 text-gray-300 hover:text-red-500 transition-all"
                                                 title="PDF">
                                                 <i data-lucide="file-text" class="w-6 h-6"></i>
                                             </a>

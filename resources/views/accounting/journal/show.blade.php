@@ -26,7 +26,7 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
         <div class="lg:col-span-2">
-            <div class="bg-card-bg border border-border rounded-[2.5rem] shadow-sm overflow-hidden overflow-x-auto"
+            <div class="bg-card-bg border border-border rounded-none shadow-sm overflow-hidden overflow-x-auto"
                 id="piece-table">
                 <table class="w-full border-collapse min-w-[800px]">
                     <thead>
@@ -86,7 +86,7 @@
 
         <div class="space-y-8">
 
-            <div class="bg-primary/5 border border-primary/20 rounded-3xl p-8">
+            <div class="bg-primary/5 border border-primary/20 rounded-none p-8">
                 <div class="flex items-center gap-4 mb-4">
                     <div class="bg-primary text-white p-2 rounded-xl">
                         <i data-lucide="info" class="w-5 h-5"></i>

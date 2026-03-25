@@ -8,19 +8,58 @@
         <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Balance Générale</h1>
         <p class="text-sm text-gray-500 italic">Vérification de l'équilibre arithmétique des comptes</p>
     </div>
-    <div class="flex flex-wrap gap-3">
-        <a href="{{ route('accounting.balance.pdf') }}" target="_blank" class="px-4 py-2 bg-red-600 text-white border border-red-700 rounded-xl text-xs font-bold uppercase transition-all shadow-sm flex items-center gap-2 hover:bg-red-700">
-            <i data-lucide="file-text" class="w-4 h-4"></i>
-            Exporter PDF
-        </a>
-        <button onclick="exportTableToExcel('balance-table', 'Balance_Generale')" class="px-4 py-2 bg-green-600 text-white border border-green-700 rounded-xl text-xs font-bold uppercase transition-all shadow-sm flex items-center gap-2 hover:bg-green-700">
-            <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
-            Exporter Excel
-        </button>
+    <div class="flex flex-wrap gap-3 no-print">
+        <div class="relative group">
+            <button id="balance-actions-dropdown-btn" class="px-5 py-2.5 bg-gray-800 text-white shadow-sm text-xs font-bold uppercase flex items-center gap-2">
+                <i data-lucide="download" class="w-4 h-4"></i>
+                OPTIONS D'EXPORT
+                <i data-lucide="chevron-down" class="w-3 h-3"></i>
+            </button>
+            <div id="balance-actions-dropdown-menu" class="absolute right-0 mt-2 w-56 bg-white border border-border shadow-xl z-[2000] hidden">
+                <a href="{{ route('accounting.balance.pdf') }}" target="_blank" class="flex items-center gap-3 px-4 py-3 text-[11px] font-black text-gray-700 hover:bg-gray-50 border-b border-gray-100">
+                    <i data-lucide="file-text" class="w-4 h-4 text-red-600"></i>
+                    TÉLÉCHARGER PDF
+                </a>
+                <button onclick="exportTableToExcel('balance-table', 'Balance_Generale')" class="flex items-center gap-3 px-4 py-3 text-[11px] font-black text-gray-700 hover:bg-gray-50 w-full text-left">
+                    <i data-lucide="file-spreadsheet" class="w-4 h-4 text-green-600"></i>
+                    EXPORTER EXCEL
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 
-<div class="bg-card-bg border border-border rounded-2xl shadow-sm overflow-hidden mb-12">
+<!-- Filtre par période -->
+<div class="mb-10 no-print">
+    <form action="{{ request()->url() }}" method="GET" class="flex flex-wrap items-end gap-5 bg-card-bg p-8 border border-border shadow-sm">
+        <div class="flex-1 min-w-[200px]">
+            <label class="block text-[10px] uppercase font-bold text-gray-400 mb-3 tracking-widest px-1 flex items-center gap-2">
+                <i data-lucide="calendar" class="w-3 h-3"></i> Période du
+            </label>
+            <input type="date" name="start_date" value="{{ request('start_date') }}" 
+                   class="w-full bg-bg border border-border px-4 py-3 text-sm font-bold outline-none focus:border-primary transition-all">
+        </div>
+        <div class="flex-1 min-w-[200px]">
+            <label class="block text-[10px] uppercase font-bold text-gray-400 mb-3 tracking-widest px-1 flex items-center gap-2">
+                <i data-lucide="calendar" class="w-3 h-3"></i> Au
+            </label>
+            <input type="date" name="end_date" value="{{ request('end_date') }}" 
+                   class="w-full bg-bg border border-border px-4 py-3 text-sm font-bold outline-none focus:border-primary transition-all">
+        </div>
+        <div class="flex gap-3">
+            <button type="submit" class="px-10 py-3 bg-primary text-white text-[11px] font-black uppercase tracking-[0.2em] hover:bg-primary-light transition-all shadow-lg flex items-center gap-3">
+                <i data-lucide="refresh-cw" class="w-4 h-4"></i> Actualiser
+            </button>
+            @if(request()->hasAny(['start_date', 'end_date']))
+                <a href="{{ request()->url() }}" class="px-8 py-3 bg-gray-100 text-gray-500 text-[11px] font-black uppercase tracking-[0.2em] hover:bg-gray-200 transition-all flex items-center gap-2 border border-gray-200">
+                    <i data-lucide="x" class="w-4 h-4"></i> Effacer
+                </a>
+            @endif
+        </div>
+    </form>
+</div>
+
+<div class="bg-card-bg border border-border rounded-none shadow-sm overflow-hidden mb-12">
     
     <!-- En-tête de l'état -->
     <div class="bg-primary/5 border-b border-primary/10 px-4 md:px-8 py-4 md:py-8 text-center">
@@ -31,8 +70,16 @@
         <table class="w-full border-separate border-spacing-0 min-w-[1000px] sticky-thead">
             <thead>
                 <!-- Groupement des colonnes - Tout en bleu primaire -->
-                <tr class="bg-primary text-white text-[10px] uppercase font-black tracking-widest border-b border-white/10 row-sticky-1">
-                    <th rowspan="2" class="px-4 py-4 text-left border-r border-white/10">NUM DE COMPTES</th>
+                <tr class="bg-primary text-white text-[11px] uppercase font-black tracking-widest border-b border-white/10 row-sticky-1">
+                    <th rowspan="2" class="group px-4 py-4 text-left border-r border-white/10" style="width: 150px;">
+                        <div class="flex items-center gap-2">
+                            <span>NUM DE COMPTES</span>
+                            <div class="flex flex-col opacity-20 group-hover:opacity-100 transition-opacity">
+                                <i data-lucide="chevron-up" class="w-3 h-3 cursor-pointer"></i>
+                                <i data-lucide="chevron-down" class="w-3 h-3 -mt-1 cursor-pointer"></i>
+                            </div>
+                        </div>
+                    </th>
                     <th rowspan="2" class="px-4 py-4 text-left border-r border-white/10">INTITULÉ DES COMPTES</th>
                     <th colspan="2" class="px-4 py-3 text-center border-r border-white/10">MOUVEMENTS DE LA PERIODE</th>
                     <th colspan="2" class="px-4 py-3 text-center">SOLDES EN FIN DE PERIODE</th>

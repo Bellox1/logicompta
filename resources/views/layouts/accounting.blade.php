@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -21,6 +22,8 @@
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         tailwind.config = {
             darkMode: 'media',
@@ -30,8 +33,8 @@
                         sans: ['Outfit', 'sans-serif'],
                     },
                     colors: {
-                        primary: '#003366',
-                        'primary-light': '#0055aa',
+                        primary: 'var(--primary)',
+                        'primary-light': 'var(--primary-light)',
                         accent: '#f53003',
                         bg: 'var(--bg)',
                         'card-bg': 'var(--card-bg)',
@@ -41,13 +44,16 @@
             }
         }
     </script>
-    
+
     <style>
         :root {
             --bg: #FFFFFF;
             --card-bg: #FFFFFF;
             --border-color: #e3e3e0;
-            --text-main: #1f2937; /* gray-800 */
+            --text-main: #1f2937;
+            /* gray-800 */
+            --primary: #003366;
+            --primary-light: #0055aa;
         }
 
         /* Table Responsive Wrapper - Scroll horizontal local au cadre blanc */
@@ -58,7 +64,7 @@
             overflow-y: visible;
             position: relative;
             background: var(--card-bg);
-            border-radius: 0.75rem;
+            border-radius: 0;
             display: block;
             cursor: grab;
             user-select: none;
@@ -74,62 +80,117 @@
                 --bg: #0a0a0a;
                 --card-bg: #161615;
                 --border-color: #262624;
-                --text-main: #f3f4f6; /* gray-100 */
+                --text-main: #f3f4f6;
+                /* gray-100 */
+                --primary: #3b82f6;
+                --primary-light: #60a5fa;
             }
-            
+
             .table-responsive {
-                border-color: rgba(255,255,255,0.1) !important;
+                border-color: rgba(255, 255, 255, 0.1) !important;
             }
-            h1, h2, h3, h4, .text-gray-950, .text-gray-900, .text-gray-800, .text-black {
+
+            h1,
+            h2,
+            h3,
+            h4,
+            .text-gray-950,
+            .text-gray-900,
+            .text-gray-800,
+            .text-black {
                 color: var(--text-main) !important;
             }
-            .text-gray-700, .text-gray-600 {
-                color: #d1d5db !important; /* gray-300 */
+
+            .text-gray-700,
+            .text-gray-600 {
+                color: #d1d5db !important;
+                /* gray-300 */
             }
-            
-            .bg-white, .bg-card-bg {
+
+            /* Fix grey overlays on tables and rows */
+            .bg-gray-50,
+            .bg-gray-100,
+            .bg-gray-200,
+            [class*="bg-gray-50/"],
+            [class*="bg-gray-100/"],
+            [class*="bg-gray-200/"],
+            [class*="bg-white/5"],
+            [class*="bg-white/10"] {
+                background-color: rgba(255, 255, 255, 0.03) !important;
+            }
+
+            .bg-white,
+            .bg-card-bg {
                 background-color: var(--card-bg) !important;
             }
-            .bg-gray-50, .bg-bg {
+
+            .bg-bg {
                 background-color: var(--bg) !important;
             }
-            
+
+            /* Specific table headers/sections */
+            [class*="bg-primary/5"],
+            [class*="bg-primary/10"] {
+                background-color: rgba(59, 130, 246, 0.1) !important;
+                /* Lighter primary blue */
+            }
+
+            .border-gray-50,
+            .border-gray-100,
+            .border-gray-200,
+            .border-gray-300,
+            .border-gray-400 {
+                border-color: rgba(255, 255, 255, 0.05) !important;
+            }
+
+            .hover\:bg-gray-50:hover,
+            .hover\:bg-gray-50\/50:hover,
+            tr:hover {
+                background-color: rgba(255, 255, 255, 0.05) !important;
+            }
+
             /* Form elements */
-            select, input {
+            select,
+            input {
                 background-color: #1c1c1b !important;
                 color: #f3f4f6 !important;
                 border-color: #262624 !important;
             }
         }
 
-        html { 
+        html {
             background-color: var(--bg) !important;
-            overflow-x: hidden; 
+            overflow-x: hidden;
             height: 100%;
             overscroll-behavior: none;
         }
 
-        body { 
+        body {
             background-color: var(--bg) !important;
             color: var(--text-main);
             margin: 0;
             padding: 0;
             min-height: 100dvh;
-            font-family: 'Outfit', sans-serif; 
-            overflow-x: hidden; 
-            position: relative; 
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+            position: relative;
             width: 100%;
             overscroll-behavior: none;
         }
-        
-        .sidebar-transition { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        
+
+        .sidebar-transition {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
         /* iOS Specific fixes */
-        input, select, textarea {
+        input,
+        select,
+        textarea {
             -webkit-appearance: none;
             appearance: none;
             box-sizing: border-box;
-            font-size: 16px; /* Global fix for iOS zoom */
+            font-size: 16px;
+            /* Global fix for iOS zoom */
         }
 
         /* Sticky Table Headers - JS Powered Version */
@@ -138,7 +199,7 @@
             border-spacing: 0;
             width: 100%;
         }
-        
+
         /* thead will be translated via JS */
         .sticky-thead thead {
             position: relative;
@@ -146,11 +207,11 @@
         }
 
         .sticky-thead thead th {
-            background-color: #003366 !important;
+            background-color: var(--primary) !important;
             color: #ffffff !important;
             padding: 1.25rem 1.5rem !important;
             border: none !important;
-            box-shadow: inset 0 -1px 0 rgba(255,255,255,0.1);
+            box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.1);
             text-transform: uppercase;
             font-weight: 800;
             font-size: 11px;
@@ -171,7 +232,14 @@
         }
 
         @media (max-width: 768px) {
-            html, body { overflow-x: hidden !important; width: 100%; position: relative; }
+
+            html,
+            body {
+                overflow-x: hidden !important;
+                width: 100%;
+                position: relative;
+            }
+
             .main-content {
                 padding: 0 0.5rem 1rem 0.5rem !important;
                 flex: 1;
@@ -179,7 +247,10 @@
                 width: 100%;
                 display: block;
             }
-            input, select, textarea {
+
+            input,
+            select,
+            textarea {
                 font-size: 16px !important;
             }
         }
@@ -188,19 +259,48 @@
         .sidebar-collapsed {
             width: 80px !important;
         }
+
         .sidebar-collapsed .sidebar-label,
         .sidebar-collapsed .sidebar-header-text {
             display: none !important;
         }
-        .rotate-180, 
+
+        .rotate-180,
         .sidebar-collapsed #toggle-chevron {
             transform: rotate(180deg);
         }
+
         #toggle-chevron {
             transition: transform 0.3s ease;
             display: inline-block;
         }
-        
+
+        .sidebar-collapsed a i {
+            width: 1.5rem !important;
+            height: 1.5rem !important;
+        }
+
+        .sidebar-collapsed a {
+            justify-content: center !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            gap: 0 !important;
+        }
+
+        /* Désactivation de l'arrondi uniquement pour le contenu principal (tableaux, boutons etc) */
+        .main-content button,
+        .main-content .button,
+        .main-content a.inline-flex,
+        .main-content a.flex,
+        .main-content input[type="submit"],
+        .main-content input[type="button"],
+        .main-content .rounded-xl,
+        .main-content .rounded-2xl,
+        .main-content .rounded-3xl,
+        .main-content .rounded-none {
+            border-radius: 0 !important;
+        }
+
         @media (max-width: 768px) {
             .sidebar {
                 position: fixed;
@@ -208,31 +308,34 @@
                 left: 0;
                 width: 260px;
                 height: 100dvh;
-                z-index: 2000; 
+                z-index: 2000;
                 transform: translateX(-100%);
                 padding-top: calc(1rem + env(safe-area-inset-top, 0));
                 padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0));
             }
+
             .sidebar.mobile-open {
                 transform: translateX(0);
             }
-            
+
             /* Orientation de la transition vers le transform */
             .sidebar-transition {
                 transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             }
-            
+
             #sidebar-overlay {
                 transition: opacity 0.3s ease, visibility 0.3s;
                 visibility: hidden;
                 opacity: 0;
-                display: block !important; /* On gère par visibility/opacity pour la fluidité */
+                display: block !important;
+                /* On gère par visibility/opacity pour la fluidité */
             }
+
             #sidebar-overlay.active {
                 visibility: visible;
                 opacity: 1;
             }
-            
+
             /* Propagation de la couleur du header vers le haut (encoche) */
             header.md\:hidden {
                 padding-top: env(safe-area-inset-top, 0) !important;
@@ -252,13 +355,15 @@
         })();
     </script>
 </head>
+
 <body class="bg-bg min-h-screen">
     <!-- Overlay for mobile (Visibility managed by JS) -->
     <div id="sidebar-overlay" class="fixed inset-0 bg-gray-900/40 dark:bg-black/80 z-[1999] md:hidden"></div>
 
     <div class="flex h-[100dvh] overflow-hidden relative">
         <!-- Sidebar -->
-        <aside id="sidebar" class="sidebar sidebar-transition w-[260px] h-full bg-white dark:bg-[#161615] border-r border-border flex flex-shrink-0 flex-col py-3 px-4 shadow-sm z-[2000] overflow-y-auto">
+        <aside id="sidebar"
+            class="sidebar sidebar-transition w-[260px] h-full bg-white dark:bg-[#161615] border-r border-border flex flex-shrink-0 flex-col py-3 px-4 shadow-sm z-[2000] overflow-y-auto">
             <script>
                 // Appliquer la classe si nécessaire avant que l'élément soit affiché
                 if (localStorage.getItem('sidebar-collapsed') === 'true' && window.innerWidth > 768) {
@@ -267,7 +372,8 @@
                 }
             </script>
             <!-- Toggle Button (Floating) -->
-            <button id="toggle-sidebar" class="fixed left-[244px] top-10 sidebar-transition bg-accent text-white border-[3px] border-[#FDFDFC] dark:border-[#0a0a0a] w-8 h-8 rounded-full flex items-center justify-center shadow-lg hover:scale-110 hover:bg-primary transition-all z-[2001] hidden md:flex">
+            <button id="toggle-sidebar"
+                class="fixed left-[244px] top-10 sidebar-transition bg-accent text-white border-[3px] border-[#FDFDFC] dark:border-[#0a0a0a] w-8 h-8 rounded-full flex items-center justify-center shadow-lg hover:scale-110 hover:bg-primary transition-all z-[2001] hidden md:flex">
                 <script>
                     if (localStorage.getItem('sidebar-collapsed') === 'true' && window.innerWidth > 768) {
                         document.currentScript.parentElement.style.left = '64px';
@@ -277,85 +383,122 @@
             </button>
 
             <!-- Mobile Close Button -->
-            <button id="close-mobile-sidebar" class="md:hidden absolute top-4 right-4 text-text-muted dark:text-gray-300">
+            <button id="close-mobile-sidebar"
+                class="md:hidden absolute top-4 right-4 text-text-muted dark:text-gray-300">
                 <i data-lucide="x"></i>
             </button>
 
             <div class="flex items-center mb-8 px-2 transition-all duration-300">
-                <img src="{{ asset('images/ChatGPT Image 11 mars 2026, 10_41_49.png') }}" alt="Comptafriq Logo" 
-                     class="h-24 w-auto object-contain dark:filter-none filter invert dark:brightness-110">
+                <img src="{{ asset('storage/images/logo.png') }}" alt="Comptafriq Logo"
+                    class="h-24 w-auto object-contain dark:filter-none filter invert dark:brightness-110">
             </div>
-            
-            <nav class="flex flex-col gap-1">
-                <a href="{{ route('accounting.dashboard') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl font-medium transition-all {{ request()->routeIs('accounting.dashboard') ? 'bg-primary text-white shadow-md' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5' }}">
+
+            <nav class="flex-1 flex flex-col gap-1 overflow-y-auto">
+                <a href="{{ route('accounting.dashboard') }}"
+                    class="flex items-center gap-4 px-4 py-3 font-medium transition-all border-l-4 {{ request()->routeIs('accounting.dashboard') ? 'border-primary text-primary bg-primary/5 dark:bg-primary/10' : 'border-transparent text-gray-600 hover:text-primary hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-white/5' }}">
                     <i class="w-5 h-5" data-lucide="home"></i>
                     <span class="sidebar-label transition-all duration-300">Accueil</span>
                 </a>
 
-                <div class="sidebar-label text-[10px] uppercase font-bold text-gray-400 mt-6 px-4 mb-2 tracking-widest hidden md:block">Comptabilité Générale</div>
+                <div
+                    class="sidebar-label text-[10px] uppercase font-bold text-gray-400 mt-6 px-4 mb-2 tracking-widest hidden md:block">
+                    Comptabilité Générale</div>
                 <div class="md:hidden border-t border-border my-4 mx-2"></div>
-                
-                <a href="{{ route('accounting.journal.index') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl font-medium transition-all {{ request()->routeIs('accounting.journal.index') ? 'bg-primary text-white shadow-md' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5' }}">
+
+                <a href="{{ route('accounting.journal.index') }}"
+                    class="flex items-center gap-4 px-4 py-3 font-medium transition-all border-l-4 {{ request()->routeIs('accounting.journal.index') ? 'border-primary text-primary bg-primary/5 dark:bg-primary/10' : 'border-transparent text-gray-600 hover:text-primary hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-white/5' }}">
                     <i class="w-5 h-5" data-lucide="book-open"></i>
                     <span class="sidebar-label transition-all duration-300">Journal</span>
                 </a>
-                <a href="{{ route('accounting.journal.create') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl font-medium transition-all {{ request()->routeIs('accounting.journal.create') ? 'bg-primary text-white shadow-md' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5' }}">
+                <a href="{{ route('accounting.journal.create') }}"
+                    class="flex items-center gap-4 px-4 py-3 font-medium transition-all border-l-4 {{ request()->routeIs('accounting.journal.create') ? 'border-primary text-primary bg-primary/5 dark:bg-primary/10' : 'border-transparent text-gray-600 hover:text-primary hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-white/5' }}">
                     <i class="w-5 h-5" data-lucide="edit"></i>
                     <span class="sidebar-label transition-all duration-300">Saisie</span>
                 </a>
-                <a href="{{ route('accounting.ledger') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl font-medium transition-all {{ request()->routeIs('accounting.ledger') ? 'bg-primary text-white shadow-md' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5' }}">
+                <a href="{{ route('accounting.ledger') }}"
+                    class="flex items-center gap-4 px-4 py-3 font-medium transition-all border-l-4 {{ request()->routeIs('accounting.ledger') ? 'border-primary text-primary bg-primary/5 dark:bg-primary/10' : 'border-transparent text-gray-600 hover:text-primary hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-white/5' }}">
                     <i class="w-5 h-5" data-lucide="bar-chart-2"></i>
                     <span class="sidebar-label transition-all duration-300">Grand Livre</span>
                 </a>
-                <a href="{{ route('accounting.balance') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl font-medium transition-all {{ request()->routeIs('accounting.balance') ? 'bg-primary text-white shadow-md' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5' }}">
+                <a href="{{ route('accounting.balance') }}"
+                    class="flex items-center gap-4 px-4 py-3 font-medium transition-all border-l-4 {{ request()->routeIs('accounting.balance') ? 'border-primary text-primary bg-primary/5 dark:bg-primary/10' : 'border-transparent text-gray-600 hover:text-primary hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-white/5' }}">
                     <i class="w-5 h-5" data-lucide="scale"></i>
                     <span class="sidebar-label transition-all duration-300">Balance</span>
                 </a>
-                <a href="{{ route('accounting.bilan') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl font-medium transition-all {{ request()->routeIs('accounting.bilan') ? 'bg-primary text-white shadow-md' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5' }}">
+                <a href="{{ route('accounting.bilan') }}"
+                    class="flex items-center gap-4 px-4 py-3 font-medium transition-all border-l-4 {{ request()->routeIs('accounting.bilan') ? 'border-primary text-primary bg-primary/5 dark:bg-primary/10' : 'border-transparent text-gray-600 hover:text-primary hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-white/5' }}">
                     <i class="w-5 h-5" data-lucide="briefcase"></i>
                     <span class="sidebar-label transition-all duration-300">Bilan</span>
                 </a>
-                <a href="{{ route('accounting.resultat') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl font-medium transition-all {{ request()->routeIs('accounting.resultat') ? 'bg-primary text-white shadow-md' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5' }}">
+                <a href="{{ route('accounting.resultat') }}"
+                    class="flex items-center gap-4 px-4 py-3 font-medium transition-all border-l-4 {{ request()->routeIs('accounting.resultat') ? 'border-primary text-primary bg-primary/5 dark:bg-primary/10' : 'border-transparent text-gray-600 hover:text-primary hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-white/5' }}">
                     <i class="w-5 h-5" data-lucide="trending-up"></i>
                     <span class="sidebar-label transition-all duration-300">Résultat</span>
                 </a>
 
-                <div class="sidebar-label text-[10px] uppercase font-bold text-gray-400 mt-6 px-4 mb-2 tracking-widest hidden md:block">Support</div>
-                <a href="{{ route('accounting.help') }}" class="flex items-center gap-4 px-4 py-3 rounded-xl font-medium transition-all {{ request()->routeIs('accounting.help') ? 'bg-primary text-white shadow-md' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5' }}">
+                <div
+                    class="sidebar-label text-[10px] uppercase font-bold text-gray-400 mt-6 px-4 mb-2 tracking-widest hidden md:block">
+                    Support</div>
+                <a href="{{ route('accounting.help') }}"
+                    class="flex items-center gap-4 px-4 py-3 font-medium transition-all border-l-4 {{ request()->routeIs('accounting.help') ? 'border-primary text-primary bg-primary/5 dark:bg-primary/10' : 'border-transparent text-gray-600 hover:text-primary hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-white/5' }}">
                     <i class="w-5 h-5" data-lucide="help-circle"></i>
                     <span class="sidebar-label transition-all duration-300">Guide & Aide</span>
                 </a>
+            </nav>
 
+            <div class="mt-auto pt-4 border-t border-border no-print">
                 <form action="{{ route('logout') }}" method="POST" id="logout-form" class="hidden">
                     @csrf
                 </form>
-                <button type="button" onclick="document.getElementById('logout-form').submit();" class="flex items-center gap-4 px-4 py-3 rounded-xl font-medium transition-all text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 w-full text-left">
+                <button type="button"
+                    onclick="Swal.fire({
+                        title: 'Déconnexion',
+                        text: 'Voulez-vous vraiment vous déconnecter ?',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#003366',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Oui, déconnecter',
+                        cancelButtonText: 'Annuler',
+                        background: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#161615' : '#fff',
+                        color: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#fff' : '#000'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            document.getElementById('logout-form').submit();
+                        }
+                    })"
+                    class="flex items-center gap-4 px-4 py-3 font-medium transition-all border-l-4 border-transparent text-red-500 hover:text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 w-full text-left">
                     <i class="w-5 h-5" data-lucide="log-out"></i>
                     <span class="sidebar-label transition-all duration-300">Déconnexion</span>
                 </button>
-            </nav>
+            </div>
         </aside>
+
+
 
         <!-- Main Content Wrapper -->
         <div class="flex-1 flex flex-col h-full overflow-hidden">
             <!-- Mobile Top Bar (Opaque background to avoid bleed-through) -->
-            <header class="md:hidden flex items-center justify-between px-4 bg-white dark:bg-[#161615] border-b border-border dark:border-white/10 shadow-sm flex-shrink-0 relative">
-                <button id="open-mobile-sidebar" class="p-2 bg-white dark:bg-white/5 rounded-lg border border-border dark:border-white/10 z-10">
+            <header
+                class="md:hidden flex items-center justify-between px-4 bg-white dark:bg-[#161615] border-b border-border dark:border-white/10 shadow-sm flex-shrink-0 relative">
+                <button id="open-mobile-sidebar"
+                    class="p-2 bg-white dark:bg-white/5 rounded-lg border border-border dark:border-white/10 z-10">
                     <i data-lucide="menu" class="w-5 h-5 dark:text-gray-300"></i>
                 </button>
-                
+
                 <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <img src="{{ asset('images/ChatGPT Image 11 mars 2026, 10_41_49.png') }}" alt="Comptafriq Logo" 
-                         class="h-20 w-auto object-contain pointer-events-auto dark:filter-none filter invert dark:brightness-110">
+                    <img src="{{ asset('storage/images/logo.png') }}" alt="Comptafriq Logo"
+                        class="h-20 w-auto object-contain pointer-events-auto dark:filter-none filter invert dark:brightness-110">
                 </div>
-                
+
                 <div class="w-10"></div>
             </header>
 
             <!-- Scrollable Content Area - Enable full auto overflow for sticky headers -->
             <main class="main-content flex-1 overflow-auto p-6 md:p-10 transition-all scroll-smooth relative">
-                @if(session('success'))
-                    <div class="mb-6 p-4 rounded-xl bg-green-50 border border-green-200 text-green-700 flex items-center gap-3">
+                @if (session('success'))
+                    <div
+                        class="mb-6 p-4 rounded-xl bg-green-50 border border-green-200 text-green-700 flex items-center gap-3">
                         <i class="w-5 h-5" data-lucide="check-circle"></i>
                         {{ session('success') }}
                     </div>
@@ -402,7 +545,7 @@
         // Mobile Sidebar Toggle
         const toggleMobile = (forceState) => {
             const isOpen = forceState !== undefined ? forceState : !sidebar.classList.contains('mobile-open');
-            
+
             if (isOpen) {
                 sidebar.classList.add('mobile-open');
                 sidebarOverlay.classList.add('active');
@@ -427,35 +570,42 @@
             isSwiping = true;
             sidebar.style.transition = 'none'; // Désactive transition CSS
             sidebarOverlay.style.transition = 'none';
-        }, { passive: true });
+        }, {
+            passive: true
+        });
 
         sidebar.addEventListener('touchmove', e => {
             if (!isSwiping) return;
             touchCurrentX = e.touches[0].clientX;
             let deltaX = touchStartX - touchCurrentX;
-            
+
             if (deltaX > 0) { // On pousse vers la gauche
                 sidebar.style.transform = `translateX(${-deltaX}px)`;
                 let progress = Math.min(deltaX / 260, 1);
-                sidebarOverlay.style.opacity = (0.8 - (progress * 0.8)).toString(); // 0.8 est l'opacité max du black/80
+                sidebarOverlay.style.opacity = (0.8 - (progress * 0.8))
+                    .toString(); // 0.8 est l'opacité max du black/80
             }
-        }, { passive: true });
+        }, {
+            passive: true
+        });
 
         sidebar.addEventListener('touchend', e => {
             if (!isSwiping) return;
             isSwiping = false;
-            
+
             sidebar.style.transition = ''; // Restore CSS transitions
             sidebarOverlay.style.transition = '';
             sidebarOverlay.style.opacity = '';
-            
+
             let deltaX = touchStartX - touchCurrentX;
-            sidebar.style.transform = ''; 
-            
+            sidebar.style.transform = '';
+
             if (deltaX > 70) { // Seuil de fermeture
                 toggleMobile(false);
             }
-        }, { passive: true });
+        }, {
+            passive: true
+        });
 
         // Load Initial State
         const savedState = localStorage.getItem('sidebar-collapsed');
@@ -465,18 +615,18 @@
 
         // Déplacement du système de sticky headers ici pour une meilleure organisation
         const mainContent = document.querySelector('.main-content');
-        
+
         const updateStickyHeaders = () => {
             const tables = document.querySelectorAll('.sticky-thead');
-            
+
             tables.forEach(table => {
                 const thead = table.querySelector('thead');
                 const tableRect = table.getBoundingClientRect();
                 const mainRect = mainContent.getBoundingClientRect();
-                
+
                 // Différence entre le haut du main et le haut du tableau
                 const offset = mainRect.top - tableRect.top;
-                
+
                 if (offset > 0) {
                     // Limiter pour ne pas sortir du tableau par le bas
                     const stopPoint = tableRect.height - thead.offsetHeight - 5;
@@ -498,7 +648,7 @@
         const initDragToScroll = () => {
             const wrappers = document.querySelectorAll('.table-responsive');
             const mainContent = document.querySelector('.main-content');
-            
+
             wrappers.forEach(wrapper => {
                 let isDown = false;
                 let startX, startY;
@@ -509,10 +659,10 @@
                     wrapper.style.cursor = 'grabbing';
                     const pageX = e.pageX || e.touches[0].pageX;
                     const pageY = e.pageY || e.touches[0].pageY;
-                    
+
                     startX = pageX - wrapper.offsetLeft;
                     startY = pageY - wrapper.offsetTop;
-                    
+
                     scrollLeft = wrapper.scrollLeft;
                     scrollTop = mainContent ? mainContent.scrollTop : 0;
                 };
@@ -525,16 +675,16 @@
                 const moveDragging = (e) => {
                     if (!isDown) return;
                     e.preventDefault();
-                    
+
                     const pageX = e.pageX || e.touches[0].pageX;
                     const pageY = e.pageY || e.touches[0].pageY;
-                    
+
                     const x = pageX - wrapper.offsetLeft;
                     const y = pageY - wrapper.offsetTop;
-                    
-                    const walkX = (x - startX) * 2; 
-                    const walkY = (y - startY) * 2; 
-                    
+
+                    const walkX = (x - startX) * 2;
+                    const walkY = (y - startY) * 2;
+
                     wrapper.scrollLeft = scrollLeft - walkX;
                     if (mainContent) {
                         mainContent.scrollTop = scrollTop - walkY;
@@ -548,9 +698,13 @@
                 wrapper.addEventListener('mousemove', moveDragging);
 
                 // Touch Events
-                wrapper.addEventListener('touchstart', startDragging, { passive: true });
+                wrapper.addEventListener('touchstart', startDragging, {
+                    passive: true
+                });
                 wrapper.addEventListener('touchend', stopDragging);
-                wrapper.addEventListener('touchmove', moveDragging, { passive: false });
+                wrapper.addEventListener('touchmove', moveDragging, {
+                    passive: false
+                });
             });
         };
 
@@ -572,8 +726,8 @@
 
             // On ne gère manuellement que ce qui n'est pas "natif" ou mal géré
             // Pour haut/bas, on ne scrolle le contenu que si aucune autre zone scrolable (comme le menu) n'est survolée
-            
-            switch(e.key) {
+
+            switch (e.key) {
                 case 'ArrowUp':
                     if (mainContent) {
                         e.preventDefault();
@@ -604,8 +758,28 @@
         // Ré-initialiser globalement si besoin
         window.reInitTables = initDragToScroll;
 
-        // Gestion de la déconnexion - supprimée car maintenant gérée par le bouton logout-form
+        // Gestion générique des dropdowns (id finit par -dropdown-btn)
+        document.addEventListener('click', (e) => {
+            const btn = e.target.closest('[id$="-dropdown-btn"]');
+            if (btn) {
+                const menuId = btn.id.replace('-btn', '-menu');
+                const menu = document.getElementById(menuId);
+                if (menu) {
+                    menu.classList.toggle('hidden');
+                    // Fermer les autres menus
+                    document.querySelectorAll('[id$="-dropdown-menu"]').forEach(otherMenu => {
+                        if (otherMenu !== menu) otherMenu.classList.add('hidden');
+                    });
+                }
+            } else {
+                // Cliquer ailleurs ferme tous les menus
+                document.querySelectorAll('[id$="-dropdown-menu"]').forEach(menu => {
+                    if (!menu.contains(e.target)) menu.classList.add('hidden');
+                });
+            }
+        });
     </script>
     @yield('scripts')
 </body>
+
 </html>

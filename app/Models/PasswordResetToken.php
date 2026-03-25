@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class PasswordResetToken extends Model
 {
-    use HasFactory;
+    protected $primaryKey = 'email';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
         'email',
@@ -16,9 +18,8 @@ class PasswordResetToken extends Model
         'expires_at',
     ];
 
-    protected $dates = [
-        'created_at',
-        'expires_at',
+    protected $casts = [
+        'expires_at' => 'datetime',
     ];
 
     /**

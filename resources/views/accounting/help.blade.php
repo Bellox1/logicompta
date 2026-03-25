@@ -3,60 +3,83 @@
 @section('title', 'Centre d\'Aide Comptable')
 
 @section('content')
-<div class="max-w-4xl mx-auto py-10 px-4">
-    <div class="mb-12 border-b border-gray-200 dark:border-white/10 pb-8">
-        <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">Guide d'utilisation Logicompta</h1>
-        <p class="text-lg text-gray-600 dark:text-gray-400 leading-relaxed italic">
-            Ce document regroupe toutes les informations essentielles concernant le fonctionnement de l'application et les principes comptables SYSCOHADA appliqués.
+<div>
+    <div class="mb-10 text-center">
+        <h1 class="text-3xl md:text-5xl font-black text-gray-900 dark:text-white mb-4 uppercase tracking-tighter">Guide de Gestion Logicompta</h1>
+        <p class="text-base md:text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto italic">
+            Maîtrisez les outils de votre comptabilité et les principes du système SYSCOHADA.
         </p>
     </div>
 
-    <div class="space-y-12 text-gray-800 dark:text-gray-300 leading-relaxed">
-        
-        <!-- SECTION 1 -->
-        <section>
-            <h2 class="text-2xl font-bold text-primary dark:text-primary-light uppercase tracking-wide mb-6">1. Le Plan Comptable (Les Classes)</h2>
-            <div class="space-y-4">
-                <p><strong class="text-gray-900 dark:text-white">Classe 1 - Comptes de ressources durables :</strong> Comprend les capitaux propres et les emprunts à long terme. Ils figurent au passif du bilan.</p>
-                <p><strong class="text-gray-900 dark:text-white">Classe 2 - Comptes d'actif immobilisé :</strong> Regroupe les biens destinés à rester durablement dans l'entreprise (terrains, bâtiments, matériel, logiciels).</p>
-                <p><strong class="text-gray-900 dark:text-white">Classe 3 - Comptes de stocks :</strong> Matières premières, produits finis ou marchandises destinés à la vente ou à la production.</p>
-                <p><strong class="text-gray-900 dark:text-white">Classe 4 - Comptes de tiers :</strong> Relations avec les clients (créances) et les fournisseurs (dettes), ainsi que l'État et le personnel.</p>
-                <p><strong class="text-gray-900 dark:text-white">Classe 5 - Comptes de trésorerie :</strong> Disponibilités en banque, en caisse et les virements internes.</p>
-                <p><strong class="text-gray-900 dark:text-white">Classe 6 - Comptes de charges :</strong> Toutes les dépenses liées à l'activité (achats, loyers, électricité, salaires). Ils servent à calculer le résultat.</p>
-                <p><strong class="text-gray-900 dark:text-white">Classe 7 - Comptes de produits :</strong> Toutes les recettes (ventes, prestations de services). Ils servent à calculer le résultat.</p>
-                <p><strong class="text-gray-900 dark:text-white">Classe 8 - Comptes spéciaux :</strong> Opérations exceptionnelles ou de fin d'exercice.</p>
-                <p><strong class="text-gray-900 dark:text-white">Classe 9 - Comptabilité des engagements :</strong> Utilisée pour le suivi analytique ou les engagements hors bilan.</p>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+        <!-- Carte 1: Plan Comptable -->
+        <div class="bg-card-bg border border-border p-8 shadow-sm transition-all hover:shadow-md group">
+            <div class="flex items-center gap-4 mb-6">
+                <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
+                    <i data-lucide="book-open" class="w-6 h-6"></i>
+                </div>
+                <h2 class="text-xl font-black uppercase tracking-widest text-gray-800 dark:text-white">1. Plan Comptable</h2>
             </div>
-        </section>
-
-        <!-- SECTION 2 -->
-        <section>
-            <h2 class="text-2xl font-bold text-primary dark:text-primary-light uppercase tracking-wide mb-6">2. Les États de Synthèse</h2>
-            <div class="space-y-4">
-                <p><strong class="text-gray-900 dark:text-white">Le Journal :</strong> C'est ici que sont saisies toutes les opérations au jour le jour. Chaque ligne doit obligatoirement appartenir à une pièce justificative.</p>
-                <p><strong class="text-gray-900 dark:text-white">Le Grand Livre :</strong> Il classe les écritures du journal par compte spécifique. C'est l'outil indispensable pour analyser le détail d'un compte précis.</p>
-                <p><strong class="text-gray-900 dark:text-white">La Balance :</strong> Elle récapitule les totaux de tous les comptes. Elle permet de s'assurer que le principe de la partie double est respecté (Total Débit = Total Crédit).</p>
-                <p><strong class="text-gray-900 dark:text-white">Le Bilan :</strong> Un état qui montre la situation patrimoniale à un instant T. L'Actif (ce que l'entreprise possède) doit toujours être égal au Passif (ce que l'entreprise doit).</p>
-                <p><strong class="text-gray-900 dark:text-white">Le Compte de Résultat :</strong> Un état qui mesure la performance sur une période. On y soustrait le total des comptes de classe 6 du total des comptes de classe 7 pour obtenir le bénéfice ou la perte.</p>
+            <div class="space-y-3 text-sm leading-relaxed text-gray-600 dark:text-gray-400">
+                <div class="flex gap-3"><b class="text-primary font-black shrink-0 w-16">Classe 1</b> <span>Ressources durables (Capitaux, Emprunts). Passif.</span></div>
+                <div class="flex gap-3"><b class="text-primary font-black shrink-0 w-16">Classe 2</b> <span>Actif immobilisé (Matériel, Logiciels, etc.).</span></div>
+                <div class="flex gap-3"><b class="text-primary font-black shrink-0 w-16">Classe 3</b> <span>Stocks et en-cours (Marchandises, Produits).</span></div>
+                <div class="flex gap-3"><b class="text-primary font-black shrink-0 w-16">Classe 4</b> <span>Tiers (Clients, Fournisseurs, État).</span></div>
+                <div class="flex gap-3"><b class="text-primary font-black shrink-0 w-16">Classe 5</b> <span>Comptes de trésorerie (Banques, Caisses).</span></div>
+                <div class="flex gap-3"><b class="text-primary font-black shrink-0 w-16">Classe 6</b> <span>Charges (Dépenses liées à l'activité).</span></div>
+                <div class="flex gap-3"><b class="text-primary font-black shrink-0 w-16">Classe 7</b> <span>Produits (Recettes et Revenus).</span></div>
             </div>
-        </section>
+        </div>
 
-        <!-- SECTION 3 -->
-        <section>
-            <h2 class="text-2xl font-bold text-primary dark:text-primary-light uppercase tracking-wide mb-6">3. Règles de Saisie et Utilisation</h2>
-            <div class="space-y-4 shadow-sm p-6 bg-gray-50 dark:bg-white/5 rounded-2xl border border-gray-100 dark:border-white/10">
-                <p>• <strong class="text-gray-900 dark:text-white">Équilibre :</strong> Le logiciel refuse d'enregistrer une écriture si le total débit n'est pas strictement égal au total crédit.</p>
-                <p>• <strong class="text-gray-900 dark:text-white">Période :</strong> La saisie est autorisée pour le mois en cours, avec une tolérance de 5 jours de retard sur le mois précédent.</p>
-                <p>• <strong class="text-gray-900 dark:text-white">Numérotation :</strong> Le numéro de pièce (PC) est généré automatiquement de manière séquentielle pour garantir l'intégrité de la comptabilité.</p>
-                <p>• <strong class="text-gray-900 dark:text-white">Menu :</strong> Vous pouvez replier le menu latéral à tout moment en cliquant sur la flèche pour libérer de l'espace sur les grands tableaux (Balance, Grand Livre).</p>
-                <p>• <strong class="text-gray-900 dark:text-white">Impression :</strong> Chaque page dispose d'un bouton d'export qui génère une version PDF simplifiée et optimisée pour l'impression papier.</p>
+        <!-- Carte 2: États de Synthèse -->
+        <div class="bg-card-bg border border-border p-8 shadow-sm transition-all hover:shadow-md group">
+            <div class="flex items-center gap-4 mb-6">
+                <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
+                    <i data-lucide="file-text" class="w-6 h-6"></i>
+                </div>
+                <h2 class="text-xl font-black uppercase tracking-widest text-gray-800 dark:text-white">2. États de Synthèse</h2>
             </div>
-        </section>
-
+            <div class="space-y-4 text-sm leading-relaxed text-gray-600 dark:text-gray-400">
+                <p>• <strong class="text-gray-800 dark:text-white">Le Journal :</strong> Enregistrement quotidien et chronologique.</p>
+                <p>• <strong class="text-gray-800 dark:text-white">Le Grand Livre :</strong> Détail exhaustif compte par compte.</p>
+                <p>• <strong class="text-gray-800 dark:text-white">La Balance :</strong> Vérification de l'équilibre Débit/Crédit.</p>
+                <p>• <strong class="text-gray-800 dark:text-white">Le Bilan :</strong> Patrimoine net de l'entreprise (Actif = Passif).</p>
+                <p>• <strong class="text-gray-800 dark:text-white">Résultat :</strong> Performance sur l'exercice (Produits - Charges).</p>
+            </div>
+        </div>
     </div>
 
-    <div class="mt-16 pt-8 border-t border-gray-100 dark:border-white/10 text-center">
-        <p class="text-sm text-gray-400 uppercase tracking-[0.2em] font-bold">Logicompta - Documentation Interne v1.0</p>
+    <!-- SECTION 3: Règles de Saisie -->
+    <div class="bg-primary text-white p-10 shadow-xl relative overflow-hidden">
+        <div class="absolute right-0 bottom-0 opacity-10 translate-x-1/4 translate-y-1/4">
+            <i data-lucide="shield-check" class="w-64 h-64"></i>
+        </div>
+        <h2 class="text-2xl font-black uppercase tracking-[0.3em] mb-8 flex items-center gap-4">
+            <i data-lucide="shield-check" class="w-8 h-8"></i>
+            Règles de Rigueur
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6 text-sm">
+            <div class="flex items-start gap-4">
+                <div class="mt-1 w-2 h-2 bg-accent shrink-0"></div>
+                <p><b class="uppercase block text-xs opacity-70 mb-1">Équilibre</b> L'enregistrement est impossible si le total débit ne correspond pas au crédit.</p>
+            </div>
+            <div class="flex items-start gap-4">
+                <div class="mt-1 w-2 h-2 bg-accent shrink-0"></div>
+                <p><b class="uppercase block text-xs opacity-70 mb-1">Période</b> Saisie flexible sur le mois en cours avec 5 jours de battement sur le mois passé.</p>
+            </div>
+            <div class="flex items-start gap-4">
+                <div class="mt-1 w-2 h-2 bg-accent shrink-0"></div>
+                <p><b class="uppercase block text-xs opacity-70 mb-1">Intégrité</b> Les numéros de pièces sont séquentiels et immuables une fois validés.</p>
+            </div>
+            <div class="flex items-start gap-4">
+                <div class="mt-1 w-2 h-2 bg-accent shrink-0"></div>
+                <p><b class="uppercase block text-xs opacity-70 mb-1">Exports</b> Chaque écran est optimisé pour être exporté en format papier ou tableur.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-12 text-center">
+        <p class="text-[10px] text-gray-400 uppercase font-black tracking-[0.5em]">Logicompta -Entreprise</p>
     </div>
 </div>
 @endsection

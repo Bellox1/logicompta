@@ -8,25 +8,64 @@
         <h1 class="text-3xl font-black text-gray-900 tracking-tight uppercase">Compte de Résultat</h1>
         <p class="text-sm text-gray-500 font-bold tracking-[0.2em] uppercase opacity-70">Performance de l'exercice au {{ date('d/m/Y') }}</p>
     </div>
-    <div class="flex flex-wrap gap-4">
-        <a href="{{ route('accounting.resultat.pdf') }}" target="_blank" class="inline-flex items-center justify-center px-4 py-2 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-all shadow text-xs">
-            <i data-lucide="file-text" class="w-4 h-4 mr-2"></i>
-            Exporter PDF
-        </a>
-        <button onclick="exportResultatToExcel('charges', 'Compte_Resultat_Charges')" class="inline-flex items-center justify-center px-4 py-2 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition-all shadow text-xs">
-            <i data-lucide="file-spreadsheet" class="w-4 h-4 mr-2"></i>
-            Export Charges
-        </button>
-        <button onclick="exportResultatToExcel('produits', 'Compte_Resultat_Produits')" class="inline-flex items-center justify-center px-4 py-2 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition-all shadow text-xs">
-            <i data-lucide="file-spreadsheet" class="w-4 h-4 mr-2"></i>
-            Export Produits
-        </button>
+    <div class="flex flex-wrap gap-4 no-print">
+        <div class="relative group">
+            <button id="resultat-actions-dropdown-btn" class="inline-flex items-center justify-center px-5 py-2.5 bg-gray-800 text-white font-bold shadow text-xs gap-3">
+                <i data-lucide="download" class="w-4 h-4"></i>
+                OPTIONS D'EXPORT
+                <i data-lucide="chevron-down" class="w-3 h-3"></i>
+            </button>
+            <div id="resultat-actions-dropdown-menu" class="absolute right-0 mt-2 w-64 bg-white border border-border shadow-xl z-[2000] hidden">
+                <a href="{{ route('accounting.resultat.pdf') }}" target="_blank" class="flex items-center gap-3 px-4 py-3 text-[11px] font-black text-gray-700 hover:bg-gray-50 border-b border-gray-100">
+                    <i data-lucide="file-text" class="w-4 h-4 text-red-600"></i>
+                    TÉLÉCHARGER PDF COMPLET
+                </a>
+                <button onclick="exportResultatToExcel('charges', 'Compte_Resultat_Charges')" class="flex items-center gap-3 px-4 py-3 text-[11px] font-black text-gray-700 hover:bg-gray-50 border-b border-gray-100 w-full text-left">
+                    <i data-lucide="file-spreadsheet" class="w-4 h-4 text-green-600"></i>
+                    EXPORTER CHARGES (CSV)
+                </button>
+                <button onclick="exportResultatToExcel('produits', 'Compte_Resultat_Produits')" class="flex items-center gap-3 px-4 py-3 text-[11px] font-black text-gray-700 hover:bg-gray-50 w-full text-left">
+                    <i data-lucide="file-spreadsheet" class="w-4 h-4 text-green-600"></i>
+                    EXPORTER PRODUITS (CSV)
+                </button>
+            </div>
+        </div>
     </div>
+</div>
+
+<!-- Filtre par période -->
+<div class="mb-10 no-print">
+    <form action="{{ request()->url() }}" method="GET" class="flex flex-wrap items-end gap-5 bg-card-bg p-8 border border-border shadow-sm">
+        <div class="flex-1 min-w-[200px]">
+            <label class="block text-[10px] uppercase font-bold text-gray-400 mb-3 tracking-widest px-1 flex items-center gap-2">
+                <i data-lucide="calendar" class="w-3 h-3"></i> Période du
+            </label>
+            <input type="date" name="start_date" value="{{ request('start_date') }}" 
+                   class="w-full bg-bg border border-border px-4 py-3 text-sm font-bold outline-none focus:border-primary transition-all">
+        </div>
+        <div class="flex-1 min-w-[200px]">
+            <label class="block text-[10px] uppercase font-bold text-gray-400 mb-3 tracking-widest px-1 flex items-center gap-2">
+                <i data-lucide="calendar" class="w-3 h-3"></i> Au
+            </label>
+            <input type="date" name="end_date" value="{{ request('end_date') }}" 
+                   class="w-full bg-bg border border-border px-4 py-3 text-sm font-bold outline-none focus:border-primary transition-all">
+        </div>
+        <div class="flex gap-3">
+            <button type="submit" class="px-10 py-3 bg-primary text-white text-[11px] font-black uppercase tracking-[0.2em] hover:bg-primary-light transition-all shadow-lg flex items-center gap-3">
+                <i data-lucide="refresh-cw" class="w-4 h-4"></i> Actualiser
+            </button>
+            @if(request()->hasAny(['start_date', 'end_date']))
+                <a href="{{ request()->url() }}" class="px-8 py-3 bg-gray-100 text-gray-500 text-[11px] font-black uppercase tracking-[0.2em] hover:bg-gray-200 transition-all flex items-center gap-2 border border-gray-200">
+                    <i data-lucide="x" class="w-4 h-4"></i> Effacer
+                </a>
+            @endif
+        </div>
+    </form>
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
     <!-- SECTION CHARGES (CLASSE 6) -->
-    <div class="bg-card-bg border border-border rounded-2xl shadow-sm overflow-hidden flex flex-col">
+    <div class="bg-card-bg border border-border rounded-none shadow-sm overflow-hidden flex flex-col">
         <div class="bg-primary text-white px-6 py-4 flex items-center justify-between">
             <h2 class="text-sm font-black uppercase tracking-[0.2em]">Charges</h2>
             <div class="bg-white/10 px-3 py-1 rounded-lg text-[10px] uppercase font-bold">Nature des dépenses</div>
@@ -67,7 +106,7 @@
     </div>
 
     <!-- SECTION PRODUITS (CLASSE 7) -->
-    <div class="bg-card-bg border border-border rounded-2xl shadow-sm overflow-hidden flex flex-col">
+    <div class="bg-card-bg border border-border rounded-none shadow-sm overflow-hidden flex flex-col">
         <div class="bg-primary text-white px-6 py-4 flex items-center justify-between">
             <h2 class="text-sm font-black uppercase tracking-[0.2em]">Produits</h2>
             <div class="bg-white/10 px-3 py-1 rounded-lg text-[10px] uppercase font-bold">Nature des revenus</div>

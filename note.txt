@@ -1,0 +1,17 @@
+Nos prestations de services en facture normalisée doivent etre enregistrer -
+ dans la journal et tjrs sur la mm base
+
+Le point des immobilisation est intégré dans le tableau des immobilisation,
+
+Concept de l'immobilisation des ammortissements:(regarder sur youture ce qu'on -
+ appelle immobilisation et commment l'amortie)
+
+Lorsqu'il y aurra une ecriture concernnant l'immobilisation ont doit concerner une -
+ immobilisation tant le comptable n'a as saissir l'immobilisation dans le logiciel -
+ des immo il ne faut pas qu'il  sois validé dans le journal
+
+Message: Pour l'crire concernnant l'immobilisation il faut un  message pour le comptable qui 
+ dit que l'immobilisation doit etre saissir dans le logiciel des immo
+
+Immobilisation:classe 2
+ pour les facture normmaliser comme facture standart

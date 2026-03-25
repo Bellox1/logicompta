@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Auth;
 
 class JournalController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
         
@@ -23,11 +23,25 @@ class JournalController extends Controller
                 ->with('warning', 'Veuillez configurer votre entreprise pour accéder au journal.');
         }
 
-        $entries = JournalEntry::with(['journal', 'lines.account'])
-            ->where('entreprise_id', $user->entreprise_id)
-            ->orderBy('date', 'desc')
-            ->orderBy('id', 'desc')
-            ->paginate(50);
+        $query = JournalEntry::with(['journal', 'lines.account'])
+            ->where('entreprise_id', $user->entreprise_id);
+
+        if ($request->filled('start_date')) {
+            $query->where('date', '>=', $request->start_date);
+        }
+        if ($request->filled('end_date')) {
+            $query->where('date', '<=', $request->end_date);
+        }
+
+        $sort = $request->query('sort', 'date');
+        $order = $request->query('order', 'desc');
+        
+        $query->orderBy($sort, $order);
+        if ($sort !== 'id') {
+            $query->orderBy('id', 'desc');
+        }
+
+        $entries = $query->paginate(50)->withQueryString();
             
         return view('accounting.journal.index', compact('entries'));
     }
@@ -61,43 +75,60 @@ class JournalController extends Controller
         $selectedClass = $request->query('class');
         $mode = $request->query('mode', 'single');
         
-        $data = [];
+        $startDate = $request->query('start_date');
+        $endDate = $request->query('end_date');
+        $sort = strtolower($request->query('sort', 'date'));
+        $order = strtolower($request->query('order', 'asc')) === 'desc' ? 'desc' : 'asc';
+        $data = collect();
 
-        if ($mode === 'all') {
-            $data = Account::with(['entryLines' => function($q) use ($entrepriseId) {
-                $q->whereHas('entry', function($qe) use ($entrepriseId) {
-                    $qe->where('entreprise_id', $entrepriseId);
-                });
-            }, 'entryLines.entry.journal'])
-            ->orderBy('code_compte')
-            ->get()
-            ->filter(fn($acc) => $acc->entryLines->count() > 0);
-        } elseif ($mode === 'class' && $selectedClass) {
-            $data = Account::with(['entryLines' => function($q) use ($entrepriseId) {
-                $q->whereHas('entry', function($qe) use ($entrepriseId) {
-                    $qe->where('entreprise_id', $entrepriseId);
-                });
-            }, 'entryLines.entry.journal'])
-            ->where('classe', $selectedClass)
-            ->orderBy('code_compte')
-            ->get()
-            ->filter(fn($acc) => $acc->entryLines->count() > 0);
-        } elseif ($selectedAccount) {
-            $lines = JournalEntryLine::with('entry.journal')
+        // 1. Déterminer les IDs des comptes concernés
+        $accountIdsQuery = Account::query();
+        if ($mode === 'class' && $selectedClass) {
+            $accountIdsQuery->where('classe', $selectedClass);
+        } elseif ($mode === 'single' && $selectedAccount) {
+            $accountIdsQuery->where('id', $selectedAccount->id);
+        }
+        $accountIds = $accountIdsQuery->pluck('id')->toArray();
+
+        if (empty($accountIds) && ($mode !== 'all')) {
+            $data = collect();
+        } else {
+            // 2. Construire la requête sur les lignes avec jointure explicite pour le tri
+            $query = JournalEntryLine::with(['entry.journal', 'account'])
                 ->join('journal_entries', 'journal_entry_lines.journal_entry_id', '=', 'journal_entries.id')
-                ->where('journal_entry_lines.account_id', $selectedAccount->id)
-                ->where('journal_entries.entreprise_id', $entrepriseId)
-                ->orderBy('journal_entries.date', 'asc')
-                ->select('journal_entry_lines.*')
-                ->get();
-            $data = collect([
-                (object)[
-                    'id' => $selectedAccount->id,
-                    'code_compte' => $selectedAccount->code_compte,
-                    'libelle' => $selectedAccount->libelle,
-                    'entryLines' => $lines
-                ]
-            ]);
+                ->where('journal_entries.entreprise_id', $entrepriseId);
+
+            if (!empty($accountIds)) {
+                $query->whereIn('journal_entry_lines.account_id', $accountIds);
+            }
+
+            if ($startDate) $query->where('journal_entries.date', '>=', $startDate);
+            if ($endDate) $query->where('journal_entries.date', '<=', $endDate);
+
+            // 3. Application du tri SQL avec préfixes de table explicites
+            if ($sort === 'numero_piece') {
+                $query->orderBy('journal_entries.numero_piece', $order)
+                      ->orderBy('journal_entries.date', $order);
+            } else {
+                // Par défaut, tri par date
+                $query->orderBy('journal_entries.date', $order)
+                      ->orderBy('journal_entries.numero_piece', $order);
+            }
+            
+            // Toujours ajouter un tri par ID pour la stabilité
+            $query->orderBy('journal_entry_lines.id', $order);
+
+            // Charger les résultats (Select lines.* pour éviter les conflits d'ID de jointure)
+            $allLines = $query->select('journal_entry_lines.*')->get();
+
+            // 4. Regrouper par compte pour la vue
+            $data = $allLines->groupBy('account_id')->map(function($accLines) {
+                if ($accLines->isEmpty()) return null;
+                $account = $accLines->first()->account;
+                // On attache la collection déjà triée par le SQL
+                $account->setRelation('entryLines', $accLines);
+                return $account;
+            })->filter()->sortBy('code_compte')->values();
         }
 
         return view('accounting.ledger', compact('accounts', 'selectedAccount', 'data', 'mode', 'selectedClass'));
@@ -193,18 +224,22 @@ class JournalController extends Controller
         }
     }
 
-    public function balance()
+    public function balance(Request $request)
     {
         $user = Auth::user();
         if (!$user || !$user->entreprise_id) {
             return redirect()->route('entreprise.setup');
         }
         $entrepriseId = $user->entreprise_id;
+        $startDate = $request->query('start_date');
+        $endDate = $request->query('end_date');
 
-        // On ne récupère que les comptes qui ont des mouvements pour cette entreprise
-        $accounts = Account::with(['entryLines' => function($q) use ($entrepriseId) {
-            $q->whereHas('entry', function($qe) use ($entrepriseId) {
+        // On ne récupère que les comptes qui ont des mouvements pour cette entreprise sur la période
+        $accounts = Account::with(['entryLines' => function($q) use ($entrepriseId, $startDate, $endDate) {
+            $q->whereHas('entry', function($qe) use ($entrepriseId, $startDate, $endDate) {
                 $qe->where('entreprise_id', $entrepriseId);
+                if ($startDate) $qe->where('date', '>=', $startDate);
+                if ($endDate) $qe->where('date', '<=', $endDate);
             });
         }])->get();
         
@@ -282,17 +317,21 @@ class JournalController extends Controller
         return view('accounting.balance', compact('balanceData', 'grandTotal'));
     }
 
-    public function bilan()
+    public function bilan(Request $request)
     {
         $user = Auth::user();
         if (!$user || !$user->entreprise_id) {
             return redirect()->route('entreprise.setup');
         }
         $entrepriseId = $user->entreprise_id;
+        $startDate = $request->query('start_date');
+        $endDate = $request->query('end_date');
 
-        $accounts = Account::with(['entryLines' => function($q) use ($entrepriseId) {
-            $q->whereHas('entry', function($qe) use ($entrepriseId) {
+        $accounts = Account::with(['entryLines' => function($q) use ($entrepriseId, $startDate, $endDate) {
+            $q->whereHas('entry', function($qe) use ($entrepriseId, $startDate, $endDate) {
                 $qe->where('entreprise_id', $entrepriseId);
+                if ($startDate) $qe->where('date', '>=', $startDate);
+                if ($endDate) $qe->where('date', '<=', $endDate);
             });
         }])->get();
         
@@ -342,17 +381,21 @@ class JournalController extends Controller
         return view('accounting.bilan', compact('actif', 'passif'));
     }
 
-    public function resultat()
+    public function resultat(Request $request)
     {
         $user = Auth::user();
         if (!$user || !$user->entreprise_id) {
             return redirect()->route('entreprise.setup');
         }
         $entrepriseId = $user->entreprise_id;
+        $startDate = $request->query('start_date');
+        $endDate = $request->query('end_date');
 
-        $accounts = Account::with(['entryLines' => function($q) use ($entrepriseId) {
-            $q->whereHas('entry', function($qe) use ($entrepriseId) {
+        $accounts = Account::with(['entryLines' => function($q) use ($entrepriseId, $startDate, $endDate) {
+            $q->whereHas('entry', function($qe) use ($entrepriseId, $startDate, $endDate) {
                 $qe->where('entreprise_id', $entrepriseId);
+                if ($startDate) $qe->where('date', '>=', $startDate);
+                if ($endDate) $qe->where('date', '<=', $endDate);
             });
         }])->get();
 

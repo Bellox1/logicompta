@@ -5,11 +5,8 @@ ComptAfriq est un progiciel de gestion intégré (ERP) conçu pour répondre aux
 Le système est basé sur les normes SYSCOHADA et vise à offrir aux :
 
 Entreprises
-
 Cabinets comptables
-
 Institutions financières
-
 Systèmes financiers décentralisés
 
 une solution moderne, flexible et adaptée aux réalités africaines.
@@ -20,13 +17,10 @@ Le logiciel ComptAfriq a été conçu pour combler le manque de solutions compta
 
 Il permet aux organisations de :
 
-structurer leur gestion comptable
-
-automatiser les processus financiers
-
-produire des états financiers conformes aux normes OHADA
-
-améliorer la prise de décision grâce aux données financières.
+- Structurer leur gestion comptable
+- Automatiser les processus financiers
+- Produire des états financiers conformes aux normes OHADA
+- Améliorer la prise de décision grâce aux données financières.
 
 🧩 Modules du système
 
@@ -40,16 +34,21 @@ Le progiciel ComptAfriq est composé de plusieurs modules interconnectés :
 6️⃣ Gestion commerciale
 
 Chaque module peut fonctionner indépendamment ou être intégré dans un système complet.
+
 ⚙️ Technologies utilisées
 
-Le projet est développé avec les technologies suivantes :
+- **Framework** : Laravel (PHP)
+- **Base de données** : SQLite / MySQL
+- **Interface** : Blade / CSS (Modernized UI)
+- **Outils** : Git & GitHub, SweetAlert2 (Modales)
 
-Laravel
+📂 ARCHITECTURE DU MODULE COMPTABILITÉ
 
-PHP
+Le code a été scindé pour une meilleure lisibilité et performance :
 
-MySQL
-
-Blade / Bootstrap
-
-Git & GitHub
+- **`JournalController`** : Gère la saisie des écritures, l'index du journal et l'importation CSV massive.
+- **`LedgerController`** : Dédié à l'analyse et l'exportation du **Grand Livre** par compte.
+- **`TrialBalanceController`** : Gère l'équilibre de la **Balance** et ses calculs automatiques.
+- **`FinancialStatementController`** : Génère le **Bilan** (Actif/Passif) et le **Compte de Résultat** (Pertes/Profits).
+- **`SupportController`** : Gère la page d'**Aide** et le référentiel interactif du **Plan Comptable** SYSCOHADA.
+- **`EntrepriseController`** : Gère la configuration initiale ("Démarrer la gestion") et la liaison avec les entités.

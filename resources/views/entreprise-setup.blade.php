@@ -11,6 +11,7 @@
         rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         tailwind.config = {
             darkMode: 'media',
@@ -99,7 +100,7 @@
         @if (session('pending_user'))
             <div class="inline-flex items-center gap-2 px-4 py-2 mt-8 rounded-full bg-white/5 border border-white/10 text-blue-300 text-xs font-bold uppercase tracking-widest animate-fade-up delay-1">
                 <i data-lucide="user" class="w-4 h-4"></i>
-                Session active : {{ session('pending_user')['email'] }}
+                Session active : <span class="lowercase tracking-normal font-normal opacity-80 ml-1">{{ strtolower(session('pending_user')['email']) }}</span>
             </div>
         @endif
     </div>
@@ -111,46 +112,20 @@
             {{-- Buttons will be here controlled by logic --}}
         </div>
 
-        {{-- Step: Join --}}
-        <div id="step-join" class="hidden w-full glass-card p-10 rounded-[2.5rem] animate-fade-up">
-            <button onclick="resetChoice()" class="flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-white mb-8 transition-colors group">
-                <i data-lucide="arrow-left" class="w-4 h-4 group-hover:-translate-x-1 transition-transform"></i> Retour
-            </button>
-            <h3 class="text-2xl font-black mb-6 flex items-center gap-3">
-                <i data-lucide="hash" class="w-6 h-6 text-blue-400"></i> Code d'invitation
-            </h3>
-            <form action="{{ route('entreprise.setup.post') }}" method="POST" class="space-y-6">
-                @csrf
-                <input type="hidden" name="action" value="join">
-                <input type="text" name="company_code" placeholder="EX: COMPTA-X1Y2" 
-                    oninput="this.value = this.value.toUpperCase()" required
-                    class="w-full bg-white/5 border border-white/10 text-white pl-6 pr-6 py-5 rounded-2xl text-lg focus:outline-none focus:border-blue-500 transition-all placeholder-slate-600 tracking-widest font-mono text-center">
-                <button type="submit" class="w-full py-5 font-black text-white rounded-2xl transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(59,130,246,0.3)] uppercase tracking-[0.2em] text-sm"
-                    style="background: linear-gradient(135deg, #003366, #0066cc);">
-                    Rejoindre l'équipe
-                </button>
-            </form>
-        </div>
+    {{-- Forms Area (Hidden, used via Swal/Logic) --}}
+    <div class="hidden">
+        <form id="join-form-main" action="{{ route('entreprise.setup.post') }}" method="POST">
+            @csrf
+            <input type="hidden" name="action" value="join">
+            <input type="hidden" name="company_code" id="swal-company-code">
+        </form>
 
-        {{-- Step: Create --}}
-        <div id="step-create" class="hidden w-full glass-card p-10 rounded-[2.5rem] animate-fade-up">
-            <button onclick="resetChoice()" class="flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-white mb-8 transition-colors group">
-                <i data-lucide="arrow-left" class="w-4 h-4 group-hover:-translate-x-1 transition-transform"></i> Retour
-            </button>
-            <h3 class="text-2xl font-black mb-6 flex items-center gap-3">
-                <i data-lucide="briefcase" class="w-6 h-6 text-emerald-400"></i> Nouvelle Entreprise
-            </h3>
-            <form action="{{ route('entreprise.setup.post') }}" method="POST" class="space-y-6">
-                @csrf
-                <input type="hidden" name="action" value="create">
-                <input type="text" name="company_name" placeholder="Le nom de votre société..." required
-                    class="w-full bg-white/5 border border-white/10 text-white px-6 py-5 rounded-2xl text-lg focus:outline-none focus:border-emerald-500 transition-all placeholder-slate-600">
-                <button type="submit" class="w-full py-5 font-black text-white rounded-2xl transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(16,185,129,0.3)] uppercase tracking-[0.2em] text-sm"
-                    style="background: linear-gradient(135deg, #065f46, #10b981);">
-                    Créer mon espace
-                </button>
-            </form>
-        </div>
+        <form id="create-form-main" action="{{ route('entreprise.setup.post') }}" method="POST">
+            @csrf
+            <input type="hidden" name="action" value="create">
+            <input type="hidden" name="company_name" id="swal-company-name">
+        </form>
+    </div>
 
         {{-- Errors --}}
         @if (session('error'))
@@ -186,8 +161,8 @@
                         <i data-lucide="plus-circle" class="w-6 h-6"></i>
                     </div>
                     <div>
-                        <p class="text-sm font-black text-white group-hover:text-emerald-400 transition-colors uppercase tracking-widest">Créer</p>
-                        <p class="text-[10px] text-slate-500 leading-none">Nouvelle entité</p>
+                        <p class="text-sm font-black text-white group-hover:text-emerald-400 transition-colors uppercase tracking-widest">Démarrer</p>
+                        <p class="text-[10px] text-slate-500 leading-none">Gestion de mon entreprise</p>
                     </div>
                 </div>
                 <i data-lucide="arrow-right" class="w-4 h-4 text-slate-700 group-hover:text-emerald-500 transition-colors"></i>
@@ -195,10 +170,27 @@
         </div>
 
         <div class="mt-12 text-center opacity-60 hover:opacity-100 transition-opacity">
-            <form action="{{ route('entreprise.setup.post') }}" method="POST">
+            <form action="{{ route('entreprise.setup.post') }}" method="POST" id="skip-form">
                 @csrf
                 <input type="hidden" name="action" value="skip">
-                <button type="submit" class="text-xs font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3 mx-auto">
+                <button type="button" 
+                    onclick="Swal.fire({
+                        title: 'Plus tard ?',
+                        text: 'Vous ne pourrez pas accéder aux fonctionnalités comptables tant que vous n\'avez pas configuré votre entreprise.',
+                        icon: 'info',
+                        showCancelButton: true,
+                        confirmButtonColor: '#003366',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Passer pour le moment',
+                        cancelButtonText: 'Rester ici',
+                        background: '#161d31',
+                        color: '#fff'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            document.getElementById('skip-form').submit();
+                        }
+                    })"
+                    class="text-xs font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3 mx-auto text-slate-400 hover:text-white transition-colors">
                     Passer cette étape <i data-lucide="chevron-right" class="w-4 h-4"></i>
                 </button>
             </form>
@@ -208,27 +200,77 @@
     <script>
         lucide.createIcons();
 
-        function showStep(step) {
-            document.getElementById('bottom-actions').classList.add('hidden');
-            document.getElementById('initial-choice').classList.add('hidden');
-            
-            // Hide all steps first
-            document.getElementById('step-join').classList.add('hidden');
-            document.getElementById('step-create').classList.add('hidden');
-            
-            // Show target
-            document.getElementById('step-' + step).classList.remove('hidden');
-            lucide.createIcons();
+        function showStep(type) {
+            if (type === 'join') {
+                Swal.fire({
+                    title: 'Rejoindre une équipe',
+                    text: "Entrez votre code d'accès pour rejoindre vos collaborateurs.",
+                    input: 'text',
+                    inputPlaceholder: 'EX: COMPTA-X1Y2',
+                    icon: 'question',
+                    background: '#161d31',
+                    color: '#fff',
+                    showCancelButton: true,
+                    confirmButtonText: 'Rejoindre',
+                    cancelButtonText: 'Annuler',
+                    confirmButtonColor: '#003366',
+                    cancelButtonColor: '#444',
+                    didOpen: () => {
+                        lucide.createIcons();
+                        const input = Swal.getInput();
+                        input.classList.add('lowercase-force-not'); // I'll just handle it in js
+                        input.style.textAlign = 'center';
+                        input.style.textTransform = 'uppercase';
+                        input.style.letterSpacing = '0.2em';
+                        input.addEventListener('input', (e) => (e.target.value = e.target.value.toUpperCase()));
+                    },
+                    preConfirm: (val) => {
+                        if (!val) {
+                            Swal.showValidationMessage('Veuillez entrer un code');
+                            return false;
+                        }
+                        return val;
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('swal-company-code').value = result.value;
+                        document.getElementById('join-form-main').submit();
+                    }
+                });
+            } else if (type === 'create') {
+                Swal.fire({
+                    title: 'Démarrer la gestion',
+                    text: 'Quel est le nom de l\'entreprise que vous souhaitez gérer ?',
+                    input: 'text',
+                    inputPlaceholder: 'Ex: Ma Société SAS',
+                    icon: 'success',
+                    background: '#161d31',
+                    color: '#fff',
+                    showCancelButton: true,
+                    confirmButtonText: 'Créer maintenant',
+                    cancelButtonText: 'Annuler',
+                    confirmButtonColor: '#065f46',
+                    cancelButtonColor: '#444',
+                    didOpen: () => {
+                        lucide.createIcons();
+                    },
+                    preConfirm: (val) => {
+                        if (!val) {
+                            Swal.showValidationMessage('Veuillez donner un nom');
+                            return false;
+                        }
+                        return val;
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('swal-company-name').value = result.value;
+                        document.getElementById('create-form-main').submit();
+                    }
+                });
+            }
         }
 
-        function resetChoice() {
-            document.getElementById('step-join').classList.add('hidden');
-            document.getElementById('step-create').classList.add('hidden');
-            document.getElementById('bottom-actions').classList.remove('hidden');
-            lucide.createIcons();
-        }
-
-        // Check for URL parameter to auto-show a step
+        // Auto-show based on URL
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const action = urlParams.get('action');

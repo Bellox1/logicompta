@@ -14,7 +14,8 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Tom Select -->
@@ -75,8 +76,51 @@
             cursor: grabbing;
         }
 
+        /* Global Input Styling */
+        input,
+        select,
+        textarea {
+            background-color: #ffffff;
+            color: #111827;
+            border: 1px solid #e5e7eb;
+        }
+
+        /* Specific fix for Date inputs to ensure they show up on mobile */
+        @media (max-width: 768px) {
+            input[type="date"]::before {
+                color: #6b7280;
+                content: attr(placeholder);
+            }
+
+            input[type="date"] {
+                width: 100% !important;
+                max-width: 100% !important;
+                min-width: 0 !important;
+                box-sizing: border-box !important;
+            }
+        }
+
+        input[type="date"] {
+            min-height: 2.5rem;
+            color-scheme: light;
+            /* Default light scheme */
+        }
+
+        @media (prefers-color-scheme: dark) {
+            input[type="date"] {
+                color-scheme: dark !important;
+            }
+
+            /* Aggressive fix for Webkit calendar icon in dark mode */
+            input[type="date"]::-webkit-calendar-picker-indicator {
+                filter: invert(1) brightness(1.5) !important;
+                cursor: pointer;
+            }
+        }
+
         @media (prefers-color-scheme: dark) {
             :root {
+                color-scheme: dark;
                 --bg: #0a0a0a;
                 --card-bg: #161615;
                 --border-color: #262624;
@@ -84,6 +128,14 @@
                 /* gray-100 */
                 --primary: #3b82f6;
                 --primary-light: #60a5fa;
+            }
+
+            input,
+            select,
+            textarea {
+                background-color: #1c1c1b !important;
+                color: #ffffff !important;
+                border-color: #404040 !important;
             }
 
             .table-responsive {
@@ -155,6 +207,11 @@
                 background-color: #1c1c1b !important;
                 color: #f3f4f6 !important;
                 border-color: #262624 !important;
+                color-scheme: dark;
+            }
+
+            input[type="date"]::-webkit-calendar-picker-indicator {
+                filter: invert(1);
             }
         }
 
@@ -186,11 +243,14 @@
         input,
         select,
         textarea {
-            -webkit-appearance: none;
-            appearance: none;
             box-sizing: border-box;
             font-size: 16px;
             /* Global fix for iOS zoom */
+        }
+
+        input[type="date"] {
+            -webkit-appearance: listbox;
+            /* Restore native date icons */
         }
 
         /* Sticky Table Headers - JS Powered Version */
@@ -447,6 +507,13 @@
             </nav>
 
             <div class="mt-auto pt-4 border-t border-border no-print">
+                <div id="system-date-container" class="px-4 py-3 text-sm font-medium flex items-center gap-4 sidebar-label no-print">
+                    <i data-lucide="clock" class="w-5 h-5 text-gray-500 dark:text-gray-400"></i>
+                    <div id="system-datetime-display" class="text-gray-600 dark:text-gray-400 transition-all duration-300 whitespace-nowrap">
+                        --/--/---- --:--:--
+                    </div>
+                </div>
+                
                 <form action="{{ route('logout') }}" method="POST" id="logout-form" class="hidden">
                     @csrf
                 </form>
@@ -497,20 +564,24 @@
             <!-- Scrollable Content Area - Enable full auto overflow for sticky headers -->
             <main class="main-content flex-1 overflow-auto p-6 md:p-10 transition-all scroll-smooth relative">
                 @if (session('success'))
-                    <div class="mb-6 p-4 rounded-xl bg-green-500/10 border border-green-500/30 text-green-700 dark:text-green-400 flex items-center gap-3 animate-fade-up">
+                    <div
+                        class="mb-6 p-4 rounded-xl bg-green-500/10 border border-green-500/30 text-green-700 dark:text-green-400 flex items-center gap-3 animate-fade-up">
                         <i data-lucide="check-circle" class="w-5 h-5 flex-shrink-0"></i>
                         <span class="flex-1">{{ session('success') }}</span>
-                        <button onclick="this.parentElement.remove()" class="p-1 hover:bg-black/5 rounded-lg transition-colors">
+                        <button onclick="this.parentElement.remove()"
+                            class="p-1 hover:bg-black/5 rounded-lg transition-colors">
                             <i data-lucide="x" class="w-4 h-4"></i>
                         </button>
                     </div>
                 @endif
 
                 @if (session('error'))
-                    <div class="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-700 dark:text-red-400 flex items-center gap-3 animate-fade-up">
+                    <div
+                        class="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-700 dark:text-red-400 flex items-center gap-3 animate-fade-up">
                         <i data-lucide="alert-circle" class="w-5 h-5 flex-shrink-0"></i>
                         <span class="flex-1">{{ session('error') }}</span>
-                        <button onclick="this.parentElement.remove()" class="p-1 hover:bg-black/5 rounded-lg transition-colors">
+                        <button onclick="this.parentElement.remove()"
+                            class="p-1 hover:bg-black/5 rounded-lg transition-colors">
                             <i data-lucide="x" class="w-4 h-4"></i>
                         </button>
                     </div>
@@ -531,6 +602,47 @@
         const body = document.body;
 
         lucide.createIcons();
+
+        // High Precision Real-time Clock (DB Synced)
+        let serverTimeOffset = 0;
+        
+        const fetchSystemDate = async () => {
+            try {
+                const startTime = Date.now();
+                const response = await fetch('{{ route("accounting.system-date") }}');
+                const data = await response.json();
+                
+                // Calculer le décalage entre le client et le serveur
+                const serverTime = new Date(data.datetime).getTime();
+                const clientTime = Date.now();
+                serverTimeOffset = serverTime - clientTime;
+                
+                updateClockDisplay();
+            } catch (error) {
+                console.error('Erreur synchronisation horloge:', error);
+            }
+        };
+
+        const updateClockDisplay = () => {
+            const display = document.getElementById('system-datetime-display');
+            if (!display) return;
+            
+            const now = new Date(Date.now() + serverTimeOffset);
+            
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const year = now.getFullYear();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            
+            display.innerText = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+        };
+
+        fetchSystemDate();
+        setInterval(updateClockDisplay, 1000);
+        // Resync avec le serveur toutes les 10 minutes
+        setInterval(fetchSystemDate, 600000);
 
         // Function to apply collapsed state
         const setSidebarState = (collapsed) => {

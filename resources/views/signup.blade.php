@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="h-full">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
     <title>Comptafriq - Inscription</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,7 +18,7 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Outfit', 'sans-serif']
+                        sans: ['Inter', 'sans-serif']
                     },
                     colors: {
                         primary: '#003366',
@@ -30,12 +31,14 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
         }
 
         @keyframes fadeInUp {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(10px);
             }
 
             to {
@@ -44,262 +47,222 @@
             }
         }
 
-        @keyframes float {
-
-            0%,
-            100% {
-                transform: translateY(0px);
-            }
-
-            50% {
-                transform: translateY(-12px);
-            }
-        }
-
         .animate-fade-up {
-            animation: fadeInUp 0.5s ease forwards;
+            animation: fadeInUp 0.4s ease-out forwards;
         }
 
-        .animate-float {
-            animation: float 6s ease-in-out infinite;
+        /* Prevent horizontal overflow */
+        html,
+        body {
+            overflow-x: hidden;
+            height: auto;
+            min-height: 100%;
         }
 
-        .delay-1 {
-            animation-delay: 0.1s;
-            opacity: 0;
+        .auth-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
-        .delay-2 {
-            animation-delay: 0.2s;
-            opacity: 0;
+        @media (min-width: 1024px) {
+            .auth-container {
+                flex-direction: row;
+                height: 100vh;
+                overflow: hidden;
+            }
         }
 
-        .delay-3 {
-            animation-delay: 0.3s;
-            opacity: 0;
-        }
-
-        .delay-4 {
-            animation-delay: 0.4s;
-            opacity: 0;
-        }
-
-        .delay-5 {
-            animation-delay: 0.5s;
-            opacity: 0;
-        }
-
-        input:-webkit-autofill,
-        input:-webkit-autofill:hover,
-        input:-webkit-autofill:focus {
-            -webkit-box-shadow: 0 0 0 30px #0a0f1e inset !important;
-            -webkit-text-fill-color: #fff !important;
+        /* Strength meter transition */
+        .strength-bar {
+            transition: width 0.3s ease, background-color 0.3s ease;
         }
     </style>
 </head>
 
-<body class="bg-gray-50 dark:bg-[#0a0f1e] min-h-screen flex overflow-hidden">
+<body class="bg-gray-50 dark:bg-[#0a0f1e]">
 
-    {{-- ═══════════════════════ LEFT PANEL ═══════════════════════ --}}
-    <div class="hidden lg:flex lg:w-1/2 relative flex-col items-center justify-center p-12 overflow-hidden"
-        style="background: linear-gradient(135deg, #001a3a 0%, #003366 50%, #004d99 100%);">
+    <div class="auth-container">
+        {{-- ═══════════════════════ LEFT PANEL ═══════════════════════ --}}
+        <div class="hidden lg:flex w-1/2 relative flex-col items-center justify-center p-12 overflow-hidden"
+            style="background: linear-gradient(135deg, #001a3a 0%, #003366 50%, #004d99 100%);">
 
-        {{-- Decorative circles --}}
-        <div class="absolute -top-24 -left-24 w-96 h-96 rounded-full opacity-10"
-            style="background: radial-gradient(circle, #fff, transparent);"></div>
-        <div class="absolute -bottom-32 -right-32 w-[500px] h-[500px] rounded-full opacity-10"
-            style="background: radial-gradient(circle, #fff, transparent);"></div>
-        <div
-            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full opacity-5 border border-white/20">
-        </div>
-        <div
-            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full opacity-5 border border-white/20">
-        </div>
-
-        {{-- Content --}}
-        <div class="relative z-10 text-center max-w-md">
-            <div class="animate-float mb-10">
-                <img src="{{ asset('storage/images/logo.png') }}" alt="Comptafriq Logo"
-                    class="w-56 mx-auto drop-shadow-2xl">
-            </div>
-            <h1 class="text-4xl font-black text-white tracking-tight mb-4">Rejoignez-nous</h1>
-            <p class="text-blue-200 text-lg leading-relaxed mb-8">
-                Créez votre compte et commencez à gérer votre comptabilité dès aujourd'hui.
-            </p>
-            <div class="space-y-3">
-                <div class="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-5 py-3 text-left">
-                    <i data-lucide="check-circle" class="w-5 h-5 text-green-400 flex-shrink-0"></i>
-                    <span class="text-sm text-blue-100">Journal & Saisie comptable</span>
+            <div class="relative z-10 text-center max-w-md">
+                <div class="mb-10">
+                    <img src="{{ asset('storage/images/logo.png') }}" alt="Logo" class="w-56 mx-auto">
                 </div>
-                <div class="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-5 py-3 text-left">
-                    <i data-lucide="check-circle" class="w-5 h-5 text-green-400 flex-shrink-0"></i>
-                    <span class="text-sm text-blue-100">Grand Livre, Balance & Bilan</span>
-                </div>
-                <div class="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-5 py-3 text-left">
-                    <i data-lucide="check-circle" class="w-5 h-5 text-green-400 flex-shrink-0"></i>
-                    <span class="text-sm text-blue-100">Rapports et états de synthèse</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {{-- ═══════════════════════ RIGHT PANEL ═══════════════════════ --}}
-    <div
-        class="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12 bg-gray-50 dark:bg-[#0a0f1e] overflow-y-auto">
-        <div class="w-full max-w-md py-8">
-
-            {{-- Mobile logo --}}
-            <div class="lg:hidden text-center mb-8 animate-fade-up">
-                <img src="{{ asset('storage/images/logo.png') }}" alt="Logo" class="w-32 mx-auto mb-4">
-            </div>
-
-            {{-- Header --}}
-            <div class="mb-8 animate-fade-up delay-1">
-                <p class="text-xs font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400 mb-2">Nouveau
-                    compte</p>
-                <h2 class="text-3xl font-black text-gray-900 dark:text-white">Inscription</h2>
-                <p class="text-gray-500 dark:text-slate-400 mt-2 text-sm">Remplissez les informations ci-dessous</p>
-            </div>
-
-            {{-- Alerts --}}
-            @if (session('error'))
-                <div
-                    class="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm flex items-center gap-3 animate-fade-up delay-1">
-                    <i data-lucide="alert-circle" class="w-5 h-5 flex-shrink-0"></i>
-                    {{ session('error') }}
-                </div>
-            @endif
-
-            {{-- Form --}}
-            <form action="{{ route('signup.post') }}" method="POST" class="space-y-5">
-                @csrf
-
-                {{-- Name --}}
-                <div class="animate-fade-up delay-2">
-                    <label for="name" class="block text-sm font-semibold text-gray-700 dark:text-slate-300 mb-2">Nom
-                        complet</label>
-                    <div class="relative">
-                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500">
-                            <i data-lucide="user" class="w-4 h-4"></i>
-                        </span>
-                        <input type="text" id="name" name="name" value="{{ old('name') }}"
-                            placeholder="Votre nom complet" required
-                            class="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white pl-11 pr-4 py-3.5 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition-all placeholder-gray-400 dark:placeholder-slate-600">
-                    </div>
-                    @error('name')
-                        <p class="text-red-400 text-xs mt-1.5 flex items-center gap-1"><i data-lucide="alert-circle"
-                                class="w-3 h-3"></i>{{ $message }}</p>
-                    @enderror
-                </div>
-
-                {{-- Email --}}
-                <div class="animate-fade-up delay-2">
-                    <label for="email"
-                        class="block text-sm font-semibold text-gray-700 dark:text-slate-300 mb-2">Adresse email</label>
-                    <div class="relative">
-                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500">
-                            <i data-lucide="mail" class="w-4 h-4"></i>
-                        </span>
-                        <input type="email" id="email" name="email" value="{{ old('email') }}"
-                            placeholder="votre@email.com" required
-                            class="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white pl-11 pr-4 py-3.5 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition-all placeholder-gray-400 dark:placeholder-slate-600">
-                    </div>
-                    @error('email')
-                        <p class="text-red-400 text-xs mt-1.5 flex items-center gap-1"><i data-lucide="alert-circle"
-                                class="w-3 h-3"></i>{{ $message }}</p>
-                    @enderror
-                </div>
-
-                {{-- Password --}}
-                <div class="animate-fade-up delay-3">
-                    <label for="password" class="block text-sm font-semibold text-gray-700 dark:text-slate-300 mb-2">Mot
-                        de passe</label>
-                    <div class="relative">
-                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500">
-                            <i data-lucide="lock" class="w-4 h-4"></i>
-                        </span>
-                        <input type="password" id="password" name="password" placeholder="••••••••" required
-                            class="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white pl-11 pr-12 py-3.5 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition-all placeholder-gray-400 dark:placeholder-slate-600">
-                        <button type="button" onclick="togglePassword('password','eye-icon-1')"
-                            class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-300 transition-colors">
-                            <i data-lucide="eye" id="eye-icon-1" class="w-4 h-4"></i>
-                        </button>
-                    </div>
-                </div>
-
-                {{-- Confirm Password --}}
-                <div class="animate-fade-up delay-4">
-                    <label for="password_confirmation"
-                        class="block text-sm font-semibold text-gray-700 dark:text-slate-300 mb-2">Confirmer le mot de
-                        passe</label>
-                    <div class="relative">
-                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500">
-                            <i data-lucide="lock" class="w-4 h-4"></i>
-                        </span>
-                        <input type="password" id="password_confirmation" name="password_confirmation"
-                            placeholder="••••••••" required
-                            class="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white pl-11 pr-12 py-3.5 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition-all placeholder-gray-400 dark:placeholder-slate-600">
-                        <button type="button" onclick="togglePassword('password_confirmation','eye-icon-2')"
-                            class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-300 transition-colors">
-                            <i data-lucide="eye" id="eye-icon-2" class="w-4 h-4"></i>
-                        </button>
-                    </div>
-                    @error('password')
-                        <p class="text-red-400 text-xs mt-1.5 flex items-center gap-1"><i data-lucide="alert-circle"
-                                class="w-3 h-3"></i>{{ $message }}</p>
-                    @enderror
-                </div>
-
-                {{-- Submit --}}
-                <div class="animate-fade-up delay-5 pt-1">
-                    <button type="submit"
-                        class="w-full py-4 font-bold text-white rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-blue-900/40 text-sm uppercase tracking-widest"
-                        style="background: linear-gradient(135deg, #003366, #004d99);">
-                        Créer mon compte
-                    </button>
-                </div>
-            </form>
-
-            {{-- Divider --}}
-            <div class="relative my-8 animate-fade-up delay-5">
-                <div class="absolute inset-0 flex items-center">
-                    <div class="w-full border-t border-gray-200 dark:border-white/10"></div>
-                </div>
-                <div class="relative flex justify-center">
-                    <span
-                        class="bg-gray-50 dark:bg-[#0a0f1e] px-4 text-xs font-medium text-gray-400 dark:text-slate-500 uppercase tracking-widest">ou</span>
-                </div>
-            </div>
-
-            {{-- Login link --}}
-            <div class="text-center animate-fade-up delay-5">
-                <p class="text-sm text-gray-500 dark:text-slate-500">
-                    Déjà un compte ?
-                    <a href="{{ url('/login') }}"
-                        class="font-bold text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors ml-1">
-                        Se connecter
-                    </a>
+                <h1 class="text-4xl font-black text-white tracking-tight mb-4">Rejoignez-nous</h1>
+                <p class="text-blue-200 text-lg leading-relaxed mb-8">
+                    Créez votre compte et gérez votre comptabilité en toute simplicité.
                 </p>
+                <div class="space-y-3">
+                    <div class="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-5 py-3 text-left">
+                        <i data-lucide="check-circle" class="w-5 h-5 text-green-400"></i>
+                        <span class="text-sm text-blue-100 font-bold">Journal & Saisie comptable</span>
+                    </div>
+                    <div class="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-5 py-3 text-left">
+                        <i data-lucide="check-circle" class="w-5 h-5 text-green-400"></i>
+                        <span class="text-sm text-blue-100 font-bold">États de synthèse & Bilan</span>
+                    </div>
+                    <div class="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-5 py-3 text-left">
+                        <i data-lucide="check-circle" class="w-5 h-5 text-green-400"></i>
+                        <span class="text-sm text-blue-100 font-bold">Équipe illimitée</span>
+                    </div>
+                </div>
             </div>
+        </div>
 
+        {{-- ═══════════════════════ RIGHT PANEL ═══════════════════════ --}}
+        <div class="w-full lg:w-1/2 flex items-center justify-center p-6 md:p-12 lg:overflow-y-auto">
+            <div class="w-full max-w-sm py-10">
+
+                {{-- Mobile Logo --}}
+                <div class="lg:hidden text-center mb-10 animate-fade-up">
+                    <img src="{{ asset('storage/images/logo.png') }}" alt="Logo"
+                        class="w-32 mx-auto filter brightness-100 dark:brightness-110">
+                </div>
+
+                {{-- Header --}}
+                <div class="mb-10 animate-fade-up" style="animation-delay: 0.1s;">
+                    <h2 class="text-4xl font-black text-gray-900 dark:text-white tracking-tight mb-2">Inscription</h2>
+                    <p class="text-gray-500 dark:text-slate-400 font-medium">Commencez dès aujourd'hui</p>
+                </div>
+
+                {{-- Alerts --}}
+                @if ($errors->any())
+                    <div class="mb-8 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-700 dark:text-red-400 animate-fade-up">
+                        <div class="flex items-center gap-3 mb-2">
+                            <i data-lucide="alert-circle" class="w-5 h-5 flex-shrink-0"></i>
+                            <span class="text-sm font-bold">Des erreurs sont survenues :</span>
+                        </div>
+                        <ul class="list-disc list-inside text-xs space-y-1 ml-8">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                {{-- Form --}}
+                <form action="{{ route('signup.post') }}" method="POST" class="space-y-6 animate-fade-up"
+                    style="animation-delay: 0.2s;">
+                    @csrf
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 dark:text-slate-300 mb-2">Nom
+                            Complet</label>
+                        <div class="relative group">
+                            <span
+                                class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
+                                <i data-lucide="user" class="w-5 h-5"></i>
+                            </span>
+                            <input type="text" name="name" value="{{ old('name') }}" required placeholder="Votre nom complet"
+                                class="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white pl-12 pr-4 py-4 rounded-2xl text-base focus:outline-none focus:border-primary transition-all shadow-sm">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 dark:text-slate-300 mb-2">Email</label>
+                        <div class="relative group">
+                            <span
+                                class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
+                                <i data-lucide="mail" class="w-5 h-5"></i>
+                            </span>
+                            <input type="email" name="email" value="{{ old('email') }}" required placeholder="votre@email.com"
+                                class="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white pl-12 pr-4 py-4 rounded-2xl text-base focus:outline-none focus:border-primary transition-all shadow-sm">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 dark:text-slate-300 mb-2">Mot de passe</label>
+                        <div class="relative group">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
+                                <i data-lucide="lock" class="w-5 h-5"></i>
+                            </span>
+                            <input type="password" name="password" id="password" required placeholder="Minimum 8 caractères"
+                                class="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white pl-12 pr-4 py-4 rounded-2xl text-base focus:outline-none focus:border-primary transition-all shadow-sm">
+                        </div>
+
+                        {{-- Strength bar --}}
+                        <div class="mt-4 px-1">
+                            <div class="h-1.5 w-full bg-gray-100 dark:bg-white/10 rounded-full overflow-hidden">
+                                <div id="strength-bar" class="strength-bar h-full w-0 bg-red-500"></div>
+                            </div>
+                            <div id="strength-text" class="text-[10px] text-gray-500 mt-2 font-bold uppercase tracking-widest">Très faible</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 dark:text-slate-300 mb-2">Confirmation</label>
+                        <div class="relative group">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
+                                <i data-lucide="shield-check" class="w-5 h-5"></i>
+                            </span>
+                            <input type="password" name="password_confirmation" required placeholder="Confirmez le mot de passe"
+                                class="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white pl-12 pr-4 py-4 rounded-2xl text-base focus:outline-none focus:border-primary transition-all shadow-sm">
+                        </div>
+                    </div>
+
+                    <p class="text-xs text-center text-gray-400 dark:text-slate-500 leading-relaxed">
+                        En cliquant sur S'inscrire, vous acceptez nos
+                        <a href="#" class="text-primary font-bold hover:underline">Conditions d'Utilisation</a>
+                    </p>
+
+                    <button type="submit"
+                        class="w-full py-4 bg-primary text-white font-black rounded-2xl hover:bg-primary-light transition-all shadow-lg shadow-blue-900/40 text-sm uppercase tracking-widest active:scale-[0.98]">
+                        S'inscrire
+                    </button>
+                </form>
+
+                {{-- Footer --}}
+                <div class="mt-10 text-center animate-fade-up" style="animation-delay: 0.3s;">
+                    <p class="text-sm text-gray-500 dark:text-slate-400">
+                        Déjà un compte ?
+                        <a href="{{ route('login') }}"
+                            class="font-black text-primary hover:text-primary-light ml-1 underline transition-all">Se
+                            connecter</a>
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
         lucide.createIcons();
 
-        function togglePassword(inputId, iconId) {
-            const input = document.getElementById(inputId);
-            const icon = document.getElementById(iconId);
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.setAttribute('data-lucide', 'eye-off');
+        // Password Strength helper
+        const passwordInput = document.getElementById('password');
+        const strengthBar = document.getElementById('strength-bar');
+        const strengthText = document.getElementById('strength-text');
+
+        passwordInput.addEventListener('input', (e) => {
+            const val = e.target.value;
+            let score = 0;
+
+            if (val.length >= 8) score += 25;
+            if (/[A-Z]/.test(val)) score += 25;
+            if (/[0-9]/.test(val)) score += 25;
+            if (/[^A-Za-z0-9]/.test(val)) score += 25;
+
+            strengthBar.style.width = score + '%';
+
+            if (score <= 25) {
+                strengthBar.className = 'strength-bar h-full bg-red-500';
+                strengthText.innerText = 'Trés Faible';
+                strengthText.className = 'text-[10px] text-red-500 mt-2 font-bold uppercase tracking-widest';
+            } else if (score <= 50) {
+                strengthBar.className = 'strength-bar h-full bg-orange-500';
+                strengthText.innerText = 'Moyen';
+                strengthText.className = 'text-[10px] text-orange-500 mt-2 font-bold uppercase tracking-widest';
+            } else if (score <= 75) {
+                strengthBar.className = 'strength-bar h-full bg-yellow-500';
+                strengthText.innerText = 'Bon';
+                strengthText.className = 'text-[10px] text-yellow-500 mt-2 font-bold uppercase tracking-widest';
             } else {
-                input.type = 'password';
-                icon.setAttribute('data-lucide', 'eye');
+                strengthBar.className = 'strength-bar h-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.4)]';
+                strengthText.innerText = 'Excellent';
+                strengthText.className = 'text-[10px] text-green-500 mt-2 font-bold uppercase tracking-widest';
             }
-            lucide.createIcons();
-        }
+        });
     </script>
 </body>
 

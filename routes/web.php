@@ -3,6 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\GeneralAccounting\JournalController;
+use App\Http\Controllers\GeneralAccounting\LedgerController;
+use App\Http\Controllers\GeneralAccounting\TrialBalanceController;
+use App\Http\Controllers\GeneralAccounting\FinancialStatementController;
+use App\Http\Controllers\GeneralAccounting\SupportController;
 use App\Http\Controllers\EntrepriseController;
 use App\Http\Controllers\AuthController;
 
@@ -26,20 +30,22 @@ Route::get('/signup', function () {
 
 Route::post('/signup', [AuthController::class, 'postSignup'])->name('signup.post');
 
-// Route pour la page de mot de passe oublié
 Route::get('/forgot-password', function () {
     return view('forgot-password');
 })->name('forgot-password');
+
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->name('forgot-password.post');
 
 // Route pour la page de profil
 Route::get('/profile', function () {
     return view('profile');
 })->name('profile');
 
-// Route pour la page de réinitialisation de mot de passe
 Route::get('/reset-password', function () {
     return view('reset-password');
 })->name('reset-password');
+
+Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('reset-password.post');
 
 // Route pour la page de configuration d'entreprise (après inscription)
 Route::get('/entreprise-setup', [EntrepriseController::class, 'setup'])->name('entreprise.setup');
@@ -66,13 +72,18 @@ Route::prefix('accounting')->name('accounting.')->middleware(['web', 'auth'])->g
     Route::post('/journal/import', [JournalController::class, 'importProcess'])->name('journal.import.process');
     Route::get('/journal/{id}', [JournalController::class, 'show'])->name('journal.show');
     Route::get('/journal/{id}/pdf', [JournalController::class, 'showPdf'])->name('journal.show.pdf');
-    Route::get('/ledger/{account_id?}', [JournalController::class, 'ledger'])->name('ledger');
-    Route::get('/ledger-pdf/{account_id?}', [JournalController::class, 'ledgerPdf'])->name('ledger.pdf');
-    Route::get('/balance', [JournalController::class, 'balance'])->name('balance');
-    Route::get('/balance-pdf', [JournalController::class, 'balancePdf'])->name('balance.pdf');
-    Route::get('/bilan', [JournalController::class, 'bilan'])->name('bilan');
-    Route::get('/bilan-pdf', [JournalController::class, 'bilanPdf'])->name('bilan.pdf');
-    Route::get('/resultat', [JournalController::class, 'resultat'])->name('resultat');
-    Route::get('/resultat-pdf', [JournalController::class, 'resultatPdf'])->name('resultat.pdf');
-    Route::get('/help', [JournalController::class, 'help'])->name('help');
+    
+    Route::get('/ledger/{account_id?}', [LedgerController::class, 'ledger'])->name('ledger');
+    Route::get('/ledger-pdf/{account_id?}', [LedgerController::class, 'ledgerPdf'])->name('ledger.pdf');
+    
+    Route::get('/balance', [TrialBalanceController::class, 'balance'])->name('balance');
+    Route::get('/balance-pdf', [TrialBalanceController::class, 'balancePdf'])->name('balance.pdf');
+    
+    Route::get('/bilan', [FinancialStatementController::class, 'bilan'])->name('bilan');
+    Route::get('/bilan-pdf', [FinancialStatementController::class, 'bilanPdf'])->name('bilan.pdf');
+    Route::get('/resultat', [FinancialStatementController::class, 'resultat'])->name('resultat');
+    Route::get('/resultat-pdf', [FinancialStatementController::class, 'resultatPdf'])->name('resultat.pdf');
+    
+    Route::get('/help', [SupportController::class, 'help'])->name('help');
+    Route::get('/system-date', [SupportController::class, 'systemeDate'])->name('system-date');
 });

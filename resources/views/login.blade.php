@@ -175,8 +175,11 @@
                                 class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
                                 <i data-lucide="lock" class="w-5 h-5"></i>
                             </span>
-                            <input type="password" name="password" required placeholder="••••••••"
-                                class="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white pl-12 pr-4 py-4 rounded-2xl text-sm focus:outline-none focus:border-primary transition-all shadow-sm">
+                            <input type="password" name="password" id="password" required placeholder="••••••••"
+                                class="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white pl-12 pr-12 py-4 rounded-2xl text-sm focus:outline-none focus:border-primary transition-all shadow-sm">
+                            <button type="button" onclick="togglePassword('password', 'eye-icon')" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary transition-colors">
+                                <i data-lucide="eye" id="eye-icon" class="w-5 h-5"></i>
+                            </button>
                         </div>
                     </div>
 
@@ -200,6 +203,20 @@
 
     <script>
         lucide.createIcons();
+
+        function togglePassword(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                input.type = 'password';
+                icon.setAttribute('data-lucide', 'eye');
+            }
+            lucide.createIcons();
+        }
     </script>
 </body>
 

@@ -26,6 +26,13 @@ class JournalController extends Controller
         $query = JournalEntry::with(['journal', 'lines.account'])
             ->where('entreprise_id', $user->entreprise_id);
 
+        $showArchived = $request->query('show_archived', '0');
+        if ($showArchived === '1') {
+            $query->where('is_archived', '=', true);
+        } elseif ($showArchived !== 'all') {
+            $query->where('is_archived', '=', false);
+        }
+
         if ($request->filled('start_date')) {
             $query->where('date', '>=', $request->start_date);
         }
@@ -187,7 +194,7 @@ class JournalController extends Controller
         $user = Auth::user();
         $entrepriseId = $user->entreprise_id;
 
-        // Cas 1 : Validation de la réindexation (Données en session)
+         // Cas 1 : Validation de la réindexation (Données en session)
         if ($request->has('force_reindex') && session()->has('pending_import')) {
             $rows = session('pending_import');
             $grouped = collect($rows)->groupBy('piece');

@@ -179,7 +179,10 @@
                                 <i data-lucide="lock" class="w-5 h-5"></i>
                             </span>
                             <input type="password" name="password" id="password" required placeholder="Minimum 8 caractères"
-                                class="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white pl-12 pr-4 py-4 rounded-2xl text-base focus:outline-none focus:border-primary transition-all shadow-sm">
+                                class="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white pl-12 pr-12 py-4 rounded-2xl text-base focus:outline-none focus:border-primary transition-all shadow-sm">
+                            <button type="button" onclick="togglePassword('password', 'eye-icon-1')" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary transition-colors">
+                                <i data-lucide="eye" id="eye-icon-1" class="w-5 h-5"></i>
+                            </button>
                         </div>
 
                         {{-- Strength bar --}}
@@ -197,8 +200,11 @@
                             <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
                                 <i data-lucide="shield-check" class="w-5 h-5"></i>
                             </span>
-                            <input type="password" name="password_confirmation" required placeholder="Confirmez le mot de passe"
-                                class="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white pl-12 pr-4 py-4 rounded-2xl text-base focus:outline-none focus:border-primary transition-all shadow-sm">
+                            <input type="password" name="password_confirmation" id="password_confirmation" required placeholder="Confirmez le mot de passe"
+                                class="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white pl-12 pr-12 py-4 rounded-2xl text-base focus:outline-none focus:border-primary transition-all shadow-sm">
+                            <button type="button" onclick="togglePassword('password_confirmation', 'eye-icon-2')" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary transition-colors">
+                                <i data-lucide="eye" id="eye-icon-2" class="w-5 h-5"></i>
+                            </button>
                         </div>
                     </div>
 
@@ -263,6 +269,21 @@
                 strengthText.className = 'text-[10px] text-green-500 mt-2 font-bold uppercase tracking-widest';
             }
         });
+
+        // Toggle Password visibility
+        function togglePassword(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                input.type = 'password';
+                icon.setAttribute('data-lucide', 'eye');
+            }
+            lucide.createIcons();
+        }
     </script>
 </body>
 

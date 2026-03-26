@@ -46,6 +46,13 @@ class LedgerController extends Controller
                 ->join('journal_entries', 'journal_entry_lines.journal_entry_id', '=', 'journal_entries.id')
                 ->where('journal_entries.entreprise_id', $entrepriseId);
 
+            $showArchived = $request->query('show_archived', '0');
+            if ($showArchived === '1') {
+                $query->where('journal_entries.is_archived', '=', true);
+            } elseif ($showArchived !== 'all') {
+                $query->where('journal_entries.is_archived', '=', false);
+            }
+
             if (!empty($accountIds)) {
                 $query->whereIn('journal_entry_lines.account_id', $accountIds);
             }
@@ -110,6 +117,13 @@ class LedgerController extends Controller
             $query = JournalEntryLine::with(['entry.journal', 'account'])
                 ->join('journal_entries', 'journal_entry_lines.journal_entry_id', '=', 'journal_entries.id')
                 ->where('journal_entries.entreprise_id', $entrepriseId);
+
+            $showArchived = $request->query('show_archived', '0');
+            if ($showArchived === '1') {
+                $query->where('journal_entries.is_archived', '=', true);
+            } elseif ($showArchived !== 'all') {
+                $query->where('journal_entries.is_archived', '=', false);
+            }
 
             if (!empty($accountIds)) {
                 $query->whereIn('journal_entry_lines.account_id', $accountIds);

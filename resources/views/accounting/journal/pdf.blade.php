@@ -91,7 +91,7 @@
         <thead>
             <tr>
                 <th style="width: 80px;">DATE</th>
-                <th style="width: 80px;">Réf</th>
+                <th style="width: 80px;">N° Pièce</th>
                 <th style="width: 90px;">COMPTE</th>
                 <th>INTITULÉ / LIBELLÉ</th>
                 <th style="width: 100px; text-align: right;">DÉBIT</th>

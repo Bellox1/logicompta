@@ -57,6 +57,23 @@
 @endsection
 
 @section('content')
+@if(request('show_archived') == '1' && request('start_date'))
+    <div class="mb-6 bg-primary/10 border-l-4 border-primary p-4 flex items-center justify-between shadow-sm animate-fade-in">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-primary text-white flex items-center justify-center rounded-xl">
+                <i data-lucide="archive" class="w-5 h-5"></i>
+            </div>
+            <div>
+                <h3 class="text-lg font-black text-gray-800 uppercase leading-none">Archives de l'exercice {{ date('Y', strtotime(request('start_date'))) }}</h3>
+                <p class="text-xs text-gray-500 font-bold uppercase tracking-widest mt-1">Écritures scellées et protégées (Lecture seule)</p>
+            </div>
+        </div>
+        <a href="{{ route('accounting.archive.index') }}" class="text-[10px] font-black uppercase text-primary bg-white border border-primary px-3 py-1.5 rounded-lg hover:bg-primary hover:text-white transition-all">
+            Retour au Hub
+        </a>
+    </div>
+@endif
+
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
             <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Journal des écritures</h1>
@@ -122,12 +139,24 @@
                 class="w-full md:px-10 py-3 bg-primary text-white text-[11px] font-black uppercase tracking-[0.2em] hover:bg-primary-light transition-all shadow-lg flex items-center justify-center gap-3">
                 <i data-lucide="refresh-cw" class="w-4 h-4"></i> Actualiser
             </button>
-            @if (request()->hasAny(['start_date', 'end_date']))
+            @if (request()->hasAny(['start_date', 'end_date', 'show_archived']))
                 <a href="{{ request()->url() }}"
                     class="w-full md:px-8 py-3 bg-gray-100 text-gray-500 text-[11px] font-black uppercase tracking-[0.2em] hover:bg-gray-200 transition-all flex items-center justify-center gap-2 border border-gray-200">
                     <i data-lucide="x" class="w-4 h-4"></i> Effacer
                 </a>
             @endif
+        </div>
+
+        <div class="w-full md:w-auto flex items-center h-full pt-6 md:pt-0">
+            <label class="flex items-center gap-3 cursor-pointer group">
+                <div class="relative">
+                    <input type="checkbox" name="show_archived" value="1" {{ request('show_archived') ? 'checked' : '' }} 
+                           onchange="this.form.submit()" class="sr-only">
+                    <div class="w-10 h-5 bg-gray-200 rounded-full transition-colors group-hover:bg-gray-300 {{ request('show_archived') ? '!bg-primary' : '' }}"></div>
+                    <div class="absolute left-1 top-1 w-3 h-3 bg-white rounded-full transition-transform {{ request('show_archived') ? 'translate-x-5' : '' }}"></div>
+                </div>
+                <span class="text-[10px] uppercase font-bold text-gray-500 tracking-wider">Afficher les archives</span>
+            </label>
         </div>
     </form>
 
@@ -180,6 +209,13 @@
                                     <td rowspan="{{ $entry->lines->count() }}"
                                         class="px-5 py-6 text-sm text-gray-950 font-black text-center align-middle not-italic transition-all border-b-2 border-gray-400">
                                         {{ \Carbon\Carbon::parse($entry->date)->format('d/m/Y') }}
+                                        @if($entry->is_archived)
+                                            <div class="mt-2">
+                                                <span class="inline-block px-2 py-1 bg-amber-100 text-amber-600 text-[8px] font-black rounded uppercase tracking-tighter">
+                                                    ARCHIVÉ
+                                                </span>
+                                            </div>
+                                        @endif
                                     </td>
                                     <td rowspan="{{ $entry->lines->count() }}"
                                         class="px-5 py-6 text-sm text-center align-middle not-italic transition-all border-b-2 border-gray-400">

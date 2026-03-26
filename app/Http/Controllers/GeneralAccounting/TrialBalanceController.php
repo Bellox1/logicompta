@@ -20,9 +20,14 @@ class TrialBalanceController extends Controller
         $endDate = $request->query('end_date');
 
         // On ne récupère que les comptes qui ont des mouvements pour cette entreprise sur la période
-        $accounts = Account::with(['entryLines' => function($q) use ($entrepriseId, $startDate, $endDate) {
-            $q->whereHas('entry', function($qe) use ($entrepriseId, $startDate, $endDate) {
-                $qe->where('entreprise_id', $entrepriseId);
+        $accounts = Account::with(['entryLines' => function($q) use ($entrepriseId, $startDate, $endDate, $request) {
+            $q->whereHas('entry', function($qe) use ($entrepriseId, $startDate, $endDate, $request) {
+                $showArchived = $request->query('show_archived', '0');
+                if ($showArchived === '1') {
+                    $qe->where('is_archived', '=', true);
+                } elseif ($showArchived !== 'all') {
+                    $qe->where('is_archived', '=', false);
+                }
                 if ($startDate) $qe->where('date', '>=', $startDate);
                 if ($endDate) $qe->where('date', '<=', $endDate);
             });
@@ -112,9 +117,14 @@ class TrialBalanceController extends Controller
         $startDate = $request->query('start_date');
         $endDate = $request->query('end_date');
 
-        $accounts = Account::with(['entryLines' => function($q) use ($entrepriseId, $startDate, $endDate) {
-            $q->whereHas('entry', function($qe) use ($entrepriseId, $startDate, $endDate) {
-                $qe->where('entreprise_id', $entrepriseId);
+        $accounts = Account::with(['entryLines' => function($q) use ($entrepriseId, $startDate, $endDate, $request) {
+            $q->whereHas('entry', function($qe) use ($entrepriseId, $startDate, $endDate, $request) {
+                $showArchived = $request->query('show_archived', '0');
+                if ($showArchived === '1') {
+                    $qe->where('is_archived', '=', true);
+                } elseif ($showArchived !== 'all') {
+                    $qe->where('is_archived', '=', false);
+                }
                 if ($startDate) $qe->where('date', '>=', $startDate);
                 if ($endDate) $qe->where('date', '<=', $endDate);
             });

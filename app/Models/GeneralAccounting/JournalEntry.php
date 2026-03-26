@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class JournalEntry extends Model
 {
-    protected $fillable = ['journal_id', 'numero_piece', 'date', 'libelle', 'entreprise_id'];
+    protected $fillable = ['journal_id', 'numero_piece', 'date', 'libelle', 'entreprise_id', 'is_archived', 'archived_at'];
 
     public function journal(): BelongsTo
     {

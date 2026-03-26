@@ -3,6 +3,23 @@
 @section('title', 'Compte de Résultat')
 
 @section('content')
+@if(request('show_archived') == '1' && request('start_date'))
+    <div class="mb-6 bg-primary/10 border-l-4 border-primary p-4 flex items-center justify-between shadow-sm animate-fade-in no-print">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-primary text-white flex items-center justify-center rounded-xl">
+                <i data-lucide="archive" class="w-5 h-5"></i>
+            </div>
+            <div>
+                <h3 class="text-lg font-black text-gray-800 uppercase leading-none">Archives de l'exercice {{ date('Y', strtotime(request('start_date'))) }}</h3>
+                <p class="text-xs text-gray-500 font-bold uppercase tracking-widest mt-1">Données scellées et définitives</p>
+            </div>
+        </div>
+        <a href="{{ route('accounting.archive.index') }}" class="text-[10px] font-black uppercase text-primary bg-white border border-primary px-3 py-1.5 rounded-lg hover:bg-primary hover:text-white transition-all">
+            Retour au Hub
+        </a>
+    </div>
+@endif
+
 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 no-print">
     <div>
         <h1 class="text-3xl font-black text-gray-900 tracking-tight uppercase">Compte de Résultat</h1>

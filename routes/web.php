@@ -7,6 +7,7 @@ use App\Http\Controllers\GeneralAccounting\LedgerController;
 use App\Http\Controllers\GeneralAccounting\TrialBalanceController;
 use App\Http\Controllers\GeneralAccounting\FinancialStatementController;
 use App\Http\Controllers\GeneralAccounting\SupportController;
+use App\Http\Controllers\GeneralAccounting\ArchiveController;
 use App\Http\Controllers\EntrepriseController;
 use App\Http\Controllers\AuthController;
 
@@ -86,4 +87,8 @@ Route::prefix('accounting')->name('accounting.')->middleware(['web', 'auth'])->g
     
     Route::get('/help', [SupportController::class, 'help'])->name('help');
     Route::get('/system-date', [SupportController::class, 'systemeDate'])->name('system-date');
+
+    // Archives
+    Route::get('/archives', [ArchiveController::class, 'index'])->name('archive.index');
+    Route::get('/archives/{year}', [ArchiveController::class, 'show'])->name('archive.show');
 });

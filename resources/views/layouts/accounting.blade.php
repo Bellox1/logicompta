@@ -495,6 +495,11 @@
                     <i class="w-5 h-5" data-lucide="trending-up"></i>
                     <span class="sidebar-label transition-all duration-300">Résultat</span>
                 </a>
+                <a href="{{ route('accounting.archive.index') }}"
+                    class="flex items-center gap-4 px-4 py-3 font-medium transition-all border-l-4 {{ request()->routeIs('accounting.archive.*') ? 'border-primary text-primary bg-primary/5 dark:bg-primary/10' : 'border-transparent text-gray-600 hover:text-primary hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-white/5' }}">
+                    <i class="w-5 h-5" data-lucide="archive"></i>
+                    <span class="sidebar-label transition-all duration-300">Archives</span>
+                </a>
 
                 <div
                     class="sidebar-label text-[10px] uppercase font-bold text-gray-400 mt-6 px-4 mb-2 tracking-widest hidden md:block">

@@ -32,16 +32,16 @@
                     <thead>
                         <tr class="bg-primary text-white">
                             <th class="px-6 py-5 text-xs font-bold uppercase tracking-widest text-center border-r border-white/10"
-                                style="width: 120px;">DATE</th>
+                                style="width: 100px;">DATE</th>
                             <th class="px-6 py-5 text-xs font-bold uppercase tracking-widest text-left border-r border-white/10"
-                                style="width: 150px;">N° DE COMPTE</th>
+                                style="width: 110px;">N° DE COMPTE</th>
                             <th
                                 class="px-6 py-5 text-xs font-bold uppercase tracking-widest text-left border-r border-white/10">
                                 INTITULÉ / LIBELLÉ</th>
                             <th class="px-6 py-5 text-xs font-bold uppercase tracking-widest text-right border-r border-white/10"
-                                style="width: 150px;">DÉBIT</th>
+                                style="width: 120px;">DÉBIT</th>
                             <th class="px-6 py-5 text-xs font-bold uppercase tracking-widest text-right"
-                                style="width: 150px;">CRÉDIT</th>
+                                style="width: 120px;">CRÉDIT</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100 italic">
@@ -61,10 +61,10 @@
                                     <div class="text-xs opacity-70">{{ $line->libelle }}</div>
                                 </td>
                                 <td
-                                    class="px-6 py-5 text-sm text-right font-bold text-gray-900 border-r border-gray-100 bg-gray-50/10 not-italic">
+                                    class="px-6 py-5 text-sm text-right font-bold text-gray-900 border-r border-gray-100 bg-gray-50/10 not-italic whitespace-nowrap">
                                     {{ number_format($line->debit, 2, ',', ' ') }}
                                 </td>
-                                <td class="px-6 py-5 text-sm text-right font-bold text-gray-900 bg-gray-50/10 not-italic">
+                                <td class="px-6 py-5 text-sm text-right font-bold text-gray-900 bg-gray-50/10 not-italic whitespace-nowrap">
                                     {{ number_format($line->credit, 2, ',', ' ') }}
                                 </td>
                             </tr>
@@ -74,9 +74,9 @@
                         <tr class="font-bold text-gray-900">
                             <td colspan="3" class="px-6 py-5 text-right uppercase tracking-widest text-xs opacity-50">
                                 Totaux Équilibrés</td>
-                            <td class="px-6 py-5 text-right text-lg border-r border-gray-200">
+                            <td class="px-6 py-5 text-right text-lg border-r border-gray-200 whitespace-nowrap">
                                 {{ number_format($entry->lines->sum('debit'), 2, ',', ' ') }}</td>
-                            <td class="px-6 py-5 text-right text-lg">
+                            <td class="px-6 py-5 text-right text-lg whitespace-nowrap">
                                 {{ number_format($entry->lines->sum('credit'), 2, ',', ' ') }}</td>
                         </tr>
                     </tfoot>

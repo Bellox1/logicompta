@@ -194,7 +194,7 @@
                         <thead>
                             <!-- EN-TÊTE DES COLONNES STICKY -->
                             <tr class="bg-primary text-white">
-                                <th class="group p-0 text-xs font-extrabold tracking-wider text-left">
+                                <th class="group p-0 text-xs font-extrabold tracking-wider text-left" style="width: 100px;">
                                     <a href="{{ request()->fullUrlWithQuery(['sort' => 'date', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}"
                                         class="flex items-center gap-2 px-6 py-4 text-white hover:bg-white/5 transition-colors w-full h-full">
                                         <span>DATES</span>
@@ -206,7 +206,7 @@
                                         </div>
                                     </a>
                                 </th>
-                                <th class="group p-0 text-xs font-extrabold tracking-wider text-left border-r border-white/20">
+                                <th class="group p-0 text-xs font-extrabold tracking-wider text-left border-r border-white/20" style="width: 90px;">
                                     <a href="{{ request()->fullUrlWithQuery(['sort' => 'numero_piece', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}"
                                         class="flex items-center gap-2 px-6 py-4 text-white hover:bg-white/5 transition-colors w-full h-full">
                                         <span>Num PC</span>
@@ -221,8 +221,8 @@
                                 <th
                                     class="px-6 py-4 text-xs font-extrabold tracking-wider text-left border-r border-white/20">
                                     LIBELLÉ DES OPERATIONS</th>
-                                <th class="px-6 py-4 text-xs font-extrabold tracking-wider text-right">DÉBIT</th>
-                                <th class="px-6 py-4 text-xs font-extrabold tracking-wider text-right">CRÉDIT</th>
+                                <th class="px-6 py-4 text-xs font-extrabold tracking-wider text-right" style="width: 120px;">DÉBIT</th>
+                                <th class="px-6 py-4 text-xs font-extrabold tracking-wider text-right" style="width: 120px;">CRÉDIT</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100 text-sm">
@@ -278,11 +278,10 @@
                                     <td colspan="2" class="px-6 py-4 text-right">
                                         <div class="inline-flex items-center gap-2 md:gap-4 whitespace-nowrap">
                                             <span class="text-[9px] md:text-[10px] uppercase font-bold text-gray-400">Solde
-                                                Net :</span>
+                                                Net {{ $runningSolde >= 0 ? 'débité' : 'crédité' }} :</span>
                                             <span
                                                 class="text-sm md:text-xl font-black {{ $runningSolde >= 0 ? 'text-green-600' : 'text-red-600' }}">
                                                 {{ number_format(abs($runningSolde), 2, ',', ' ') }}
-                                                {{ $runningSolde >= 0 ? 'D' : 'C' }}
                                             </span>
                                         </div>
                                     </td>

@@ -14,9 +14,8 @@ class JournalEntrySeeder extends Seeder
     {
         // On récupère ou crée un journal par défaut si besoin (ex: Journal Général)
         $journal = Journal::first() ?? Journal::create([
-            'code' => 'G',
             'name' => 'Journal Général',
-            'type' => 'GENERAL'
+            'description' => 'Journal par défaut'
         ]);
 
         // On s'assure d'avoir quelques comptes pour le débit/crédit (SYSCOHADA)

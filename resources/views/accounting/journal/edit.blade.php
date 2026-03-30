@@ -1,12 +1,17 @@
 @extends('layouts.accounting')
 
-@section('title', 'Saisie d\'écriture')
+@section('title', "Modifier l'écriture")
 
 @section('content')
     <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-            <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Saisie d'écriture</h1>
-            <p class="text-sm text-gray-500 font-bold uppercase tracking-widest mt-1">Enregistrez une nouvelle opération dans le journal</p>
+        <div class="flex items-center gap-4">
+            <a href="{{ route('accounting.journal.index') }}" class="p-2 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all">
+                <i data-lucide="arrow-left" class="w-5 h-5 text-gray-600"></i>
+            </a>
+            <div>
+                <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-1">Modifier l'écriture</h1>
+                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Pièce N° {{ str_replace('PC-', '', $entry->numero_piece) }}</p>
+            </div>
         </div>
         <div class="flex flex-wrap gap-3">
             <a href="{{ route('accounting.journals-settings.index') }}" 
@@ -22,7 +27,7 @@
         </div>
     </div>
 
-    <form action="{{ route('accounting.journal.store') }}" method="POST" id="journalform">
+    <form action="{{ route('accounting.journal.update', $entry->id) }}" method="POST" id="journalform">
         @csrf
 
         @if ($errors->any())
@@ -45,7 +50,7 @@
                     <label
                         class="block text-[10px] md:text-sm font-semibold text-gray-700 mb-1 md:mb-2 px-1 uppercase tracking-wider">N°
                         Pièce</label>
-                    <input type="text" value="{{ $nextPieceNumber }}" disabled
+                    <input type="text" value="{{ str_replace('PC-', '', $entry->numero_piece) }}" disabled
                         class="w-full max-w-full bg-gray-100 border border-border rounded-xl px-3 py-2 md:px-4 md:py-3 text-gray-500 font-bold cursor-not-allowed">
                 </div>
                 <div class="min-w-0">
@@ -56,7 +61,7 @@
                             class="w-full max-w-full bg-gray-50 border border-border rounded-xl px-3 py-2 md:px-4 md:py-3 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all appearance-none cursor-pointer text-sm md:text-base">
                             @foreach ($journals as $journal)
                                 <option value="{{ $journal->id }}"
-                                    {{ old('journal_id') == $journal->id ? 'selected' : '' }}>{{ $journal->name }}</option>
+                                    {{ old('journal_id', $entry->journal_id) == $journal->id ? 'selected' : '' }}>{{ $journal->name }}</option>
                             @endforeach
                         </select>
                         <div class="absolute right-3 md:right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
@@ -68,8 +73,8 @@
                     <label
                         class="block text-[10px] md:text-sm font-semibold text-gray-700 mb-1 md:mb-2 px-1 uppercase tracking-wider">Date
                         d'opération</label>
-                    <input type="date" name="date" value="{{ old('date', date('Y-m-d')) }}"
-                        min="{{ date('Y-m-d', strtotime('-5 days')) }}" max="{{ date('Y-m-t') }}" required
+                    <input type="date" name="date" value="{{ old('date', $entry->date) }}"
+                        required
                         class="w-full max-w-full bg-gray-50 border border-border rounded-xl px-3 py-2 md:px-4 md:py-3 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-sm md:text-base">
                 </div>
                 <div class="min-w-0 md:col-span-2">
@@ -77,7 +82,7 @@
                         class="block text-[10px] md:text-sm font-semibold text-gray-700 mb-1 md:mb-2 px-1 uppercase tracking-wider">Libellé
                         général</label>
                     <textarea name="libelle" placeholder="Ex: Règlement..." required rows="1"
-                        class="w-full max-w-full bg-gray-50 border border-border rounded-xl px-3 py-2 md:px-4 md:py-3 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-sm md:text-base resize-y min-h-[100px] flex items-center">{{ old('libelle') }}</textarea>
+                        class="w-full max-w-full bg-gray-50 border border-border rounded-xl px-3 py-2 md:px-4 md:py-3 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-sm md:text-base resize-y min-h-[100px] flex items-center">{{ old('libelle', $entry->libelle) }}</textarea>
                 </div>
             </div>
         </div>
@@ -108,9 +113,9 @@
                     </thead>
                     <tbody id="lines-body" class="divide-y divide-gray-100">
                         @php
-                            $oldLines = old('lines', [null, null]); // Au moins 2 lignes
+                            $lines = old('lines', $entry->lines->toArray());
                         @endphp
-                        @foreach ($oldLines as $index => $oldLine)
+                        @foreach ($lines as $index => $line)
                             <tr class="line-row hover:bg-gray-50/50 transition-colors">
                                 <td class="px-4 py-3">
                                     <select name="lines[{{ $index }}][account_id]" required
@@ -120,7 +125,7 @@
                                             <optgroup label="CLASSE {{ $classId }}">
                                                 @foreach ($classAccounts as $account)
                                                     <option value="{{ $account->id }}"
-                                                        {{ isset($oldLine['account_id']) && $oldLine['account_id'] == $account->id ? 'selected' : '' }}>
+                                                        {{ (isset($line['account_id']) && $line['account_id'] == $account->id) ? 'selected' : '' }}>
                                                         {{ $account->code_compte }} - {{ $account->libelle }}</option>
                                                 @endforeach
                                             </optgroup>
@@ -130,26 +135,24 @@
                                 <td class="px-4 py-3">
                                     <input type="number" step="0.01" name="lines[{{ $index }}][debit]"
                                         class="debit-input w-full bg-white border border-border rounded-lg px-3 py-2 text-sm text-right font-semibold focus:ring-2 focus:ring-primary outline-none"
-                                        value="{{ isset($oldLine['debit']) && $oldLine['debit'] != 0 ? $oldLine['debit'] : '' }}"
+                                        value="{{ (isset($line['debit']) && $line['debit'] != 0) ? $line['debit'] : '' }}"
                                         placeholder="0">
                                 </td>
                                 <td class="px-4 py-3">
                                     <input type="number" step="0.01" name="lines[{{ $index }}][credit]"
                                         class="credit-input w-full bg-white border border-border rounded-lg px-3 py-2 text-sm text-right font-semibold focus:ring-2 focus:ring-primary outline-none"
-                                        value="{{ isset($oldLine['credit']) && $oldLine['credit'] != 0 ? $oldLine['credit'] : '' }}"
+                                        value="{{ (isset($line['credit']) && $line['credit'] != 0) ? $line['credit'] : '' }}"
                                         placeholder="0">
                                 </td>
                                 <td class="px-4 py-3">
                                     <textarea name="lines[{{ $index }}][libelle]" placeholder="Libellé spécifique (facultatif)" rows="1"
-                                        class="w-full bg-white border border-border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none resize-y min-h-[60px]">{{ $oldLine['libelle'] ?? '' }}</textarea>
+                                        class="w-full bg-white border border-border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none resize-y min-h-[60px]">{{ $line['libelle'] ?? '' }}</textarea>
                                 </td>
                                 <td class="px-4 py-3 text-center">
-                                    @if ($index >= 2)
-                                        <button type="button" class="text-red-400 hover:text-red-600 transition-colors p-1"
-                                            onclick="this.closest('tr').remove(); calculate();">
-                                            <i data-lucide="x" class="w-5 h-5"></i>
-                                        </button>
-                                    @endif
+                                    <button type="button" class="text-red-400 hover:text-red-600 transition-colors p-1"
+                                        onclick="this.closest('tr').remove(); calculate();">
+                                        <i data-lucide="x" class="w-5 h-5"></i>
+                                    </button>
                                 </td>
                             </tr>
                         @endforeach
@@ -173,15 +176,18 @@
                         <div id="balance-container">
                             <div class="text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-1">État
                                 d'Équilibre</div>
-                            <div id="balance-status" class="text-sm font-bold text-red-600">Déséquilibre: 0 F
+                            <div id="balance-status" class="text-sm font-bold text-red-600 italic">Déséquilibre: 0 F
                             </div>
                         </div>
                     </div>
-                    <button type="submit" id="submit-btn" disabled
-                        class="w-full md:w-auto px-8 py-4 bg-primary text-white font-bold rounded-2xl hover:bg-primary-light disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-lg flex items-center justify-center gap-2">
-                        <i data-lucide="save" class="w-5 h-5"></i>
-                        Enregistrer l'écriture
-                    </button>
+                    <div class="flex gap-4">
+                        <a href="{{ route('accounting.journal.index') }}" class="px-8 py-4 bg-gray-200 text-gray-600 font-bold rounded-2xl hover:bg-gray-300 transition-all">Annuler</a>
+                        <button type="submit" id="submit-btn" 
+                            class="px-8 py-4 bg-primary text-white font-bold rounded-2xl hover:bg-primary-light disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-lg flex items-center justify-center gap-2">
+                            <i data-lucide="check-circle" class="w-5 h-5"></i>
+                            Mettre à jour l'écriture
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -207,14 +213,12 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            let lineCount = {{ count($oldLines) }};
+            let lineCount = {{ count($lines) }};
             const body = document.getElementById('lines-body');
             const totalDebitEl = document.getElementById('total-debit');
             const totalCreditEl = document.getElementById('total-credit');
             const balanceStatusEl = document.getElementById('balance-status');
             const submitBtn = document.getElementById('submit-btn');
-
-            let equilibre_first = false;
 
             function calculate() {
                 let totalDebit = 0;
@@ -251,9 +255,6 @@
                         balanceStatusEl.classList.remove('text-red-600');
                         balanceStatusEl.classList.add('text-green-600');
                         submitBtn.disabled = false;
-
-                        // User's logic: if balanced once, mark it
-                        equilibre_first = true;
                     } else {
                         let message = "Déséquilibre";
                         if (totalDebit > 0 || totalCredit > 0) {
@@ -265,91 +266,17 @@
                         balanceStatusEl.classList.remove('text-green-600');
                         balanceStatusEl.classList.add('text-red-600');
                         submitBtn.disabled = true;
-
-                        const hintValue = absDiff.toLocaleString('fr-FR', {
-                            minimumFractionDigits: 0,
-                            maximumFractionDigits: 2
-                        });
-                        if (diff > 0) {
-                            // On doit ajouter au crédit
-                            credits.forEach(i => {
-                                if (!i.value || parseFloat(i.value) === 0) i.placeholder = hintValue;
-                            });
-                        } else if (diff < 0) {
-                            // On doit ajouter au débit
-                            debits.forEach(i => {
-                                if (!i.value || parseFloat(i.value) === 0) i.placeholder = hintValue;
-                            });
-                        }
                     }
                 }
-                return diff;
             }
 
-            function smartFillImbalance(input) {
-                // User's logic: if balanced once, stop automatic filling
-                if (equilibre_first) return;
-
-                if (parseFloat(input.value || 0) !== 0) return;
-
-                const diff = calculate();
-                const absDiff = Math.abs(diff);
-                if (absDiff < 0.01) return;
-
-                if ((input.classList.contains('debit-input') && diff < 0) ||
-                    (input.classList.contains('credit-input') && diff > 0)) {
-                    input.value = absDiff.toFixed(2);
-                    input.classList.add('bg-blue-50', 'dark:bg-blue-900/10');
-                    setTimeout(() => input.classList.remove('bg-blue-50', 'dark:bg-blue-900/10'), 500);
-                    calculate();
-                }
-            }
-
-            function handleInput(e) {
-                const input = e.target;
-                const row = input.closest('tr');
-                const val = parseFloat(input.value || 0);
-
-                // Only zero-out the opposite side BEFORE the first total balance is reached.
-                // After equilibre_first is true, we "touch nothing" automatically.
-                if (!equilibre_first && val > 0) {
-                    if (input.classList.contains('debit-input')) {
-                        row.querySelector('.credit-input').value = '';
-                    } else {
-                        row.querySelector('.debit-input').value = '';
-                    }
-                }
-                calculate();
-            }
-
-            function attachListeners(row) {
-                row.querySelectorAll('input').forEach(input => {
-                    input.addEventListener('input', handleInput);
-                    input.addEventListener('focus', function() {
-                        smartFillImbalance(this);
-                    });
-                });
-                row.querySelectorAll('select').forEach(select => {
-                    select.addEventListener('change', calculate);
-                });
-            }
-
-            const addLineBtn = document.getElementById('add-line');
-            if (addLineBtn) {
-                addLineBtn.addEventListener('click', () => {
-                    const rows = document.querySelectorAll('.line-row');
-                    if (rows.length === 0) return;
-
-                    const firstRow = rows[0];
+            document.getElementById('add-line').addEventListener('click', function() {
+                const firstRow = document.querySelector('.line-row');
+                if (firstRow) {
                     const newRow = firstRow.cloneNode(true);
-                    const inputs = newRow.querySelectorAll('input, select');
 
-                    inputs.forEach(input => {
-                        const name = input.getAttribute('name');
-                        if (name) {
-                            input.setAttribute('name', name.replace(/\[\d+\]/, `[${lineCount}]`));
-                        }
-
+                    // Reset inputs
+                    newRow.querySelectorAll('input, select, textarea').forEach(input => {
                         if (input.classList.contains('debit-input') || input.classList.contains(
                                 'credit-input')) {
                             input.value = '';
@@ -358,8 +285,13 @@
                         } else if (input.tagName === 'SELECT') {
                             input.selectedIndex = 0;
                         }
+                        const name = input.getAttribute('name');
+                        if (name) {
+                            input.setAttribute('name', name.replace(/\[\d+\]/, `[${lineCount}]`));
+                        }
                     });
 
+                    // Assurer que le bouton de suppression est présent (vu que c'est le cas pour toutes les lignes en edit)
                     const deleteCell = newRow.cells[newRow.cells.length - 1];
                     deleteCell.innerHTML =
                         '<button type="button" class="text-red-400 hover:text-red-600 transition-colors p-1" onclick="this.closest(\'tr\').remove(); calculate();"><i data-lucide="x" class="w-5 h-5"></i></button>';
@@ -367,34 +299,17 @@
                     body.appendChild(newRow);
                     lineCount++;
                     attachListeners(newRow);
-                    if (typeof lucide !== 'undefined') lucide.createIcons();
-                    calculate();
+                    lucide.createIcons();
+                }
+            });
+
+            function attachListeners(row) {
+                row.querySelectorAll('input, select, textarea').forEach(input => {
+                    input.addEventListener('input', calculate);
                 });
             }
 
-            document.querySelectorAll('.line-row').forEach(attachListeners);
-
-            const dateInput = document.querySelector('input[name="date"]');
-            if (dateInput) {
-                dateInput.addEventListener('change', function() {
-                    const selectedDate = new Date(this.value);
-                    const today = new Date();
-                    today.setHours(0, 0, 0, 0);
-                    const minDate = new Date();
-                    minDate.setDate(today.getDate() - 5);
-                    minDate.setHours(0, 0, 0, 0);
-                    const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-
-                    if (selectedDate < minDate) {
-                        alert('La date ne peut pas remonter à plus de 5 jours.');
-                        this.value = minDate.toISOString().split('T')[0];
-                    } else if (selectedDate > lastDayOfMonth) {
-                        alert('La date ne peut pas dépasser le mois en cours.');
-                        this.value = today.toISOString().split('T')[0];
-                    }
-                });
-            }
-
+            document.querySelectorAll('.line-row').forEach(row => attachListeners(row));
             calculate();
         });
     </script>

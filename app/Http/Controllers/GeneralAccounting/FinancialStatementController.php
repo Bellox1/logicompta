@@ -90,6 +90,7 @@ class FinancialStatementController extends Controller
 
         $accounts = Account::with(['entryLines' => function($q) use ($entrepriseId, $startDate, $endDate, $request) {
             $q->whereHas('entry', function($qe) use ($entrepriseId, $startDate, $endDate, $request) {
+                $qe->where('entreprise_id', $entrepriseId);
                 $showArchived = $request->query('show_archived', '0');
                 if ($showArchived === '1') {
                     $qe->where('is_archived', '=', true);

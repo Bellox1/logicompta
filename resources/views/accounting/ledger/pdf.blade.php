@@ -82,10 +82,10 @@
                         <td class="text-right">{{ number_format($account->entryLines->sum('credit'), 2, ',', ' ') }}</td>
                     </tr>
                     <tr class="font-black bg-white">
-                        <td colspan="3" class="text-right uppercase">Solde Net</td>
+                        <td colspan="3" class="text-right uppercase">Solde Net {{ $runningSolde >= 0 ? 'débité' : 'crédité' }}</td>
                         <td colspan="2" class="text-right">
                            <span class="{{ $runningSolde >= 0 ? 'text-green-700' : 'text-red-700' }}">
-                                {{ number_format(abs($runningSolde), 2, ',', ' ') }} {{ $runningSolde >= 0 ? 'D' : 'C' }}
+                                {{ number_format(abs($runningSolde), 2, ',', ' ') }}
                            </span>
                         </td>
                     </tr>

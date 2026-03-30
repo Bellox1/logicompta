@@ -77,10 +77,17 @@ class JournalController extends Controller
             return redirect()->route('entreprise.setup');
         }
         
-        $journals = Journal::all();
+        $journals = Journal::where(function($q) use ($user) {
+            $q->where('entreprise_id', $user->entreprise_id)
+              ->orWhereNull('entreprise_id');
+        })->get();
         $accounts = Account::orderBy('code_compte')->get()->groupBy('classe');
         
-        $latestEntry = JournalEntry::where('entreprise_id', $user->entreprise_id)->orderBy('id', 'desc')->first();
+        $currentYear = date('Y');
+        $latestEntry = JournalEntry::where('entreprise_id', $user->entreprise_id)
+            ->whereYear('date', $currentYear)
+            ->orderBy('id', 'desc')
+            ->first();
         $nextNum = $latestEntry ? intval(preg_replace('/[^0-9]/', '', $latestEntry->numero_piece)) + 1 : 1;
         $nextPieceNumber = str_pad($nextNum, 6, '0', STR_PAD_LEFT);
 
@@ -152,12 +159,99 @@ class JournalController extends Controller
             }
 
             DB::commit();
-            return redirect()->route('accounting.journal.create')->with('success', 'Écriture enregistrée avec succès ! (Pièce N° ' . $numeroPiece . ')');
-
+            return redirect()->route('accounting.journal.index')->with('success', 'Écriture enregistrée avec succès.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withErrors(['error' => 'Erreur : ' . $e->getMessage()])->withInput();
+            return back()->with('error', 'Erreur lors de l\'enregistrement : ' . $e->getMessage())->withInput();
         }
+    }
+
+    public function edit($id)
+    {
+        $user = Auth::user();
+        $entry = JournalEntry::with('lines.account')->findOrFail($id);
+        
+        if ($entry->entreprise_id != $user->entreprise_id) {
+            abort(403);
+        }
+
+
+
+        $journals = Journal::where(function($q) use ($user) {
+            $q->where('entreprise_id', $user->entreprise_id)
+              ->orWhereNull('entreprise_id');
+        })->get();
+        $accounts = Account::orderBy('code_compte', 'asc')->get()->groupBy('classe');
+        
+        return view('accounting.journal.edit', compact('entry', 'journals', 'accounts'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $user = Auth::user();
+        $entry = JournalEntry::findOrFail($id);
+        if ($entry->entreprise_id != $user->entreprise_id) abort(403);
+
+
+        $request->validate([
+            'journal_id' => 'required|exists:journals,id',
+            'date' => 'required|date',
+            'libelle' => 'required|string|max:255',
+            'lines' => 'required|array|min:2',
+            'lines.*.account_id' => 'required|exists:accounts,id',
+            'lines.*.debit' => 'nullable|numeric|min:0',
+            'lines.*.credit' => 'nullable|numeric|min:0',
+        ]);
+
+        $totalDebit = collect($request->lines)->sum('debit');
+        $totalCredit = collect($request->lines)->sum('credit');
+
+        if (abs($totalDebit - $totalCredit) > 0.001) {
+            return back()->withErrors(['balance' => 'L\'écriture n\'est pas équilibrée.'])->withInput();
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $entry->update([
+                'journal_id' => $request->journal_id,
+                'date' => $request->date,
+                'libelle' => $request->libelle,
+            ]);
+
+            $entry->lines()->delete();
+
+            foreach ($request->lines as $line) {
+                if (($line['debit'] ?? 0) > 0 || ($line['credit'] ?? 0) > 0) {
+                    JournalEntryLine::create([
+                        'journal_entry_id' => $entry->id,
+                        'account_id' => $line['account_id'],
+                        'debit' => $line['debit'] ?? 0,
+                        'credit' => $line['credit'] ?? 0,
+                        'libelle' => $line['libelle'] ?? $request->libelle,
+                    ]);
+                }
+            }
+
+            DB::commit();
+            return redirect()->route('accounting.journal.index')->with('success', 'Écriture mise à jour.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Erreur lors de la mise à jour : ' . $e->getMessage());
+        }
+    }
+
+    public function destroy($id)
+    {
+        $user = Auth::user();
+        $entry = JournalEntry::findOrFail($id);
+        if ($entry->entreprise_id != $user->entreprise_id) abort(403);
+
+
+        $entry->lines()->delete();
+        $entry->delete();
+
+        return redirect()->route('accounting.journal.index')->with('success', 'Écriture supprimée.');
     }
 
 
@@ -251,7 +345,7 @@ class JournalController extends Controller
                 $rows[] = [
                     'date' => $rowDate,
                     'piece' => $rowPiece,
-                    'journal_code' => $rowJournal,
+                    'journal_name' => $rowJournal,
                     'account' => trim($data[$map['account']]),
                     'label' => isset($map['label']) ? trim($data[$map['label']]) : 'Importation',
                     'debit' => $parseNumber($data[$map['debit']]),
@@ -307,7 +401,7 @@ class JournalController extends Controller
                 }
 
                 $firstLine = $lines->first();
-                $journal = Journal::where('code', $firstLine['journal_code'])->first() ?? Journal::first();
+                $journal = Journal::where('name', $firstLine['journal_name'])->first() ?? Journal::first();
                 
                 $entry = JournalEntry::create([
                     'journal_id' => $journal->id,

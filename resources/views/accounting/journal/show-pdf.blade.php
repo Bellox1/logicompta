@@ -110,7 +110,7 @@
             <div class="p-4 bg-gray-50 rounded-xl border border-gray-100 flex flex-col justify-center space-y-1">
                 <div class="flex justify-between items-center text-xs">
                     <span class="text-gray-400 font-bold uppercase text-[9px]">Journal</span>
-                    <span class="font-black text-gray-900 uppercase">[{{ $entry->journal->code }}] {{ $entry->journal->name }}</span>
+                    <span class="font-black text-gray-900 uppercase">{{ $entry->journal->name }}</span>
                 </div>
                 <div class="flex justify-between items-center text-xs">
                     <span class="text-gray-400 font-bold uppercase text-[9px]">Statut</span>

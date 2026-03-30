@@ -150,6 +150,19 @@
                 </div>
             </a>
 
+            <a href="{{ route('accounting.journals-settings.index') }}" class="group relative bg-[#004A99] rounded-3xl p-8 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden border-none text-white">
+                <div class="relative z-10">
+                    <div class="w-14 h-14 bg-white/20 text-white rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="settings" class="w-7 h-7"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Paramétrage Journaux</h3>
+                    <p class="text-sm text-white/70 leading-relaxed mb-6">Ajouter, modifier ou supprimer vos journaux comptables.</p>
+                    <div class="flex items-center text-white font-bold text-sm gap-2 uppercase tracking-widest">
+                        Gérer <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+                    </div>
+                </div>
+            </a>
+
             <a href="{{ route('accounting.help') }}" class="group relative bg-white dark:bg-[#161615] border border-border rounded-3xl p-8 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
                 <div class="relative z-10">
                     <div class="w-14 h-14 bg-gray-500/10 text-gray-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">

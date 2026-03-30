@@ -6,6 +6,7 @@ use App\Http\Controllers\GeneralAccounting\JournalController;
 use App\Http\Controllers\GeneralAccounting\LedgerController;
 use App\Http\Controllers\GeneralAccounting\TrialBalanceController;
 use App\Http\Controllers\GeneralAccounting\FinancialStatementController;
+use App\Http\Controllers\GeneralAccounting\JournalSettingsController;
 use App\Http\Controllers\GeneralAccounting\SupportController;
 use App\Http\Controllers\GeneralAccounting\ArchiveController;
 use App\Http\Controllers\EntrepriseController;
@@ -72,7 +73,18 @@ Route::prefix('accounting')->name('accounting.')->middleware(['web', 'auth'])->g
     Route::get('/journal/import', [JournalController::class, 'importForm'])->name('journal.import');
     Route::post('/journal/import', [JournalController::class, 'importProcess'])->name('journal.import.process');
     Route::get('/journal/{id}', [JournalController::class, 'show'])->name('journal.show');
+    Route::get('/journal/{id}/edit', [JournalController::class, 'edit'])->name('journal.edit');
+    Route::post('/journal/{id}/update', [JournalController::class, 'update'])->name('journal.update');
+    Route::delete('/journal/{id}', [JournalController::class, 'destroy'])->name('journal.destroy');
     Route::get('/journal/{id}/pdf', [JournalController::class, 'showPdf'])->name('journal.show.pdf');
+    
+    // Paramétrage des journaux
+    Route::get('/journals-settings', [JournalSettingsController::class, 'index'])->name('journals-settings.index');
+    Route::get('/journals-settings/create', [JournalSettingsController::class, 'create'])->name('journals-settings.create');
+    Route::post('/journals-settings', [JournalSettingsController::class, 'store'])->name('journals-settings.store');
+    Route::get('/journals-settings/{id}/edit', [JournalSettingsController::class, 'edit'])->name('journals-settings.edit');
+    Route::post('/journals-settings/{id}', [JournalSettingsController::class, 'update'])->name('journals-settings.update');
+    Route::delete('/journals-settings/{id}', [JournalSettingsController::class, 'destroy'])->name('journals-settings.destroy');
     
     Route::get('/ledger/{account_id?}', [LedgerController::class, 'ledger'])->name('ledger');
     Route::get('/ledger-pdf/{account_id?}', [LedgerController::class, 'ledgerPdf'])->name('ledger.pdf');

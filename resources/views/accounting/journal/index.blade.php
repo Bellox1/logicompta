@@ -166,7 +166,7 @@
                 <thead>
                     <tr class="bg-primary text-white">
                         <th class="group p-0 font-bold text-[11px] uppercase tracking-widest text-center border-r border-white/10"
-                            style="width: 140px;">
+                            style="width: 100px;">
                             <a href="{{ request()->fullUrlWithQuery(['sort' => 'date', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}"
                                 class="flex items-center justify-center gap-2 w-full px-4 py-4 text-white hover:bg-white/5 transition-colors">
                                 <span>DATE</span>
@@ -177,7 +177,7 @@
                             </a>
                         </th>
                         <th class="group p-0 font-bold text-[11px] uppercase tracking-widest text-center border-r border-white/10"
-                            style="width: 120px;">
+                            style="width: 90px;">
                             <a href="{{ request()->fullUrlWithQuery(['sort' => 'numero_piece', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}"
                                 class="flex items-center justify-center gap-2 w-full px-4 py-4 text-white hover:bg-white/5 transition-colors">
                                 <span>Num PC</span>
@@ -188,17 +188,17 @@
                             </a>
                         </th>
                         <th class="px-4 py-4 font-bold text-[11px] uppercase tracking-widest border-r border-white/10"
-                            style="width: 120px;">N° DE COMPTE</th>
+                            style="width: 100px;">N° DE COMPTE</th>
                         <th class="px-4 py-4 font-bold text-[11px] uppercase tracking-widest border-r border-white/10">
                             INTITULE</th>
                         <th class="px-4 py-4 font-bold text-[11px] uppercase tracking-widest border-r border-white/10">
                             LIBELLES</th>
                         <th class="px-4 py-4 font-bold text-[11px] uppercase tracking-widest text-right border-r border-white/10"
-                            style="width: 120px;">DEBIT</th>
+                            style="width: 110px;">DEBIT</th>
                         <th class="px-4 py-4 font-bold text-[11px] uppercase tracking-widest text-right border-r border-white/10"
-                            style="width: 120px;">CREDIT</th>
+                            style="width: 110px;">CREDIT</th>
                         <th class="px-4 py-4 font-bold text-[11px] uppercase tracking-widest text-center"
-                            style="width: 100px;">ACTIONS</th>
+                            style="width: 80px;">ACTIONS</th>
                     </tr>
                 </thead>
                 <tbody class="italic">
@@ -209,13 +209,6 @@
                                     <td rowspan="{{ $entry->lines->count() }}"
                                         class="px-5 py-6 text-sm text-gray-950 font-black text-center align-middle not-italic transition-all border-b-2 border-gray-400">
                                         {{ \Carbon\Carbon::parse($entry->date)->format('d/m/Y') }}
-                                        @if($entry->is_archived)
-                                            <div class="mt-2">
-                                                <span class="inline-block px-2 py-1 bg-amber-100 text-amber-600 text-[8px] font-black rounded uppercase tracking-tighter">
-                                                    ARCHIVÉ
-                                                </span>
-                                            </div>
-                                        @endif
                                     </td>
                                     <td rowspan="{{ $entry->lines->count() }}"
                                         class="px-5 py-6 text-sm text-center align-middle not-italic transition-all border-b-2 border-gray-400">
@@ -231,7 +224,7 @@
                                     {{ $line->account->code_compte }}
                                 </td>
                                 <td
-                                    class="px-5 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400 not-italic w-[230px] transition-all {{ $loop->last ? 'border-b-2 border-gray-400' : '' }}">
+                                    class="px-5 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400 not-italic w-[180px] transition-all {{ $loop->last ? 'border-b-2 border-gray-400' : '' }}">
                                     {{ $line->account->libelle }}
                                 </td>
                                 <td
@@ -250,17 +243,44 @@
                                 @if ($index === 0)
                                     <td rowspan="{{ $entry->lines->count() }}"
                                         class="px-4 py-4 text-center align-middle not-italic transition-all border-b-2 border-gray-400">
-                                        <div class="flex items-center justify-center gap-4">
+                                        <div class="flex items-center justify-center gap-2">
                                             <a href="{{ route('accounting.journal.show', $entry->id) }}"
-                                                class="p-2 text-gray-300 hover:text-primary transition-all"
+                                                class="p-1.5 text-gray-400 hover:text-primary transition-all rounded-lg hover:bg-gray-100"
                                                 title="Détails">
-                                                <i data-lucide="eye" class="w-6 h-6"></i>
+                                                <i data-lucide="eye" class="w-5 h-5"></i>
                                             </a>
+                                            <a href="{{ route('accounting.journal.edit', $entry->id) }}"
+                                                class="p-1.5 text-gray-400 hover:text-amber-500 transition-all rounded-lg hover:bg-gray-100"
+                                                title="Modifier">
+                                                <i data-lucide="edit-3" class="w-5 h-5"></i>
+                                            </a>
+                                            <form id="delete-entry-{{ $entry->id }}" action="{{ route('accounting.journal.destroy', $entry->id) }}" method="POST" class="inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="button" 
+                                                    onclick="Swal.fire({
+                                                        title: 'Supprimer cette écriture ?',
+                                                        text: 'L\'opération sera définitivement supprimée.',
+                                                        icon: 'warning',
+                                                        showCancelButton: true,
+                                                        confirmButtonColor: '#003366',
+                                                        cancelButtonColor: '#d33',
+                                                        confirmButtonText: 'Oui, supprimer',
+                                                        cancelButtonText: 'Annuler'
+                                                    }).then((result) => {
+                                                        if (result.isConfirmed) {
+                                                            document.getElementById('delete-entry-{{ $entry->id }}').submit();
+                                                        }
+                                                    })"
+                                                    class="p-1.5 text-gray-400 hover:text-red-500 transition-all rounded-lg hover:bg-gray-100" title="Supprimer">
+                                                    <i data-lucide="x" class="w-5 h-5"></i>
+                                                </button>
+                                            </form>
                                             <a href="{{ route('accounting.journal.show.pdf', $entry->id) }}"
                                                 target="_blank"
-                                                class="p-2 text-gray-300 hover:text-red-500 transition-all"
+                                                class="p-1.5 text-gray-400 hover:text-red-500 transition-all rounded-lg hover:bg-gray-100"
                                                 title="PDF">
-                                                <i data-lucide="file-text" class="w-6 h-6"></i>
+                                                <i data-lucide="file-text" class="w-5 h-5"></i>
                                             </a>
                                         </div>
                                     </td>

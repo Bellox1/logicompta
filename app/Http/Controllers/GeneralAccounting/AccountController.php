@@ -18,12 +18,12 @@ class AccountController extends Controller
         }
 
         $accounts = Account::with(['sousComptes' => function($query) use ($user) {
-            $query->where('entreprise_id', '=', $user->entreprise_id, 'and');
+            $query->where('entreprise_id', $user->entreprise_id);
         }])->orderBy('code_compte', 'asc')->get()->groupBy('classe');
 
         // Extraer todos los sous-comptes para la tabla separada
         $allSousComptes = SousCompte::query()->with('account')
-            ->where('entreprise_id', '=', $user->entreprise_id, 'and')
+            ->where('entreprise_id', $user->entreprise_id)
             ->get();
 
         return view('accounting.account.index', compact('accounts', 'allSousComptes'));
@@ -49,8 +49,8 @@ class AccountController extends Controller
         }
 
         // Vérifier si le numéro existe déjà en tant que sous-compte pour cette entreprise
-        $existsS = SousCompte::where('entreprise_id', '=', $user->entreprise_id, 'and')
-            ->where('numero_sous_compte', '=', $request->numero_sous_compte, 'and')
+        $existsS = SousCompte::where('entreprise_id', $user->entreprise_id)
+            ->where('numero_sous_compte', $request->numero_sous_compte)
             ->exists();
             
         if ($existsS) {

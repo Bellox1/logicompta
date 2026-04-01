@@ -5,12 +5,12 @@
 @section('content')
     <div class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-            <h1 class="text-3xl font-bold text-slate-800">Saisie d'écriture</h1>
-            <p class="text-sm text-slate-500 mt-1">Enregistrez vos flux financiers avec précision</p>
+            <h1 class="text-3xl font-bold text-text-main uppercase tracking-tight">Saisie d'écriture</h1>
+            <p class="text-sm text-text-secondary mt-1 font-bold italic">Enregistrez vos flux financiers avec précision</p>
         </div>
         <div class="flex items-center gap-3">
             <a href="{{ route('accounting.journal.index') }}" 
-                class="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 font-semibold rounded-lg hover:bg-slate-50 transition-all text-xs flex items-center gap-2">
+                class="px-5 py-2.5 bg-white border border-border text-text-secondary font-black rounded-xl hover:-translate-y-0.5 transition-all text-xs flex items-center gap-2 shadow-sm">
                 <i data-lucide="history" class="w-4 h-4"></i>
                 Historique
             </a>
@@ -26,30 +26,32 @@
         @csrf
 
         @if ($errors->any())
-            <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-8 rounded-r-xl">
-                <div class="flex items-center">
-                    <i data-lucide="alert-circle" class="text-red-500 w-5 h-5 mr-3"></i>
-                    <div class="text-sm text-red-700 font-bold">Certaines informations sont incorrectes :</div>
-                </div>
-                <ul class="mt-2 list-disc list-inside text-xs text-red-600">
+            <div class="relative bg-rose-50 border border-rose-100 rounded-2xl p-5 mb-10 animate-fade-in no-print">
+                <button type="button" onclick="this.parentElement.remove()" class="absolute top-4 right-4 text-rose-300 hover:text-rose-600 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+                <ul class="space-y-1">
                     @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
+                        <li class="text-xs text-rose-700 font-bold italic flex items-center gap-2">
+                            <span class="w-1 h-1 bg-rose-400 rounded-full"></span>
+                            {{ $error }}
+                        </li>
                     @endforeach
                 </ul>
             </div>
         @endif
 
-        <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm mb-8">
+        <div class="bg-card-bg border border-border rounded-3xl p-8 shadow-sm mb-8">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div>
-                    <label class="block text-[11px] font-bold text-slate-400 mb-2 uppercase tracking-wider">N° Pièce</label>
+                    <label class="block text-[11px] font-bold text-text-secondary mb-2 uppercase tracking-wider">N° Pièce</label>
                     <input type="text" value="{{ $nextPieceNumber }}" disabled
-                        class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-slate-400 font-bold cursor-not-allowed">
+                        class="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl px-4 py-3 text-text-secondary font-bold cursor-not-allowed italic">
                 </div>
                 <div>
-                    <label class="block text-[11px] font-bold text-slate-400 mb-2 uppercase tracking-wider">Journal</label>
+                    <label class="block text-[11px] font-bold text-text-secondary mb-2 uppercase tracking-wider">Journal</label>
                     <select name="journal_id" required
-                        class="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 focus:border-primary outline-none transition-all text-sm font-semibold">
+                        class="w-full bg-white border border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all text-sm font-black text-text-main">
                         @foreach ($journals as $journal)
                             <option value="{{ $journal->id }}"
                                 {{ old('journal_id') == $journal->id ? 'selected' : '' }}>{{ $journal->name }}</option>
@@ -57,24 +59,24 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-[11px] font-bold text-slate-400 mb-2 uppercase tracking-wider">Date</label>
+                    <label class="block text-[11px] font-bold text-text-secondary mb-2 uppercase tracking-wider">Date</label>
                     <input type="date" name="date" value="{{ old('date', date('Y-m-d')) }}" required
-                        class="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 focus:border-primary outline-none transition-all text-sm font-semibold">
+                        class="w-full bg-white border border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all text-sm font-black text-text-main">
                 </div>
                 <div>
-                    <label class="block text-[11px] font-bold text-slate-400 mb-2 uppercase tracking-wider">Libellé</label>
+                    <label class="block text-[11px] font-bold text-text-secondary mb-2 uppercase tracking-wider">Libellé</label>
                     <input type="text" name="libelle" placeholder="Ex: Achat fournitures..." required
-                        class="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 focus:border-primary outline-none transition-all text-sm font-semibold" 
+                        class="w-full bg-white border border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all text-sm font-black text-text-main" 
                         value="{{ old('libelle') }}">
                 </div>
             </div>
         </div>
 
-        <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden mb-8">
-            <div class="bg-slate-50/50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Lignes d'écritures</h3>
+        <div class="bg-card-bg border border-border rounded-3xl shadow-sm overflow-hidden mb-8">
+            <div class="bg-white/50 px-6 py-4 border-b border-border flex items-center justify-between">
+                <h3 class="text-xs font-black text-text-secondary uppercase tracking-widest italic">Lignes d'écritures</h3>
                 <button type="button" id="add-line"
-                    class="text-primary hover:opacity-80 font-bold text-xs flex items-center gap-2 transition-all">
+                    class="text-primary hover:opacity-80 font-black text-xs flex items-center gap-2 transition-all">
                     <i data-lucide="plus" class="w-4 h-4"></i>
                     Ajouter une ligne
                 </button>
@@ -83,14 +85,11 @@
             <div class="table-responsive">
                 <table class="w-full border-collapse min-w-[800px]">
                     <thead>
-                        <tr class="text-slate-400 border-b border-slate-100">
-                            <th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-left" style="width: 30%;">
-                                Compte</th>
-                            <th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-right" style="width: 15%;">
-                                Débit</th>
-                            <th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-right" style="width: 15%;">
-                                Crédit</th>
-                            <th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-left">Libellé de ligne</th>
+                        <tr class="text-text-secondary border-b border-border font-black italic">
+                            <th class="px-6 py-4 text-[10px] uppercase font-black tracking-widest text-left" style="width: 30%;">Compte</th>
+                            <th class="px-6 py-4 text-[10px] uppercase font-black tracking-widest text-right" style="width: 15%;">Débit</th>
+                            <th class="px-6 py-4 text-[10px] uppercase font-black tracking-widest text-right" style="width: 15%;">Crédit</th>
+                            <th class="px-6 py-4 text-[10px] uppercase font-black tracking-widest text-left">Libellé de ligne</th>
                             <th class="px-6 py-4" style="width: 50px;"></th>
                         </tr>
                     </thead>
@@ -99,10 +98,10 @@
                             $oldLines = old('lines', [null, null]); // Au moins 2 lignes
                         @endphp
                         @foreach ($oldLines as $index => $oldLine)
-                            <tr class="line-row hover:bg-slate-50/50 transition-colors">
+                            <tr class="line-row hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
                                 <td class="px-4 py-3">
                                     <select name="lines[{{ $index }}][sous_compte_id]" required
-                                        class="w-full bg-white border border-border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none select2-account">
+                                        class="w-full bg-white dark:bg-white/5 border border-border rounded-xl px-3 py-2 text-sm font-bold focus:ring-2 focus:ring-primary outline-none select2-account">
                                         <option value="">Choisir un sous-compte...</option>
                                         @foreach ($accounts->groupBy(fn($sc) => $sc->account->code_compte . ' - ' . $sc->account->libelle) as $parentLabel => $subAccounts)
                                             <optgroup label="{{ $parentLabel }}">
@@ -117,23 +116,23 @@
                                 </td>
                                 <td class="px-4 py-3">
                                     <input type="number" step="0.01" name="lines[{{ $index }}][debit]"
-                                        class="debit-input w-full bg-white border border-border rounded-lg px-3 py-2 text-sm text-right font-semibold focus:ring-2 focus:ring-primary outline-none"
+                                        class="debit-input w-full bg-white dark:bg-white/5 border border-border rounded-xl px-3 py-2 text-sm text-right font-black focus:ring-2 focus:ring-primary outline-none"
                                         value="{{ isset($oldLine['debit']) && $oldLine['debit'] != 0 ? $oldLine['debit'] : '' }}"
                                         placeholder="0">
                                 </td>
                                 <td class="px-4 py-3">
                                     <input type="number" step="0.01" name="lines[{{ $index }}][credit]"
-                                        class="credit-input w-full bg-white border border-border rounded-lg px-3 py-2 text-sm text-right font-semibold focus:ring-2 focus:ring-primary outline-none"
+                                        class="credit-input w-full bg-white dark:bg-white/5 border border-border rounded-xl px-3 py-2 text-sm text-right font-black focus:ring-2 focus:ring-primary outline-none"
                                         value="{{ isset($oldLine['credit']) && $oldLine['credit'] != 0 ? $oldLine['credit'] : '' }}"
                                         placeholder="0">
                                 </td>
                                 <td class="px-4 py-3">
                                     <textarea name="lines[{{ $index }}][libelle]" placeholder="Libellé spécifique (facultatif)" rows="1"
-                                        class="w-full bg-white border border-border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none resize-y min-h-[60px]">{{ $oldLine['libelle'] ?? '' }}</textarea>
+                                        class="w-full bg-white dark:bg-white/5 border border-border rounded-xl px-3 py-2 text-sm font-bold focus:ring-2 focus:ring-primary outline-none resize-y min-h-[60px]">{{ $oldLine['libelle'] ?? '' }}</textarea>
                                 </td>
                                 <td class="px-4 py-3 text-center">
                                     @if ($index >= 2)
-                                        <button type="button" class="text-red-400 hover:text-red-600 transition-colors p-1"
+                                        <button type="button" class="text-rose-400 hover:text-rose-600 transition-colors p-1"
                                             onclick="this.closest('tr').remove(); calculate();">
                                             <i data-lucide="x" class="w-5 h-5"></i>
                                         </button>
@@ -149,21 +148,21 @@
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-8">
                     <div class="flex flex-wrap gap-10">
                         <div>
-                            <div class="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">Total Débit</div>
-                            <div class="text-2xl font-bold text-slate-800"><span id="total-debit">0</span> <span class="text-sm font-medium text-slate-400">XOF</span></div>
+                            <div class="text-[10px] uppercase font-black text-text-secondary tracking-widest mb-1 italic">Total Débit</div>
+                            <div class="text-3xl font-black text-text-main"><span id="total-debit">0</span> <span class="text-sm font-medium text-text-secondary opacity-60">XOF</span></div>
                         </div>
                         <div>
-                            <div class="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">Total Crédit</div>
-                            <div class="text-2xl font-bold text-slate-800"><span id="total-credit">0</span> <span class="text-sm font-medium text-slate-400">XOF</span></div>
+                            <div class="text-[10px] uppercase font-black text-text-secondary tracking-widest mb-1 italic">Total Crédit</div>
+                            <div class="text-3xl font-black text-text-main"><span id="total-credit">0</span> <span class="text-sm font-medium text-text-secondary opacity-60">XOF</span></div>
                         </div>
                         <div id="balance-container">
-                            <div class="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">État d'Équilibre</div>
-                            <div id="balance-status" class="text-sm font-bold text-red-500">Déséquilibre: 0 XOF</div>
+                            <div class="text-[10px] uppercase font-black text-text-secondary tracking-widest mb-1 italic">État d'Équilibre</div>
+                            <div id="balance-status" class="text-sm font-black text-rose-500 uppercase tracking-widest">Déséquilibre: 0 XOF</div>
                         </div>
                     </div>
                     <button type="submit" id="submit-btn" disabled
-                        class="w-full md:w-auto px-10 py-4 bg-primary text-white font-bold rounded-lg hover:opacity-90 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm flex items-center justify-center gap-2">
-                        <i data-lucide="check" class="w-5 h-5"></i>
+                        class="w-full md:w-auto px-10 py-4 bg-primary text-white font-black rounded-2xl hover:bg-primary-light disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-xl flex items-center justify-center gap-2 uppercase tracking-widest text-xs">
+                        <i data-lucide="check-circle" class="w-5 h-5"></i>
                         Valider l'écriture
                     </button>
                 </div>

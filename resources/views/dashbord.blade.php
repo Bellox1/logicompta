@@ -38,8 +38,8 @@
                         <i data-lucide="building-2" class="w-8 h-8"></i>
                     </div>
                     <div>
-                        <h3 class="text-xl font-black text-slate-900 dark:text-white">Aucune entreprise associée</h3>
-                        <p class="text-slate-500 dark:text-slate-300/60 text-sm mt-1 leading-relaxed max-w-xl">
+                        <h3 class="text-xl font-black text-text-main">Aucune entreprise associée</h3>
+                        <p class="text-text-secondary text-sm mt-1 leading-relaxed max-w-xl">
                             Démarez votre expérience complète en associant votre compte à une structure existante ou en créant la vôtre dès maintenant.
                         </p>
                     </div>
@@ -62,7 +62,7 @@
                         </button>
                     </form>
                     <a href="{{ url('/entreprise-setup?action=create') }}"
-                       class="px-6 py-3 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-black rounded-2xl hover:bg-slate-50 dark:hover:bg-white/10 transition-all text-xs uppercase tracking-widest flex items-center gap-2 text-center justify-center">
+                       class="px-6 py-3 bg-card-bg border border-border text-text-main font-black rounded-2xl hover:bg-slate-50 dark:hover:bg-white/10 transition-all text-xs uppercase tracking-widest flex items-center gap-2 text-center justify-center">
                         <i data-lucide="plus-circle" class="w-4 h-4"></i> Créer
                     </a>
                 </div>
@@ -73,10 +73,10 @@
 
     {{-- Modules --}}
     <div>
-        <p class="text-xs uppercase font-bold tracking-widest text-slate-400 mb-4">Modules disponibles</p>
+        <p class="text-xs uppercase font-bold tracking-widest text-text-secondary mb-4">Modules disponibles</p>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-            <a href="{{ route('accounting.journal.index') }}" class="group relative bg-white dark:bg-[#161615] border border-border rounded-3xl p-8 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+            <a href="{{ route('accounting.journal.index') }}" class="group relative bg-card-bg border border-border rounded-3xl p-8 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
                 <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                     <i data-lucide="book-open" class="w-32 h-32 -mr-8 -mt-8 rotate-12"></i>
                 </div>
@@ -84,8 +84,8 @@
                     <div class="w-14 h-14 bg-primary/10 text-primary rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                         <i data-lucide="book-open" class="w-7 h-7"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Journal</h3>
-                    <p class="text-sm text-slate-500 leading-relaxed mb-6">Saisie et historique complet des écritures comptables.</p>
+                    <h3 class="text-xl font-bold text-text-main mb-2">Journal</h3>
+                    <p class="text-sm text-text-secondary leading-relaxed mb-6">Saisie et historique complet des écritures comptables.</p>
                     <div class="flex items-center text-primary font-bold text-sm gap-2 uppercase tracking-widest">
                         Accéder <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
                     </div>
@@ -101,7 +101,7 @@
                         <i data-lucide="bar-chart-2" class="w-7 h-7"></i>
                     </div>
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Grand Livre</h3>
-                    <p class="text-sm text-slate-500 leading-relaxed mb-6">Consultation par compte avec soldes progressifs.</p>
+                    <p class="text-sm text-slate-700 leading-relaxed mb-6">Consultation par compte avec soldes progressifs.</p>
                     <div class="flex items-center text-indigo-600 font-bold text-sm gap-2 uppercase tracking-widest">
                         Accéder <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
                     </div>
@@ -117,7 +117,7 @@
                         <i data-lucide="scale" class="w-7 h-7"></i>
                     </div>
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Balance</h3>
-                    <p class="text-sm text-slate-500 leading-relaxed mb-6">Vérification de l'équilibre comptable par classe.</p>
+                    <p class="text-sm text-slate-700 leading-relaxed mb-6">Vérification de l'équilibre comptable par classe.</p>
                     <div class="flex items-center text-green-600 font-bold text-sm gap-2 uppercase tracking-widest">
                         Accéder <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
                     </div>
@@ -130,7 +130,7 @@
                         <i data-lucide="briefcase" class="w-7 h-7"></i>
                     </div>
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Bilan</h3>
-                    <p class="text-sm text-slate-500 leading-relaxed mb-6">Actif, Passif et situation patrimoniale de l'entreprise.</p>
+                    <p class="text-sm text-slate-700 leading-relaxed mb-6">Actif, Passif et situation patrimoniale de l'entreprise.</p>
                     <div class="flex items-center text-primary font-bold text-sm gap-2 uppercase tracking-widest">
                         Accéder <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
                     </div>
@@ -143,7 +143,7 @@
                         <i data-lucide="trending-up" class="w-7 h-7"></i>
                     </div>
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Résultat</h3>
-                    <p class="text-sm text-slate-500 leading-relaxed mb-6">Compte de résultat, charges et produits de la période.</p>
+                    <p class="text-sm text-slate-700 leading-relaxed mb-6">Compte de résultat, charges et produits de la période.</p>
                     <div class="flex items-center text-emerald-600 font-bold text-sm gap-2 uppercase tracking-widest">
                         Accéder <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
                     </div>
@@ -169,7 +169,7 @@
                         <i data-lucide="help-circle" class="w-7 h-7"></i>
                     </div>
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Guide & Aide</h3>
-                    <p class="text-sm text-slate-500 leading-relaxed mb-6">Documentation et assistance pour utiliser Comptafriq.</p>
+                    <p class="text-sm text-slate-700 leading-relaxed mb-6">Documentation et assistance pour utiliser Comptafriq.</p>
                     <div class="flex items-center text-slate-500 font-bold text-sm gap-2 uppercase tracking-widest">
                         Consulter <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
                     </div>

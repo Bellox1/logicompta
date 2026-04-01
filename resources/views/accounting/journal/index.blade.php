@@ -12,8 +12,7 @@
         .journal-table th,
         .journal-table td {
             padding: 1rem;
-            border: 1px solid #e5e7eb;
-            /* border-gray-200 */
+            border: 1px solid var(--border-color);
         }
 
         .journal-table th {
@@ -65,7 +64,7 @@
             </div>
             <div>
                 <h3 class="text-lg font-black text-gray-800 uppercase leading-none">Archives de l'exercice {{ date('Y', strtotime(request('start_date'))) }}</h3>
-                <p class="text-xs text-gray-500 font-bold uppercase tracking-widest mt-1">Écritures scellées et protégées (Lecture seule)</p>
+                <p class="text-xs text-gray-700 font-bold uppercase tracking-widest mt-1">Écritures scellées et protégées (Lecture seule)</p>
             </div>
         </div>
         <a href="{{ route('accounting.archive.index') }}" class="text-[10px] font-black uppercase text-primary bg-white border border-primary px-3 py-1.5 rounded-lg hover:bg-primary hover:text-white transition-all">
@@ -77,7 +76,7 @@
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
             <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Journal des écritures</h1>
-            <p class="text-sm text-gray-500">Historique complet des opérations comptables</p>
+            <p class="text-sm text-gray-700">Historique complet des opérations comptables</p>
         </div>
         <div class="flex flex-wrap items-center gap-3 no-print">
             <div class="relative group">
@@ -120,19 +119,19 @@
         class="mb-10 grid grid-cols-1 md:flex md:flex-row md:items-end gap-3 md:gap-5 bg-card-bg p-4 md:p-8 border border-border shadow-sm no-print overflow-hidden max-w-full">
         <div class="w-full md:flex-1 md:min-w-[200px]">
             <label
-                class="block text-[10px] uppercase font-bold text-gray-400 mb-2 tracking-widest px-1 flex items-center gap-2">
+                class="block text-[10px] uppercase font-bold text-text-secondary mb-2 tracking-widest px-1 flex items-center gap-2">
                 <i data-lucide="calendar" class="w-3 h-3"></i> Période du
             </label>
             <input type="date" name="start_date" value="{{ request('start_date') }}" placeholder="JJ/MM/AAAA"
-                class="w-full bg-bg border border-border px-4 py-3 text-sm font-bold outline-none focus:border-primary transition-all rounded-lg box-border max-w-full">
+                class="w-full bg-white border border-border px-4 py-3 text-sm font-bold text-text-main outline-none focus:border-primary transition-all rounded-xl box-border max-w-full">
         </div>
         <div class="w-full md:flex-1 md:min-w-[200px]">
             <label
-                class="block text-[10px] uppercase font-bold text-gray-400 mb-2 tracking-widest px-1 flex items-center gap-2">
+                class="block text-[10px] uppercase font-bold text-text-secondary mb-2 tracking-widest px-1 flex items-center gap-2">
                 <i data-lucide="calendar" class="w-3 h-3"></i> Au
             </label>
             <input type="date" name="end_date" value="{{ request('end_date') }}" placeholder="JJ/MM/AAAA"
-                class="w-full bg-bg border border-border px-4 py-3 text-sm font-bold outline-none focus:border-primary transition-all rounded-lg box-border max-w-full">
+                class="w-full bg-white border border-border px-4 py-3 text-sm font-bold text-text-main outline-none focus:border-primary transition-all rounded-xl box-border max-w-full">
         </div>
         <div class="w-full md:w-auto flex flex-col md:flex-row gap-3">
             <button type="submit"
@@ -141,7 +140,7 @@
             </button>
             @if (request()->hasAny(['start_date', 'end_date', 'show_archived']))
                 <a href="{{ request()->url() }}"
-                    class="w-full md:px-8 py-3 bg-gray-100 text-gray-500 text-[11px] font-black uppercase tracking-[0.2em] hover:bg-gray-200 transition-all flex items-center justify-center gap-2 border border-gray-200">
+                    class="w-full md:px-8 py-3 bg-white text-text-secondary text-[11px] font-black uppercase tracking-[0.2em] hover:bg-slate-50 transition-all flex items-center justify-center gap-2 border border-border rounded-xl">
                     <i data-lucide="x" class="w-4 h-4"></i> Effacer
                 </a>
             @endif
@@ -202,16 +201,24 @@
                     </tr>
                 </thead>
                 <tbody class="italic">
+                    @php
+                        $pageTotalDebit = 0;
+                        $pageTotalCredit = 0;
+                    @endphp
                     @forelse($entries as $entry)
+                        @php
+                            $pageTotalDebit += $entry->lines->sum('debit');
+                            $pageTotalCredit += $entry->lines->sum('credit');
+                        @endphp
                         @foreach ($entry->lines as $index => $line)
-                            <tr class="hover:bg-gray-50 transition-colors">
+                            <tr class="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
                                 @if ($index === 0)
                                     <td rowspan="{{ $entry->lines->count() }}"
-                                        class="px-5 py-6 text-sm text-gray-950 font-black text-center align-middle not-italic transition-all border-b-2 border-gray-400">
+                                        class="px-5 py-6 text-sm text-gray-950 font-black text-center align-middle not-italic transition-all border-b-2 border-slate-300 dark:border-slate-700">
                                         {{ \Carbon\Carbon::parse($entry->date)->format('d/m/Y') }}
                                     </td>
                                     <td rowspan="{{ $entry->lines->count() }}"
-                                        class="px-5 py-6 text-sm text-center align-middle not-italic transition-all border-b-2 border-gray-400">
+                                        class="px-5 py-6 text-sm text-center align-middle not-italic transition-all border-b-2 border-slate-300 dark:border-slate-700">
                                         <a href="{{ route('accounting.journal.show', $entry->id) }}"
                                             class="text-primary font-black hover:underline tracking-tighter text-base">
                                             {{ str_replace('PC-', '', $entry->numero_piece) }}
@@ -220,32 +227,32 @@
                                 @endif
 
                                 <td
-                                    class="px-5 py-6 text-sm font-bold text-gray-800 not-italic transition-all {{ $loop->last ? 'border-b-2 border-gray-400' : '' }}">
+                                    class="px-5 py-6 text-sm font-bold text-text-main not-italic transition-all {{ $loop->last ? 'border-b-2 border-slate-300 dark:border-slate-700' : '' }}">
                                     {{ $line->sousCompte->numero_sous_compte }}
                                 </td>
                                 <td
-                                    class="px-5 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400 not-italic w-[180px] transition-all {{ $loop->last ? 'border-b-2 border-gray-400' : '' }}">
+                                    class="px-5 py-6 text-[10px] font-black uppercase tracking-widest text-text-secondary not-italic w-[180px] transition-all {{ $loop->last ? 'border-b-2 border-slate-300 dark:border-slate-700' : '' }}">
                                     {{ $line->sousCompte->libelle }}
                                 </td>
                                 <td
-                                    class="px-5 py-6 text-sm text-gray-600 font-medium transition-all {{ $loop->last ? 'border-b-2 border-gray-400' : '' }}">
+                                    class="px-5 py-6 text-sm text-text-secondary font-medium transition-all {{ $loop->last ? 'border-b-2 border-slate-300 dark:border-slate-700' : '' }}">
                                     {{ $line->libelle ?: $entry->libelle }}
                                 </td>
                                 <td
-                                    class="px-5 py-6 text-sm text-right font-black text-gray-900 not-italic whitespace-nowrap transition-all {{ $loop->last ? 'border-b-2 border-gray-400' : '' }}">
+                                    class="px-5 py-6 text-sm text-right font-black text-text-main not-italic whitespace-nowrap transition-all {{ $loop->last ? 'border-b-2 border-slate-300 dark:border-slate-700' : '' }}">
                                     {{ number_format($line->debit, 2, ',', ' ') }}
                                 </td>
                                 <td
-                                    class="px-5 py-6 text-sm text-right font-black text-gray-900 not-italic whitespace-nowrap transition-all {{ $loop->last ? 'border-b-2 border-gray-400' : '' }}">
+                                    class="px-5 py-6 text-sm text-right font-black text-text-main not-italic whitespace-nowrap transition-all {{ $loop->last ? 'border-b-2 border-slate-300 dark:border-slate-700' : '' }}">
                                     {{ number_format($line->credit, 2, ',', ' ') }}
                                 </td>
 
                                 @if ($index === 0)
                                     <td rowspan="{{ $entry->lines->count() }}"
-                                        class="px-4 py-4 text-center align-middle not-italic transition-all border-b-2 border-gray-400">
+                                        class="px-4 py-4 text-center align-middle not-italic transition-all border-b-2 border-slate-300 dark:border-slate-700">
                                         <div class="flex items-center justify-center gap-2">
                                             <a href="{{ route('accounting.journal.show', $entry->id) }}"
-                                                class="p-1.5 text-gray-400 hover:text-primary transition-all rounded-lg hover:bg-gray-100"
+                                                class="p-1.5 text-slate-400 hover:text-primary transition-all rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
                                                 title="Détails">
                                                 <i data-lucide="eye" class="w-5 h-5"></i>
                                             </a>
@@ -295,6 +302,15 @@
                             </td>
                         </tr>
                     @endforelse
+
+                    @if($entries->count() > 0)
+                        <tr class="bg-white text-text-main font-black not-italic border-t-2 border-slate-950">
+                            <td colspan="5" class="px-5 py-6 text-right uppercase tracking-[0.2em] text-[10px] whitespace-nowrap">Totaux cumulés (Page actuelle)</td>
+                            <td class="px-5 py-6 text-right whitespace-nowrap text-base">{{ number_format($pageTotalDebit, 2, ',', ' ') }}</td>
+                            <td class="px-5 py-6 text-right whitespace-nowrap text-base">{{ number_format($pageTotalCredit, 2, ',', ' ') }}</td>
+                            <td class="bg-slate-50"></td>
+                        </tr>
+                    @endif
                 </tbody>
             </table>
         </div>

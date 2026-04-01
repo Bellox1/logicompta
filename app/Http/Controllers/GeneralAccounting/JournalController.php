@@ -24,12 +24,12 @@ class JournalController extends Controller
         }
 
         $query = JournalEntry::query()->with(['journal', 'lines.sousCompte.account'])
-            ->where('entreprise_id', '=', $user->entreprise_id, 'and');
+            ->where('entreprise_id', $user->entreprise_id);
         
         if ($request->query('show_archived') == '1') {
-            $query->where('is_archived', '=', true, 'and');
+            $query->where('is_archived', true);
         } else {
-            $query->where('is_archived', '=', false, 'and');
+            $query->where('is_archived', false);
         }
 
         if ($request->start_date) {
@@ -141,6 +141,8 @@ class JournalController extends Controller
             'lines.*.sous_compte_id' => 'required|exists:sous_comptes,id',
             'lines.*.debit' => 'nullable|numeric|min:0',
             'lines.*.credit' => 'nullable|numeric|min:0',
+        ], [
+            'lines.min' => 'Une écriture comptable doit comporter au moins 2 lignes (un débit et un crédit).'
         ]);
 
         $totalDebit = collect($request->lines)->sum('debit');
@@ -229,6 +231,8 @@ class JournalController extends Controller
             'lines.*.sous_compte_id' => 'required|exists:sous_comptes,id',
             'lines.*.debit' => 'nullable|numeric|min:0',
             'lines.*.credit' => 'nullable|numeric|min:0',
+        ], [
+            'lines.min' => 'Une écriture comptable doit comporter au moins 2 lignes (un débit et un crédit).'
         ]);
 
         $totalDebit = collect($request->lines)->sum('debit');
@@ -470,13 +474,22 @@ class JournalController extends Controller
                         ->first(['*']);
 
                     if (!$sousCompte) {
+                        // Tentative de trouver le compte par correspondance exacte ou par préfixe
                         $account = Account::where('code_compte', '=', $line['account'], 'and')->first(['*']);
+                        
+                        if (!$account) {
+                            // Recherche par préfixe (le plus long d'abord)
+                            $account = Account::whereRaw('? LIKE code_compte || "%"', [$line['account']], 'and')
+                                ->orderByRaw('LENGTH(code_compte) DESC')
+                                ->first();
+                        }
+
                         if (!$account) throw new \Exception("[Ligne {$line['line']}] Compte ou sous-compte non trouvé : " . $line['account']);
                         
-                        // On prend le premier sous-compte associé ou on en crée un "Général"
+                        // Création automatique du sous-compte pour ce parent
                         $sousCompte = \App\Models\SousCompte::firstOrCreate(
-                            ['entreprise_id' => $entrepriseId, 'account_id' => $account->id, 'libelle' => 'Général ' . $account->libelle],
-                            ['numero_sous_compte' => $account->code_compte . '000'] // Convention par défaut
+                            ['entreprise_id' => $entrepriseId, 'numero_sous_compte' => $line['account']],
+                            ['account_id' => $account->id, 'libelle' => 'Général ' . $account->libelle]
                         );
                     }
 
@@ -504,19 +517,39 @@ class JournalController extends Controller
             'date' => ['date', 'dates', 'le', 'jour'],
             'piece' => ['piece', 'num pc', 'num_pc', 'réf', 'ref', 'numero_piece', 'pc', 'n° pièce', 'n pièce'],
             'journal' => ['journalCode', 'journal', 'code_journal', 'code journal', 'jrn'],
-            'account' => ['account', 'compte', 'n° de compte', 'code_compte', 'code compte', 'n° compte', 'n compte', 'num compte', 'no compte', 'compte n°', 'n° de compte'],
+            'account' => ['account', 'compte', 'n° de compte', 'code_compte', 'code compte', 'n° compte', 'n compte', 'num compte', 'no compte', 'compte n°', 'n° de compte', 'sous-compte', 'sous compte', 'sous_compte', 'num sous-compte'],
             'label' => ['label', 'libelles', 'libellés', 'operation', 'libelle', 'libellé', 'intitulé / libellé', 'intitulé', 'désignation'],
             'debit' => ['debit', 'débit', 'montant_debit', 'entrant', 'somme débit'],
             'credit' => ['credit', 'crédit', 'montant_credit', 'sortant', 'somme crédit'],
         ];
 
         foreach ($header as $index => $colName) {
-            // Remove BOM and lower case
-            $colName = preg_replace('/[\x00-\x1F\x7F-\xFF]/', '', mb_strtolower(trim($colName)));
+            // Nettoyage agressif : minuscule, pas d'accents, pas de ponctuation
+            $rawName = preg_replace('/[\x00-\x1F\x7F-\xFF]/', '', mb_strtolower(trim($colName)));
+            $cleanName = preg_replace('/[^a-z0-9]/', '', $rawName);
             
             foreach ($columns as $key => $aliases) {
-                if (in_array($colName, $aliases)) {
-                    $map[$key] = $index;
+                foreach ($aliases as $alias) {
+                    $cleanAlias = preg_replace('/[^a-z0-9]/', '', mb_strtolower($alias));
+                    
+                    // Match EXACT (après nettoyage) -> Sortie immédiate pour cette colonne
+                    if ($cleanName === $cleanAlias) {
+                        // Priorité absolue au sous-compte
+                        if ($key === 'account' && str_contains($cleanName, 'sous')) {
+                            $map[$key] = $index;
+                            continue 3; 
+                        }
+                        if (!isset($map[$key]) || ($key === 'account' && !str_contains($cleanName, 'sous'))) {
+                             $map[$key] = $index;
+                        }
+                    }
+
+                    // Match PARTIEL (si le nom de la colonne contient un mot clé métier)
+                    if (strlen($cleanAlias) >= 4 && str_contains($cleanName, $cleanAlias)) {
+                        if (!isset($map[$key]) || ($key === 'account' && str_contains($cleanName, 'sous'))) {
+                            $map[$key] = $index;
+                        }
+                    }
                 }
             }
         }

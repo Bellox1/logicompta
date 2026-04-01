@@ -98,10 +98,10 @@
         <tfoot>
             <tr class="grand-total bg-slate-200">
                 <td colspan="2" class="text-right text-sm">TOTAUX GÉNÉRAUX</td>
-                <td class="text-right text-sm">{{ number_format($grandTotal['mouv_debit'], 2, ',', ' ') }}</td>
-                <td class="text-right text-sm">{{ number_format($grandTotal['mouv_credit'], 2, ',', ' ') }}</td>
-                <td class="text-right text-sm">{{ number_format($grandTotal['fin_debit'], 2, ',', ' ') }}</td>
-                <td class="text-right text-sm">{{ number_format($grandTotal['fin_credit'], 2, ',', ' ') }}</td>
+                <td class="text-right text-sm whitespace-nowrap">{{ number_format($grandTotal['mouv_debit'], 2, ',', ' ') }}</td>
+                <td class="text-right text-sm whitespace-nowrap">{{ number_format($grandTotal['mouv_credit'], 2, ',', ' ') }}</td>
+                <td class="text-right text-sm whitespace-nowrap">{{ number_format($grandTotal['fin_debit'], 2, ',', ' ') }}</td>
+                <td class="text-right text-sm whitespace-nowrap">{{ number_format($grandTotal['fin_credit'], 2, ',', ' ') }}</td>
             </tr>
         </tfoot>
     </table>

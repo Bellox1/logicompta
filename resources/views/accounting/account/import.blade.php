@@ -139,14 +139,14 @@
                     const rows = lines.slice(1, 6); // Max 5 preview rows
                     
                     // Render header
-                    const headerHtml = header.map(h => `<th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100">${h}</th>`).join('');
+                    const headerHtml = header.map(h => `<th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 whitespace-nowrap">${h.trim().replace(/^"(.*)"$/, '$1')}</th>`).join('');
                     document.getElementById('js-preview-header').innerHTML = headerHtml;
                     
                     // Render body
                     let bodyHtml = "";
                     rows.forEach(row => {
                         const cols = row.split(delimiter);
-                        bodyHtml += `<tr class="border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">${cols.map(c => `<td class="px-6 py-4 text-slate-700 font-semibold text-xs">${c}</td>`).join('')}</tr>`;
+                        bodyHtml += `<tr class="border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">${cols.map(c => `<td class="px-6 py-4 text-slate-700 font-semibold text-xs whitespace-nowrap">${c.trim().replace(/^"(.*)"$/, '$1')}</td>`).join('')}</tr>`;
                     });
                     document.getElementById('js-preview-body').innerHTML = bodyHtml;
                     document.getElementById('file-row-count').innerText = `${lines.length - 1} lignes détectées`;

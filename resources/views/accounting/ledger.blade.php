@@ -10,8 +10,8 @@
                 <i data-lucide="archive" class="w-5 h-5"></i>
             </div>
             <div>
-                <h3 class="text-lg font-black text-slate-800 uppercase leading-none">Archives de l'exercice {{ date('Y', strtotime(request('start_date'))) }}</h3>
-                <p class="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Données scellées et définitives</p>
+                <h3 class="text-lg font-black text-text-main uppercase leading-none">Archives de l'exercice {{ date('Y', strtotime(request('start_date'))) }}</h3>
+                <p class="text-xs text-text-secondary font-black uppercase tracking-widest mt-1 italic">Données scellées et définitives</p>
             </div>
         </div>
         <a href="{{ route('accounting.archive.index') }}" class="text-[10px] font-black uppercase text-primary bg-white border border-primary px-3 py-1.5 rounded-lg hover:bg-primary hover:text-white transition-all">
@@ -22,8 +22,8 @@
 
     <div class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6 no-print">
         <div>
-            <h1 class="text-3xl font-bold text-slate-800">Grand Livre {{ $selectedClass ? '- CLASSE ' . $selectedClass : '' }}</h1>
-            <p class="text-sm text-slate-500 mt-1">Détail chronologique des mouvements par compte</p>
+            <h1 class="text-3xl font-black text-text-main uppercase tracking-tight">Grand Livre</h1>
+            <p class="text-sm text-text-secondary mt-1 font-bold italic">Détail chronologique des mouvements par compte</p>
         </div>
         <div class="flex items-center gap-3">
             <a href="{{ route('accounting.ledger', ['mode' => 'all']) }}"
@@ -38,10 +38,10 @@
                     <i data-lucide="chevron-down" class="w-3 h-3"></i>
                 </button>
                 <div id="class-dropdown-menu"
-                    class="absolute right-0 mt-2 w-48 bg-white border border-slate-200 rounded-lg shadow-xl z-[2001] hidden text-[11px]">
+                    class="absolute right-0 mt-2 w-48 bg-card-bg border border-border rounded-xl shadow-xl z-[2001] hidden text-[11px] overflow-hidden">
                     @foreach (range(1, 9) as $class)
                         <a href="{{ route('accounting.ledger', ['mode' => 'class', 'class' => $class]) }}"
-                            class="flex items-center justify-between px-4 py-3 font-semibold text-slate-600 hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-0">
+                            class="flex items-center justify-between px-4 py-3 font-black text-text-secondary hover:bg-white/50 transition-colors border-b border-border last:border-0 uppercase italic">
                             Classe {{ $class }}
                             @if ($selectedClass == $class)
                                 <i data-lucide="check" class="w-3 h-3 text-primary"></i>
@@ -58,12 +58,12 @@
         <input type="hidden" name="mode" value="{{ request('mode', 'single') }}">
         <input type="hidden" name="class" value="{{ request('class') }}">
         <div class="w-full md:flex-1">
-            <label class="block text-[11px] font-bold text-slate-400 mb-2 uppercase tracking-wider px-1">Période du</label>
+            <label class="block text-[11px] font-black text-text-secondary mb-2 uppercase tracking-wider px-1 italic">Période du</label>
             <input type="date" name="start_date" value="{{ request('start_date') }}" 
                 class="w-full bg-slate-50 border border-slate-200 px-4 py-3 text-sm font-semibold outline-none focus:border-primary transition-all rounded-lg">
         </div>
         <div class="w-full md:flex-1">
-            <label class="block text-[11px] font-bold text-slate-400 mb-2 uppercase tracking-wider px-1">Au</label>
+            <label class="block text-[11px] font-black text-text-secondary mb-2 uppercase tracking-wider px-1 italic">Au</label>
             <input type="date" name="end_date" value="{{ request('end_date') }}" 
                 class="w-full bg-slate-50 border border-slate-200 px-4 py-3 text-sm font-semibold outline-none focus:border-primary transition-all rounded-lg">
         </div>
@@ -100,13 +100,12 @@
     </script>
 
     <!-- Account Selector -->
-    <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm mb-8 no-print">
+    <div class="bg-card-bg border border-border rounded-3xl p-6 shadow-sm mb-8 no-print">
         <div class="flex flex-col md:flex-row md:items-end gap-6">
             <div class="flex-1">
-                <label for="account_select" class="block text-[11px] font-bold text-slate-400 mb-2 uppercase tracking-wider px-1">Filtrer par compte</label>
+                <label for="account_select" class="block text-[11px] font-black text-text-secondary mb-2 uppercase tracking-wider px-1 italic">Filtrer par compte</label>
                 <select id="account_select"
-                    class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 focus:border-primary outline-none transition-all text-sm font-semibold appearance-none cursor-pointer"
-                    onchange="window.location.href='/accounting/ledger/' + this.value">
+                    class="w-full bg-bg border border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all text-sm font-black appearance-none cursor-pointer">
                     <option value="">-- Sélectionner un compte spécifique --</option>
                     @foreach ($accounts as $classId => $classAccounts)
                         <optgroup label="CLASSE {{ $classId }}">
@@ -140,22 +139,22 @@
 
     @if (count($data) > 0)
         @foreach ($data as $account)
-            <div class="bg-white border border-slate-200 rounded-xl shadow-sm mb-12 overflow-hidden page-break-after">
+            <div class="bg-card-bg border border-border rounded-[2.5rem] shadow-sm mb-12 overflow-hidden page-break-after">
                 <!-- Informations Compte -->
-                <div class="grid grid-cols-1 md:grid-cols-3 bg-slate-50/50 border-b border-slate-100 p-6 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 bg-white/50 border-b border-border p-8 gap-6">
                     <div>
-                        <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider block mb-1">Intitulé du compte</span>
-                        <span class="text-sm font-bold text-slate-700 uppercase">{{ $account->libelle }}</span>
+                        <span class="text-[10px] uppercase font-black text-text-secondary tracking-widest block mb-1 italic">Intitulé du compte</span>
+                        <span class="text-base font-black text-text-main uppercase">{{ $account->libelle }}</span>
                     </div>
                     <div>
-                        <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider block mb-1">Numéro</span>
-                        <span class="text-sm font-mono font-bold text-primary">
+                        <span class="text-[10px] uppercase font-black text-text-secondary tracking-widest block mb-1 italic">Numéro</span>
+                        <span class="text-base font-black text-primary tracking-tighter italic">
                             {{ str_pad($account->code_compte, 9, '0', STR_PAD_RIGHT) }}
                         </span>
                     </div>
                     <div class="md:text-right">
-                        <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider block mb-1">Dernière consultation</span>
-                        <span class="text-xs font-semibold text-slate-500">{{ date('d/m/Y H:i') }}</span>
+                        <span class="text-[10px] uppercase font-black text-text-secondary tracking-widest block mb-1 italic">Dernière consultation</span>
+                        <span class="text-xs font-black text-text-secondary">{{ date('d/m/Y H:i') }}</span>
                     </div>
                 </div>
 
@@ -163,35 +162,35 @@
                     <table class="w-full border-collapse min-w-[800px]" data-ledger-table
                         data-account="{{ $account->code_compte }} - {{ $account->libelle }}">
                         <thead>
-                            <tr class="text-slate-400 border-b border-slate-100 italic">
-                                <th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-left" style="width: 120px;">Date</th>
-                                <th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-left" style="width: 100px;">Saisie</th>
-                                <th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-left">Libellé de l'opération</th>
-                                <th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-right" style="width: 140px;">Débit</th>
-                                <th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-right" style="width: 140px;">Crédit</th>
+                            <tr class="text-text-secondary border-b border-border font-black italic">
+                                <th class="px-6 py-5 text-[10px] uppercase tracking-widest text-left" style="width: 120px;">Date</th>
+                                <th class="px-6 py-5 text-[10px] uppercase tracking-widest text-left" style="width: 100px;">Journal</th>
+                                <th class="px-6 py-5 text-[10px] uppercase tracking-widest text-left">Libellé de l'opération</th>
+                                <th class="px-6 py-5 text-[10px] uppercase tracking-widest text-right" style="width: 140px;">Débit</th>
+                                <th class="px-6 py-5 text-[10px] uppercase tracking-widest text-right" style="width: 140px;">Crédit</th>
                             </tr>
                         </thead>
                         <tbody class="text-[13px]">
                             @php $runningSolde = 0; @endphp
                             @forelse($account->entryLines as $line)
                                 @php $runningSolde += ($line->debit - $line->credit); @endphp
-                                <tr class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors group">
-                                    <td class="px-6 py-4 text-slate-500">
+                                <tr class="border-b border-border hover:bg-slate-50 transition-colors group">
+                                    <td class="px-6 py-4 text-text-secondary font-black italic">
                                         {{ \Carbon\Carbon::parse($line->entry->date)->format('d/m/Y') }}
                                     </td>
-                                    <td class="px-6 py-4 font-bold">
+                                    <td class="px-6 py-4 font-black">
                                         <a href="{{ route('accounting.journal.show', $line->entry->id) }}"
-                                            class="text-primary hover:text-primary-light flex items-center gap-1">
+                                            class="text-primary hover:text-primary-light flex items-center gap-1 italic">
                                             {{ str_replace('PC-', '', $line->entry->numero_piece) }}
                                         </a>
                                     </td>
-                                    <td class="px-6 py-4 text-slate-600">
+                                    <td class="px-6 py-4 text-text-secondary font-black uppercase">
                                         {{ $line->libelle }}
                                     </td>
-                                    <td class="px-6 py-4 text-right font-bold text-slate-700">
+                                    <td class="px-6 py-4 text-right font-black text-text-main whitespace-nowrap">
                                         {{ $line->debit > 0 ? number_format($line->debit, 2, ',', ' ') : '-' }}
                                     </td>
-                                    <td class="px-6 py-4 text-right font-bold text-slate-700">
+                                    <td class="px-6 py-4 text-right font-black text-text-main whitespace-nowrap">
                                         {{ $line->credit > 0 ? number_format($line->credit, 2, ',', ' ') : '-' }}
                                     </td>
                                 </tr>
@@ -205,25 +204,25 @@
                             @endforelse
                         </tbody>
                         @if (count($account->entryLines) > 0)
-                            <tfoot class="bg-slate-50/30 border-t border-slate-100">
+                            <tfoot class="bg-white/50 border-t border-border">
                                 <tr>
-                                    <td colspan="3" class="px-6 py-4 text-right text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                    <td colspan="3" class="px-6 py-6 text-right text-[10px] font-black text-text-secondary uppercase tracking-widest italic">
                                         Total cumulé
                                     </td>
-                                    <td class="px-6 py-4 text-right font-bold text-slate-700">
+                                    <td class="px-6 py-6 text-right font-black text-text-main whitespace-nowrap">
                                         {{ number_format($account->entryLines->sum('debit'), 2, ',', ' ') }}
                                     </td>
-                                    <td class="px-6 py-4 text-right font-bold text-slate-700">
+                                    <td class="px-6 py-6 text-right font-black text-text-main whitespace-nowrap">
                                         {{ number_format($account->entryLines->sum('credit'), 2, ',', ' ') }}
                                     </td>
                                 </tr>
-                                <tr class="bg-slate-50/80">
+                                <tr class="bg-card-bg">
                                     <td colspan="3"></td>
-                                    <td colspan="2" class="px-6 py-6 text-right">
-                                        <div class="flex items-center justify-end gap-4">
-                                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Solde Net :</span>
-                                            <span class="text-xl font-bold {{ $runningSolde >= 0 ? 'text-emerald-600' : 'text-rose-600' }}">
-                                                {{ number_format(abs($runningSolde), 2, ',', ' ') }} <span class="text-xs uppercase">{{ $runningSolde >= 0 ? 'D' : 'C' }}</span>
+                                    <td colspan="2" class="px-6 py-10 text-right">
+                                        <div class="flex items-center justify-end gap-6 whitespace-nowrap">
+                                            <span class="text-[10px] font-black text-text-secondary uppercase tracking-[0.2em] italic">Solde Net {{ $runningSolde >= 0 ? 'Débité' : 'Crédité' }} :</span>
+                                            <span class="text-3xl font-black {{ $runningSolde >= 0 ? 'text-green-700' : 'text-red-700' }} italic">
+                                                {{ number_format(abs($runningSolde), 2, ',', ' ') }} <span class="text-xs uppercase font-normal not-italic opacity-40 text-text-main">FCFA</span>
                                             </span>
                                         </div>
                                     </td>

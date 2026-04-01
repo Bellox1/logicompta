@@ -21,8 +21,8 @@
                         sans: ['Inter', 'sans-serif']
                     },
                     colors: {
-                        primary: '#005b82',
-                        'primary-light': '#004d99',
+                        primary: '#2563eb',
+                        'primary-light': '#3b82f6',
                     }
                 }
             }
@@ -79,7 +79,7 @@
     </style>
 </head>
 
-<body class="bg-[#0a0f1e] text-white min-h-screen flex flex-col items-center justify-between p-8 overflow-x-hidden">
+<body class="bg-[#020617] text-white min-h-screen flex flex-col items-center justify-between p-8 overflow-x-hidden antialiased">
 
     {{-- Background Decoration --}}
     <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
@@ -179,12 +179,12 @@
                         text: 'Vous ne pourrez pas accéder aux fonctionnalités comptables tant que vous n\'avez pas configuré votre entreprise.',
                         icon: 'info',
                         showCancelButton: true,
-                        confirmButtonColor: '#005b82',
-                        cancelButtonColor: '#94a3b8',
+                        confirmButtonColor: '#2563eb',
+                        cancelButtonColor: '#1e293b',
                         confirmButtonText: 'Passer pour le moment',
                         cancelButtonText: 'Rester ici',
-                        background: '#ffffff',
-                        color: '#111827'
+                        background: '#0f172a',
+                        color: '#ffffff'
                     }).then((result) => {
                         if (result.isConfirmed) {
                             document.getElementById('skip-form').submit();
@@ -208,13 +208,13 @@
                     input: 'text',
                     inputPlaceholder: 'EX: COMPTA-X1Y2',
                     icon: 'question',
-                    background: '#ffffff',
-                    color: '#111827',
+                    background: '#0f172a',
+                    color: '#ffffff',
                     showCancelButton: true,
                     confirmButtonText: 'Rejoindre',
                     cancelButtonText: 'Annuler',
-                    confirmButtonColor: '#005b82',
-                    cancelButtonColor: '#94a3b8',
+                    confirmButtonColor: '#2563eb',
+                    cancelButtonColor: '#1e293b',
                     didOpen: () => {
                         lucide.createIcons();
                         const input = Swal.getInput();
@@ -244,13 +244,13 @@
                     input: 'text',
                     inputPlaceholder: 'Ex: Ma Société SAS',
                     icon: 'success',
-                    background: '#ffffff',
-                    color: '#111827',
+                    background: '#0f172a',
+                    color: '#ffffff',
                     showCancelButton: true,
                     confirmButtonText: 'Créer maintenant',
                     cancelButtonText: 'Annuler',
-                    confirmButtonColor: '#059669',
-                    cancelButtonColor: '#94a3b8',
+                    confirmButtonColor: '#10b981',
+                    cancelButtonColor: '#1e293b',
                     didOpen: () => {
                         lucide.createIcons();
                     },

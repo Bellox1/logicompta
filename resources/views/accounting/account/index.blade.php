@@ -5,34 +5,34 @@
 @section('content')
     <div>
     <div class="mb-10">
-        <h1 class="text-3xl font-bold text-slate-800">Plan Comptable & Sous-comptes</h1>
-        <p class="text-sm text-slate-500 mt-1">Consultez le référentiel SYSCOHADA et gérez vos sous-comptes personnalisés</p>
+        <h1 class="text-3xl font-black text-text-main uppercase tracking-tight">Plan Comptable & Sous-comptes</h1>
+        <p class="text-sm text-text-secondary mt-1 font-bold italic">Consultez le référentiel SYSCOHADA et gérez vos sous-comptes personnalisés</p>
     </div>
 
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
             <!-- COLONNE GAUCHE: PLAN COMPTABLE -->
             <div class="xl:col-span-2">
-                <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden h-full flex flex-col">
-                    <div class="p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="bg-card-bg border border-border rounded-3xl shadow-sm overflow-hidden h-full flex flex-col">
+                    <div class="p-6 border-b border-border flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div>
-                            <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                            <h2 class="text-lg font-black text-text-main flex items-center gap-2 uppercase tracking-widest">
                                 <i data-lucide="book-open" class="w-5 h-5 text-primary"></i>
                                 Référentiel SYSCOHADA
                             </h2>
-                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Plan comptable officiel</p>
+                            <p class="text-[10px] text-text-secondary font-black uppercase tracking-wider italic">Plan comptable officiel</p>
                         </div>
                         <div class="relative max-w-xs w-full">
                             <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
                             <input type="text" id="searchAccount" placeholder="Rechercher par numéro ou intitulé..."
-                                class="w-full bg-slate-50 border border-slate-200 pl-10 pr-4 py-2.5 text-xs font-semibold rounded-lg outline-none focus:border-primary transition-all">
+                                class="w-full bg-bg border border-border pl-10 pr-4 py-2.5 text-xs font-bold rounded-xl outline-none focus:border-primary transition-all dark:text-white">
                         </div>
                     </div>
 
                     <div class="overflow-y-auto custom-scrollbar" style="max-height: 800px;" id="account-list-container">
                         @foreach ($accounts as $classe => $classAccounts)
                             <div class="classe-group">
-                                <div class="bg-slate-50/80 backdrop-blur-sm px-6 py-2 border-y border-slate-100 sticky top-0 z-10">
-                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Classe {{ $classe }}</span>
+                                <div class="bg-white px-6 py-2 border-y border-border sticky top-0 z-10">
+                                    <span class="text-[10px] font-black text-text-secondary uppercase tracking-widest italic">Classe {{ $classe }}</span>
                                 </div>
                                 <table class="w-full text-left">
                                     <tbody class="divide-y divide-slate-50 text-[13px]">
@@ -42,13 +42,13 @@
                                                 <td class="px-6 py-4 font-mono font-bold text-primary w-32">
                                                     {{ $account->code_compte }}
                                                 </td>
-                                                <td class="px-6 py-4 font-semibold text-slate-700">
+                                                <td class="px-6 py-4 font-black text-text-main">
                                                     {{ $account->libelle }}
                                                 </td>
                                                 <td class="px-6 py-4 text-right">
                                                     <button onclick="openSubAccountModal({{ $account->id }}, '{{ $account->code_compte }}', '{{ addslashes($account->libelle) }}')" 
-                                                        class="px-4 py-2 bg-white border border-slate-200 text-slate-600 font-semibold rounded-lg hover:bg-slate-50 transition-all text-[10px] uppercase flex items-center gap-2 ml-auto">
-                                                        <i data-lucide="plus" class="w-3.5 h-3.5"></i> Sous-compte
+                                                        class="px-4 py-2 bg-white border border-border text-text-secondary font-black rounded-xl hover:bg-slate-50 transition-all text-[10px] uppercase flex items-center gap-2 ml-auto shadow-sm">
+                                                        <i data-lucide="plus" class="w-3.5 h-3.5 text-primary"></i> Sous-compte
                                                     </button>
                                                 </td>
                                             </tr>
@@ -63,14 +63,14 @@
 
             <!-- COLONNE DROITE: MES SOUS-COMPTES -->
             <div class="xl:col-span-1">
-                <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden h-full flex flex-col">
-                    <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+                <div class="bg-card-bg border border-border rounded-3xl shadow-sm overflow-hidden h-full flex flex-col">
+                    <div class="p-6 border-b border-border flex items-center justify-between">
                         <div>
-                            <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                            <h2 class="text-lg font-black text-text-main flex items-center gap-2 uppercase tracking-widest">
                                 <i data-lucide="layers" class="w-5 h-5 text-primary"></i>
                                 Mes Sous-comptes
                             </h2>
-                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Interface de saisie</p>
+                            <p class="text-[10px] text-text-secondary font-black uppercase tracking-wider italic">Interface de saisie</p>
                         </div>
                         <a href="{{ route('accounting.account.import') }}" 
                             class="px-4 py-2 bg-primary text-white font-bold rounded-lg hover:opacity-90 transition-all text-xs flex items-center gap-2">
@@ -133,12 +133,12 @@
         <!-- Modals -->
         
         <!-- Modal Ajouter Sous Compte -->
-        <div id="subAccountModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[9999] hidden items-center justify-center p-4">
-            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full relative overflow-hidden animate-in fade-in zoom-in duration-200">
-                <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-                    <h3 class="text-lg font-bold text-slate-800">Nouveau Sous-compte</h3>
-                    <button type="button" onclick="closeSubAccountModal()" class="text-slate-400 hover:text-rose-500 transition-colors">
-                        <i data-lucide="x" class="w-5 h-5"></i>
+        <div id="subAccountModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[9999] hidden items-center justify-center p-4">
+            <div class="bg-card-bg rounded-3xl shadow-2xl max-w-md w-full relative overflow-hidden animate-in fade-in zoom-in duration-200 border border-border">
+                <div class="p-8 border-b border-border flex justify-between items-center bg-white/50">
+                    <h3 class="text-xl font-black text-text-main uppercase tracking-widest italic">Nouveau Sous-compte</h3>
+                    <button type="button" onclick="closeSubAccountModal()" class="text-text-secondary hover:text-rose-500 transition-colors">
+                        <i data-lucide="x" class="w-6 h-6"></i>
                     </button>
                 </div>
                 

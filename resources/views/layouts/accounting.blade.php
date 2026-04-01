@@ -36,10 +36,13 @@
                     colors: {
                         primary: 'var(--primary)',
                         'primary-light': 'var(--primary-light)',
-                        accent: '#f53003',
+                        accent: 'var(--accent)',
                         bg: 'var(--bg)',
                         'card-bg': 'var(--card-bg)',
+                        'sidebar-bg': 'var(--sidebar-bg)',
                         border: 'var(--border-color)',
+                        'text-main': 'var(--text-main)',
+                        'text-secondary': 'var(--text-secondary)',
                     }
                 }
             }
@@ -48,12 +51,12 @@
 
     <style>
         :root {
-            --bg: #f8fafc;
+            --bg: #ffffff;
             --card-bg: #ffffff;
             --sidebar-bg: #ffffff;
             --border-color: #e2e8f0;
-            --text-main: #1e293b;
-            --text-secondary: #64748b;
+            --text-main: #000000;
+            --text-secondary: #1e293b;
             --primary: #005b82;
             --primary-light: #0ea5e9;
             --accent: #38bdf8;
@@ -63,6 +66,17 @@
             --radius-main: 12px;
             --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
             --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #020617;
+                --card-bg: #030712;
+                --sidebar-bg: #020617;
+                --border-color: #1e293b;
+                --text-main: #ffffff;
+                --text-secondary: #cbd5e1;
+            }
         }
 
         /* Table Responsive Wrapper - Scroll horizontal local au cadre blanc */
@@ -88,9 +102,9 @@
         input,
         select,
         textarea {
-            background-color: #ffffff;
-            color: #111827;
-            border: 1px solid #e5e7eb;
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
         }
 
         /* Specific fix for Date inputs to ensure they show up on mobile */
@@ -129,13 +143,14 @@
         @media (prefers-color-scheme: dark) {
             :root {
                 color-scheme: dark;
-                --bg: #0a0a0a;
-                --card-bg: #161615;
-                --border-color: #262624;
-                --text-main: #f3f4f6;
-                /* slate-100 */
-                --primary: #3b82f6;
-                --primary-light: #60a5fa;
+                --bg: #000000;
+                --card-bg: #000000;
+                --sidebar-bg: #000000;
+                --border-color: #1e1e1e;
+                --text-main: #ffffff;
+                --text-secondary: #a1a1aa;
+                --primary: #2563eb;
+                --primary-light: #3b82f6;
             }
 
             input,
@@ -378,6 +393,7 @@
                 transform: translateX(-100%);
                 padding-top: calc(1rem + env(safe-area-inset-top, 0));
                 padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0));
+                background-color: var(--sidebar-bg) !important;
             }
 
             .sidebar.mobile-open {
@@ -422,14 +438,14 @@
     </script>
 </head>
 
-<body class="bg-bg min-h-screen">
+<body class="bg-bg text-text-main min-h-screen antialiased">
     <!-- Overlay for mobile (Visibility managed by JS) -->
     <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/40 dark:bg-black/80 z-[1999] md:hidden"></div>
 
     <div class="flex h-[100dvh] overflow-hidden relative">
         <!-- Sidebar -->
         <aside id="sidebar"
-            class="sidebar sidebar-transition w-[260px] h-full bg-white dark:bg-[#161615] border-r border-border flex flex-shrink-0 flex-col py-3 px-4 shadow-sm z-[2000] overflow-y-auto">
+            class="sidebar sidebar-transition w-[260px] h-full bg-sidebar-bg border-r border-border flex flex-shrink-0 flex-col py-3 px-4 shadow-sm z-[2000] overflow-y-auto">
             <script>
                 // Appliquer la classe si nécessaire avant que l'élément soit affiché
                 if (localStorage.getItem('sidebar-collapsed') === 'true' && window.innerWidth > 768) {
@@ -461,76 +477,76 @@
 
             <nav class="flex-1 flex flex-col gap-1 overflow-y-auto mt-4 px-2">
                 <a href="{{ route('accounting.dashboard') }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-bold transition-all {{ request()->routeIs('accounting.dashboard') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-slate-500 hover:text-primary hover:bg-slate-50' }}">
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.dashboard') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
                     <i class="w-4 h-4 {{ request()->routeIs('accounting.dashboard') ? 'text-white' : '' }}" data-lucide="layout-dashboard"></i>
-                    <span class="sidebar-label transition-all duration-300">Tableau de bord</span>
+                    <span class="sidebar-label transition-all duration-300 uppercase italic">Tableau de bord</span>
                 </a>
 
-                <div class="sidebar-label text-[11px] uppercase font-black text-slate-400 mt-6 px-3 mb-2 tracking-widest hidden md:block opacity-60">
+                <div class="sidebar-label text-[10px] uppercase font-black text-text-secondary mt-6 px-3 mb-2 tracking-widest hidden md:block opacity-60">
                     PRODUITS & SERVICES</div>
 
                 <a href="{{ route('accounting.journal.index') }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-bold transition-all {{ request()->routeIs('accounting.journal.index') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-slate-500 hover:text-primary hover:bg-slate-50' }}">
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.journal.index') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
                     <i class="w-4 h-4 {{ request()->routeIs('accounting.journal.index') ? 'text-white' : '' }}" data-lucide="book"></i>
-                    <span class="sidebar-label transition-all duration-300">Journal</span>
+                    <span class="sidebar-label transition-all duration-300 uppercase italic">Journal</span>
                 </a>
                 <a href="{{ route('accounting.journal.create') }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-bold transition-all {{ request()->routeIs('accounting.journal.create') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-slate-500 hover:text-primary hover:bg-slate-50' }}">
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.journal.create') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
                     <i class="w-4 h-4 {{ request()->routeIs('accounting.journal.create') ? 'text-white' : '' }}" data-lucide="plus-circle"></i>
-                    <span class="sidebar-label transition-all duration-300">Saisie active</span>
+                    <span class="sidebar-label transition-all duration-300 uppercase italic">Saisie active</span>
                 </a>
                 
-                <div class="sidebar-label text-[11px] uppercase font-bold text-slate-400 mt-6 px-3 mb-2 tracking-widest hidden md:block opacity-70">
+                <div class="sidebar-label text-[10px] uppercase font-black text-text-secondary mt-6 px-3 mb-2 tracking-widest hidden md:block opacity-60">
                     PILOTAGE</div>
 
                 <a href="{{ route('accounting.ledger') }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-bold transition-all {{ request()->routeIs('accounting.ledger') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-slate-500 hover:text-primary hover:bg-slate-50' }}">
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.ledger') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
                     <i class="w-4 h-4 {{ request()->routeIs('accounting.ledger') ? 'text-white' : '' }}" data-lucide="list-checks"></i>
-                    <span class="sidebar-label transition-all duration-300">Grand Livre</span>
+                    <span class="sidebar-label transition-all duration-300 uppercase italic">Grand Livre</span>
                 </a>
                 <a href="{{ route('accounting.balance') }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-bold transition-all {{ request()->routeIs('accounting.balance') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-slate-500 hover:text-primary hover:bg-slate-50' }}">
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.balance') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
                     <i class="w-4 h-4 {{ request()->routeIs('accounting.balance') ? 'text-white' : '' }}" data-lucide="layers"></i>
-                    <span class="sidebar-label transition-all duration-300">Balance</span>
+                    <span class="sidebar-label transition-all duration-300 uppercase italic">Balance</span>
                 </a>
                 <a href="{{ route('accounting.bilan') }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-bold transition-all {{ request()->routeIs('accounting.bilan') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-slate-500 hover:text-primary hover:bg-slate-50' }}">
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.bilan') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
                     <i class="w-4 h-4 {{ request()->routeIs('accounting.bilan') ? 'text-white' : '' }}" data-lucide="file-bar-chart"></i>
-                    <span class="sidebar-label transition-all duration-300">Bilan</span>
+                    <span class="sidebar-label transition-all duration-300 uppercase italic">Bilan</span>
                 </a>
                 <a href="{{ route('accounting.resultat') }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-bold transition-all {{ request()->routeIs('accounting.resultat') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-slate-500 hover:text-primary hover:bg-slate-50' }}">
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.resultat') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
                     <i class="w-4 h-4 {{ request()->routeIs('accounting.resultat') ? 'text-white' : '' }}" data-lucide="trending-up"></i>
-                    <span class="sidebar-label transition-all duration-300">Résultat</span>
+                    <span class="sidebar-label transition-all duration-300 uppercase italic">Résultat</span>
                 </a>
                 <a href="{{ route('accounting.archive.index') }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-bold transition-all {{ request()->routeIs('accounting.archive.*') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-slate-500 hover:text-primary hover:bg-slate-50' }}">
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.archive.index') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
                     <i class="w-4 h-4 {{ request()->routeIs('accounting.archive.*') ? 'text-white' : '' }}" data-lucide="archive"></i>
-                    <span class="sidebar-label transition-all duration-300">Archives</span>
+                    <span class="sidebar-label transition-all duration-300 uppercase italic">Archives</span>
                 </a>
                 
-                <div class="sidebar-label text-[11px] uppercase font-bold text-slate-400 mt-6 px-3 mb-2 tracking-widest hidden md:block opacity-70">
+                <div class="sidebar-label text-[11px] uppercase font-bold text-slate-500 mt-6 px-3 mb-2 tracking-widest hidden md:block opacity-80">
                     PARAMÈTRES</div>
 
                 <a href="{{ route('accounting.account.index') }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-bold transition-all {{ request()->routeIs('accounting.account.*') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-slate-500 hover:text-primary hover:bg-slate-50' }}">
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.account.*') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
                     <i class="w-4 h-4 {{ request()->routeIs('accounting.account.*') ? 'text-white' : '' }}" data-lucide="package"></i>
-                    <span class="sidebar-label transition-all duration-300">Plan Comptable</span>
+                    <span class="sidebar-label transition-all duration-300 uppercase italic">Plan Comptable</span>
                 </a>
                 
-                <div class="sidebar-label text-[11px] uppercase font-bold text-slate-400 mt-6 px-3 mb-2 tracking-widest hidden md:block opacity-70">
+                <div class="sidebar-label text-[10px] uppercase font-black text-text-secondary mt-6 px-3 mb-2 tracking-widest hidden md:block opacity-60">
                     SUPPORT</div>
                 <a href="{{ route('accounting.help') }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-bold transition-all {{ request()->routeIs('accounting.help') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-slate-500 hover:text-primary hover:bg-slate-50' }}">
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.help') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
                     <i class="w-4 h-4 {{ request()->routeIs('accounting.help') ? 'text-white' : '' }}" data-lucide="help-circle"></i>
-                    <span class="sidebar-label transition-all duration-300">Guide & Aide</span>
+                    <span class="sidebar-label transition-all duration-300 uppercase italic">Guide & Aide</span>
                 </a>
             </nav>
 
             <div class="mt-auto pt-4 border-t border-border no-print">
-                <div id="system-date-container" class="px-4 py-3 text-sm font-medium flex items-center gap-4 sidebar-label no-print">
-                    <i data-lucide="clock" class="w-5 h-5 text-slate-500 dark:text-slate-400"></i>
-                    <div id="system-datetime-display" class="text-slate-600 dark:text-slate-400 transition-all duration-300 whitespace-nowrap">
+                <div id="system-date-container" class="px-4 py-3 text-xs flex items-center gap-4 sidebar-label no-print border-t border-border mt-4">
+                    <i data-lucide="clock" class="w-4 h-4 text-text-secondary"></i>
+                    <div id="system-datetime-display" class="text-text-main font-black transition-all duration-300 whitespace-nowrap italic uppercase tracking-wider">
                         --/--/---- --:--:--
                     </div>
                 </div>
@@ -544,10 +560,10 @@
                         text: 'Voulez-vous vraiment vous déconnecter ?',
                         icon: 'question',
                         showCancelButton: true,
-                        confirmButtonColor: '#005b82',
-                        cancelButtonColor: '#94a3b8',
-                        confirmButtonText: 'Oui, déconnecter',
-                        cancelButtonText: 'Annuler',
+                        confirmButtonColor: '#2563eb',
+                        cancelButtonColor: '#64748b',
+                        confirmButtonText: 'OUI, ME DÉCONNECTER',
+                        cancelButtonText: 'ANNULER',
                         background: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#161615' : '#fff',
                         color: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#fff' : '#000'
                     }).then((result) => {
@@ -566,9 +582,8 @@
 
         <!-- Main Content Wrapper -->
         <div class="flex-1 flex flex-col h-full overflow-hidden">
-            <!-- Mobile Top Bar (Opaque background to avoid bleed-through) -->
-            <header
-                class="md:hidden flex items-center justify-between px-4 bg-white dark:bg-[#161615] border-b border-border dark:border-white/10 shadow-sm flex-shrink-0 relative">
+            <!-- Main Header (Mobile Only) -->
+            <header class="flex h-16 items-center justify-between border-b border-border bg-card-bg px-6 md:px-10 sticky top-0 z-[1998] md:hidden">
                 <button id="open-mobile-sidebar"
                     class="p-2 bg-white dark:bg-white/5 rounded-lg border border-border dark:border-white/10 z-10">
                     <i data-lucide="menu" class="w-5 h-5 dark:text-slate-300"></i>

@@ -10,8 +10,8 @@
                 <i data-lucide="archive" class="w-5 h-5"></i>
             </div>
             <div>
-                <h3 class="text-lg font-black text-slate-800 uppercase leading-none">Archives de l'exercice {{ date('Y', strtotime(request('start_date'))) }}</h3>
-                <p class="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Données scellées et définitives</p>
+                <h3 class="text-lg font-black text-text-main uppercase leading-none">Archives de l'exercice {{ date('Y', strtotime(request('start_date'))) }}</h3>
+                <p class="text-xs text-text-secondary font-black uppercase tracking-widest mt-1 italic">Données scellées et définitives</p>
             </div>
         </div>
         <a href="{{ route('accounting.archive.index') }}" class="text-[10px] font-black uppercase text-primary bg-white border border-primary px-3 py-1.5 rounded-lg hover:bg-primary hover:text-white transition-all">
@@ -22,8 +22,8 @@
 
 <div class="mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
     <div>
-        <h1 class="text-3xl font-bold text-slate-800 tracking-tight">Bilan Patrimonial</h1>
-        <p class="text-sm text-slate-500 font-medium tracking-wide">État de santé financière au {{ date('d/m/Y') }}</p>
+        <h1 class="text-3xl font-black text-text-main uppercase tracking-tight">Bilan Patrimonial</h1>
+        <p class="text-sm text-text-secondary mt-1 font-bold italic">État de santé financière au {{ date('d/m/Y') }}</p>
     </div>
     <div class="flex flex-wrap gap-4 no-print">
         <div class="relative group">
@@ -32,12 +32,12 @@
                 OPTIONS D'EXPORT
                 <i data-lucide="chevron-down" class="w-3 h-3"></i>
             </button>
-            <div id="bilan-actions-dropdown-menu" class="absolute right-0 mt-2 w-64 bg-white border border-border shadow-xl z-[2000] hidden">
-                <a href="{{ route('accounting.bilan.pdf') }}" target="_blank" class="flex items-center gap-3 px-4 py-3 text-[11px] font-black text-slate-700 hover:bg-slate-50 border-b border-slate-100">
+            <div id="bilan-actions-dropdown-menu" class="absolute right-0 mt-2 w-64 bg-card-bg border border-border shadow-xl z-[2000] hidden rounded-xl overflow-hidden">
+                <a href="{{ route('accounting.bilan.pdf') }}" target="_blank" class="flex items-center gap-3 px-4 py-3 text-[11px] font-black text-text-main hover:bg-white/50 border-b border-border">
                     <i data-lucide="file-text" class="w-4 h-4 text-red-600"></i>
                     TÉLÉCHARGER PDF
                 </a>
-                <button onclick="exportBilanComplete()" class="flex items-center gap-3 px-4 py-3 text-[11px] font-black text-slate-700 hover:bg-slate-50 w-full text-left">
+                <button onclick="exportBilanComplete()" class="flex items-center gap-3 px-4 py-3 text-[11px] font-black text-text-main hover:bg-white/50 w-full text-left">
                     <i data-lucide="file-spreadsheet" class="w-4 h-4 text-green-600"></i>
                     EXPORTER BILAN COMPLET (CSV)
                 </button>
@@ -48,27 +48,23 @@
 
 <!-- Filtre par période -->
 <div class="mb-10 no-print">
-    <form action="{{ request()->url() }}" method="GET" class="grid grid-cols-1 md:flex md:flex-row md:items-end gap-3 md:gap-5 bg-card-bg p-4 md:p-8 border border-border shadow-sm overflow-hidden max-w-full">
-        <div class="w-full md:flex-1 md:min-w-[200px]">
-            <label class="block text-[10px] uppercase font-bold text-slate-400 mb-2 tracking-widest px-1 flex items-center gap-2">
-                <i data-lucide="calendar" class="w-3 h-3"></i> Période du
-            </label>
-            <input type="date" name="start_date" value="{{ request('start_date') }}" placeholder="JJ/MM/AAAA"
-                   class="w-full bg-bg border border-border px-4 py-3 text-sm font-bold outline-none focus:border-primary transition-all rounded-lg box-border max-w-full">
+    <form action="{{ request()->url() }}" method="GET" class="mb-10 grid grid-cols-1 md:flex md:flex-row md:items-end gap-5 bg-card-bg border border-border p-6 rounded-3xl shadow-sm no-print">
+        <div class="w-full md:flex-1">
+            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-2 uppercase tracking-wider px-1">Période du</label>
+            <input type="date" name="start_date" value="{{ request('start_date') }}" 
+                   class="w-full bg-bg border border-border px-4 py-3 text-sm font-bold outline-none focus:border-primary transition-all rounded-xl dark:text-white">
         </div>
-        <div class="w-full md:flex-1 md:min-w-[200px]">
-            <label class="block text-[10px] uppercase font-bold text-slate-400 mb-2 tracking-widest px-1 flex items-center gap-2">
-                <i data-lucide="calendar" class="w-3 h-3"></i> Au
-            </label>
-            <input type="date" name="end_date" value="{{ request('end_date') }}" placeholder="JJ/MM/AAAA"
-                   class="w-full bg-bg border border-border px-4 py-3 text-sm font-bold outline-none focus:border-primary transition-all rounded-lg box-border max-w-full">
+        <div class="w-full md:flex-1">
+            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-2 uppercase tracking-wider px-1">Au</label>
+            <input type="date" name="end_date" value="{{ request('end_date') }}" 
+                   class="w-full bg-bg border border-border px-4 py-3 text-sm font-bold outline-none focus:border-primary transition-all rounded-xl dark:text-white">
         </div>
         <div class="w-full md:w-auto flex flex-col md:flex-row gap-3">
             <button type="submit" class="w-full md:px-10 py-3 bg-primary text-white text-[11px] font-black uppercase tracking-[0.2em] hover:bg-primary-light transition-all shadow-lg flex items-center justify-center gap-3">
                 <i data-lucide="refresh-cw" class="w-4 h-4"></i> Actualiser
             </button>
             @if(request()->hasAny(['start_date', 'end_date']))
-                <a href="{{ request()->url() }}" class="w-full md:px-8 py-3 bg-slate-100 text-slate-500 text-[11px] font-black uppercase tracking-[0.2em] hover:bg-slate-200 transition-all flex items-center justify-center gap-2 border border-slate-200">
+                <a href="{{ request()->url() }}" class="w-full md:px-8 py-3 bg-white text-text-secondary text-[11px] font-black uppercase tracking-[0.2em] hover:bg-slate-50 transition-all flex items-center justify-center gap-2 border border-border shadow-sm rounded-xl">
                     <i data-lucide="x" class="w-4 h-4"></i> Effacer
                 </a>
             @endif
@@ -79,19 +75,19 @@
 <div class="flex flex-col xl:flex-row gap-8 mb-12">
     <!-- ACTIF -->
     <div class="flex-1 min-w-0 bg-card-bg border border-border rounded-3xl shadow-sm overflow-hidden flex flex-col">
-        <div class="bg-white dark:bg-slate-900 p-6 flex items-center justify-between text-slate-800 dark:text-white border-b border-slate-100 dark:border-white/10">
+        <div class="bg-white/50 p-6 flex items-center justify-between text-text-main border-b border-border">
             <div class="flex items-center gap-4">
-                <div class="bg-green-50 dark:bg-white/10 p-2.5 rounded-xl border border-green-100 dark:border-transparent">
-                    <i data-lucide="trending-up" class="w-6 h-6 text-green-600 dark:text-green-400"></i>
+                <div class="bg-green-50/50 p-2.5 rounded-xl border border-green-100">
+                    <i data-lucide="trending-up" class="w-6 h-6 text-green-600"></i>
                 </div>
                 <div>
-                    <h2 class="text-xl font-black uppercase tracking-widest leading-none mb-1">Actif</h2>
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-tighter opacity-80">Emplois de l'entreprise</p>
+                    <h2 class="text-xl font-black uppercase tracking-widest leading-none mb-1 text-text-main">Actif</h2>
+                    <p class="text-xs font-black text-text-secondary uppercase tracking-tighter opacity-80 italic">Emplois de l'entreprise</p>
                 </div>
             </div>
             <div class="text-right">
-                <div class="text-[10px] uppercase font-bold tracking-widest leading-none opacity-40">Total Actif</div>
-                <div class="text-2xl font-black italic whitespace-nowrap">{{ number_format($actif->sum('solde'), 2, ',', ' ') }} F</div>
+                <div class="text-[10px] uppercase font-black tracking-widest leading-none opacity-40 italic">Total Actif</div>
+                <div class="text-2xl font-black italic whitespace-nowrap text-text-main">{{ number_format($actif->sum('solde'), 2, ',', ' ') }} F</div>
             </div>
         </div>
         
@@ -107,11 +103,11 @@
                     @forelse($actif as $item)
                         <tr class="hover:bg-green-50/30 transition-colors">
                             <td class="px-6 py-4">
-                                <span class="block text-sm font-bold text-slate-800">{{ $item['libelle'] }}</span>
-                                <span class="text-[10px] uppercase font-medium text-slate-400">Ressource durable</span>
+                                <span class="block text-sm font-black text-text-main uppercase">{{ $item['libelle'] }}</span>
+                                <span class="text-[10px] uppercase font-black text-text-secondary italic">Ressource durable</span>
                             </td>
                             <td class="px-6 py-4 text-right whitespace-nowrap">
-                                <span class="text-lg font-bold text-slate-900">{{ number_format($item['solde'], 2, ',', ' ') }}</span>
+                                <span class="text-lg font-bold text-text-main">{{ number_format($item['solde'], 2, ',', ' ') }}</span>
                             </td>
                         </tr>
                     @empty
@@ -127,26 +123,26 @@
         </div>
         
         <div class="p-6 bg-slate-50 dark:bg-black/20 border-t border-border flex justify-between items-center">
-            <span class="text-xs font-black uppercase tracking-widest text-slate-500">Total Bilan (Actif)</span>
-            <span class="text-2xl font-black text-slate-900 dark:text-white italic underline decoration-green-500/30 decoration-4 underline-offset-4 whitespace-nowrap">{{ number_format($actif->sum('solde'), 2, ',', ' ') }} F</span>
+            <span class="text-xs font-black uppercase tracking-widest text-text-secondary">Total Bilan (Actif)</span>
+            <span class="text-2xl font-black text-text-main italic underline decoration-green-500/30 decoration-4 underline-offset-4 whitespace-nowrap">{{ number_format($actif->sum('solde'), 2, ',', ' ') }} F</span>
         </div>
     </div>
 
     <!-- PASSIF -->
     <div class="flex-1 min-w-0 bg-card-bg border border-border rounded-3xl shadow-sm overflow-hidden flex flex-col">
-        <div class="bg-white dark:bg-slate-900 p-6 flex items-center justify-between text-slate-800 dark:text-white border-b border-slate-100 dark:border-white/10">
+        <div class="bg-white/50 p-6 flex items-center justify-between text-text-main border-b border-border">
             <div class="flex items-center gap-4">
-                <div class="bg-primary/5 dark:bg-white/10 p-2.5 rounded-xl border border-primary/10 dark:border-transparent">
+                <div class="bg-primary/5 p-2.5 rounded-xl border border-primary/10">
                     <i data-lucide="trending-down" class="w-6 h-6 text-primary"></i>
                 </div>
                 <div>
-                    <h2 class="text-xl font-black uppercase tracking-widest leading-none mb-1">Passif</h2>
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-tighter opacity-80">Ressources de l'entreprise</p>
+                    <h2 class="text-xl font-black uppercase tracking-widest leading-none mb-1 text-text-main">Passif</h2>
+                    <p class="text-xs font-black text-text-secondary uppercase tracking-tighter opacity-80 italic">Ressources de l'entreprise</p>
                 </div>
             </div>
             <div class="text-right">
-                <div class="text-[10px] uppercase font-bold tracking-widest leading-none opacity-40">Total Passif</div>
-                <div class="text-2xl font-black italic whitespace-nowrap">{{ number_format($passif->sum('solde'), 2, ',', ' ') }} F</div>
+                <div class="text-[10px] uppercase font-black tracking-widest leading-none opacity-40 italic">Total Passif</div>
+                <div class="text-2xl font-black italic whitespace-nowrap text-text-main">{{ number_format($passif->sum('solde'), 2, ',', ' ') }} F</div>
             </div>
         </div>
         
@@ -162,11 +158,11 @@
                     @forelse($passif as $item)
                         <tr class="hover:bg-primary/5 transition-colors">
                             <td class="px-6 py-4">
-                                <span class="block text-sm font-bold text-slate-800">{{ $item['libelle'] }}</span>
-                                <span class="text-[10px] uppercase font-medium text-slate-400">Dettes / Capitaux</span>
+                                <span class="block text-sm font-black text-text-main uppercase">{{ $item['libelle'] }}</span>
+                                <span class="text-[10px] uppercase font-black text-text-secondary italic">Dettes / Capitaux</span>
                             </td>
                             <td class="px-6 py-4 text-right whitespace-nowrap">
-                                <span class="text-lg font-bold text-slate-900">{{ number_format($item['solde'], 2, ',', ' ') }}</span>
+                                <span class="text-lg font-black text-text-main">{{ number_format($item['solde'], 2, ',', ' ') }}</span>
                             </td>
                         </tr>
                     @empty
@@ -181,9 +177,9 @@
             </table>
         </div>
         
-        <div class="p-6 bg-slate-50 dark:bg-black/20 border-t border-border flex justify-between items-center">
-            <span class="text-xs font-black uppercase tracking-widest text-slate-500">Total Bilan (Passif)</span>
-            <span class="text-2xl font-black text-slate-900 dark:text-white italic underline decoration-primary/30 decoration-4 underline-offset-4 whitespace-nowrap">{{ number_format($passif->sum('solde'), 2, ',', ' ') }} F</span>
+        <div class="p-6 bg-white/50 border-t border-border flex justify-between items-center">
+            <span class="text-xs font-black uppercase tracking-widest text-text-secondary italic">Total Bilan (Passif)</span>
+            <span class="text-2xl font-black text-text-main italic underline decoration-primary/30 decoration-4 underline-offset-4 whitespace-nowrap">{{ number_format($passif->sum('solde'), 2, ',', ' ') }} F</span>
         </div>
     </div>
 </div>

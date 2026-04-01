@@ -21,7 +21,7 @@
 
 
 
-    <form id="import-form" action="{{ route('accounting.account.import.process') }}" method="POST" enctype="multipart/form-data" class="flex flex-col flex-grow gap-12 sm:gap-16">
+    <form id="import-form" action="{{ route('accounting.account.import.preview') }}" method="POST" enctype="multipart/form-data" class="flex flex-col flex-grow gap-12 sm:gap-16">
         @csrf
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 xl:gap-16 items-start">
@@ -45,12 +45,27 @@
                         </div>
                     </div>
                 </div>
+                <!-- ZONE D'APERÇU INSTANTANNÉ (JS) -->
+                <div id="js-preview-container" class="hidden animate-in fade-in zoom-in duration-500">
+                    <div class="mb-6 flex items-center justify-between border-b-2 border-primary pb-4">
+                        <h3 class="text-xs font-bold uppercase tracking-widest text-primary italic leading-none">Aperçu instantané du fichier choisi</h3>
+                        <span id="file-row-count" class="text-[10px] font-bold text-gray-500 uppercase"></span>
+                    </div>
+                    <div class="w-full overflow-x-auto bg-white border border-gray-100 p-1">
+                        <table class="w-full text-[10px] font-mono">
+                            <thead class="bg-gray-50 text-gray-400 uppercase text-left border-b border-gray-100">
+                                <tr id="js-preview-header"></tr>
+                            </thead>
+                            <tbody id="js-preview-body" class="text-gray-900 font-bold divide-y divide-gray-50"></tbody>
+                        </table>
+                    </div>
+                </div>
 
                 <!-- ILLUSTRATION -->
-                <div class="w-full">
+                <div id="format-illustration" class="w-full">
                     <div class="mb-10 flex items-center justify-between border-b-2 border-gray-900 pb-6">
-                        <h3 class="text-xs font-bold uppercase tracking-widest text-gray-900 italic leading-none">Aperçu du format CSV</h3>
-                        <span class="text-[9px] font-bold text-gray-400 uppercase opacity-50 underline">Séparateur (;)</span>
+                        <h3 class="text-xs font-bold uppercase tracking-widest text-gray-900 italic leading-none">Format attendu</h3>
+                        <span class="text-[9px] font-bold text-gray-400 uppercase opacity-50 underline">Séparateur (;) ou (,)</span>
                     </div>
                     
                     <div class="w-full overflow-auto">
@@ -66,43 +81,32 @@
                                     <td class="py-6 pr-4 font-bold">411101</td>
                                     <td class="py-6 pr-4 italic font-medium text-gray-500">Client Dupont SAS</td>
                                 </tr>
-                                <tr class="group">
-                                    <td class="py-6 pr-4 font-bold">512001</td>
-                                    <td class="py-6 pr-4 italic font-medium text-gray-500">Banque BOA - Cpte Courant</td>
-                                </tr>
                             </tbody>
                         </table>
                     </div>
+                </div>
 
-                    <!-- INFO BOX -->
-                    <div class="mt-10 flex items-start gap-5 py-6 px-10 border-l-[4px] border-black bg-gray-50 italic">
-                        <i data-lucide="info" class="w-6 h-6 text-black opacity-30 shrink-0"></i>
-                        <p class="text-[11px] font-bold text-gray-600 uppercase tracking-wider leading-relaxed">
-                            Le parent est détecté automatiquement. Le numéro de sous-compte doit être unique et commencer par le numéro du compte parent correspondant.
-                        </p>
-                    </div>
+                <!-- INFO BOX -->
+                <div class="mt-4 flex items-start gap-5 py-6 px-10 border-l-[4px] border-black bg-gray-50 italic">
+                    <i data-lucide="info" class="w-6 h-6 text-black opacity-30 shrink-0"></i>
+                    <p class="text-[11px] font-bold text-gray-600 uppercase tracking-wider leading-relaxed">
+                        Le parent est détecté automatiquement. Le numéro de sous-compte doit être unique et commencer par le numéro du compte parent correspondant.
+                    </p>
                 </div>
             </div>
 
             <!-- COLONNE DROITE -->
             <div class="lg:col-span-4 flex flex-col gap-10">
-                <div class="bg-white border-2 border-gray-100 rounded-none p-10 flex flex-col h-full sticky top-32">
-                    <h3 class="text-xs font-bold uppercase text-gray-900 mb-10 pb-4 border-b-2 border-gray-900 italic">Colonnes attendues</h3>
-                    <div class="space-y-4 flex-grow">
-                        <div class="flex items-center justify-between p-4 border-b border-gray-50 group hover:border-black transition-all duration-300">
-                            <span class="text-[11px] font-bold text-primary uppercase tracking-widest">NUMERO</span>
-                            <i data-lucide="check-circle-2" class="w-4 h-4 text-green-500"></i>
-                        </div>
-                        <div class="flex items-center justify-between p-4 border-b border-gray-50 group hover:border-black transition-all duration-300">
-                            <span class="text-[11px] font-bold text-primary uppercase tracking-widest">LIBELLE</span>
-                            <i data-lucide="check-circle-2" class="w-4 h-4 text-green-500"></i>
-                        </div>
-                    </div>
+                <div class="bg-white border-2 border-gray-100 rounded-none p-10 flex flex-col h-full sticky top-32 shadow-xl">
+                    <h3 class="text-xs font-black uppercase text-gray-900 mb-10 pb-4 border-b-2 border-gray-900 italic tracking-widest">Étape suivante</h3>
+                    <p class="text-[10px] text-gray-400 font-bold uppercase mb-8 leading-relaxed">
+                        Après avoir cliqué, vous pourrez vérifier chaque ligne avant la validation finale.
+                    </p>
                     
-                    <div class="mt-16">
-                        <button type="submit" class="w-full px-8 py-4 bg-primary text-white font-bold rounded-none shadow-lg hover:bg-black hover:scale-[1.02] active:scale-100 transition-all uppercase tracking-widest text-xs flex items-center justify-center gap-4">
-                            Lancer l'importation
-                            <i data-lucide="upload" class="w-4 h-4 text-white"></i>
+                    <div class="mt-auto">
+                        <button type="submit" class="w-full px-8 py-5 bg-primary text-white font-black rounded-none shadow-2xl hover:bg-black hover:scale-[1.02] active:scale-100 transition-all uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-4">
+                            Continuer vers l'aperçu
+                            <i data-lucide="arrow-right" class="w-4 h-4 text-white"></i>
                         </button>
                     </div>
                 </div>
@@ -115,12 +119,47 @@
     function updateFileName(input) {
         const fileNameDisplay = document.getElementById('file-name');
         const dropZone = document.getElementById('drop-zone');
+        const jsPreviewContainer = document.getElementById('js-preview-container');
+        const formatIllustration = document.getElementById('format-illustration');
         
         if (input.files.length > 0) {
             const name = input.files[0].name.toUpperCase();
-            fileNameDisplay.innerHTML = `<span class="text-primary font-black">${name}</span>`;
-            dropZone.classList.add('border-black', 'bg-white');
-            lucide.createIcons();
+            fileNameDisplay.innerHTML = `<span class="text-primary font-black animate-pulse">${name}</span>`;
+            dropZone.classList.add('border-primary', 'bg-white');
+            
+            // Generate JS Preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const text = e.target.result;
+                const lines = text.split(/\r?\n/).filter(line => line.trim() !== "");
+                if (lines.length > 0) {
+                    // Try to detect delimiter
+                    const firstLine = lines[0];
+                    const delimiter = firstLine.split(';').length >= firstLine.split(',').length ? ';' : ',';
+                    
+                    const header = lines[0].split(delimiter);
+                    const rows = lines.slice(1, 6); // Max 5 preview rows
+                    
+                    // Render header
+                    const headerHtml = header.map(h => `<th class="px-3 py-3 border-b border-gray-100">${h}</th>`).join('');
+                    document.getElementById('js-preview-header').innerHTML = headerHtml;
+                    
+                    // Render body
+                    let bodyHtml = "";
+                    rows.forEach(row => {
+                        const cols = row.split(delimiter);
+                        bodyHtml += `<tr>${cols.map(c => `<td class="px-3 py-3">${c}</td>`).join('')}</tr>`;
+                    });
+                    document.getElementById('js-preview-body').innerHTML = bodyHtml;
+                    document.getElementById('file-row-count').innerText = `${lines.length - 1} lignes détectées`;
+                    
+                    jsPreviewContainer.classList.remove('hidden');
+                    formatIllustration.classList.add('hidden');
+                }
+            };
+            reader.readAsText(input.files[0]);
+            
+            if(typeof lucide !== 'undefined') lucide.createIcons();
         }
     }
 </script>

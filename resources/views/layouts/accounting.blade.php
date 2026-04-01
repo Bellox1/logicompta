@@ -586,6 +586,25 @@
                     </div>
                 @endif
 
+                @if (session('warnings'))
+                    <div
+                        class="mb-6 p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/30 text-yellow-700 dark:text-yellow-400 flex flex-col gap-2 animate-fade-up">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="alert-triangle" class="w-5 h-5 flex-shrink-0"></i>
+                            <span class="font-bold flex-1">Quelques lignes ont été ignorées :</span>
+                            <button onclick="this.parentElement.parentElement.remove()"
+                                class="p-1 hover:bg-black/5 rounded-lg transition-colors">
+                                <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        <ul class="list-disc list-inside text-xs space-y-1 ml-8">
+                            @foreach(session('warnings') as $warning)
+                                <li>{{ $warning }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 @if (session('error'))
                     <div
                         class="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-700 dark:text-red-400 flex items-center gap-3 animate-fade-up">

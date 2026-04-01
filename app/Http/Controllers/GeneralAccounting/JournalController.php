@@ -299,10 +299,29 @@ class JournalController extends Controller
         else {
             $request->validate(['file' => 'required|file|mimes:csv,txt']);
             $file = $request->file('file');
-            $handle = fopen($file->getRealPath(), 'r');
             
-            $header = fgetcsv($handle, 1000, ';');
-            if (!$header) return back()->with('error', 'En-tête manquant.');
+            // Detect delimiter efficiently
+            $fp = fopen($file->getRealPath(), 'r');
+            $firstLine = fgets($fp);
+            fclose($fp);
+            
+            $delimiters = [';', ',', "\t"];
+            $delimiter = ';';
+            $maxCount = 0;
+            foreach ($delimiters as $d) {
+                $count = substr_count($firstLine, $d);
+                if ($count > $maxCount) {
+                    $maxCount = $count;
+                    $delimiter = $d;
+                }
+            }
+
+            $handle = fopen($file->getRealPath(), 'r');
+            $header = fgetcsv($handle, 1000, $delimiter);
+            if (!$header) {
+                if ($handle) fclose($handle);
+                return back()->with('error', 'En-tête manquant.');
+            }
 
             $map = $this->mapCsvHeaders($header);
             
@@ -314,7 +333,8 @@ class JournalController extends Controller
             
             foreach ($required as $key => $label) {
                 if (!isset($map[$key])) {
-                    return back()->with('error', "La colonne obligatoire [$label] est introuvable. Vérifiez que votre fichier CSV contient bien une ligne d'en-tête avec ces noms.");
+                    fclose($handle);
+                    return back()->with('error', "La colonne obligatoire [$label] est introuvable. Colonnes : " . implode(', ', $header));
                 }
             }
 
@@ -322,8 +342,10 @@ class JournalController extends Controller
             $lastDate = now()->format('Y-m-d');
             $lastPiece = 'IMP-' . date('Ymd-His');
             $lastJournal = 'AC';
+            $lineNum = 1;
 
-            while (($data = fgetcsv($handle, 1000, ';')) !== FALSE) {
+            while (($data = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
+                $lineNum++;
                 if (count($data) < count($header)) continue;
                 
                 $rowDate = isset($map['date']) && !empty($data[$map['date']]) ? $this->formatImportDate($data[$map['date']]) : $lastDate;
@@ -343,6 +365,7 @@ class JournalController extends Controller
                 };
 
                 $rows[] = [
+                    'line' => $lineNum,
                     'date' => $rowDate,
                     'piece' => $rowPiece,
                     'journal_name' => $rowJournal,
@@ -413,7 +436,7 @@ class JournalController extends Controller
 
                 foreach ($lines as $line) {
                     $account = Account::where('code_compte', $line['account'])->first();
-                    if (!$account) throw new \Exception("Compte non trouvé : " . $line['account']);
+                    if (!$account) throw new \Exception("[Ligne {$line['line']}] Compte non trouvé : " . $line['account']);
 
                     JournalEntryLine::create([
                         'journal_entry_id' => $entry->id,
@@ -446,9 +469,8 @@ class JournalController extends Controller
         ];
 
         foreach ($header as $index => $colName) {
-            // Supprimer uniquement le BOM UTF-8 s'il est présent
-            $colName = str_replace("\xEF\xBB\xBF", '', $colName);
-            $colName = mb_strtolower(trim($colName));
+            // Remove BOM and lower case
+            $colName = preg_replace('/[\x00-\x1F\x7F-\xFF]/', '', mb_strtolower(trim($colName)));
             
             foreach ($columns as $key => $aliases) {
                 if (in_array($colName, $aliases)) {
@@ -456,6 +478,17 @@ class JournalController extends Controller
                 }
             }
         }
+        
+        // Second pass if mandatory column missing
+        if (!isset($map['account']) || !isset($map['debit']) || !isset($map['credit'])) {
+            foreach ($header as $index => $colName) {
+                $colName = mb_strtolower(trim($colName));
+                if (!isset($map['account']) && (str_contains($colName, 'compte') || $colName == 'acc' || $colName == 'n')) $map['account'] = $index;
+                if (!isset($map['debit']) && str_contains($colName, 'deb')) $map['debit'] = $index;
+                if (!isset($map['credit']) && str_contains($colName, 'cred')) $map['credit'] = $index;
+            }
+        }
+
         return $map;
     }
 

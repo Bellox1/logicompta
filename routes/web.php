@@ -104,7 +104,8 @@ Route::prefix('accounting')->name('accounting.')->middleware(['web', 'auth'])->g
     // Plan Comptable et Sous-comptes
     Route::get('/compte', [AccountController::class, 'index'])->name('account.index');
     Route::get('/compte/import', [AccountController::class, 'importForm'])->name('account.import');
-    Route::post('/compte/import', [AccountController::class, 'importProcess'])->name('account.import.process');
+    Route::post('/compte/import/preview', [AccountController::class, 'importPreview'])->name('account.import.preview');
+    Route::post('/compte/import/confirm', [AccountController::class, 'importProcess'])->name('account.import.process');
     Route::post('/compte/sous-compte', [AccountController::class, 'storeSousCompte'])->name('account.store_sous_compte');
     Route::put('/compte/sous-compte/{id}', [AccountController::class, 'updateSousCompte'])->name('account.update_sous_compte');
     Route::delete('/compte/sous-compte/{id}', [AccountController::class, 'destroySousCompte'])->name('account.destroy_sous_compte');

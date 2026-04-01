@@ -120,86 +120,162 @@ class AccountController extends Controller
         return view('accounting.account.import');
     }
 
+    public function importPreview(Request $request)
+    {
+        $user = Auth::user();
+        if (!$user || !$user->entreprise_id) return redirect()->route('entreprise.setup');
+        
+        $request->validate(['file' => 'required|file']); // Relaxed validation
+        $file = $request->file('file');
+        
+        // Detect delimiter efficiently
+        $fp = fopen($file->getRealPath(), 'r');
+        $firstLine = fgets($fp);
+        fclose($fp);
+        
+        $delimiters = [';', ',', "\t"];
+        $delimiter = ';';
+        $maxCount = 0;
+        foreach ($delimiters as $d) {
+            $count = substr_count($firstLine, $d);
+            if ($count > $maxCount) {
+                $maxCount = $count;
+                $delimiter = $d;
+            }
+        }
+
+        $handle = fopen($file->getRealPath(), 'r');
+        // Handle BOM and read header
+        $header = fgetcsv($handle, 1000, $delimiter);
+        if (!$header) {
+            if ($handle) fclose($handle);
+            return back()->with('error', 'Fichier vide ou illisible.');
+        }
+
+        // Robust mapping
+        $map = [];
+        foreach ($header as $i => $col) {
+            // Remove BOM and everything above 127
+            $cleanCol = preg_replace('/[\x00-\x1F\x7F-\xFF]/', '', mb_strtolower(trim($col)));
+            if (empty($cleanCol)) $cleanCol = mb_strtolower(trim($col)); // Fallback if preg_replace was too aggressive
+
+            if (preg_match('/^(numero|compte|numro|num|n|no|code|numer|numo|sous-compte)$/', $cleanCol)) $map['numero'] = $i;
+            if (preg_match('/^(libelle|libell|libel|intitul|label|nom|description|desc|intitule|designation|libell du compte|nom du compte)$/', $cleanCol)) $map['libelle'] = $i;
+        }
+
+        // Broader second pass
+        if (!isset($map['numero']) || !isset($map['libelle'])) {
+            foreach ($header as $i => $col) {
+                $colLow = mb_strtolower(trim($col));
+                if (!isset($map['numero']) && (str_contains($colLow, 'num') || str_contains($colLow, 'compte'))) $map['numero'] = $i;
+                if (!isset($map['libelle']) && (str_contains($colLow, 'lib') || str_contains($colLow, 'nom') || str_contains($colLow, 'desc'))) $map['libelle'] = $i;
+            }
+        }
+
+        if (!isset($map['numero']) || !isset($map['libelle'])) {
+            fclose($handle);
+            $found_cols = implode(', ', $header);
+            return back()->with('error', "Colonnes obligatoires [NUMERO, LIBELLE] manquantes. Colonnes détectées : [$found_cols] dans un fichier utilisant le délimiteur '$delimiter'.");
+        }
+
+        $allMainAccounts = Account::orderByRaw('LENGTH(code_compte) DESC', [])->get();
+        $previewData = [];
+        $lineNum = 1;
+
+        while (($data = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
+            $lineNum++;
+            if (empty($data) || count($data) <= max(array_values($map))) continue;
+            
+            $numeroRaw = $data[$map['numero']];
+            $numero = preg_replace('/[^a-zA-Z0-9]/', '', (string)$numeroRaw);
+            $libelle = trim($data[$map['libelle']]);
+
+            if (empty($numero) || empty($libelle)) continue;
+
+            $isMainAccount = Account::where('code_compte', $numero)->exists();
+            $parentAccount = null;
+            if (!$isMainAccount) {
+                foreach ($allMainAccounts as $main) {
+                    if (str_starts_with((string)$numero, (string)$main->code_compte)) {
+                        $parentAccount = $main;
+                        break;
+                    }
+                }
+            }
+
+            $exists = SousCompte::where('entreprise_id', $user->entreprise_id)
+                ->where('numero_sous_compte', $numero)
+                ->first();
+
+            $previewData[] = [
+                'line' => $lineNum,
+                'numero' => $numero,
+                'libelle' => $libelle,
+                'is_main' => $isMainAccount,
+                'parent' => $parentAccount ? $parentAccount->code_compte : null,
+                'parent_id' => $parentAccount ? $parentAccount->id : null,
+                'status' => $isMainAccount ? 'error_main' : ($parentAccount ? ($exists ? 'update' : 'new') : 'error_no_parent')
+            ];
+        }
+        fclose($handle);
+
+        if (empty($previewData)) return back()->with('error', 'Aucune donnée valide à importer.');
+
+        session(['pending_account_import' => $previewData]);
+
+        return view('accounting.account.import-preview', compact('previewData'));
+    }
+
     public function importProcess(Request $request)
     {
         $user = Auth::user();
         if (!$user || !$user->entreprise_id) return redirect()->route('entreprise.setup');
         $entrepriseId = $user->entreprise_id;
 
-        $request->validate(['file' => 'required|file|mimes:csv,txt']);
-        $file = $request->file('file');
-        $handle = fopen($file->getRealPath(), 'r');
-        
-        $header = fgetcsv($handle, 1000, ';');
-        if (!$header) return back()->with('error', 'Fichier vide.');
+        $previewData = session('pending_account_import');
+        if (!$previewData) return redirect()->route('accounting.account.import')->with('error', 'Session d’importation expirée.');
 
-        // Mapping simple
-        $map = [];
-        foreach ($header as $i => $col) {
-            $col = trim(str_replace("\xEF\xBB\xBF", '', mb_strtolower($col)));
-            // Numero typos: numro, num, n, etc.
-            if (in_array($col, ['numero', 'compte', 'numéro', 'code', 'n', 'no', 'numro', 'num', 'numo', 'numer'])) $map['numero'] = $i;
-            // Libelle typos: libell, libel, nom, etc.
-            if (in_array($col, ['libelle', 'libellé', 'intitulé', 'label', 'désignation', 'libell', 'libel', 'intitule', 'nom', 'description', 'desc'])) $map['libelle'] = $i;
-        }
-
-        if (!isset($map['numero']) || !isset($map['libelle'])) {
-            return back()->with('error', 'Les colonnes [numero] et [libelle] sont obligatoires.');
-        }
-
-        $allMainAccounts = Account::orderByRaw('LENGTH(code_compte) DESC', [])->get();
         $importedCount = 0;
+        $createdCount = 0;
+        $updatedCount = 0;
         $errors = [];
 
         try {
             \Illuminate\Support\Facades\DB::beginTransaction();
 
-            while (($data = fgetcsv($handle, 1000, ';')) !== FALSE) {
-                if (count($data) < 2) continue;
-                
-                $numero = trim($data[$map['numero']]);
-                $libelle = trim($data[$map['libelle']]);
-
-                if (empty($numero) || empty($libelle)) continue;
-
-                // 1. Skip if already exists as main account
-                if (Account::where('code_compte', $numero)->exists()) {
-                    continue; // Skip
-                }
-
-                // 2. Find parent account (Longest prefix match)
-                $parentAccount = null;
-                foreach ($allMainAccounts as $main) {
-                    if (strpos($numero, $main->code_compte) === 0) {
-                        $parentAccount = $main;
-                        break;
-                    }
-                }
-
-                if (!$parentAccount) {
-                    $errors[] = "Impossible de trouver un compte parent pour le numéro : $numero";
+            foreach ($previewData as $row) {
+                if ($row['status'] === 'error_main' || $row['status'] === 'error_no_parent') {
+                    $errors[] = "[Ligne {$row['line']}] Compte n° {$row['numero']} : " . 
+                        ($row['status'] === 'error_main' ? "Identique à un compte principal." : "Aucun compte parent trouvé.");
                     continue;
                 }
 
-                // 3. Create or Update for this entreprise
-                SousCompte::updateOrCreate(
-                    ['entreprise_id' => $entrepriseId, 'numero_sous_compte' => $numero],
-                    ['account_id' => $parentAccount->id, 'libelle' => $libelle]
+                $sc = SousCompte::updateOrCreate(
+                    ['entreprise_id' => $entrepriseId, 'numero_sous_compte' => $row['numero']],
+                    ['account_id' => $row['parent_id'], 'libelle' => $row['libelle']]
                 );
                 
+                if ($sc->wasRecentlyCreated) {
+                    $createdCount++;
+                } else {
+                    $updatedCount++;
+                }
                 $importedCount++;
             }
 
             \Illuminate\Support\Facades\DB::commit();
-            fclose($handle);
+            session()->forget('pending_account_import');
 
-            $msg = "$importedCount sous-comptes importés avec succès.";
-            if (!empty($errors)) $msg .= " (Quelques erreurs : " . count($errors) . ")";
+            $msg = "$createdCount nouveaux sous-comptes ajoutés.";
+            if ($updatedCount > 0) $msg .= " $updatedCount existants mis à jour.";
             
-            return redirect()->route('accounting.account.index')->with('success', $msg);
+            $redirect = redirect()->route('accounting.account.index')->with('success', $msg);
+            if (!empty($errors)) $redirect->with('warnings', $errors);
+            
+            return $redirect;
 
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\DB::rollBack();
+            if (\Illuminate\Support\Facades\DB::transactionLevel() > 0) \Illuminate\Support\Facades\DB::rollBack();
             return back()->with('error', 'Erreur lors de l’importation : ' . $e->getMessage());
         }
     }

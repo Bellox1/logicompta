@@ -15,10 +15,14 @@ return new class extends Migration
             $table->id();
             $table->foreignId('journal_id')->constrained()->onDelete('cascade');
             $table->foreignId('entreprise_id')->constrained()->onDelete('cascade');
-            $table->string('numero_piece')->unique(); // Numéro auto-incrémenté ou formaté
+            $table->string('numero_piece'); 
             $table->date('date');
             $table->string('libelle');
+            $table->boolean('is_archived')->default(false);
             $table->timestamps();
+
+            // Index unique par entreprise
+            $table->unique(['entreprise_id', 'numero_piece']);
         });
     }
 

@@ -132,9 +132,9 @@
                 <tbody>
                     @foreach($entry->lines as $line)
                         <tr>
-                            <td class="font-bold text-primary text-center">{{ $line->account->code_compte }}</td>
+                            <td class="font-bold text-primary text-center">{{ $line->sousCompte->numero_sous_compte }}</td>
                             <td>
-                                <div class="font-bold text-gray-900 uppercase text-[10px]">{{ $line->account->libelle }}</div>
+                                <div class="font-bold text-gray-900 uppercase text-[10px]">{{ $line->sousCompte->libelle }}</div>
                                 @if($line->libelle && $line->libelle != $entry->libelle)
                                     <div class="text-[9px] text-gray-500 italic">{{ $line->libelle }}</div>
                                 @endif

@@ -221,11 +221,11 @@
 
                                 <td
                                     class="px-5 py-6 text-sm font-bold text-gray-800 not-italic transition-all {{ $loop->last ? 'border-b-2 border-gray-400' : '' }}">
-                                    {{ $line->account->code_compte }}
+                                    {{ $line->sousCompte->numero_sous_compte }}
                                 </td>
                                 <td
                                     class="px-5 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400 not-italic w-[180px] transition-all {{ $loop->last ? 'border-b-2 border-gray-400' : '' }}">
-                                    {{ $line->account->libelle }}
+                                    {{ $line->sousCompte->libelle }}
                                 </td>
                                 <td
                                     class="px-5 py-6 text-sm text-gray-600 font-medium transition-all {{ $loop->last ? 'border-b-2 border-gray-400' : '' }}">

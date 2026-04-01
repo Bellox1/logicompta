@@ -110,9 +110,9 @@
                                 {{ str_replace('PC-', '', $entry->numero_piece) }}
                             </td>
                         @endif
-                        <td class="font-bold text-gray-700">{{ $line->account->code_compte }}</td>
+                        <td class="font-bold text-gray-700">{{ $line->sousCompte->numero_sous_compte }}</td>
                         <td>
-                            <div class="font-bold text-gray-900">{{ $line->account->libelle }}</div>
+                            <div class="font-bold text-gray-900">{{ $line->sousCompte->libelle }}</div>
                             <div class="text-[10px] text-gray-500 italic">{{ $line->libelle ?: $entry->libelle }}</div>
                         </td>
                         <td class="text-right font-bold">

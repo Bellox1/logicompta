@@ -23,7 +23,7 @@ class JournalController extends Controller
                 ->with('warning', 'Veuillez configurer votre entreprise pour accéder au journal.');
         }
 
-        $query = JournalEntry::with(['journal', 'lines.account'])
+        $query = JournalEntry::with(['journal', 'lines.sousCompte.account'])
             ->where('entreprise_id', $user->entreprise_id);
 
         $showArchived = $request->query('show_archived', '0');
@@ -60,7 +60,7 @@ class JournalController extends Controller
             return redirect()->route('entreprise.setup');
         }
 
-        $entries = JournalEntry::with(['journal', 'lines.account'])
+        $entries = JournalEntry::with(['journal', 'lines.sousCompte.account'])
             ->where('entreprise_id', $user->entreprise_id)
             ->orderBy('date', 'asc')
             ->orderBy('id', 'asc')
@@ -81,10 +81,14 @@ class JournalController extends Controller
             $q->where('entreprise_id', $user->entreprise_id)
               ->orWhereNull('entreprise_id');
         })->get();
-        $accounts = Account::orderBy('code_compte')->get()->groupBy('classe');
+
+        $accounts = \App\Models\SousCompte::where('entreprise_id', '=', $user->entreprise_id)
+            ->with('account')
+            ->orderBy('numero_sous_compte')
+            ->get();
         
         $currentYear = date('Y');
-        $latestEntry = JournalEntry::where('entreprise_id', $user->entreprise_id)
+        $latestEntry = JournalEntry::where('entreprise_id', '=', $user->entreprise_id)
             ->whereYear('date', $currentYear)
             ->orderBy('id', 'desc')
             ->first();
@@ -115,7 +119,7 @@ class JournalController extends Controller
             ],
             'libelle' => 'required|string|max:255',
             'lines' => 'required|array|min:2',
-            'lines.*.account_id' => 'required|exists:accounts,id',
+            'lines.*.sous_compte_id' => 'required|exists:sous_comptes,id',
             'lines.*.debit' => 'nullable|numeric|min:0',
             'lines.*.credit' => 'nullable|numeric|min:0',
         ]);
@@ -134,7 +138,7 @@ class JournalController extends Controller
         try {
             DB::beginTransaction();
 
-            $latestEntry = JournalEntry::where('entreprise_id', $entrepriseId)->orderBy('id', 'desc')->first();
+            $latestEntry = JournalEntry::where('entreprise_id', '=', $entrepriseId)->orderBy('id', 'desc')->first();
             $nextNum = $latestEntry ? intval(preg_replace('/[^0-9]/', '', $latestEntry->numero_piece)) + 1 : 1;
             $numeroPiece = str_pad($nextNum, 6, '0', STR_PAD_LEFT);
 
@@ -148,9 +152,11 @@ class JournalController extends Controller
 
             foreach ($request->lines as $line) {
                 if (($line['debit'] ?? 0) > 0 || ($line['credit'] ?? 0) > 0) {
+                    $sousCompte = \App\Models\SousCompte::findOrFail($line['sous_compte_id']);
+                    
                     JournalEntryLine::create([
                         'journal_entry_id' => $entry->id,
-                        'account_id' => $line['account_id'],
+                        'sous_compte_id' => $sousCompte->id,
                         'debit' => $line['debit'] ?? 0,
                         'credit' => $line['credit'] ?? 0,
                         'libelle' => $line['libelle'] ?? $request->libelle,
@@ -169,7 +175,7 @@ class JournalController extends Controller
     public function edit($id)
     {
         $user = Auth::user();
-        $entry = JournalEntry::with('lines.account')->findOrFail($id);
+        $entry = JournalEntry::with(['lines.sousCompte.account'])->findOrFail($id);
         
         if ($entry->entreprise_id != $user->entreprise_id) {
             abort(403);
@@ -181,7 +187,10 @@ class JournalController extends Controller
             $q->where('entreprise_id', $user->entreprise_id)
               ->orWhereNull('entreprise_id');
         })->get();
-        $accounts = Account::orderBy('code_compte', 'asc')->get()->groupBy('classe');
+        $accounts = \App\Models\SousCompte::where('entreprise_id', $user->entreprise_id)
+            ->with('account')
+            ->orderBy('numero_sous_compte')
+            ->get();
         
         return view('accounting.journal.edit', compact('entry', 'journals', 'accounts'));
     }
@@ -198,7 +207,7 @@ class JournalController extends Controller
             'date' => 'required|date',
             'libelle' => 'required|string|max:255',
             'lines' => 'required|array|min:2',
-            'lines.*.account_id' => 'required|exists:accounts,id',
+            'lines.*.sous_compte_id' => 'required|exists:sous_comptes,id',
             'lines.*.debit' => 'nullable|numeric|min:0',
             'lines.*.credit' => 'nullable|numeric|min:0',
         ]);
@@ -223,9 +232,11 @@ class JournalController extends Controller
 
             foreach ($request->lines as $line) {
                 if (($line['debit'] ?? 0) > 0 || ($line['credit'] ?? 0) > 0) {
+                    $sousCompte = \App\Models\SousCompte::findOrFail($line['sous_compte_id']);
+
                     JournalEntryLine::create([
                         'journal_entry_id' => $entry->id,
-                        'account_id' => $line['account_id'],
+                        'sous_compte_id' => $sousCompte->id,
                         'debit' => $line['debit'] ?? 0,
                         'credit' => $line['credit'] ?? 0,
                         'libelle' => $line['libelle'] ?? $request->libelle,
@@ -258,7 +269,7 @@ class JournalController extends Controller
     public function show($id)
     {
         $user = Auth::user();
-        $entry = JournalEntry::with(['lines.account', 'journal'])
+        $entry = JournalEntry::with(['lines.sousCompte.account', 'journal'])
             ->where('entreprise_id', $user->entreprise_id)
             ->findOrFail($id);
         return view('accounting.journal.show', compact('entry'));
@@ -267,7 +278,7 @@ class JournalController extends Controller
     public function showPdf($id)
     {
         $user = Auth::user();
-        $entry = JournalEntry::with(['lines.account', 'journal'])
+        $entry = JournalEntry::with(['lines.sousCompte.account', 'journal'])
             ->where('entreprise_id', $user->entreprise_id)
             ->findOrFail($id);
         return view('accounting.journal.show-pdf', compact('entry', 'user'));
@@ -435,12 +446,26 @@ class JournalController extends Controller
                 ]);
 
                 foreach ($lines as $line) {
-                    $account = Account::where('code_compte', $line['account'])->first();
-                    if (!$account) throw new \Exception("[Ligne {$line['line']}] Compte non trouvé : " . $line['account']);
+                    $sousCompte = \App\Models\SousCompte::where('entreprise_id', '=', $entrepriseId)
+                        ->where('numero_sous_compte', '=', $line['account'])
+                        ->first();
+
+                    if (!$sousCompte) {
+                        // Fallback: Si c'est un compte général, on cherche s'il existe un sous-compte par défaut ou on en crée un?
+                        // Pour l'instant, on exige que le sous-compte existe ou on cherche le premier sous-compte de ce compte
+                        $account = Account::where('code_compte', $line['account'])->first();
+                        if (!$account) throw new \Exception("[Ligne {$line['line']}] Compte ou sous-compte non trouvé : " . $line['account']);
+                        
+                        // On prend le premier sous-compte associé ou on en crée un "Général"
+                        $sousCompte = \App\Models\SousCompte::firstOrCreate(
+                            ['entreprise_id' => $entrepriseId, 'account_id' => $account->id, 'libelle' => 'Général ' . $account->libelle],
+                            ['numero_sous_compte' => $account->code_compte . '000'] // Convention par défaut
+                        );
+                    }
 
                     JournalEntryLine::create([
                         'journal_entry_id' => $entry->id,
-                        'account_id' => $account->id,
+                        'sous_compte_id' => $sousCompte->id,
                         'debit' => $line['debit'],
                         'credit' => $line['credit'],
                         'libelle' => $line['label'],

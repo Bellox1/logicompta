@@ -9,9 +9,9 @@ class Account extends Model
 {
     protected $fillable = ['classe', 'code_compte', 'libelle'];
 
-    public function entryLines(): HasMany
+    public function entryLines(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
     {
-        return $this->hasMany(JournalEntryLine::class);
+        return $this->hasManyThrough(JournalEntryLine::class, \App\Models\SousCompte::class, 'account_id', 'sous_compte_id');
     }
 
     public function sousComptes(): HasMany

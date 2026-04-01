@@ -54,10 +54,10 @@
                                     </td>
                                 @endif
                                 <td class="px-6 py-5 text-sm font-bold text-gray-800 border-r border-gray-100 not-italic">
-                                    {{ $line->account->code_compte }}
+                                    {{ $line->sousCompte->numero_sous_compte }}
                                 </td>
                                 <td class="px-6 py-5 text-sm text-gray-600 border-r border-gray-100">
-                                    <div class="font-bold text-gray-800 not-italic mb-1">{{ $line->account->libelle }}</div>
+                                    <div class="font-bold text-gray-800 not-italic mb-1">{{ $line->sousCompte->libelle }}</div>
                                     <div class="text-xs opacity-70">{{ $line->libelle }}</div>
                                 </td>
                                 <td

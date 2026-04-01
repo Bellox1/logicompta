@@ -12,6 +12,10 @@ class EntrepriseSeeder extends Seeder
      */
     public function run(): void
     {
-        // 
+        $name = 'LOGICOMPTA TEST';
+        Entreprise::create([
+            'name' => $name,
+            'code' => Entreprise::generateCode($name),
+        ]);
     }
 }

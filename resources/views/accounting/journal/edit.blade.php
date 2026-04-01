@@ -118,15 +118,15 @@
                         @foreach ($lines as $index => $line)
                             <tr class="line-row hover:bg-gray-50/50 transition-colors">
                                 <td class="px-4 py-3">
-                                    <select name="lines[{{ $index }}][account_id]" required
-                                        class="w-full bg-white border border-border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none">
-                                        <option value="">Choisir un compte...</option>
-                                        @foreach ($accounts as $classId => $classAccounts)
-                                            <optgroup label="CLASSE {{ $classId }}">
-                                                @foreach ($classAccounts as $account)
-                                                    <option value="{{ $account->id }}"
-                                                        {{ (isset($line['account_id']) && $line['account_id'] == $account->id) ? 'selected' : '' }}>
-                                                        {{ $account->code_compte }} - {{ $account->libelle }}</option>
+                                    <select name="lines[{{ $index }}][sous_compte_id]" required
+                                        class="w-full bg-white border border-border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none select2-account">
+                                        <option value="">Choisir un sous-compte...</option>
+                                        @foreach ($accounts->groupBy(fn($sc) => $sc->account->code_compte . ' - ' . $sc->account->libelle) as $parentLabel => $subAccounts)
+                                            <optgroup label="{{ $parentLabel }}">
+                                                @foreach ($subAccounts as $sc)
+                                                    <option value="{{ $sc->id }}"
+                                                        {{ (isset($line['sous_compte_id']) && $line['sous_compte_id'] == $sc->id) ? 'selected' : '' }}>
+                                                        {{ $sc->numero_sous_compte }} - {{ $sc->libelle }}</option>
                                                 @endforeach
                                             </optgroup>
                                         @endforeach

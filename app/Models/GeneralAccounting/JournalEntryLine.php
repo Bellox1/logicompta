@@ -7,15 +7,21 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class JournalEntryLine extends Model
 {
-    protected $fillable = ['journal_entry_id', 'account_id', 'debit', 'credit', 'libelle'];
+    protected $fillable = ['journal_entry_id', 'sous_compte_id', 'debit', 'credit', 'libelle'];
 
     public function entry(): BelongsTo
     {
         return $this->belongsTo(JournalEntry::class, 'journal_entry_id');
     }
 
-    public function account(): BelongsTo
+    public function sousCompte(): BelongsTo
     {
-        return $this->belongsTo(Account::class);
+        return $this->belongsTo(\App\Models\SousCompte::class, 'sous_compte_id');
+    }
+
+    // Helper pour accéder au compte général via le sous-compte
+    public function getAccountAttribute()
+    {
+        return $this->sousCompte?->account;
     }
 }

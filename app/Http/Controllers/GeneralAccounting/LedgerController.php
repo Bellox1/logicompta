@@ -42,8 +42,9 @@ class LedgerController extends Controller
             $data = collect();
         } else {
             // 2. Construire la requête sur les lignes avec jointure explicite pour le tri
-            $query = JournalEntryLine::with(['entry.journal', 'account'])
+            $query = JournalEntryLine::with(['entry.journal', 'sousCompte.account'])
                 ->join('journal_entries', 'journal_entry_lines.journal_entry_id', '=', 'journal_entries.id')
+                ->join('sous_comptes', 'journal_entry_lines.sous_compte_id', '=', 'sous_comptes.id')
                 ->where('journal_entries.entreprise_id', $entrepriseId);
 
             $showArchived = $request->query('show_archived', '0');
@@ -54,33 +55,31 @@ class LedgerController extends Controller
             }
 
             if (!empty($accountIds)) {
-                $query->whereIn('journal_entry_lines.account_id', $accountIds);
+                $query->whereIn('sous_comptes.account_id', $accountIds);
             }
 
             if ($startDate) $query->where('journal_entries.date', '>=', $startDate);
             if ($endDate) $query->where('journal_entries.date', '<=', $endDate);
 
-            // 3. Application du tri SQL avec préfixes de table explicites
+            // 3. Application du tri
             if ($sort === 'numero_piece') {
                 $query->orderBy('journal_entries.numero_piece', $order)
                       ->orderBy('journal_entries.date', $order);
             } else {
-                // Par défaut, tri par date
                 $query->orderBy('journal_entries.date', $order)
                       ->orderBy('journal_entries.numero_piece', $order);
             }
             
-            // Toujours ajouter un tri par ID pour la stabilité
             $query->orderBy('journal_entry_lines.id', $order);
 
-            // Charger les résultats (Select lines.* pour éviter les conflits d'ID de jointure)
             $allLines = $query->select('journal_entry_lines.*')->get();
 
-            // 4. Regrouper par compte pour la vue
-            $data = $allLines->groupBy('account_id')->map(function($accLines) {
+            // 4. Regrouper par compte général (via le sous-compte)
+            $data = $allLines->groupBy(function($line) {
+                return $line->sousCompte->account_id;
+            })->map(function($accLines) {
                 if ($accLines->isEmpty()) return null;
-                $account = $accLines->first()->account;
-                // On attache la collection déjà triée par le SQL
+                $account = $accLines->first()->sousCompte->account;
                 $account->setRelation('entryLines', $accLines);
                 return $account;
             })->filter()->sortBy('code_compte')->values();
@@ -114,8 +113,9 @@ class LedgerController extends Controller
         if (empty($accountIds) && ($mode !== 'all')) {
             $data = collect();
         } else {
-            $query = JournalEntryLine::with(['entry.journal', 'account'])
+            $query = JournalEntryLine::with(['entry.journal', 'sousCompte.account'])
                 ->join('journal_entries', 'journal_entry_lines.journal_entry_id', '=', 'journal_entries.id')
+                ->join('sous_comptes', 'journal_entry_lines.sous_compte_id', '=', 'sous_comptes.id')
                 ->where('journal_entries.entreprise_id', $entrepriseId);
 
             $showArchived = $request->query('show_archived', '0');
@@ -126,7 +126,7 @@ class LedgerController extends Controller
             }
 
             if (!empty($accountIds)) {
-                $query->whereIn('journal_entry_lines.account_id', $accountIds);
+                $query->whereIn('sous_comptes.account_id', $accountIds);
             }
             if ($startDate) $query->where('journal_entries.date', '>=', $startDate);
             if ($endDate) $query->where('journal_entries.date', '<=', $endDate);
@@ -136,8 +136,10 @@ class LedgerController extends Controller
                   ->orderBy('journal_entry_lines.id', 'asc');
 
             $allLines = $query->select('journal_entry_lines.*')->get();
-            $data = $allLines->groupBy('account_id')->map(function($accLines) {
-                $account = $accLines->first()->account;
+            $data = $allLines->groupBy(function($line) {
+                return $line->sousCompte->account_id;
+            })->map(function($accLines) {
+                $account = $accLines->first()->sousCompte->account;
                 $account->setRelation('entryLines', $accLines);
                 return $account;
             })->sortBy('code_compte')->values();

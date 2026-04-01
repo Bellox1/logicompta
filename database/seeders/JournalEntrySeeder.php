@@ -2,75 +2,76 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\GeneralAccounting\Journal;
 use App\Models\GeneralAccounting\JournalEntry;
 use App\Models\GeneralAccounting\JournalEntryLine;
-use App\Models\GeneralAccounting\Account;
+use App\Models\SousCompte;
+use App\Models\Entreprise;
+use Illuminate\Database\Seeder;
 
 class JournalEntrySeeder extends Seeder
 {
     public function run(): void
     {
-        // On récupère ou crée un journal par défaut si besoin (ex: Journal Général)
+        $entreprise = Entreprise::first();
+        if (!$entreprise) return;
+
         $journal = Journal::first() ?? Journal::create([
             'name' => 'Journal Général',
-            'description' => 'Journal par défaut'
+            'description' => 'Journal par défaut',
+            'entreprise_id' => $entreprise->id
         ]);
 
-        // On s'assure d'avoir quelques comptes pour le débit/crédit (SYSCOHADA)
-        $bank = Account::firstOrCreate(['code_compte' => '521'], ['classe' => 5, 'libelle' => 'Banque']);
-        $capital = Account::firstOrCreate(['code_compte' => '101'], ['classe' => 1, 'libelle' => 'Capital']);
-        $expense = Account::firstOrCreate(['code_compte' => '601'], ['classe' => 6, 'libelle' => 'Achats de marchandises']);
-        $revenue = Account::firstOrCreate(['code_compte' => '701'], ['classe' => 7, 'libelle' => 'Vente de marchandises']);
+        $bank = SousCompte::where('numero_sous_compte', '521001')->first();
+        $capital = SousCompte::where('numero_sous_compte', '101000')->first();
+        $expense = SousCompte::where('numero_sous_compte', '601000')->first();
+        $revenue = SousCompte::where('numero_sous_compte', '701000')->first();
 
-        $years = [2022, 2023, 2024, 2025, 2026];
-        $pieceCounter = 1000;
+        if (!$bank || !$capital || !$expense || !$revenue) return;
+
+        $years = [2025, 2026];
+        $pieceCounter = 1;
 
         foreach ($years as $year) {
-            $is_archived = ($year < 2026); // Tout ce qui est avant l'année en cours est archivé
+            $is_archived = ($year < 2026);
 
-            // --- Écriture 1: Apport de capital ---
+            // Apport
             $entry = JournalEntry::create([
                 'journal_id' => $journal->id,
-                'piece_number' => 'PC-' . $year . '-' . ($pieceCounter++),
+                'entreprise_id' => $entreprise->id,
+                'numero_piece' => str_pad($pieceCounter++, 6, '0', STR_PAD_LEFT),
                 'date' => "$year-01-05",
                 'libelle' => "Constitution capital $year",
-                'total_debit' => 10000000,
-                'total_credit' => 10000000,
-                'is_archived' => $is_archived
             ]);
 
             JournalEntryLine::create([
                 'journal_entry_id' => $entry->id,
-                'account_id' => $bank->id,
+                'sous_compte_id' => $bank->id,
                 'debit' => 10000000,
                 'credit' => 0,
-                'libelle' => 'Versement banque'
+                'libelle' => 'Versement banque BOA'
             ]);
 
             JournalEntryLine::create([
                 'journal_entry_id' => $entry->id,
-                'account_id' => $capital->id,
+                'sous_compte_id' => $capital->id,
                 'debit' => 0,
                 'credit' => 10000000,
-                'libelle' => 'Dotation capital initiale'
+                'libelle' => 'Dotation capital'
             ]);
 
-            // --- Écriture 2: Ventes / Recettes ---
+            // Vente
             $entry2 = JournalEntry::create([
                 'journal_id' => $journal->id,
-                'piece_number' => 'PC-' . $year . '-' . ($pieceCounter++),
+                'entreprise_id' => $entreprise->id,
+                'numero_piece' => str_pad($pieceCounter++, 6, '0', STR_PAD_LEFT),
                 'date' => "$year-06-15",
                 'libelle' => "Ventes périodiques $year",
-                'total_debit' => 2500000,
-                'total_credit' => 2500000,
-                'is_archived' => $is_archived
             ]);
 
             JournalEntryLine::create([
                 'journal_entry_id' => $entry2->id,
-                'account_id' => $bank->id,
+                'sous_compte_id' => $bank->id,
                 'debit' => 2500000,
                 'credit' => 0,
                 'libelle' => 'Encaissement ventes'
@@ -78,37 +79,10 @@ class JournalEntrySeeder extends Seeder
 
             JournalEntryLine::create([
                 'journal_entry_id' => $entry2->id,
-                'account_id' => $revenue->id,
+                'sous_compte_id' => $revenue->id,
                 'debit' => 0,
                 'credit' => 2500000,
                 'libelle' => 'CA annuel'
-            ]);
-
-            // --- Écriture 3: Achats / Charges ---
-            $entry3 = JournalEntry::create([
-                'journal_id' => $journal->id,
-                'piece_number' => 'PC-' . $year . '-' . ($pieceCounter++),
-                'date' => "$year-10-20",
-                'libelle' => "Achats de marchandises $year",
-                'total_debit' => 1200000,
-                'total_credit' => 1200000,
-                'is_archived' => $is_archived
-            ]);
-
-            JournalEntryLine::create([
-                'journal_entry_id' => $entry3->id,
-                'account_id' => $expense->id,
-                'debit' => 1200000,
-                'credit' => 0,
-                'libelle' => 'Facture fournisseur X'
-            ]);
-
-            JournalEntryLine::create([
-                'journal_entry_id' => $entry3->id,
-                'account_id' => $bank->id,
-                'debit' => 0,
-                'credit' => 1200000,
-                'libelle' => 'Règlement par chèque'
             ]);
         }
     }

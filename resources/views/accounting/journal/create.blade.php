@@ -199,6 +199,77 @@
 
             let equilibre_first = false;
 
+            // --- PERSISTENCE LOGIC (localStorage) ---
+            const STORAGE_KEY = 'journal_draft_entry';
+
+            function saveDraft() {
+                const draft = {
+                    journal_id: document.querySelector('select[name="journal_id"]').value,
+                    date: document.querySelector('input[name="date"]').value,
+                    libelle: document.querySelector('input[name="libelle"]').value,
+                    lines: []
+                };
+
+                document.querySelectorAll('.line-row').forEach(row => {
+                    const scSelect = row.querySelector('select[name$="[sous_compte_id]"]');
+                    const debitInput = row.querySelector('.debit-input');
+                    const creditInput = row.querySelector('.credit-input');
+                    const libelleArea = row.querySelector('textarea[name$="[libelle]"]');
+                    
+                    if (scSelect) {
+                        draft.lines.push({
+                            account_id: scSelect.value,
+                            debit: debitInput.value,
+                            credit: creditInput.value,
+                            libelle: libelleArea.value
+                        });
+                    }
+                });
+
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
+            }
+
+            function loadDraft() {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (!saved) return;
+                
+                // Only load if the form is currently "fresh"
+                const currentLibelle = document.querySelector('input[name="libelle"]').value;
+                if (currentLibelle && currentLibelle.trim() !== "") return;
+
+                const draft = JSON.parse(saved);
+                
+                if (draft.journal_id) document.querySelector('select[name="journal_id"]').value = draft.journal_id;
+                if (draft.date) document.querySelector('input[name="date"]').value = draft.date;
+                if (draft.libelle) document.querySelector('input[name="libelle"]').value = draft.libelle;
+
+                if (draft.lines && draft.lines.length > 0) {
+                    // Start from line 0
+                    const rows = document.querySelectorAll('.line-row');
+                    
+                    draft.lines.forEach((line, index) => {
+                        let row;
+                        if (index < rows.length) {
+                            row = rows[index];
+                        } else {
+                            // Add new line
+                            const addLineBtn = document.getElementById('add-line');
+                            if (addLineBtn) addLineBtn.click();
+                            row = document.querySelectorAll('.line-row')[index];
+                        }
+
+                        if (!row) return;
+
+                        const scSelect = row.querySelector('select[name$="[sous_compte_id]"]');
+                        if (scSelect) scSelect.value = line.account_id;
+                        row.querySelector('.debit-input').value = line.debit;
+                        row.querySelector('.credit-input').value = line.credit;
+                        row.querySelector('textarea[name$="[libelle]"]').value = line.libelle;
+                    });
+                }
+                calculate();
+            }
+
             function calculate() {
                 let totalDebit = 0;
                 let totalCredit = 0;
@@ -234,8 +305,6 @@
                         balanceStatusEl.classList.remove('text-red-600');
                         balanceStatusEl.classList.add('text-green-600');
                         submitBtn.disabled = false;
-
-                        // User's logic: if balanced once, mark it
                         equilibre_first = true;
                     } else {
                         let message = "Déséquilibre";
@@ -254,12 +323,10 @@
                             maximumFractionDigits: 2
                         });
                         if (diff > 0) {
-                            // On doit ajouter au crédit
                             credits.forEach(i => {
                                 if (!i.value || parseFloat(i.value) === 0) i.placeholder = hintValue;
                             });
                         } else if (diff < 0) {
-                            // On doit ajouter au débit
                             debits.forEach(i => {
                                 if (!i.value || parseFloat(i.value) === 0) i.placeholder = hintValue;
                             });
@@ -270,11 +337,8 @@
             }
 
             function smartFillImbalance(input) {
-                // User's logic: if balanced once, stop automatic filling
                 if (equilibre_first) return;
-
                 if (parseFloat(input.value || 0) !== 0) return;
-
                 const diff = calculate();
                 const absDiff = Math.abs(diff);
                 if (absDiff < 0.01) return;
@@ -293,8 +357,6 @@
                 const row = input.closest('tr');
                 const val = parseFloat(input.value || 0);
 
-                // Only zero-out the opposite side BEFORE the first total balance is reached.
-                // After equilibre_first is true, we "touch nothing" automatically.
                 if (!equilibre_first && val > 0) {
                     if (input.classList.contains('debit-input')) {
                         row.querySelector('.credit-input').value = '';
@@ -303,6 +365,7 @@
                     }
                 }
                 calculate();
+                saveDraft(); // Save draft on every change
             }
 
             function attachListeners(row) {
@@ -313,7 +376,10 @@
                     });
                 });
                 row.querySelectorAll('select').forEach(select => {
-                    select.addEventListener('change', calculate);
+                    select.addEventListener('change', () => { calculate(); saveDraft(); });
+                });
+                row.querySelectorAll('textarea').forEach(area => {
+                    area.addEventListener('input', saveDraft);
                 });
             }
 
@@ -325,7 +391,7 @@
 
                     const firstRow = rows[0];
                     const newRow = firstRow.cloneNode(true);
-                    const inputs = newRow.querySelectorAll('input, select');
+                    const inputs = newRow.querySelectorAll('input, select, textarea');
 
                     inputs.forEach(input => {
                         const name = input.getAttribute('name');
@@ -333,25 +399,23 @@
                             input.setAttribute('name', name.replace(/\[\d+\]/, `[${lineCount}]`));
                         }
 
-                        if (input.classList.contains('debit-input') || input.classList.contains(
-                                'credit-input')) {
+                        if (input.classList.contains('debit-input') || input.classList.contains('credit-input')) {
                             input.value = '';
-                        } else if (input.tagName === 'INPUT' || input.tagName === 'TEXTAREA') {
+                        } else {
                             input.value = '';
-                        } else if (input.tagName === 'SELECT') {
-                            input.selectedIndex = 0;
                         }
                     });
 
                     const deleteCell = newRow.cells[newRow.cells.length - 1];
                     deleteCell.innerHTML =
-                        '<button type="button" class="text-red-400 hover:text-red-600 transition-colors p-1" onclick="this.closest(\'tr\').remove(); calculate();"><i data-lucide="x" class="w-5 h-5"></i></button>';
+                        '<button type="button" class="text-red-400 hover:text-red-600 transition-colors p-1" onclick="this.closest(\'tr\').remove(); calculate(); saveDraft();"><i data-lucide="x" class="w-5 h-5"></i></button>';
 
                     body.appendChild(newRow);
                     lineCount++;
                     attachListeners(newRow);
                     if (typeof lucide !== 'undefined') lucide.createIcons();
                     calculate();
+                    saveDraft();
                 });
             }
 
@@ -375,9 +439,20 @@
                         alert('La date ne peut pas dépasser le mois en cours.');
                         this.value = today.toISOString().split('T')[0];
                     }
+                    saveDraft();
                 });
             }
+            
+            document.querySelector('input[name="libelle"]').addEventListener('input', saveDraft);
+            document.querySelector('select[name="journal_id"]').addEventListener('change', saveDraft);
 
+            // Clear storage on submit
+            document.getElementById('journalform').addEventListener('submit', function() {
+                localStorage.removeItem(STORAGE_KEY);
+            });
+
+            // Initial load
+            loadDraft();
             calculate();
         });
     </script>

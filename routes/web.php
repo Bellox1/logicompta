@@ -8,6 +8,7 @@ use App\Http\Controllers\GeneralAccounting\TrialBalanceController;
 use App\Http\Controllers\GeneralAccounting\FinancialStatementController;
 use App\Http\Controllers\GeneralAccounting\JournalSettingsController;
 use App\Http\Controllers\GeneralAccounting\SupportController;
+use App\Http\Controllers\GeneralAccounting\AccountController;
 use App\Http\Controllers\GeneralAccounting\ArchiveController;
 use App\Http\Controllers\EntrepriseController;
 use App\Http\Controllers\AuthController;
@@ -99,6 +100,14 @@ Route::prefix('accounting')->name('accounting.')->middleware(['web', 'auth'])->g
     
     Route::get('/help', [SupportController::class, 'help'])->name('help');
     Route::get('/system-date', [SupportController::class, 'systemeDate'])->name('system-date');
+    
+    // Plan Comptable et Sous-comptes
+    Route::get('/compte', [AccountController::class, 'index'])->name('account.index');
+    Route::get('/compte/import', [AccountController::class, 'importForm'])->name('account.import');
+    Route::post('/compte/import', [AccountController::class, 'importProcess'])->name('account.import.process');
+    Route::post('/compte/sous-compte', [AccountController::class, 'storeSousCompte'])->name('account.store_sous_compte');
+    Route::put('/compte/sous-compte/{id}', [AccountController::class, 'updateSousCompte'])->name('account.update_sous_compte');
+    Route::delete('/compte/sous-compte/{id}', [AccountController::class, 'destroySousCompte'])->name('account.destroy_sous_compte');
 
     // Archives
     Route::get('/archives', [ArchiveController::class, 'index'])->name('archive.index');

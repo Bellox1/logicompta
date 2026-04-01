@@ -13,4 +13,9 @@ class Account extends Model
     {
         return $this->hasMany(JournalEntryLine::class);
     }
+
+    public function sousComptes(): HasMany
+    {
+        return $this->hasMany(\App\Models\SousCompte::class, 'account_id');
+    }
 }

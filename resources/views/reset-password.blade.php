@@ -20,7 +20,7 @@
                         sans: ['Inter', 'sans-serif']
                     },
                     colors: {
-                        primary: '#003366',
+                        primary: '#005b82',
                         'primary-light': '#004d99',
                     }
                 }
@@ -71,25 +71,25 @@
     </style>
 </head>
 
-<body class="bg-gray-50 dark:bg-[#0a0f1e]">
+<body class="bg-slate-50 dark:bg-[#0a0f1e]">
 
     <div class="auth-container">
         {{-- ═══════════════════════ LEFT PANEL ═══════════════════════ --}}
         <div class="hidden lg:flex w-1/2 relative flex-col items-center justify-center p-12 overflow-hidden"
-            style="background: linear-gradient(135deg, #001a3a 0%, #003366 50%, #004d99 100%);">
+            style="background: linear-gradient(135deg, #001a3a 0%, #005b82 50%, #004d99 100%);">
             
             <div class="relative z-10 text-center max-w-md">
                 <div class="mb-10">
                     <img src="{{ asset('storage/images/logo.png') }}" alt="Logo" class="w-56 mx-auto">
                 </div>
                 <h1 class="text-4xl font-black text-white tracking-tight mb-4">Mise à jour</h1>
-                <p class="text-blue-200 text-lg leading-relaxed mb-8">
+                <p class="text-slate-300 text-lg leading-relaxed mb-8">
                     Choisissez un nouveau mot de passe fort pour sécuriser votre compte.
                 </p>
                 <div class="space-y-4">
                     <div class="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-5 py-3">
                         <i data-lucide="shield-check" class="w-5 h-5 text-green-400"></i>
-                        <span class="text-sm text-blue-100 font-bold">Sécurité renforcée</span>
+                        <span class="text-sm text-slate-300 font-bold">Sécurité renforcée</span>
                     </div>
                 </div>
             </div>
@@ -106,8 +106,8 @@
 
                 {{-- Header --}}
                 <div class="mb-10 animate-fade-up" style="animation-delay: 0.1s;">
-                    <h2 class="text-4xl font-black text-gray-900 dark:text-white tracking-tight mb-2">Nouveau MDP</h2>
-                    <p class="text-gray-500 dark:text-slate-400 font-medium">Réinitialisez votre compte</p>
+                    <h2 class="text-4xl font-black text-slate-900 dark:text-white tracking-tight mb-2">Nouveau MDP</h2>
+                    <p class="text-slate-500 dark:text-slate-400 font-medium">Réinitialisez votre compte</p>
                 </div>
 
                 {{-- Form --}}
@@ -117,24 +117,24 @@
                     <input type="hidden" name="email" value="{{ $email }}">
                     
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 dark:text-slate-300 mb-2">Mot de passe</label>
+                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Mot de passe</label>
                         <div class="relative group">
-                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
                                 <i data-lucide="lock" class="w-5 h-5"></i>
                             </span>
                             <input type="password" name="password" required placeholder="Nouveau mot de passe"
-                                class="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white pl-12 pr-4 py-4 rounded-2xl text-base focus:outline-none focus:border-primary transition-all shadow-sm">
+                                class="w-full bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white pl-12 pr-4 py-4 rounded-2xl text-base focus:outline-none focus:border-primary transition-all shadow-sm">
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 dark:text-slate-300 mb-2">Confirmation</label>
+                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Confirmation</label>
                         <div class="relative group">
-                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
                                 <i data-lucide="shield-check" class="w-5 h-5"></i>
                             </span>
                             <input type="password" name="password_confirmation" required placeholder="Confirmez le mot de passe"
-                                class="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white pl-12 pr-4 py-4 rounded-2xl text-base focus:outline-none focus:border-primary transition-all shadow-sm">
+                                class="w-full bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white pl-12 pr-4 py-4 rounded-2xl text-base focus:outline-none focus:border-primary transition-all shadow-sm">
                         </div>
                     </div>
 

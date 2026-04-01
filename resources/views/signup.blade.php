@@ -21,7 +21,7 @@
                         sans: ['Inter', 'sans-serif']
                     },
                     colors: {
-                        primary: '#003366',
+                        primary: '#005b82',
                         'primary-light': '#004d99',
                     }
                 }
@@ -80,33 +80,32 @@
     </style>
 </head>
 
-<body class="bg-gray-50 dark:bg-[#0a0f1e]">
+<body class="bg-slate-50 dark:bg-[#0a0f1e]">
 
     <div class="auth-container">
         {{-- ═══════════════════════ LEFT PANEL ═══════════════════════ --}}
-        <div class="hidden lg:flex w-1/2 relative flex-col items-center justify-center p-12 overflow-hidden"
-            style="background: linear-gradient(135deg, #001a3a 0%, #003366 50%, #004d99 100%);">
+        <div class="hidden lg:flex w-1/2 relative flex-col items-center justify-center p-12 overflow-hidden bg-primary">
 
             <div class="relative z-10 text-center max-w-md">
                 <div class="mb-10">
                     <img src="{{ asset('storage/images/logo.png') }}" alt="Logo" class="w-56 mx-auto">
                 </div>
                 <h1 class="text-4xl font-black text-white tracking-tight mb-4">Rejoignez-nous</h1>
-                <p class="text-blue-200 text-lg leading-relaxed mb-8">
+                <p class="text-slate-300 text-lg leading-relaxed mb-8">
                     Créez votre compte et gérez votre comptabilité en toute simplicité.
                 </p>
                 <div class="space-y-3">
                     <div class="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-5 py-3 text-left">
                         <i data-lucide="check-circle" class="w-5 h-5 text-green-400"></i>
-                        <span class="text-sm text-blue-100 font-bold">Journal & Saisie comptable</span>
+                        <span class="text-sm text-slate-300 font-bold">Journal & Saisie comptable</span>
                     </div>
                     <div class="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-5 py-3 text-left">
                         <i data-lucide="check-circle" class="w-5 h-5 text-green-400"></i>
-                        <span class="text-sm text-blue-100 font-bold">États de synthèse & Bilan</span>
+                        <span class="text-sm text-slate-300 font-bold">États de synthèse & Bilan</span>
                     </div>
                     <div class="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-5 py-3 text-left">
                         <i data-lucide="check-circle" class="w-5 h-5 text-green-400"></i>
-                        <span class="text-sm text-blue-100 font-bold">Équipe illimitée</span>
+                        <span class="text-sm text-slate-300 font-bold">Équipe illimitée</span>
                     </div>
                 </div>
             </div>
@@ -124,8 +123,8 @@
 
                 {{-- Header --}}
                 <div class="mb-10 animate-fade-up" style="animation-delay: 0.1s;">
-                    <h2 class="text-4xl font-black text-gray-900 dark:text-white tracking-tight mb-2">Inscription</h2>
-                    <p class="text-gray-500 dark:text-slate-400 font-medium">Commencez dès aujourd'hui</p>
+                    <h2 class="text-4xl font-black text-slate-900 dark:text-white tracking-tight mb-2">Inscription</h2>
+                    <p class="text-slate-500 dark:text-slate-400 font-medium">Commencez dès aujourd'hui</p>
                 </div>
 
                 {{-- Alerts --}}
@@ -148,80 +147,80 @@
                     style="animation-delay: 0.2s;">
                     @csrf
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 dark:text-slate-300 mb-2">Nom
+                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Nom
                             Complet</label>
                         <div class="relative group">
                             <span
-                                class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
+                                class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
                                 <i data-lucide="user" class="w-5 h-5"></i>
                             </span>
                             <input type="text" name="name" value="{{ old('name') }}" required placeholder="Votre nom complet"
-                                class="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white pl-12 pr-4 py-4 rounded-2xl text-base focus:outline-none focus:border-primary transition-all shadow-sm">
+                                class="w-full bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white pl-12 pr-4 py-4 rounded-2xl text-base focus:outline-none focus:border-primary transition-all shadow-sm">
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 dark:text-slate-300 mb-2">Email</label>
+                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Email</label>
                         <div class="relative group">
                             <span
-                                class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
+                                class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
                                 <i data-lucide="mail" class="w-5 h-5"></i>
                             </span>
                             <input type="email" name="email" value="{{ old('email') }}" required placeholder="votre@email.com"
-                                class="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white pl-12 pr-4 py-4 rounded-2xl text-base focus:outline-none focus:border-primary transition-all shadow-sm">
+                                class="w-full bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white pl-12 pr-4 py-4 rounded-2xl text-base focus:outline-none focus:border-primary transition-all shadow-sm">
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 dark:text-slate-300 mb-2">Mot de passe</label>
+                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Mot de passe</label>
                         <div class="relative group">
-                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
                                 <i data-lucide="lock" class="w-5 h-5"></i>
                             </span>
                             <input type="password" name="password" id="password" required placeholder="Minimum 8 caractères"
-                                class="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white pl-12 pr-12 py-4 rounded-2xl text-base focus:outline-none focus:border-primary transition-all shadow-sm">
-                            <button type="button" onclick="togglePassword('password', 'eye-icon-1')" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary transition-colors">
+                                class="w-full bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white pl-12 pr-12 py-4 rounded-2xl text-base focus:outline-none focus:border-primary transition-all shadow-sm">
+                            <button type="button" onclick="togglePassword('password', 'eye-icon-1')" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors">
                                 <i data-lucide="eye" id="eye-icon-1" class="w-5 h-5"></i>
                             </button>
                         </div>
 
                         {{-- Strength bar --}}
                         <div class="mt-4 px-1">
-                            <div class="h-1.5 w-full bg-gray-100 dark:bg-white/10 rounded-full overflow-hidden">
+                            <div class="h-1.5 w-full bg-slate-100 dark:bg-white/10 rounded-full overflow-hidden">
                                 <div id="strength-bar" class="strength-bar h-full w-0 bg-red-500"></div>
                             </div>
-                            <div id="strength-text" class="text-[10px] text-gray-500 mt-2 font-bold uppercase tracking-widest">Très faible</div>
+                            <div id="strength-text" class="text-[10px] text-slate-500 mt-2 font-bold uppercase tracking-widest">Très faible</div>
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 dark:text-slate-300 mb-2">Confirmation</label>
+                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Confirmation</label>
                         <div class="relative group">
-                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
                                 <i data-lucide="shield-check" class="w-5 h-5"></i>
                             </span>
                             <input type="password" name="password_confirmation" id="password_confirmation" required placeholder="Confirmez le mot de passe"
-                                class="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white pl-12 pr-12 py-4 rounded-2xl text-base focus:outline-none focus:border-primary transition-all shadow-sm">
-                            <button type="button" onclick="togglePassword('password_confirmation', 'eye-icon-2')" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary transition-colors">
+                                class="w-full bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white pl-12 pr-12 py-4 rounded-2xl text-base focus:outline-none focus:border-primary transition-all shadow-sm">
+                            <button type="button" onclick="togglePassword('password_confirmation', 'eye-icon-2')" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors">
                                 <i data-lucide="eye" id="eye-icon-2" class="w-5 h-5"></i>
                             </button>
                         </div>
                     </div>
 
-                    <p class="text-xs text-center text-gray-400 dark:text-slate-500 leading-relaxed">
+                    <p class="text-xs text-center text-slate-400 dark:text-slate-500 leading-relaxed">
                         En cliquant sur S'inscrire, vous acceptez nos
                         <a href="#" class="text-primary font-bold hover:underline">Conditions d'Utilisation</a>
                     </p>
 
                     <button type="submit"
-                        class="w-full py-4 bg-primary text-white font-black rounded-2xl hover:bg-primary-light transition-all shadow-lg shadow-blue-900/40 text-sm uppercase tracking-widest active:scale-[0.98]">
+                        class="w-full py-4 bg-primary text-white font-black rounded-2xl hover:bg-primary-light transition-all shadow-lg shadow-primary/40 text-sm uppercase tracking-widest active:scale-[0.98]">
                         S'inscrire
                     </button>
                 </form>
 
                 {{-- Footer --}}
                 <div class="mt-10 text-center animate-fade-up" style="animation-delay: 0.3s;">
-                    <p class="text-sm text-gray-500 dark:text-slate-400">
+                    <p class="text-sm text-slate-500 dark:text-slate-400">
                         Déjà un compte ?
                         <a href="{{ route('login') }}"
                             class="font-black text-primary hover:text-primary-light ml-1 underline transition-all">Se

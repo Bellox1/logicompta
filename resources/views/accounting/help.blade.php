@@ -5,9 +5,9 @@
 @section('content')
     <div>
         <div class="mb-10 text-center">
-            <h1 class="text-3xl md:text-5xl font-black text-gray-900 dark:text-white mb-4 uppercase tracking-tighter">Guide
+            <h1 class="text-3xl md:text-5xl font-black text-slate-900 dark:text-white mb-4 uppercase tracking-tighter">Guide
                 de Gestion Logicompta</h1>
-            <p class="text-base md:text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto italic">
+            <p class="text-base md:text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto italic">
                 Maîtrisez les outils de votre comptabilité et les principes du système SYSCOHADA.
             </p>
         </div>
@@ -20,10 +20,10 @@
                         class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
                         <i data-lucide="book-open" class="w-6 h-6"></i>
                     </div>
-                    <h2 class="text-xl font-black uppercase tracking-widest text-gray-800 dark:text-white">1. Plan Comptable
+                    <h2 class="text-xl font-black uppercase tracking-widest text-slate-800 dark:text-white">1. Plan Comptable
                     </h2>
                 </div>
-                <div class="space-y-3 text-sm leading-relaxed text-gray-600 dark:text-gray-400">
+                <div class="space-y-3 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
                     <div class="flex gap-3"><b class="text-primary font-black shrink-0 w-16">Classe 1</b> <span>Ressources
                             durables (Capitaux, Emprunts). Passif.</span></div>
                     <div class="flex gap-3"><b class="text-primary font-black shrink-0 w-16">Classe 2</b> <span>Actif
@@ -48,19 +48,19 @@
                         class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
                         <i data-lucide="file-text" class="w-6 h-6"></i>
                     </div>
-                    <h2 class="text-xl font-black uppercase tracking-widest text-gray-800 dark:text-white">2. États de
+                    <h2 class="text-xl font-black uppercase tracking-widest text-slate-800 dark:text-white">2. États de
                         Synthèse</h2>
                 </div>
-                <div class="space-y-4 text-sm leading-relaxed text-gray-600 dark:text-gray-400">
-                    <p>• <strong class="text-gray-800 dark:text-white">Le Journal :</strong> Enregistrement quotidien et
+                <div class="space-y-4 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+                    <p>• <strong class="text-slate-800 dark:text-white">Le Journal :</strong> Enregistrement quotidien et
                         chronologique.</p>
-                    <p>• <strong class="text-gray-800 dark:text-white">Le Grand Livre :</strong> Détail exhaustif compte par
+                    <p>• <strong class="text-slate-800 dark:text-white">Le Grand Livre :</strong> Détail exhaustif compte par
                         compte.</p>
-                    <p>• <strong class="text-gray-800 dark:text-white">La Balance :</strong> Vérification de l'équilibre
+                    <p>• <strong class="text-slate-800 dark:text-white">La Balance :</strong> Vérification de l'équilibre
                         Débit/Crédit.</p>
-                    <p>• <strong class="text-gray-800 dark:text-white">Le Bilan :</strong> Patrimoine net de l'entreprise
+                    <p>• <strong class="text-slate-800 dark:text-white">Le Bilan :</strong> Patrimoine net de l'entreprise
                         (Actif = Passif).</p>
-                    <p>• <strong class="text-gray-800 dark:text-white">Résultat :</strong> Performance sur l'exercice
+                    <p>• <strong class="text-slate-800 dark:text-white">Résultat :</strong> Performance sur l'exercice
                         (Produits - Charges).</p>
                 </div>
             </div>
@@ -102,7 +102,7 @@
         <!-- SECTION 4 WAS MOVED TO COMPTE VIEW -->
 
         <div class="mt-16 text-center pb-12">
-            <p class="text-[10px] text-gray-400 uppercase font-black tracking-[0.5em]">Logicompta Management - Plan
+            <p class="text-[10px] text-slate-400 uppercase font-black tracking-[0.5em]">Logicompta Management - Plan
                 Comptable</p>
         </div>
     </div>

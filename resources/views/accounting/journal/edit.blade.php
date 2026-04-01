@@ -5,12 +5,12 @@
 @section('content')
     <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div class="flex items-center gap-4">
-            <a href="{{ route('accounting.journal.index') }}" class="p-2 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all">
-                <i data-lucide="arrow-left" class="w-5 h-5 text-gray-600"></i>
+            <a href="{{ route('accounting.journal.index') }}" class="p-2 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all">
+                <i data-lucide="arrow-left" class="w-5 h-5 text-slate-600"></i>
             </a>
             <div>
-                <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-1">Modifier l'écriture</h1>
-                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Pièce N° {{ str_replace('PC-', '', $entry->numero_piece) }}</p>
+                <h1 class="text-2xl md:text-3xl font-bold text-slate-800 mb-1">Modifier l'écriture</h1>
+                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Pièce N° {{ str_replace('PC-', '', $entry->numero_piece) }}</p>
             </div>
         </div>
         <div class="flex flex-wrap gap-3">
@@ -20,7 +20,7 @@
                 Paramétrage Journaux
             </a>
             <a href="{{ route('accounting.journal.index') }}" 
-                class="px-5 py-2.5 bg-white border border-border text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition-all text-xs flex items-center gap-2 shadow-sm uppercase tracking-widest">
+                class="px-5 py-2.5 bg-white border border-border text-slate-700 font-bold rounded-xl hover:bg-slate-50 transition-all text-xs flex items-center gap-2 shadow-sm uppercase tracking-widest">
                 <i data-lucide="book-open" class="w-4 h-4"></i>
                 Historique Journal
             </a>
@@ -48,48 +48,48 @@
             <div class="grid grid-cols-1 md:grid-cols-5 gap-4 md:gap-6">
                 <div class="min-w-0">
                     <label
-                        class="block text-[10px] md:text-sm font-semibold text-gray-700 mb-1 md:mb-2 px-1 uppercase tracking-wider">N°
+                        class="block text-[10px] md:text-sm font-semibold text-slate-700 mb-1 md:mb-2 px-1 uppercase tracking-wider">N°
                         Pièce</label>
                     <input type="text" value="{{ str_replace('PC-', '', $entry->numero_piece) }}" disabled
-                        class="w-full max-w-full bg-gray-100 border border-border rounded-xl px-3 py-2 md:px-4 md:py-3 text-gray-500 font-bold cursor-not-allowed">
+                        class="w-full max-w-full bg-slate-100 border border-border rounded-xl px-3 py-2 md:px-4 md:py-3 text-slate-500 font-bold cursor-not-allowed">
                 </div>
                 <div class="min-w-0">
                     <label
-                        class="block text-[10px] md:text-sm font-semibold text-gray-700 mb-1 md:mb-2 px-1 uppercase tracking-wider">Journal</label>
+                        class="block text-[10px] md:text-sm font-semibold text-slate-700 mb-1 md:mb-2 px-1 uppercase tracking-wider">Journal</label>
                     <div class="relative">
                         <select name="journal_id" required
-                            class="w-full max-w-full bg-gray-50 border border-border rounded-xl px-3 py-2 md:px-4 md:py-3 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all appearance-none cursor-pointer text-sm md:text-base">
+                            class="w-full max-w-full bg-slate-50 border border-border rounded-xl px-3 py-2 md:px-4 md:py-3 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all appearance-none cursor-pointer text-sm md:text-base">
                             @foreach ($journals as $journal)
                                 <option value="{{ $journal->id }}"
                                     {{ old('journal_id', $entry->journal_id) == $journal->id ? 'selected' : '' }}>{{ $journal->name }}</option>
                             @endforeach
                         </select>
-                        <div class="absolute right-3 md:right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                        <div class="absolute right-3 md:right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
                             <i data-lucide="chevron-down" class="w-4 h-4 md:w-5 md:h-5"></i>
                         </div>
                     </div>
                 </div>
                 <div class="min-w-0">
                     <label
-                        class="block text-[10px] md:text-sm font-semibold text-gray-700 mb-1 md:mb-2 px-1 uppercase tracking-wider">Date
+                        class="block text-[10px] md:text-sm font-semibold text-slate-700 mb-1 md:mb-2 px-1 uppercase tracking-wider">Date
                         d'opération</label>
                     <input type="date" name="date" value="{{ old('date', $entry->date) }}"
                         required
-                        class="w-full max-w-full bg-gray-50 border border-border rounded-xl px-3 py-2 md:px-4 md:py-3 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-sm md:text-base">
+                        class="w-full max-w-full bg-slate-50 border border-border rounded-xl px-3 py-2 md:px-4 md:py-3 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-sm md:text-base">
                 </div>
                 <div class="min-w-0 md:col-span-2">
                     <label
-                        class="block text-[10px] md:text-sm font-semibold text-gray-700 mb-1 md:mb-2 px-1 uppercase tracking-wider">Libellé
+                        class="block text-[10px] md:text-sm font-semibold text-slate-700 mb-1 md:mb-2 px-1 uppercase tracking-wider">Libellé
                         général</label>
                     <textarea name="libelle" placeholder="Ex: Règlement..." required rows="1"
-                        class="w-full max-w-full bg-gray-50 border border-border rounded-xl px-3 py-2 md:px-4 md:py-3 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-sm md:text-base resize-y min-h-[100px] flex items-center">{{ old('libelle', $entry->libelle) }}</textarea>
+                        class="w-full max-w-full bg-slate-50 border border-border rounded-xl px-3 py-2 md:px-4 md:py-3 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-sm md:text-base resize-y min-h-[100px] flex items-center">{{ old('libelle', $entry->libelle) }}</textarea>
                 </div>
             </div>
         </div>
 
         <div class="bg-card-bg border border-border rounded-2xl shadow-sm overflow-hidden mb-8">
-            <div class="bg-gray-50 px-6 py-4 border-b border-border flex items-center justify-between">
-                <h3 class="text-sm font-bold text-gray-700 uppercase tracking-widest">Lignes d'écritures</h3>
+            <div class="bg-slate-50 px-6 py-4 border-b border-border flex items-center justify-between">
+                <h3 class="text-sm font-bold text-slate-700 uppercase tracking-widest">Lignes d'écritures</h3>
                 <button type="button" id="add-line"
                     class="text-primary hover:text-primary-light font-bold text-sm flex items-center gap-2 transition-colors">
                     <i data-lucide="plus-circle" class="w-4 h-4"></i>
@@ -100,7 +100,7 @@
             <div class="table-responsive">
                 <table class="w-full border-collapse min-w-[800px]">
                     <thead>
-                        <tr class="bg-white text-gray-500 border-b border-border">
+                        <tr class="bg-white text-slate-500 border-b border-border">
                             <th class="px-6 py-4 text-xs font-bold uppercase tracking-widest text-left" style="width: 25%;">
                                 Compte</th>
                             <th class="px-6 py-4 text-xs font-bold uppercase tracking-widest text-left" style="width: 12%;">
@@ -111,12 +111,12 @@
                             <th class="px-6 py-4 text-center" style="width: 50px;"></th>
                         </tr>
                     </thead>
-                    <tbody id="lines-body" class="divide-y divide-gray-100">
+                    <tbody id="lines-body" class="divide-y divide-slate-100">
                         @php
                             $lines = old('lines', $entry->lines->toArray());
                         @endphp
                         @foreach ($lines as $index => $line)
-                            <tr class="line-row hover:bg-gray-50/50 transition-colors">
+                            <tr class="line-row hover:bg-slate-50/50 transition-colors">
                                 <td class="px-4 py-3">
                                     <select name="lines[{{ $index }}][sous_compte_id]" required
                                         class="w-full bg-white border border-border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none select2-account">
@@ -160,28 +160,28 @@
                 </table>
             </div>
 
-            <div class="bg-gray-50 p-3 md:p-6 border-t border-border mt-auto">
+            <div class="bg-slate-50 p-3 md:p-6 border-t border-border mt-auto">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div class="flex flex-wrap gap-4 md:gap-8">
                         <div>
-                            <div class="text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-1">Total Débit
+                            <div class="text-[10px] uppercase font-bold text-slate-400 tracking-widest mb-1">Total Débit
                             </div>
-                            <div class="text-xl font-bold text-gray-900"><span id="total-debit">0</span> F</div>
+                            <div class="text-xl font-bold text-slate-900"><span id="total-debit">0</span> F</div>
                         </div>
                         <div>
-                            <div class="text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-1">Total Crédit
+                            <div class="text-[10px] uppercase font-bold text-slate-400 tracking-widest mb-1">Total Crédit
                             </div>
-                            <div class="text-xl font-bold text-gray-900"><span id="total-credit">0</span> F</div>
+                            <div class="text-xl font-bold text-slate-900"><span id="total-credit">0</span> F</div>
                         </div>
                         <div id="balance-container">
-                            <div class="text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-1">État
+                            <div class="text-[10px] uppercase font-bold text-slate-400 tracking-widest mb-1">État
                                 d'Équilibre</div>
                             <div id="balance-status" class="text-sm font-bold text-red-600 italic">Déséquilibre: 0 F
                             </div>
                         </div>
                     </div>
                     <div class="flex gap-4">
-                        <a href="{{ route('accounting.journal.index') }}" class="px-8 py-4 bg-gray-200 text-gray-600 font-bold rounded-2xl hover:bg-gray-300 transition-all">Annuler</a>
+                        <a href="{{ route('accounting.journal.index') }}" class="px-8 py-4 bg-slate-200 text-slate-600 font-bold rounded-2xl hover:bg-slate-300 transition-all">Annuler</a>
                         <button type="submit" id="submit-btn" 
                             class="px-8 py-4 bg-primary text-white font-bold rounded-2xl hover:bg-primary-light disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-lg flex items-center justify-center gap-2">
                             <i data-lucide="check-circle" class="w-5 h-5"></i>
@@ -199,7 +199,7 @@
         .debit-input::placeholder,
         .credit-input::placeholder {
             color: #9ca3af !important;
-            /* Gris (gray-400) */
+            /* Gris (slate-400) */
             font-weight: 500;
             opacity: 0.8;
         }

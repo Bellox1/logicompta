@@ -62,8 +62,8 @@
                             <i class="fas fa-camera text-sm"></i>
                         </button>
                     </div>
-                    <h3 class="mt-4 text-xl font-semibold text-gray-800" id="profileName">Chargement...</h3>
-                    <p class="text-gray-600" id="profileEmail">Chargement...</p>
+                    <h3 class="mt-4 text-xl font-semibold text-slate-800" id="profileName">Chargement...</h3>
+                    <p class="text-slate-600" id="profileEmail">Chargement...</p>
                     <span class="inline-block mt-2 px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium" id="profileRole">
                         Chargement...
                     </span>
@@ -72,7 +72,7 @@
                 <!-- Profile Information -->
                 <div class="md:col-span-2">
                     <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-2xl font-bold text-gray-800">Informations du profil</h2>
+                        <h2 class="text-2xl font-bold text-slate-800">Informations du profil</h2>
                         <button onclick="toggleEditMode()" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition">
                             <i class="fas fa-edit mr-2"></i>Modifier
                         </button>
@@ -81,21 +81,21 @@
                     <!-- View Mode -->
                     <div id="viewMode" class="space-y-4">
                         <div class="grid md:grid-cols-2 gap-4">
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <label class="text-sm text-gray-600 font-medium">Nom complet</label>
-                                <p class="text-lg font-semibold text-gray-800" id="displayName">Chargement...</p>
+                            <div class="bg-slate-50 p-4 rounded-lg">
+                                <label class="text-sm text-slate-600 font-medium">Nom complet</label>
+                                <p class="text-lg font-semibold text-slate-800" id="displayName">Chargement...</p>
                             </div>
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <label class="text-sm text-gray-600 font-medium">Email</label>
-                                <p class="text-lg font-semibold text-gray-800" id="displayEmail">Chargement...</p>
+                            <div class="bg-slate-50 p-4 rounded-lg">
+                                <label class="text-sm text-slate-600 font-medium">Email</label>
+                                <p class="text-lg font-semibold text-slate-800" id="displayEmail">Chargement...</p>
                             </div>
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <label class="text-sm text-gray-600 font-medium">Rôle</label>
-                                <p class="text-lg font-semibold text-gray-800" id="displayRole">Chargement...</p>
+                            <div class="bg-slate-50 p-4 rounded-lg">
+                                <label class="text-sm text-slate-600 font-medium">Rôle</label>
+                                <p class="text-lg font-semibold text-slate-800" id="displayRole">Chargement...</p>
                             </div>
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <label class="text-sm text-gray-600 font-medium">Date d'inscription</label>
-                                <p class="text-lg font-semibold text-gray-800" id="displayDate">Chargement...</p>
+                            <div class="bg-slate-50 p-4 rounded-lg">
+                                <label class="text-sm text-slate-600 font-medium">Date d'inscription</label>
+                                <p class="text-lg font-semibold text-slate-800" id="displayDate">Chargement...</p>
                             </div>
                         </div>
                     </div>
@@ -104,19 +104,19 @@
                     <div id="editMode" class="hidden space-y-4">
                         <div class="grid md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Nom complet</label>
-                                <input type="text" id="editName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                <label class="block text-sm font-medium text-slate-700 mb-2">Nom complet</label>
+                                <input type="text" id="editName" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                                <input type="email" id="editEmail" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                <label class="block text-sm font-medium text-slate-700 mb-2">Email</label>
+                                <input type="email" id="editEmail" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
                             </div>
                         </div>
                         <div class="flex gap-4">
                             <button onclick="saveProfile()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
                                 <i class="fas fa-save mr-2"></i>Enregistrer
                             </button>
-                            <button onclick="cancelEdit()" class="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition">
+                            <button onclick="cancelEdit()" class="bg-slate-600 text-white px-6 py-2 rounded-lg hover:bg-slate-700 transition">
                                 <i class="fas fa-times mr-2"></i>Annuler
                             </button>
                         </div>
@@ -125,16 +125,16 @@
             </div>
 
             <!-- Quick Actions -->
-            <div class="mt-8 pt-8 border-t border-gray-200">
-                <h3 class="text-lg font-semibold text-gray-800 mb-4">Actions rapides</h3>
+            <div class="mt-8 pt-8 border-t border-slate-200">
+                <h3 class="text-lg font-semibold text-slate-800 mb-4">Actions rapides</h3>
                 <div class="grid md:grid-cols-3 gap-4">
-                    <button onclick="showPasswordModal()" class="bg-blue-600 text-white p-4 rounded-lg hover:bg-blue-700 transition">
+                    <button onclick="showPasswordModal()" class="bg-primary text-white p-4 rounded-lg hover:bg-primary transition">
                         <i class="fas fa-key mr-2"></i>Changer le mot de passe
                     </button>
                     <button onclick="showDeleteModal()" class="bg-red-600 text-white p-4 rounded-lg hover:bg-red-700 transition">
                         <i class="fas fa-trash mr-2"></i>Supprimer le compte
                     </button>
-                    <button onclick="logout()" class="bg-gray-600 text-white p-4 rounded-lg hover:bg-gray-700 transition">
+                    <button onclick="logout()" class="bg-slate-600 text-white p-4 rounded-lg hover:bg-slate-700 transition">
                         <i class="fas fa-sign-out-alt mr-2"></i>Déconnexion
                     </button>
                 </div>
@@ -327,7 +327,7 @@
             if (type === 'error') {
                 messageEl.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg';
             } else if (type === 'info') {
-                messageEl.className = 'fixed top-4 right-4 bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg';
+                messageEl.className = 'fixed top-4 right-4 bg-primary text-white px-6 py-3 rounded-lg shadow-lg';
             } else {
                 messageEl.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg';
             }

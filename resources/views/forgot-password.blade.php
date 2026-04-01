@@ -20,7 +20,7 @@
                         sans: ['Inter', 'sans-serif']
                     },
                     colors: {
-                        primary: '#003366',
+                        primary: '#005b82',
                         'primary-light': '#004d99',
                     }
                 }
@@ -71,29 +71,29 @@
     </style>
 </head>
 
-<body class="bg-gray-50 dark:bg-[#0a0f1e]">
+<body class="bg-slate-50 dark:bg-[#0a0f1e]">
 
     <div class="auth-container">
         {{-- ═══════════════════════ LEFT PANEL ═══════════════════════ --}}
         <div class="hidden lg:flex w-1/2 relative flex-col items-center justify-center p-12 overflow-hidden"
-            style="background: linear-gradient(135deg, #001a3a 0%, #003366 50%, #004d99 100%);">
+            style="background: linear-gradient(135deg, #001a3a 0%, #005b82 50%, #004d99 100%);">
             
             <div class="relative z-10 text-center max-w-md">
                 <div class="mb-10">
                     <img src="{{ asset('storage/images/logo.png') }}" alt="Logo" class="w-56 mx-auto">
                 </div>
                 <h1 class="text-4xl font-black text-white tracking-tight mb-4">Récupération</h1>
-                <p class="text-blue-200 text-lg leading-relaxed mb-8">
+                <p class="text-slate-300 text-lg leading-relaxed mb-8">
                     Pas d'inquiétude ! Entrez votre email et nous vous enverrons un lien pour réinitialiser votre mot de passe.
                 </p>
                 <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left">
                     <div class="flex items-start gap-4">
-                        <div class="bg-blue-500/20 p-3 rounded-xl">
+                        <div class="bg-primary/20 p-3 rounded-xl">
                             <i data-lucide="mail" class="w-6 h-6 text-blue-300"></i>
                         </div>
                         <div>
                             <p class="text-white text-sm font-bold">Vérifiez votre email</p>
-                            <p class="text-blue-200 text-xs mt-1 leading-relaxed">Un lien sécurisé vous sera envoyé. Pensez à vérifier vos spams.</p>
+                            <p class="text-slate-300 text-xs mt-1 leading-relaxed">Un lien sécurisé vous sera envoyé. Pensez à vérifier vos spams.</p>
                         </div>
                     </div>
                 </div>
@@ -115,21 +115,21 @@
                         <i data-lucide="arrow-left" class="w-4 h-4 group-hover:-translate-x-1 transition-transform"></i>
                         Retour
                     </button>
-                    <h2 class="text-4xl font-black text-gray-900 dark:text-white tracking-tight mb-2">Mot de passe</h2>
-                    <p class="text-gray-500 dark:text-slate-400 font-medium">Récupérez l'accès à votre compte</p>
+                    <h2 class="text-4xl font-black text-slate-900 dark:text-white tracking-tight mb-2">Mot de passe</h2>
+                    <p class="text-slate-500 dark:text-slate-400 font-medium">Récupérez l'accès à votre compte</p>
                 </div>
 
                 {{-- Form --}}
                 <form action="{{ route('forgot-password.post') }}" method="POST" class="space-y-6 animate-fade-up" style="animation-delay: 0.2s;">
                     @csrf
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 dark:text-slate-300 mb-2">Email</label>
+                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Email</label>
                         <div class="relative group">
-                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
                                 <i data-lucide="mail" class="w-5 h-5"></i>
                             </span>
                             <input type="email" name="email" required placeholder="votre@email.com"
-                                class="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white pl-12 pr-4 py-4 rounded-2xl text-base focus:outline-none focus:border-primary transition-all shadow-sm">
+                                class="w-full bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white pl-12 pr-4 py-4 rounded-2xl text-base focus:outline-none focus:border-primary transition-all shadow-sm">
                         </div>
                     </div>
 
@@ -141,7 +141,7 @@
 
                 {{-- Footer --}}
                 <div class="mt-10 text-center animate-fade-up" style="animation-delay: 0.3s;">
-                    <p class="text-sm text-gray-500 dark:text-slate-400">
+                    <p class="text-sm text-slate-500 dark:text-slate-400">
                         Vous avez retrouvé votre mot de passe ?
                         <a href="{{ route('login') }}" class="font-black text-primary hover:text-primary-light ml-1 underline transition-all">Se connecter</a>
                     </p>

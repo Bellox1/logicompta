@@ -6,13 +6,13 @@
     <div class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
             <div class="flex items-center gap-3 mb-2">
-                <a href="javascript:history.back()" class="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
-                    <i data-lucide="arrow-left" class="w-5 h-5 text-gray-600"></i>
+                <a href="javascript:history.back()" class="p-2 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
+                    <i data-lucide="arrow-left" class="w-5 h-5 text-slate-600"></i>
                 </a>
-                <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Pièce Comptable :
+                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Pièce Comptable :
                     {{ str_replace('PC-', '', $entry->numero_piece) }}</h1>
             </div>
-            <p class="text-sm text-gray-500 font-medium">Détail complet de l'opération enregistrée dans le journal <span
+            <p class="text-sm text-slate-500 font-medium">Détail complet de l'opération enregistrée dans le journal <span
                     class="text-primary font-bold">{{ $entry->journal->name }}</span></p>
         </div>
         <div class="flex gap-4">
@@ -44,37 +44,37 @@
                                 style="width: 120px;">CRÉDIT</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100 italic">
+                    <tbody class="divide-y divide-slate-100 italic">
                         @foreach ($entry->lines as $index => $line)
-                            <tr class="hover:bg-gray-50/50 transition-colors">
+                            <tr class="hover:bg-slate-50/50 transition-colors">
                                 @if ($index === 0)
                                     <td rowspan="{{ $entry->lines->count() }}"
-                                        class="px-6 py-6 text-sm text-gray-900 font-bold text-center border-r border-gray-100 align-middle not-italic bg-gray-50/30">
+                                        class="px-6 py-6 text-sm text-slate-900 font-bold text-center border-r border-slate-100 align-middle not-italic bg-slate-50/30">
                                         {{ \Carbon\Carbon::parse($entry->date)->format('d/m/Y') }}
                                     </td>
                                 @endif
-                                <td class="px-6 py-5 text-sm font-bold text-gray-800 border-r border-gray-100 not-italic">
+                                <td class="px-6 py-5 text-sm font-bold text-slate-800 border-r border-slate-100 not-italic">
                                     {{ $line->sousCompte->numero_sous_compte }}
                                 </td>
-                                <td class="px-6 py-5 text-sm text-gray-600 border-r border-gray-100">
-                                    <div class="font-bold text-gray-800 not-italic mb-1">{{ $line->sousCompte->libelle }}</div>
+                                <td class="px-6 py-5 text-sm text-slate-600 border-r border-slate-100">
+                                    <div class="font-bold text-slate-800 not-italic mb-1">{{ $line->sousCompte->libelle }}</div>
                                     <div class="text-xs opacity-70">{{ $line->libelle }}</div>
                                 </td>
                                 <td
-                                    class="px-6 py-5 text-sm text-right font-bold text-gray-900 border-r border-gray-100 bg-gray-50/10 not-italic whitespace-nowrap">
+                                    class="px-6 py-5 text-sm text-right font-bold text-slate-900 border-r border-slate-100 bg-slate-50/10 not-italic whitespace-nowrap">
                                     {{ number_format($line->debit, 2, ',', ' ') }}
                                 </td>
-                                <td class="px-6 py-5 text-sm text-right font-bold text-gray-900 bg-gray-50/10 not-italic whitespace-nowrap">
+                                <td class="px-6 py-5 text-sm text-right font-bold text-slate-900 bg-slate-50/10 not-italic whitespace-nowrap">
                                     {{ number_format($line->credit, 2, ',', ' ') }}
                                 </td>
                             </tr>
                         @endforeach
                     </tbody>
-                    <tfoot class="bg-gray-50 border-t-2 border-primary/20">
-                        <tr class="font-bold text-gray-900">
+                    <tfoot class="bg-slate-50 border-t-2 border-primary/20">
+                        <tr class="font-bold text-slate-900">
                             <td colspan="3" class="px-6 py-5 text-right uppercase tracking-widest text-xs opacity-50">
                                 Totaux Équilibrés</td>
-                            <td class="px-6 py-5 text-right text-lg border-r border-gray-200 whitespace-nowrap">
+                            <td class="px-6 py-5 text-right text-lg border-r border-slate-200 whitespace-nowrap">
                                 {{ number_format($entry->lines->sum('debit'), 2, ',', ' ') }}</td>
                             <td class="px-6 py-5 text-right text-lg whitespace-nowrap">
                                 {{ number_format($entry->lines->sum('credit'), 2, ',', ' ') }}</td>

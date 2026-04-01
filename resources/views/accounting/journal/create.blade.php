@@ -3,21 +3,21 @@
 @section('title', 'Saisie d\'écriture')
 
 @section('content')
-    <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-            <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Saisie d'écriture</h1>
-            <p class="text-sm text-gray-500 font-bold uppercase tracking-widest mt-1">Enregistrez une nouvelle opération dans le journal</p>
+            <h1 class="text-3xl font-bold text-slate-800">Saisie d'écriture</h1>
+            <p class="text-sm text-slate-500 mt-1">Enregistrez vos flux financiers avec précision</p>
         </div>
-        <div class="flex flex-wrap gap-3">
-            <a href="{{ route('accounting.journals-settings.index') }}" 
-                class="px-5 py-2.5 bg-primary text-white font-bold rounded-xl hover:bg-primary-light transition-all text-xs flex items-center gap-2 shadow-lg uppercase tracking-widest">
-                <i data-lucide="settings" class="w-4 h-4"></i>
-                Paramétrage Journaux
-            </a>
+        <div class="flex items-center gap-3">
             <a href="{{ route('accounting.journal.index') }}" 
-                class="px-5 py-2.5 bg-white border border-border text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition-all text-xs flex items-center gap-2 shadow-sm uppercase tracking-widest">
-                <i data-lucide="book-open" class="w-4 h-4"></i>
-                Historique Journal
+                class="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 font-semibold rounded-lg hover:bg-slate-50 transition-all text-xs flex items-center gap-2">
+                <i data-lucide="history" class="w-4 h-4"></i>
+                Historique
+            </a>
+            <a href="{{ route('accounting.journal.create') }}" 
+                class="px-5 py-2.5 bg-primary text-white font-semibold rounded-lg hover:opacity-90 transition-all text-xs flex items-center gap-2 shadow-sm">
+                <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                Nouvelle saisie
             </a>
         </div>
     </div>
@@ -39,55 +39,43 @@
             </div>
         @endif
 
-        <div class="bg-card-bg border border-border rounded-2xl p-3 md:p-6 shadow-sm mb-8">
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-4 md:gap-6">
-                <div class="min-w-0">
-                    <label
-                        class="block text-[10px] md:text-sm font-semibold text-gray-700 mb-1 md:mb-2 px-1 uppercase tracking-wider">N°
-                        Pièce</label>
+        <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-400 mb-2 uppercase tracking-wider">N° Pièce</label>
                     <input type="text" value="{{ $nextPieceNumber }}" disabled
-                        class="w-full max-w-full bg-gray-100 border border-border rounded-xl px-3 py-2 md:px-4 md:py-3 text-gray-500 font-bold cursor-not-allowed">
+                        class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-slate-400 font-bold cursor-not-allowed">
                 </div>
-                <div class="min-w-0">
-                    <label
-                        class="block text-[10px] md:text-sm font-semibold text-gray-700 mb-1 md:mb-2 px-1 uppercase tracking-wider">Journal</label>
-                    <div class="relative">
-                        <select name="journal_id" required
-                            class="w-full max-w-full bg-gray-50 border border-border rounded-xl px-3 py-2 md:px-4 md:py-3 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all appearance-none cursor-pointer text-sm md:text-base">
-                            @foreach ($journals as $journal)
-                                <option value="{{ $journal->id }}"
-                                    {{ old('journal_id') == $journal->id ? 'selected' : '' }}>{{ $journal->name }}</option>
-                            @endforeach
-                        </select>
-                        <div class="absolute right-3 md:right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                            <i data-lucide="chevron-down" class="w-4 h-4 md:w-5 md:h-5"></i>
-                        </div>
-                    </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-400 mb-2 uppercase tracking-wider">Journal</label>
+                    <select name="journal_id" required
+                        class="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 focus:border-primary outline-none transition-all text-sm font-semibold">
+                        @foreach ($journals as $journal)
+                            <option value="{{ $journal->id }}"
+                                {{ old('journal_id') == $journal->id ? 'selected' : '' }}>{{ $journal->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
-                <div class="min-w-0">
-                    <label
-                        class="block text-[10px] md:text-sm font-semibold text-gray-700 mb-1 md:mb-2 px-1 uppercase tracking-wider">Date
-                        d'opération</label>
-                    <input type="date" name="date" value="{{ old('date', date('Y-m-d')) }}"
-                        min="{{ date('Y-m-d', strtotime('-5 days')) }}" max="{{ date('Y-m-t') }}" required
-                        class="w-full max-w-full bg-gray-50 border border-border rounded-xl px-3 py-2 md:px-4 md:py-3 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-sm md:text-base">
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-400 mb-2 uppercase tracking-wider">Date</label>
+                    <input type="date" name="date" value="{{ old('date', date('Y-m-d')) }}" required
+                        class="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 focus:border-primary outline-none transition-all text-sm font-semibold">
                 </div>
-                <div class="min-w-0 md:col-span-2">
-                    <label
-                        class="block text-[10px] md:text-sm font-semibold text-gray-700 mb-1 md:mb-2 px-1 uppercase tracking-wider">Libellé
-                        général</label>
-                    <textarea name="libelle" placeholder="Ex: Règlement..." required rows="1"
-                        class="w-full max-w-full bg-gray-50 border border-border rounded-xl px-3 py-2 md:px-4 md:py-3 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-sm md:text-base resize-y min-h-[100px] flex items-center">{{ old('libelle') }}</textarea>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-400 mb-2 uppercase tracking-wider">Libellé</label>
+                    <input type="text" name="libelle" placeholder="Ex: Achat fournitures..." required
+                        class="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 focus:border-primary outline-none transition-all text-sm font-semibold" 
+                        value="{{ old('libelle') }}">
                 </div>
             </div>
         </div>
 
-        <div class="bg-card-bg border border-border rounded-2xl shadow-sm overflow-hidden mb-8">
-            <div class="bg-gray-50 px-6 py-4 border-b border-border flex items-center justify-between">
-                <h3 class="text-sm font-bold text-gray-700 uppercase tracking-widest">Lignes d'écritures</h3>
+        <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden mb-8">
+            <div class="bg-slate-50/50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Lignes d'écritures</h3>
                 <button type="button" id="add-line"
-                    class="text-primary hover:text-primary-light font-bold text-sm flex items-center gap-2 transition-colors">
-                    <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                    class="text-primary hover:opacity-80 font-bold text-xs flex items-center gap-2 transition-all">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
                     Ajouter une ligne
                 </button>
             </div>
@@ -95,23 +83,23 @@
             <div class="table-responsive">
                 <table class="w-full border-collapse min-w-[800px]">
                     <thead>
-                        <tr class="bg-white text-gray-500 border-b border-border">
-                            <th class="px-6 py-4 text-xs font-bold uppercase tracking-widest text-left" style="width: 25%;">
+                        <tr class="text-slate-400 border-b border-slate-100">
+                            <th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-left" style="width: 30%;">
                                 Compte</th>
-                            <th class="px-6 py-4 text-xs font-bold uppercase tracking-widest text-left" style="width: 12%;">
+                            <th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-right" style="width: 15%;">
                                 Débit</th>
-                            <th class="px-6 py-4 text-xs font-bold uppercase tracking-widest text-left" style="width: 12%;">
+                            <th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-right" style="width: 15%;">
                                 Crédit</th>
-                            <th class="px-6 py-4 text-xs font-bold uppercase tracking-widest text-left">Libellé ligne</th>
-                            <th class="px-6 py-4 text-center" style="width: 50px;"></th>
+                            <th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-left">Libellé de ligne</th>
+                            <th class="px-6 py-4" style="width: 50px;"></th>
                         </tr>
                     </thead>
-                    <tbody id="lines-body" class="divide-y divide-gray-100">
+                    <tbody id="lines-body" class="divide-y divide-slate-100">
                         @php
                             $oldLines = old('lines', [null, null]); // Au moins 2 lignes
                         @endphp
                         @foreach ($oldLines as $index => $oldLine)
-                            <tr class="line-row hover:bg-gray-50/50 transition-colors">
+                            <tr class="line-row hover:bg-slate-50/50 transition-colors">
                                 <td class="px-4 py-3">
                                     <select name="lines[{{ $index }}][sous_compte_id]" required
                                         class="w-full bg-white border border-border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none select2-account">
@@ -157,30 +145,26 @@
                 </table>
             </div>
 
-            <div class="bg-gray-50 p-3 md:p-6 border-t border-border mt-auto">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                    <div class="flex flex-wrap gap-4 md:gap-8">
+            <div class="bg-slate-50/50 p-6 border-t border-slate-100">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-8">
+                    <div class="flex flex-wrap gap-10">
                         <div>
-                            <div class="text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-1">Total Débit
-                            </div>
-                            <div class="text-xl font-bold text-gray-900"><span id="total-debit">0</span> F</div>
+                            <div class="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">Total Débit</div>
+                            <div class="text-2xl font-bold text-slate-800"><span id="total-debit">0</span> <span class="text-sm font-medium text-slate-400">XOF</span></div>
                         </div>
                         <div>
-                            <div class="text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-1">Total Crédit
-                            </div>
-                            <div class="text-xl font-bold text-gray-900"><span id="total-credit">0</span> F</div>
+                            <div class="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">Total Crédit</div>
+                            <div class="text-2xl font-bold text-slate-800"><span id="total-credit">0</span> <span class="text-sm font-medium text-slate-400">XOF</span></div>
                         </div>
                         <div id="balance-container">
-                            <div class="text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-1">État
-                                d'Équilibre</div>
-                            <div id="balance-status" class="text-sm font-bold text-red-600">Déséquilibre: 0 F
-                            </div>
+                            <div class="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">État d'Équilibre</div>
+                            <div id="balance-status" class="text-sm font-bold text-red-500">Déséquilibre: 0 XOF</div>
                         </div>
                     </div>
                     <button type="submit" id="submit-btn" disabled
-                        class="w-full md:w-auto px-8 py-4 bg-primary text-white font-bold rounded-2xl hover:bg-primary-light disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-lg flex items-center justify-center gap-2">
-                        <i data-lucide="save" class="w-5 h-5"></i>
-                        Enregistrer l'écriture
+                        class="w-full md:w-auto px-10 py-4 bg-primary text-white font-bold rounded-lg hover:opacity-90 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm flex items-center justify-center gap-2">
+                        <i data-lucide="check" class="w-5 h-5"></i>
+                        Valider l'écriture
                     </button>
                 </div>
             </div>
@@ -193,7 +177,7 @@
         .debit-input::placeholder,
         .credit-input::placeholder {
             color: #9ca3af !important;
-            /* Gris (gray-400) */
+            /* Gris (slate-400) */
             font-weight: 500;
             opacity: 0.8;
         }

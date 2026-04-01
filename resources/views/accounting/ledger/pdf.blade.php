@@ -4,10 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grand Livre - {{ $user->entreprise->name ?? 'Logicompta' }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            theme: { extend: { colors: { primary: '#003366', 'primary-light': '#0055aa' } } }
+            theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], },
+                    colors: { primary: '#005b82', 'primary-light': '#0055aa' } } }
         }
     </script>
     <style>
@@ -17,17 +21,17 @@
             @page { margin: 1cm; }
             .page-break { page-break-after: always; }
         }
-        body { font-family: sans-serif; }
+        body { font-family: 'Inter', sans-serif; }
         table { border-collapse: collapse; width: 100%; font-size: 9px; }
-        th, td { border: 1px solid #ddd; padding: 4px; }
-        th { background-color: #f3f4f6; text-transform: uppercase; font-weight: bold; }
+        th, td { border: 1px solid #e2e8f0; padding: 4px; }
+        th { background-color: #f8fafc; text-transform: uppercase; font-weight: bold; }
     </style>
 </head>
 <body class="bg-white p-4 md:p-8">
-    <div class="no-print mb-6 flex flex-col md:flex-row md:items-center justify-between gap-6 bg-gray-50 p-6 rounded-2xl border border-gray-200">
-        <p class="text-sm text-gray-600 font-medium italic">Vérifiez l'aperçu avant d'enregistrer en PDF.</p>
+    <div class="no-print mb-6 flex flex-col md:flex-row md:items-center justify-between gap-6 bg-slate-50 p-6 rounded-2xl border border-slate-200">
+        <p class="text-sm text-slate-600 font-medium italic">Vérifiez l'aperçu avant d'enregistrer en PDF.</p>
         <div class="flex flex-wrap gap-4">
-            <button onclick="window.close()" class="px-5 py-2.5 text-sm font-bold text-gray-600 hover:text-gray-900 border border-gray-300 rounded-xl hover:bg-white transition-all">Fermer</button>
+            <button onclick="window.close()" class="px-5 py-2.5 text-sm font-bold text-slate-600 hover:text-slate-900 border border-slate-300 rounded-xl hover:bg-white transition-all">Fermer</button>
             <button onclick="window.print()" class="px-8 py-2.5 bg-primary text-white font-bold rounded-xl shadow-lg hover:bg-primary-light transition-all flex items-center justify-center gap-2">
                 <i data-lucide="printer" class="w-4 h-4"></i>
                 Imprimer / Enregistrer PDF
@@ -35,23 +39,23 @@
         </div>
     </div>
 
-    <div class="mb-8 border-b-2 border-gray-900 pb-6 flex flex-col md:flex-row md:justify-between md:items-end gap-6">
+    <div class="mb-8 border-b-2 border-slate-900 pb-6 flex flex-col md:flex-row md:justify-between md:items-end gap-6">
         <div>
-            <h1 class="text-3xl font-black uppercase tracking-tighter text-gray-900">GRAND LIVRE COMPTABLE</h1>
-            <p class="text-sm font-bold text-gray-500 italic uppercase">{{ $user->entreprise->name ?? 'MA SOCIETE' }}</p>
+            <h1 class="text-3xl font-black uppercase tracking-tighter text-slate-900">GRAND LIVRE COMPTABLE</h1>
+            <p class="text-sm font-bold text-slate-500 italic uppercase">{{ $user->entreprise->name ?? 'MA SOCIETE' }}</p>
         </div>
-        <div class="text-right text-xs font-medium text-gray-400">
+        <div class="text-right text-xs font-medium text-slate-400">
             Édité le {{ now()->format('d/m/Y à H:i') }}
         </div>
     </div>
 
     @foreach($data as $account)
         <div class="mb-10 {{ !$loop->last ? 'page-break' : '' }}">
-            <div class="bg-gray-50 border-x border-t border-gray-300 p-3 flex flex-col md:flex-row md:items-center justify-between gap-2">
+            <div class="bg-slate-50 border-x border-t border-slate-300 p-3 flex flex-col md:flex-row md:items-center justify-between gap-2">
                 <span class="text-sm font-black uppercase text-primary">{{ $account->code_compte }} - {{ $account->libelle }}</span>
-                <span class="text-[10px] font-bold italic text-gray-400">Compte de classe {{ substr($account->code_compte, 0, 1) }}</span>
+                <span class="text-[10px] font-bold italic text-slate-400">Compte de classe {{ substr($account->code_compte, 0, 1) }}</span>
             </div>
-            <div class="overflow-x-auto shadow-sm rounded-b-xl border border-gray-300">
+            <div class="overflow-x-auto shadow-sm rounded-b-xl border border-slate-300">
                 <table class="w-full min-w-[800px]">
                 <thead>
                     <tr>
@@ -76,7 +80,7 @@
                     @endforeach
                 </tbody>
                 <tfoot>
-                    <tr class="bg-gray-50 font-bold">
+                    <tr class="bg-slate-50 font-bold">
                         <td colspan="3" class="text-right uppercase">Totaux mouvements</td>
                         <td class="text-right">{{ number_format($account->entryLines->sum('debit'), 2, ',', ' ') }}</td>
                         <td class="text-right">{{ number_format($account->entryLines->sum('credit'), 2, ',', ' ') }}</td>

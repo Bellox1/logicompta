@@ -263,8 +263,8 @@
                                                         text: 'L\'opération sera définitivement supprimée.',
                                                         icon: 'warning',
                                                         showCancelButton: true,
-                                                        confirmButtonColor: '#003366',
-                                                        cancelButtonColor: '#d33',
+                                                        confirmButtonColor: '#005b82',
+                                                        cancelButtonColor: '#94a3b8',
                                                         confirmButtonText: 'Oui, supprimer',
                                                         cancelButtonText: 'Annuler'
                                                     }).then((result) => {

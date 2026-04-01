@@ -13,19 +13,19 @@ class JournalEntrySeeder extends Seeder
 {
     public function run(): void
     {
-        $entreprise = Entreprise::first();
+        $entreprise = Entreprise::first(['*']);
         if (!$entreprise) return;
 
-        $journal = Journal::first() ?? Journal::create([
+        $journal = Journal::first(['*']) ?? Journal::create([
             'name' => 'Journal Général',
             'description' => 'Journal par défaut',
             'entreprise_id' => $entreprise->id
         ]);
 
-        $bank = SousCompte::where('numero_sous_compte', '521001')->first();
-        $capital = SousCompte::where('numero_sous_compte', '101000')->first();
-        $expense = SousCompte::where('numero_sous_compte', '601000')->first();
-        $revenue = SousCompte::where('numero_sous_compte', '701000')->first();
+        $bank = SousCompte::where('numero_sous_compte', '=', '521001', 'and')->first(['*']);
+        $capital = SousCompte::where('numero_sous_compte', '=', '101000', 'and')->first(['*']);
+        $expense = SousCompte::where('numero_sous_compte', '=', '601000', 'and')->first(['*']);
+        $revenue = SousCompte::where('numero_sous_compte', '=', '701000', 'and')->first(['*']);
 
         if (!$bank || !$capital || !$expense || !$revenue) return;
 
@@ -42,6 +42,7 @@ class JournalEntrySeeder extends Seeder
                 'numero_piece' => str_pad($pieceCounter++, 6, '0', STR_PAD_LEFT),
                 'date' => "$year-01-05",
                 'libelle' => "Constitution capital $year",
+                'is_archived' => $is_archived,
             ]);
 
             JournalEntryLine::create([
@@ -67,6 +68,7 @@ class JournalEntrySeeder extends Seeder
                 'numero_piece' => str_pad($pieceCounter++, 6, '0', STR_PAD_LEFT),
                 'date' => "$year-06-15",
                 'libelle' => "Ventes périodiques $year",
+                'is_archived' => $is_archived,
             ]);
 
             JournalEntryLine::create([

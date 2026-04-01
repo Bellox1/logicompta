@@ -7,12 +7,12 @@
     <div class="mb-10 flex items-center justify-between">
         <div>
             <div class="flex items-center gap-3 mb-2">
-                <a href="{{ route('accounting.journals-settings.index') }}" class="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
-                    <i data-lucide="arrow-left" class="w-5 h-5 text-gray-600"></i>
+                <a href="{{ route('accounting.journals-settings.index') }}" class="p-2 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
+                    <i data-lucide="arrow-left" class="w-5 h-5 text-slate-600"></i>
                 </a>
-                <h1 class="text-3xl font-black text-gray-900 tracking-tight">Nouveau Journal</h1>
+                <h1 class="text-3xl font-black text-slate-900 tracking-tight">Nouveau Journal</h1>
             </div>
-            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Enregistrez un nouveau support pour vos écritures</p>
+            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Enregistrez un nouveau support pour vos écritures</p>
         </div>
     </div>
 
@@ -36,7 +36,7 @@
             
             <div class="space-y-6">
                 <div>
-                    <label class="block text-[10px] uppercase font-bold text-gray-400 mb-2 tracking-[0.2em] px-1">
+                    <label class="block text-[10px] uppercase font-bold text-slate-400 mb-2 tracking-[0.2em] px-1">
                         Nom du journal
                     </label>
                     <input type="text" name="name" value="{{ old('name') }}" placeholder="Ex: Journal de Caisse" required
@@ -44,7 +44,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-[10px] uppercase font-bold text-gray-400 mb-2 tracking-[0.2em] px-1">
+                    <label class="block text-[10px] uppercase font-bold text-slate-400 mb-2 tracking-[0.2em] px-1">
                         Description (Optionnel)
                     </label>
                     <textarea name="description" placeholder="Ex: Opérations en espèces uniquement..." rows="4"
@@ -52,8 +52,8 @@
                 </div>
             </div>
 
-            <div class="pt-6 border-t border-gray-100 flex justify-end gap-4">
-                <a href="{{ route('accounting.journals-settings.index') }}" class="px-8 py-4 bg-gray-100 text-gray-500 font-black text-xs uppercase tracking-widest hover:bg-gray-200 transition-all">
+            <div class="pt-6 border-t border-slate-100 flex justify-end gap-4">
+                <a href="{{ route('accounting.journals-settings.index') }}" class="px-8 py-4 bg-slate-100 text-slate-500 font-black text-xs uppercase tracking-widest hover:bg-slate-200 transition-all">
                     Annuler
                 </a>
                 <button type="submit" class="px-10 py-4 bg-primary text-white font-black text-xs uppercase tracking-[0.4em] hover:bg-primary-light transition-all shadow-xl">

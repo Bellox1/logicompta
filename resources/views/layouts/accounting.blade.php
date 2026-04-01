@@ -48,13 +48,21 @@
 
     <style>
         :root {
-            --bg: #FFFFFF;
-            --card-bg: #FFFFFF;
-            --border-color: #e3e3e0;
-            --text-main: #1f2937;
-            /* gray-800 */
-            --primary: #003366;
-            --primary-light: #0055aa;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --sidebar-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --text-main: #1e293b;
+            --text-secondary: #64748b;
+            --primary: #005b82;
+            --primary-light: #0ea5e9;
+            --accent: #38bdf8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --radius-main: 12px;
+            --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
 
         /* Table Responsive Wrapper - Scroll horizontal local au cadre blanc */
@@ -125,7 +133,7 @@
                 --card-bg: #161615;
                 --border-color: #262624;
                 --text-main: #f3f4f6;
-                /* gray-100 */
+                /* slate-100 */
                 --primary: #3b82f6;
                 --primary-light: #60a5fa;
             }
@@ -147,25 +155,25 @@
             h3,
             h4,
             .text-gray-950,
-            .text-gray-900,
-            .text-gray-800,
+            .text-slate-900,
+            .text-slate-800,
             .text-black {
                 color: var(--text-main) !important;
             }
 
-            .text-gray-700,
-            .text-gray-600 {
+            .text-slate-700,
+            .text-slate-600 {
                 color: #d1d5db !important;
-                /* gray-300 */
+                /* slate-300 */
             }
 
             /* Fix grey overlays on tables and rows */
-            .bg-gray-50,
-            .bg-gray-100,
-            .bg-gray-200,
-            [class*="bg-gray-50/"],
-            [class*="bg-gray-100/"],
-            [class*="bg-gray-200/"],
+            .bg-slate-50,
+            .bg-slate-100,
+            .bg-slate-200,
+            [class*="bg-slate-50/"],
+            [class*="bg-slate-100/"],
+            [class*="bg-slate-200/"],
             [class*="bg-white/5"],
             [class*="bg-white/10"] {
                 background-color: rgba(255, 255, 255, 0.03) !important;
@@ -187,16 +195,16 @@
                 /* Lighter primary blue */
             }
 
-            .border-gray-50,
-            .border-gray-100,
-            .border-gray-200,
-            .border-gray-300,
-            .border-gray-400 {
+            .border-slate-50,
+            .border-slate-100,
+            .border-slate-200,
+            .border-slate-300,
+            .border-slate-400 {
                 border-color: rgba(255, 255, 255, 0.05) !important;
             }
 
-            .hover\:bg-gray-50:hover,
-            .hover\:bg-gray-50\/50:hover,
+            .hover\:bg-slate-50:hover,
+            .hover\:bg-slate-50\/50:hover,
             tr:hover {
                 background-color: rgba(255, 255, 255, 0.05) !important;
             }
@@ -347,18 +355,16 @@
             gap: 0 !important;
         }
 
-        /* Désactivation de l'arrondi uniquement pour le contenu principal (tableaux, boutons etc) */
+        /* Rétablissement des arrondis doux (Dougs Style) */
         .main-content button,
         .main-content .button,
         .main-content a.inline-flex,
-        .main-content a.flex,
-        .main-content input[type="submit"],
-        .main-content input[type="button"],
-        .main-content .rounded-xl,
-        .main-content .rounded-2xl,
-        .main-content .rounded-3xl,
-        .main-content .rounded-none {
-            border-radius: 0 !important;
+        .main-content input[type="text"],
+        .main-content input[type="date"],
+        .main-content select,
+        .main-content .card,
+        .main-content .bg-card-bg {
+            border-radius: 8px !important;
         }
 
         @media (max-width: 768px) {
@@ -418,7 +424,7 @@
 
 <body class="bg-bg min-h-screen">
     <!-- Overlay for mobile (Visibility managed by JS) -->
-    <div id="sidebar-overlay" class="fixed inset-0 bg-gray-900/40 dark:bg-black/80 z-[1999] md:hidden"></div>
+    <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/40 dark:bg-black/80 z-[1999] md:hidden"></div>
 
     <div class="flex h-[100dvh] overflow-hidden relative">
         <!-- Sidebar -->
@@ -444,7 +450,7 @@
 
             <!-- Mobile Close Button -->
             <button id="close-mobile-sidebar"
-                class="md:hidden absolute top-4 right-4 text-text-muted dark:text-gray-300">
+                class="md:hidden absolute top-4 right-4 text-text-muted dark:text-slate-300">
                 <i data-lucide="x"></i>
             </button>
 
@@ -453,74 +459,78 @@
                     class="h-24 w-auto object-contain dark:filter-none filter invert dark:brightness-110">
             </div>
 
-            <nav class="flex-1 flex flex-col gap-1 overflow-y-auto">
+            <nav class="flex-1 flex flex-col gap-1 overflow-y-auto mt-4 px-2">
                 <a href="{{ route('accounting.dashboard') }}"
-                    class="flex items-center gap-4 px-4 py-3 font-medium transition-all border-l-4 {{ request()->routeIs('accounting.dashboard') ? 'border-primary text-primary bg-primary/5 dark:bg-primary/10' : 'border-transparent text-gray-600 hover:text-primary hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-white/5' }}">
-                    <i class="w-5 h-5" data-lucide="home"></i>
-                    <span class="sidebar-label transition-all duration-300">Accueil</span>
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-bold transition-all {{ request()->routeIs('accounting.dashboard') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-slate-500 hover:text-primary hover:bg-slate-50' }}">
+                    <i class="w-4 h-4 {{ request()->routeIs('accounting.dashboard') ? 'text-white' : '' }}" data-lucide="layout-dashboard"></i>
+                    <span class="sidebar-label transition-all duration-300">Tableau de bord</span>
                 </a>
 
-                <div
-                    class="sidebar-label text-[10px] uppercase font-bold text-gray-400 mt-6 px-4 mb-2 tracking-widest hidden md:block">
-                    Comptabilité Générale</div>
-                <div class="md:hidden border-t border-border my-4 mx-2"></div>
+                <div class="sidebar-label text-[11px] uppercase font-black text-slate-400 mt-6 px-3 mb-2 tracking-widest hidden md:block opacity-60">
+                    PRODUITS & SERVICES</div>
 
                 <a href="{{ route('accounting.journal.index') }}"
-                    class="flex items-center gap-4 px-4 py-3 font-medium transition-all border-l-4 {{ request()->routeIs('accounting.journal.index') ? 'border-primary text-primary bg-primary/5 dark:bg-primary/10' : 'border-transparent text-gray-600 hover:text-primary hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-white/5' }}">
-                    <i class="w-5 h-5" data-lucide="book-open"></i>
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-bold transition-all {{ request()->routeIs('accounting.journal.index') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-slate-500 hover:text-primary hover:bg-slate-50' }}">
+                    <i class="w-4 h-4 {{ request()->routeIs('accounting.journal.index') ? 'text-white' : '' }}" data-lucide="book"></i>
                     <span class="sidebar-label transition-all duration-300">Journal</span>
                 </a>
                 <a href="{{ route('accounting.journal.create') }}"
-                    class="flex items-center gap-4 px-4 py-3 font-medium transition-all border-l-4 {{ request()->routeIs('accounting.journal.create') ? 'border-primary text-primary bg-primary/5 dark:bg-primary/10' : 'border-transparent text-gray-600 hover:text-primary hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-white/5' }}">
-                    <i class="w-5 h-5" data-lucide="edit"></i>
-                    <span class="sidebar-label transition-all duration-300">Saisie</span>
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-bold transition-all {{ request()->routeIs('accounting.journal.create') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-slate-500 hover:text-primary hover:bg-slate-50' }}">
+                    <i class="w-4 h-4 {{ request()->routeIs('accounting.journal.create') ? 'text-white' : '' }}" data-lucide="plus-circle"></i>
+                    <span class="sidebar-label transition-all duration-300">Saisie active</span>
                 </a>
+                
+                <div class="sidebar-label text-[11px] uppercase font-bold text-slate-400 mt-6 px-3 mb-2 tracking-widest hidden md:block opacity-70">
+                    PILOTAGE</div>
+
                 <a href="{{ route('accounting.ledger') }}"
-                    class="flex items-center gap-4 px-4 py-3 font-medium transition-all border-l-4 {{ request()->routeIs('accounting.ledger') ? 'border-primary text-primary bg-primary/5 dark:bg-primary/10' : 'border-transparent text-gray-600 hover:text-primary hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-white/5' }}">
-                    <i class="w-5 h-5" data-lucide="bar-chart-2"></i>
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-bold transition-all {{ request()->routeIs('accounting.ledger') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-slate-500 hover:text-primary hover:bg-slate-50' }}">
+                    <i class="w-4 h-4 {{ request()->routeIs('accounting.ledger') ? 'text-white' : '' }}" data-lucide="list-checks"></i>
                     <span class="sidebar-label transition-all duration-300">Grand Livre</span>
                 </a>
                 <a href="{{ route('accounting.balance') }}"
-                    class="flex items-center gap-4 px-4 py-3 font-medium transition-all border-l-4 {{ request()->routeIs('accounting.balance') ? 'border-primary text-primary bg-primary/5 dark:bg-primary/10' : 'border-transparent text-gray-600 hover:text-primary hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-white/5' }}">
-                    <i class="w-5 h-5" data-lucide="scale"></i>
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-bold transition-all {{ request()->routeIs('accounting.balance') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-slate-500 hover:text-primary hover:bg-slate-50' }}">
+                    <i class="w-4 h-4 {{ request()->routeIs('accounting.balance') ? 'text-white' : '' }}" data-lucide="layers"></i>
                     <span class="sidebar-label transition-all duration-300">Balance</span>
                 </a>
                 <a href="{{ route('accounting.bilan') }}"
-                    class="flex items-center gap-4 px-4 py-3 font-medium transition-all border-l-4 {{ request()->routeIs('accounting.bilan') ? 'border-primary text-primary bg-primary/5 dark:bg-primary/10' : 'border-transparent text-gray-600 hover:text-primary hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-white/5' }}">
-                    <i class="w-5 h-5" data-lucide="briefcase"></i>
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-bold transition-all {{ request()->routeIs('accounting.bilan') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-slate-500 hover:text-primary hover:bg-slate-50' }}">
+                    <i class="w-4 h-4 {{ request()->routeIs('accounting.bilan') ? 'text-white' : '' }}" data-lucide="file-bar-chart"></i>
                     <span class="sidebar-label transition-all duration-300">Bilan</span>
                 </a>
                 <a href="{{ route('accounting.resultat') }}"
-                    class="flex items-center gap-4 px-4 py-3 font-medium transition-all border-l-4 {{ request()->routeIs('accounting.resultat') ? 'border-primary text-primary bg-primary/5 dark:bg-primary/10' : 'border-transparent text-gray-600 hover:text-primary hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-white/5' }}">
-                    <i class="w-5 h-5" data-lucide="trending-up"></i>
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-bold transition-all {{ request()->routeIs('accounting.resultat') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-slate-500 hover:text-primary hover:bg-slate-50' }}">
+                    <i class="w-4 h-4 {{ request()->routeIs('accounting.resultat') ? 'text-white' : '' }}" data-lucide="trending-up"></i>
                     <span class="sidebar-label transition-all duration-300">Résultat</span>
                 </a>
                 <a href="{{ route('accounting.archive.index') }}"
-                    class="flex items-center gap-4 px-4 py-3 font-medium transition-all border-l-4 {{ request()->routeIs('accounting.archive.*') ? 'border-primary text-primary bg-primary/5 dark:bg-primary/10' : 'border-transparent text-gray-600 hover:text-primary hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-white/5' }}">
-                    <i class="w-5 h-5" data-lucide="archive"></i>
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-bold transition-all {{ request()->routeIs('accounting.archive.*') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-slate-500 hover:text-primary hover:bg-slate-50' }}">
+                    <i class="w-4 h-4 {{ request()->routeIs('accounting.archive.*') ? 'text-white' : '' }}" data-lucide="archive"></i>
                     <span class="sidebar-label transition-all duration-300">Archives</span>
                 </a>
                 
+                <div class="sidebar-label text-[11px] uppercase font-bold text-slate-400 mt-6 px-3 mb-2 tracking-widest hidden md:block opacity-70">
+                    PARAMÈTRES</div>
+
                 <a href="{{ route('accounting.account.index') }}"
-                    class="flex items-center gap-4 px-4 py-3 font-medium transition-all border-l-4 {{ request()->routeIs('accounting.account.*') ? 'border-primary text-primary bg-primary/5 dark:bg-primary/10' : 'border-transparent text-gray-600 hover:text-primary hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-white/5' }}">
-                    <i class="w-5 h-5" data-lucide="list"></i>
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-bold transition-all {{ request()->routeIs('accounting.account.*') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-slate-500 hover:text-primary hover:bg-slate-50' }}">
+                    <i class="w-4 h-4 {{ request()->routeIs('accounting.account.*') ? 'text-white' : '' }}" data-lucide="package"></i>
                     <span class="sidebar-label transition-all duration-300">Plan Comptable</span>
                 </a>
-
-                <div
-                    class="sidebar-label text-[10px] uppercase font-bold text-gray-400 mt-6 px-4 mb-2 tracking-widest hidden md:block">
-                    Support</div>
+                
+                <div class="sidebar-label text-[11px] uppercase font-bold text-slate-400 mt-6 px-3 mb-2 tracking-widest hidden md:block opacity-70">
+                    SUPPORT</div>
                 <a href="{{ route('accounting.help') }}"
-                    class="flex items-center gap-4 px-4 py-3 font-medium transition-all border-l-4 {{ request()->routeIs('accounting.help') ? 'border-primary text-primary bg-primary/5 dark:bg-primary/10' : 'border-transparent text-gray-600 hover:text-primary hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-white/5' }}">
-                    <i class="w-5 h-5" data-lucide="help-circle"></i>
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-bold transition-all {{ request()->routeIs('accounting.help') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-slate-500 hover:text-primary hover:bg-slate-50' }}">
+                    <i class="w-4 h-4 {{ request()->routeIs('accounting.help') ? 'text-white' : '' }}" data-lucide="help-circle"></i>
                     <span class="sidebar-label transition-all duration-300">Guide & Aide</span>
                 </a>
             </nav>
 
             <div class="mt-auto pt-4 border-t border-border no-print">
                 <div id="system-date-container" class="px-4 py-3 text-sm font-medium flex items-center gap-4 sidebar-label no-print">
-                    <i data-lucide="clock" class="w-5 h-5 text-gray-500 dark:text-gray-400"></i>
-                    <div id="system-datetime-display" class="text-gray-600 dark:text-gray-400 transition-all duration-300 whitespace-nowrap">
+                    <i data-lucide="clock" class="w-5 h-5 text-slate-500 dark:text-slate-400"></i>
+                    <div id="system-datetime-display" class="text-slate-600 dark:text-slate-400 transition-all duration-300 whitespace-nowrap">
                         --/--/---- --:--:--
                     </div>
                 </div>
@@ -534,8 +544,8 @@
                         text: 'Voulez-vous vraiment vous déconnecter ?',
                         icon: 'question',
                         showCancelButton: true,
-                        confirmButtonColor: '#003366',
-                        cancelButtonColor: '#d33',
+                        confirmButtonColor: '#005b82',
+                        cancelButtonColor: '#94a3b8',
                         confirmButtonText: 'Oui, déconnecter',
                         cancelButtonText: 'Annuler',
                         background: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#161615' : '#fff',
@@ -545,8 +555,8 @@
                             document.getElementById('logout-form').submit();
                         }
                     })"
-                    class="flex items-center gap-4 px-4 py-3 font-medium transition-all border-l-4 border-transparent text-red-500 hover:text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 w-full text-left">
-                    <i class="w-5 h-5" data-lucide="log-out"></i>
+                    class="flex items-center gap-3 px-3 py-2 text-[13px] font-bold transition-all border-l-4 border-transparent text-red-500 hover:text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 w-full text-left">
+                    <i class="w-4 h-4" data-lucide="log-out"></i>
                     <span class="sidebar-label transition-all duration-300">Déconnexion</span>
                 </button>
             </div>
@@ -561,7 +571,7 @@
                 class="md:hidden flex items-center justify-between px-4 bg-white dark:bg-[#161615] border-b border-border dark:border-white/10 shadow-sm flex-shrink-0 relative">
                 <button id="open-mobile-sidebar"
                     class="p-2 bg-white dark:bg-white/5 rounded-lg border border-border dark:border-white/10 z-10">
-                    <i data-lucide="menu" class="w-5 h-5 dark:text-gray-300"></i>
+                    <i data-lucide="menu" class="w-5 h-5 dark:text-slate-300"></i>
                 </button>
 
                 <div class="absolute inset-0 flex items-center justify-center pointer-events-none">

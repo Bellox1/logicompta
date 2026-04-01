@@ -32,9 +32,9 @@ class LedgerController extends Controller
         // 1. Déterminer les IDs des comptes concernés
         $accountIdsQuery = Account::query();
         if ($mode === 'class' && $selectedClass) {
-            $accountIdsQuery->where('classe', $selectedClass);
+            $accountIdsQuery->where('classe', '=', $selectedClass, 'and');
         } elseif ($mode === 'single' && $selectedAccount) {
-            $accountIdsQuery->where('id', $selectedAccount->id);
+            $accountIdsQuery->where('id', '=', $selectedAccount->id, 'and');
         }
         $accountIds = $accountIdsQuery->pluck('id')->toArray();
 
@@ -67,7 +67,7 @@ class LedgerController extends Controller
                       ->orderBy('journal_entries.date', $order);
             } else {
                 $query->orderBy('journal_entries.date', $order)
-                      ->orderBy('journal_entries.numero_piece', $order);
+                      ->orderBy('journal_entries.numero_piece', $order); 
             }
             
             $query->orderBy('journal_entry_lines.id', $order);
@@ -104,9 +104,9 @@ class LedgerController extends Controller
 
         $accountIdsQuery = Account::query();
         if ($mode === 'class' && $selectedClass) {
-            $accountIdsQuery->where('classe', $selectedClass);
+            $accountIdsQuery->where('classe', '=', $selectedClass, 'and');
         } elseif ($mode === 'single' && $selectedAccount) {
-            $accountIdsQuery->where('id', $selectedAccount->id);
+            $accountIdsQuery->where('id', '=', $selectedAccount->id, 'and');
         }
         $accountIds = $accountIdsQuery->pluck('id')->toArray();
 

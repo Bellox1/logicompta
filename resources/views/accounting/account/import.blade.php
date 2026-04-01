@@ -5,16 +5,13 @@
 @section('content')
 <div class="px-6 sm:px-12 py-10 w-full max-w-[1600px] mx-auto min-h-screen flex flex-col">
     <!-- HEADER -->
-    <div class="mb-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-8 animate-in fade-in slide-in-from-top duration-700">
+    <div class="mb-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
         <div>
-            <h1 class="text-2xl md:text-3xl font-bold text-gray-900 uppercase">Import Sous-comptes</h1>
-            <div class="flex items-center gap-3 mt-4">
-                <span class="h-[2px] w-12 bg-gray-900"></span>
-                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Chargement massif via CSV</p>
-            </div>
+            <h1 class="text-3xl font-bold text-slate-800">Import de Sous-comptes</h1>
+            <p class="text-sm text-slate-500 mt-1 uppercase font-bold tracking-widest">Chargement massif via CSV</p>
         </div>
-        <a href="{{ route('accounting.account.index') }}" class="group flex items-center gap-4 px-8 py-4 bg-white border border-gray-100 rounded-none text-xs font-bold uppercase text-gray-500 hover:text-black hover:border-black transition-all tracking-widest italic">
-            <i data-lucide="x" class="w-4 h-4 group-hover:rotate-90 transition-transform"></i>
+        <a href="{{ route('accounting.account.index') }}" class="px-6 py-3 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-all text-xs flex items-center gap-2">
+            <i data-lucide="x" class="w-4 h-4"></i>
             Quitter l'import
         </a>
     </div>
@@ -29,57 +26,57 @@
             <div class="lg:col-span-8 flex flex-col gap-16 animate-in fade-in slide-in-from-left duration-700 delay-100">
                 
                 <!-- ZONE DE DEPOT -->
-                <div class="relative group h-[350px] sm:h-[400px]">
+                <div class="relative group h-[300px]">
                     <input type="file" name="file" id="file" required accept=".csv,.txt"
                         class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-50"
                         onchange="updateFileName(this)">
                     
-                    <div id="drop-zone" class="w-full h-full border-2 border-dashed border-gray-200 rounded-none p-10 flex flex-col items-center justify-center text-center group-hover:bg-white group-hover:border-black transition-all duration-500 bg-gray-50/50 relative overflow-hidden">
-                        <div id="icon-container" class="mb-8 relative transition-transform duration-500 group-hover:-translate-y-4">
-                            <i data-lucide="upload-cloud" class="w-16 h-16 text-gray-200 group-hover:text-black transition-colors"></i>
+                    <div id="drop-zone" class="w-full h-full border-2 border-dashed border-slate-200 rounded-2xl p-10 flex flex-col items-center justify-center text-center group-hover:bg-slate-50/50 group-hover:border-primary transition-all duration-300 bg-white relative overflow-hidden shadow-sm">
+                        <div id="icon-container" class="mb-6">
+                            <i data-lucide="file-up" class="w-16 h-16 text-slate-200 transition-all"></i>
                         </div>
 
                         <div class="space-y-4">
-                            <h3 id="file-name" class="text-xl sm:text-2xl font-bold text-gray-900 uppercase">Déposez votre CSV</h3>
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest opacity-60">ou cliquez pour choisir un fichier</p>
+                            <h3 id="file-name" class="text-lg font-bold text-slate-800">Sélectionnez votre fichier CSV</h3>
+                            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">ou déposez-le directement ici</p>
                         </div>
                     </div>
                 </div>
                 <!-- ZONE D'APERÇU INSTANTANNÉ (JS) -->
-                <div id="js-preview-container" class="hidden animate-in fade-in zoom-in duration-500">
-                    <div class="mb-6 flex items-center justify-between border-b-2 border-primary pb-4">
-                        <h3 class="text-xs font-bold uppercase tracking-widest text-primary italic leading-none">Aperçu instantané du fichier choisi</h3>
-                        <span id="file-row-count" class="text-[10px] font-bold text-gray-500 uppercase"></span>
+                <div id="js-preview-container" class="hidden">
+                    <div class="mb-6 flex items-center justify-between border-b border-slate-200 pb-4">
+                        <h3 class="text-[11px] font-bold uppercase tracking-widest text-primary">Aperçu du fichier</h3>
+                        <span id="file-row-count" class="text-[10px] font-bold text-slate-400 uppercase"></span>
                     </div>
-                    <div class="w-full overflow-x-auto bg-white border border-gray-100 p-1">
-                        <table class="w-full text-[10px] font-mono">
-                            <thead class="bg-gray-50 text-gray-400 uppercase text-left border-b border-gray-100">
+                    <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                        <table class="w-full text-left">
+                            <thead class="bg-slate-50 text-slate-400 uppercase text-[10px] font-bold tracking-widest border-b border-slate-100">
                                 <tr id="js-preview-header"></tr>
                             </thead>
-                            <tbody id="js-preview-body" class="text-gray-900 font-bold divide-y divide-gray-50"></tbody>
+                            <tbody id="js-preview-body" class="divide-y divide-slate-50 text-[13px]"></tbody>
                         </table>
                     </div>
                 </div>
 
                 <!-- ILLUSTRATION -->
                 <div id="format-illustration" class="w-full">
-                    <div class="mb-10 flex items-center justify-between border-b-2 border-gray-900 pb-6">
-                        <h3 class="text-xs font-bold uppercase tracking-widest text-gray-900 italic leading-none">Format attendu</h3>
-                        <span class="text-[9px] font-bold text-gray-400 uppercase opacity-50 underline">Séparateur (;) ou (,)</span>
+                    <div class="mb-8 flex items-center justify-between border-b border-slate-200 pb-4">
+                        <h3 class="text-[11px] font-bold uppercase tracking-widest text-slate-800 leading-none">Structure attendue</h3>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Format : CSV (point-virgule)</span>
                     </div>
                     
-                    <div class="w-full overflow-auto">
-                        <table class="w-full text-[10px] sm:text-xs font-mono border-collapse border-b border-gray-100">
+                    <div class="bg-white border border-slate-100 rounded-xl overflow-hidden shadow-sm">
+                        <table class="w-full border-collapse">
                             <thead>
-                                <tr class="text-gray-400 uppercase text-left border-b-2 border-gray-900">
-                                    <th class="py-5 pr-4 font-bold">NUMERO</th>
-                                    <th class="py-5 pr-4 font-bold">LIBELLE</th>
+                                <tr class="text-slate-400 uppercase text-[10px] font-bold tracking-widest text-left border-b border-slate-100 bg-slate-50/50">
+                                    <th class="px-6 py-4">NUMERO</th>
+                                    <th class="px-6 py-4">LIBELLE</th>
                                 </tr>
                             </thead>
-                            <tbody class="text-gray-900 font-bold divide-y divide-gray-100">
-                                <tr class="group">
-                                    <td class="py-6 pr-4 font-bold">411101</td>
-                                    <td class="py-6 pr-4 italic font-medium text-gray-500">Client Dupont SAS</td>
+                            <tbody class="text-[13px]">
+                                <tr class="hover:bg-slate-50/50 transition-colors">
+                                    <td class="px-6 py-4 font-bold text-primary">411101</td>
+                                    <td class="px-6 py-4 font-semibold text-slate-700">Client Dupont SAS</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -87,9 +84,9 @@
                 </div>
 
                 <!-- INFO BOX -->
-                <div class="mt-4 flex items-start gap-5 py-6 px-10 border-l-[4px] border-black bg-gray-50 italic">
-                    <i data-lucide="info" class="w-6 h-6 text-black opacity-30 shrink-0"></i>
-                    <p class="text-[11px] font-bold text-gray-600 uppercase tracking-wider leading-relaxed">
+                <div class="mt-8 flex items-start gap-4 p-6 bg-slate-50 rounded-xl border border-slate-200">
+                    <i data-lucide="info" class="w-5 h-5 text-primary shrink-0"></i>
+                    <p class="text-[13px] text-slate-600 leading-relaxed font-medium">
                         Le parent est détecté automatiquement. Le numéro de sous-compte doit être unique et commencer par le numéro du compte parent correspondant.
                     </p>
                 </div>
@@ -97,18 +94,19 @@
 
             <!-- COLONNE DROITE -->
             <div class="lg:col-span-4 flex flex-col gap-10">
-                <div class="bg-white border-2 border-gray-100 rounded-none p-10 flex flex-col h-full sticky top-32 shadow-xl">
-                    <h3 class="text-xs font-black uppercase text-gray-900 mb-10 pb-4 border-b-2 border-gray-900 italic tracking-widest">Étape suivante</h3>
-                    <p class="text-[10px] text-gray-400 font-bold uppercase mb-8 leading-relaxed">
-                        Après avoir cliqué, vous pourrez vérifier chaque ligne avant la validation finale.
-                    </p>
-                    
-                    <div class="mt-auto">
-                        <button type="submit" class="w-full px-8 py-5 bg-primary text-white font-black rounded-none shadow-2xl hover:bg-black hover:scale-[1.02] active:scale-100 transition-all uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-4">
-                            Continuer vers l'aperçu
-                            <i data-lucide="arrow-right" class="w-4 h-4 text-white"></i>
-                        </button>
+                <div class="bg-white border border-slate-200 rounded-xl p-8 sticky top-8 shadow-sm flex flex-col gap-6">
+                    <div>
+                        <h3 class="text-[11px] font-bold uppercase tracking-widest text-slate-400 border-b border-slate-100 pb-4">Validation</h3>
+                        <p class="text-[13px] text-slate-500 leading-relaxed mt-4">
+                            Après avoir cliqué, vous pourrez vérifier chaque ligne avant la validation finale dans la base de données.
+                        </p>
                     </div>
+                    
+                    <button type="submit" 
+                        class="w-full py-4 bg-primary text-white font-bold rounded-xl hover:opacity-95 transition-all text-sm flex items-center justify-center gap-3 shadow-md">
+                        Continuer vers l'aperçu
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -141,20 +139,22 @@
                     const rows = lines.slice(1, 6); // Max 5 preview rows
                     
                     // Render header
-                    const headerHtml = header.map(h => `<th class="px-3 py-3 border-b border-gray-100">${h}</th>`).join('');
+                    const headerHtml = header.map(h => `<th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100">${h}</th>`).join('');
                     document.getElementById('js-preview-header').innerHTML = headerHtml;
                     
                     // Render body
                     let bodyHtml = "";
                     rows.forEach(row => {
                         const cols = row.split(delimiter);
-                        bodyHtml += `<tr>${cols.map(c => `<td class="px-3 py-3">${c}</td>`).join('')}</tr>`;
+                        bodyHtml += `<tr class="border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">${cols.map(c => `<td class="px-6 py-4 text-slate-700 font-semibold text-xs">${c}</td>`).join('')}</tr>`;
                     });
                     document.getElementById('js-preview-body').innerHTML = bodyHtml;
                     document.getElementById('file-row-count').innerText = `${lines.length - 1} lignes détectées`;
                     
                     jsPreviewContainer.classList.remove('hidden');
                     formatIllustration.classList.add('hidden');
+                    dropZone.classList.add('border-primary', 'bg-white/80');
+                    dropZone.classList.remove('bg-slate-50/50');
                 }
             };
             reader.readAsText(input.files[0]);

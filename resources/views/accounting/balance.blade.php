@@ -10,8 +10,8 @@
                 <i data-lucide="archive" class="w-5 h-5"></i>
             </div>
             <div>
-                <h3 class="text-lg font-black text-gray-800 uppercase leading-none">Archives de l'exercice {{ date('Y', strtotime(request('start_date'))) }}</h3>
-                <p class="text-xs text-gray-500 font-bold uppercase tracking-widest mt-1">Données scellées et définitives</p>
+                <h3 class="text-lg font-black text-slate-800 uppercase leading-none">Archives de l'exercice {{ date('Y', strtotime(request('start_date'))) }}</h3>
+                <p class="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Données scellées et définitives</p>
             </div>
         </div>
         <a href="{{ route('accounting.archive.index') }}" class="text-[10px] font-black uppercase text-primary bg-white border border-primary px-3 py-1.5 rounded-lg hover:bg-primary hover:text-white transition-all">
@@ -20,94 +20,70 @@
     </div>
 @endif
 
-<div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6 no-print">
+<div class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6 no-print">
     <div>
-        <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Balance Générale</h1>
-        <p class="text-sm text-gray-500 italic">Vérification de l'équilibre arithmétique des comptes</p>
+        <h1 class="text-3xl font-bold text-slate-800">Balance Générale</h1>
+        <p class="text-sm text-slate-500 mt-1">Vérification de l'équilibre arithmétique de vos comptes</p>
     </div>
-    <div class="flex flex-wrap gap-3 no-print">
-        <div class="relative group">
-            <button id="balance-actions-dropdown-btn" class="px-5 py-2.5 bg-gray-800 text-white shadow-sm text-xs font-bold uppercase flex items-center gap-2">
-                <i data-lucide="download" class="w-4 h-4"></i>
-                OPTIONS D'EXPORT
-                <i data-lucide="chevron-down" class="w-3 h-3"></i>
-            </button>
-            <div id="balance-actions-dropdown-menu" class="absolute right-0 mt-2 w-56 bg-white border border-border shadow-xl z-[2000] hidden">
-                <a href="{{ route('accounting.balance.pdf') }}" target="_blank" class="flex items-center gap-3 px-4 py-3 text-[11px] font-black text-gray-700 hover:bg-gray-50 border-b border-gray-100">
-                    <i data-lucide="file-text" class="w-4 h-4 text-red-600"></i>
-                    TÉLÉCHARGER PDF
-                </a>
-                <button onclick="exportTableToExcel('balance-table', 'Balance_Generale')" class="flex items-center gap-3 px-4 py-3 text-[11px] font-black text-gray-700 hover:bg-gray-50 w-full text-left">
-                    <i data-lucide="file-spreadsheet" class="w-4 h-4 text-green-600"></i>
-                    EXPORTER EXCEL
-                </button>
-            </div>
-        </div>
+    <div class="flex items-center gap-3 no-print">
+        <a href="{{ route('accounting.balance.pdf') }}" target="_blank" 
+            class="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 font-semibold rounded-lg hover:bg-slate-50 transition-all text-xs flex items-center gap-2">
+            <i data-lucide="file-text" class="w-4 h-4 text-rose-500"></i>
+            Format PDF
+        </a>
+        <button onclick="exportTableToExcel('balance-table', 'Balance_Generale')" 
+            class="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 font-semibold rounded-lg hover:bg-slate-50 transition-all text-xs flex items-center gap-2">
+            <i data-lucide="sheet" class="w-4 h-4 text-emerald-500"></i>
+            Excel
+        </button>
     </div>
 </div>
 
 <!-- Filtre par période -->
 <div class="mb-10 no-print">
-    <form action="{{ request()->url() }}" method="GET" class="grid grid-cols-1 md:flex md:flex-row md:items-end gap-3 md:gap-5 bg-card-bg p-4 md:p-8 border border-border shadow-sm overflow-hidden max-w-full">
-        <div class="w-full md:flex-1 md:min-w-[200px]">
-            <label class="block text-[10px] uppercase font-bold text-gray-400 mb-2 tracking-widest px-1 flex items-center gap-2">
-                <i data-lucide="calendar" class="w-3 h-3"></i> Période du
-            </label>
-            <input type="date" name="start_date" value="{{ request('start_date') }}" placeholder="JJ/MM/AAAA"
-                   class="w-full bg-bg border border-border px-4 py-3 text-sm font-bold outline-none focus:border-primary transition-all rounded-lg box-border max-w-full">
-        </div>
-        <div class="w-full md:flex-1 md:min-w-[200px]">
-            <label class="block text-[10px] uppercase font-bold text-gray-400 mb-2 tracking-widest px-1 flex items-center gap-2">
-                <i data-lucide="calendar" class="w-3 h-3"></i> Au
-            </label>
-            <input type="date" name="end_date" value="{{ request('end_date') }}" placeholder="JJ/MM/AAAA"
-                   class="w-full bg-bg border border-border px-4 py-3 text-sm font-bold outline-none focus:border-primary transition-all rounded-lg box-border max-w-full">
-        </div>
-        <div class="w-full md:w-auto flex flex-col md:flex-row gap-3">
-            <button type="submit" class="w-full md:px-10 py-3 bg-primary text-white text-[11px] font-black uppercase tracking-[0.2em] hover:bg-primary-light transition-all shadow-lg flex items-center justify-center gap-3">
-                <i data-lucide="refresh-cw" class="w-4 h-4"></i> Actualiser
-            </button>
-            @if(request()->hasAny(['start_date', 'end_date']))
-                <a href="{{ request()->url() }}" class="w-full md:px-8 py-3 bg-gray-100 text-gray-500 text-[11px] font-black uppercase tracking-[0.2em] hover:bg-gray-200 transition-all flex items-center justify-center gap-2 border border-gray-200">
-                    <i data-lucide="x" class="w-4 h-4"></i> Effacer
-                </a>
-            @endif
-        </div>
-    </form>
+<form action="{{ request()->url() }}" method="GET" class="mb-10 grid grid-cols-1 md:flex md:flex-row md:items-end gap-5 bg-white border border-slate-200 p-6 rounded-xl shadow-sm no-print">
+    <div class="w-full md:flex-1">
+        <label class="block text-[11px] font-bold text-slate-400 mb-2 uppercase tracking-wider px-1">Période du</label>
+        <input type="date" name="start_date" value="{{ request('start_date') }}" 
+               class="w-full bg-slate-50 border border-slate-200 px-4 py-3 text-sm font-semibold outline-none focus:border-primary transition-all rounded-lg">
+    </div>
+    <div class="w-full md:flex-1">
+        <label class="block text-[11px] font-bold text-slate-400 mb-2 uppercase tracking-wider px-1">Au</label>
+        <input type="date" name="end_date" value="{{ request('end_date') }}" 
+               class="w-full bg-slate-50 border border-slate-200 px-4 py-3 text-sm font-semibold outline-none focus:border-primary transition-all rounded-lg">
+    </div>
+    <div class="flex items-center gap-3">
+        <button type="submit" class="px-8 py-3 bg-primary text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all shadow-sm rounded-lg flex items-center gap-2">
+            <i data-lucide="refresh-cw" class="w-4 h-4"></i> Actualiser
+        </button>
+        @if(request()->hasAny(['start_date', 'end_date']))
+            <a href="{{ request()->url() }}" class="px-6 py-3 bg-slate-100 text-slate-500 text-xs font-bold uppercase tracking-widest hover:bg-slate-200 transition-all rounded-lg flex items-center gap-2 border border-slate-200">
+                <i data-lucide="x" class="w-4 h-4"></i> Effacer
+            </a>
+        @endif
+    </div>
+</form>
 </div>
 
-<div class="bg-card-bg border border-border rounded-none shadow-sm overflow-hidden mb-12">
-    
-    <!-- En-tête de l'état -->
-    <div class="bg-primary/5 border-b border-primary/10 px-4 md:px-8 py-4 md:py-8 text-center">
-        <h1 class="text-base md:text-2xl font-black text-gray-900 uppercase">BALANCE GÉNÉRALE DES COMPTES AU {{ date('d/m/y') }}</h1>
+<div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden mb-12" id="balance-table">
+    <div class="bg-slate-50/50 border-b border-slate-100 px-8 py-8 text-center">
+        <h2 class="text-xl font-bold text-slate-800 uppercase tracking-wide">État de la Balance au {{ date('d/m/Y') }}</h2>
     </div>
 
-    <div class="table-responsive" id="balance-table">
-        <table class="w-full border-separate border-spacing-0 min-w-[1000px] sticky-thead">
+    <div class="table-responsive">
+        <table class="w-full border-collapse min-w-[1000px]">
             <thead>
-                <!-- Groupement des colonnes - Tout en bleu primaire -->
-                <tr class="bg-primary text-white text-[11px] uppercase font-black tracking-widest border-b border-white/10 row-sticky-1">
-                    <th rowspan="2" class="group px-4 py-4 text-left border-r border-white/10" style="width: 150px;">
-                        <div class="flex items-center gap-2">
-                            <span>NUM DE COMPTES</span>
-                            <div class="flex flex-col opacity-20 group-hover:opacity-100 transition-opacity">
-                                <i data-lucide="chevron-up" class="w-3 h-3 cursor-pointer"></i>
-                                <i data-lucide="chevron-down" class="w-3 h-3 -mt-1 cursor-pointer"></i>
-                            </div>
-                        </div>
-                    </th>
-                    <th rowspan="2" class="px-4 py-4 text-left border-r border-white/10">INTITULÉ DES COMPTES</th>
-                    <th colspan="2" class="px-4 py-3 text-center border-r border-white/10">MOUVEMENTS DE LA PERIODE</th>
-                    <th colspan="2" class="px-4 py-3 text-center">SOLDES EN FIN DE PERIODE</th>
+                <tr class="text-slate-400 border-b border-slate-100 italic">
+                    <th rowspan="2" class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-left" style="width: 140px;">Compte</th>
+                    <th rowspan="2" class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-left">Intitulé</th>
+                    <th colspan="2" class="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-center border-l border-slate-50">Flux de la période</th>
+                    <th colspan="2" class="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-center border-l border-slate-50">Solde final</th>
                 </tr>
-                <tr class="bg-primary text-white text-[9px] uppercase font-bold tracking-widest row-sticky-2">
-                    <!-- Mouvements -->
-                    <th class="px-4 py-2 text-right border-r border-white/20">DÉBIT</th>
-                    <th class="px-4 py-2 text-right border-r border-white/20">CRÉDIT</th>
-                    <!-- Soldes Fin -->
-                    <th class="px-4 py-2 text-right border-r border-white/20">DÉBIT</th>
-                    <th class="px-4 py-2 text-right">CRÉDIT</th>
+                <tr class="text-slate-400 border-b border-slate-100 italic">
+                    <th class="px-6 py-2 text-right text-[10px] uppercase font-bold border-l border-slate-50">Débit</th>
+                    <th class="px-6 py-2 text-right text-[10px] uppercase font-bold">Crédit</th>
+                    <th class="px-6 py-2 text-right text-[10px] uppercase font-bold border-l border-slate-50">Débit</th>
+                    <th class="px-6 py-2 text-right text-[10px] uppercase font-bold">Crédit</th>
                 </tr>
             </thead>
             <tbody class="text-xs">
@@ -116,33 +92,33 @@
                     @foreach($class['groups'] as $prefix => $group)
                         <!-- Comptes individuels du groupe -->
                         @foreach($group['accounts'] as $acc)
-                            <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
-                                <td class="px-4 py-3 font-mono font-bold text-gray-900 border-r border-gray-200 italic">{{ $acc['code'] }}</td>
-                                <td class="px-4 py-3 text-gray-700 border-r border-gray-200 font-medium uppercase">{{ $acc['libelle'] }}</td>
+                            <tr class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
+                                <td class="px-4 py-3 font-mono font-bold text-slate-900 border-r border-slate-200 italic">{{ $acc['code'] }}</td>
+                                <td class="px-4 py-3 text-slate-700 border-r border-slate-200 font-medium uppercase">{{ $acc['libelle'] }}</td>
                                 
-                                <td class="px-4 py-3 text-right font-semibold text-gray-900 border-r border-gray-200 whitespace-nowrap">
+                                <td class="px-4 py-3 text-right font-semibold text-slate-900 border-r border-slate-200 whitespace-nowrap">
                                     {{ $acc['mouv_debit'] > 0 ? number_format($acc['mouv_debit'], 2, ',', ' ') : '0,00' }}
                                 </td>
-                                <td class="px-4 py-3 text-right font-semibold text-gray-900 border-r border-gray-200 whitespace-nowrap">
+                                <td class="px-4 py-3 text-right font-semibold text-slate-900 border-r border-slate-200 whitespace-nowrap">
                                     {{ $acc['mouv_credit'] > 0 ? number_format($acc['mouv_credit'], 2, ',', ' ') : '0,00' }}
                                 </td>
                                 
-                                <td class="px-4 py-3 text-right font-bold text-green-700 bg-green-50/10 border-r border-gray-200 whitespace-nowrap">
+                                <td class="px-4 py-3 text-right font-bold text-green-700 bg-green-50/10 border-r border-slate-200 whitespace-nowrap">
                                     {{ $acc['fin_debit'] > 0 ? number_format($acc['fin_debit'], 2, ',', ' ') : '0,00' }}
                                 </td>
-                                <td class="px-4 py-3 text-right font-bold text-red-700 bg-red-50/10 border-r border-gray-200 whitespace-nowrap">
+                                <td class="px-4 py-3 text-right font-bold text-red-700 bg-red-50/10 border-r border-slate-200 whitespace-nowrap">
                                     {{ $acc['fin_credit'] > 0 ? number_format($acc['fin_credit'], 2, ',', ' ') : '0,00' }}
                                 </td>
                             </tr>
                         @endforeach
 
                         <!-- Sous-Total du Groupe (S'affiche après chaque groupe) -->
-                        <tr class="bg-gray-100/50 border-b border-gray-200 font-bold italic text-gray-800">
-                            <td colspan="2" class="px-4 py-3 border-r border-gray-200 uppercase text-[10px]">Sous Total {{ $group['prefix'] }}</td>
-                            <td class="px-4 py-3 text-right border-r border-gray-200 whitespace-nowrap">{{ number_format($group['group_totals']['mouv_debit'], 2, ',', ' ') }}</td>
-                            <td class="px-4 py-3 text-right border-r border-gray-200 whitespace-nowrap">{{ number_format($group['group_totals']['mouv_credit'], 2, ',', ' ') }}</td>
-                            <td class="px-4 py-3 text-right border-r border-gray-200 text-green-800 whitespace-nowrap">{{ number_format($group['group_totals']['fin_debit'], 2, ',', ' ') }}</td>
-                            <td class="px-4 py-3 text-right border-r border-gray-200 text-red-800 whitespace-nowrap">{{ number_format($group['group_totals']['fin_credit'], 2, ',', ' ') }}</td>
+                        <tr class="bg-slate-100/50 border-b border-slate-200 font-bold italic text-slate-800">
+                            <td colspan="2" class="px-4 py-3 border-r border-slate-200 uppercase text-[10px]">Sous Total {{ $group['prefix'] }}</td>
+                            <td class="px-4 py-3 text-right border-r border-slate-200 whitespace-nowrap">{{ number_format($group['group_totals']['mouv_debit'], 2, ',', ' ') }}</td>
+                            <td class="px-4 py-3 text-right border-r border-slate-200 whitespace-nowrap">{{ number_format($group['group_totals']['mouv_credit'], 2, ',', ' ') }}</td>
+                            <td class="px-4 py-3 text-right border-r border-slate-200 text-green-800 whitespace-nowrap">{{ number_format($group['group_totals']['fin_debit'], 2, ',', ' ') }}</td>
+                            <td class="px-4 py-3 text-right border-r border-slate-200 text-red-800 whitespace-nowrap">{{ number_format($group['group_totals']['fin_credit'], 2, ',', ' ') }}</td>
                         </tr>
                     @endforeach
 
@@ -159,8 +135,8 @@
                 @empty
                     <tr>
                         <td colspan="6" class="px-6 py-20 text-center">
-                            <i data-lucide="file-warning" class="w-12 h-12 mx-auto mb-4 text-gray-200"></i>
-                            <p class="text-gray-500 font-medium italic">Aucune donnée disponible pour établir la balance.</p>
+                            <i data-lucide="file-warning" class="w-12 h-12 mx-auto mb-4 text-slate-200"></i>
+                            <p class="text-slate-500 font-medium italic">Aucune donnée disponible pour établir la balance.</p>
                         </td>
                     </tr>
                 @endforelse

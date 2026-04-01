@@ -11,7 +11,7 @@ class SousCompteSeeder extends Seeder
 {
     public function run(): void
     {
-        $entreprise = Entreprise::first();
+        $entreprise = Entreprise::first(['*']);
         if (!$entreprise) return;
 
         $accounts = [
@@ -22,7 +22,7 @@ class SousCompteSeeder extends Seeder
         ];
 
         foreach ($accounts as $code => $subs) {
-            $parent = Account::where('code_compte', $code)->first();
+            $parent = Account::where('code_compte', '=', $code, 'and')->first(['*']);
             if (!$parent) continue;
 
             foreach ($subs as $num => $libelle) {

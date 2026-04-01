@@ -21,7 +21,7 @@
                         sans: ['Inter', 'sans-serif']
                     },
                     colors: {
-                        primary: '#003366',
+                        primary: '#005b82',
                         'primary-light': '#004d99',
                     }
                 }
@@ -80,33 +80,32 @@
     </style>
 </head>
 
-<body class="bg-gray-50 dark:bg-[#0a0f1e]">
+<body class="bg-slate-50 dark:bg-[#0a0f1e]">
 
     <div class="auth-container">
         {{-- ═══════════════════════ LEFT PANEL ═══════════════════════ --}}
-        <div class="hidden lg:flex w-1/2 relative flex-col items-center justify-center p-12 overflow-hidden"
-            style="background: linear-gradient(135deg, #001a3a 0%, #003366 50%, #004d99 100%);">
+        <div class="hidden lg:flex w-1/2 relative flex-col items-center justify-center p-12 overflow-hidden bg-primary">
 
             <div class="relative z-10 text-center max-w-md">
                 <div class="mb-10">
                     <img src="{{ asset('storage/images/logo.png') }}" alt="Logo" class="w-56 mx-auto">
                 </div>
                 <h1 class="text-4xl font-black text-white tracking-tight mb-4">Comptafriq</h1>
-                <p class="text-blue-200 text-lg leading-relaxed mb-8">
+                <p class="text-slate-300 text-lg leading-relaxed mb-8">
                     Votre plateforme de gestion comptable moderne et intuitive.
                 </p>
                 <div class="grid grid-cols-3 gap-4">
                     <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center">
-                        <i data-lucide="book-open" class="w-7 h-7 text-blue-200 mx-auto mb-1"></i>
-                        <div class="text-[10px] text-blue-200 font-bold uppercase tracking-widest">Écritures</div>
+                        <i data-lucide="book-open" class="w-7 h-7 text-slate-300 mx-auto mb-1"></i>
+                        <div class="text-[10px] text-slate-300 font-bold uppercase tracking-widest">Écritures</div>
                     </div>
                     <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center">
-                        <i data-lucide="bar-chart-2" class="w-7 h-7 text-blue-200 mx-auto mb-1"></i>
-                        <div class="text-[10px] text-blue-200 font-bold uppercase tracking-widest">Bilan</div>
+                        <i data-lucide="bar-chart-2" class="w-7 h-7 text-slate-300 mx-auto mb-1"></i>
+                        <div class="text-[10px] text-slate-300 font-bold uppercase tracking-widest">Bilan</div>
                     </div>
                     <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center">
-                        <i data-lucide="zap" class="w-7 h-7 text-blue-200 mx-auto mb-1"></i>
-                        <div class="text-[10px] text-blue-200 font-bold uppercase tracking-widest">Temps Réel</div>
+                        <i data-lucide="zap" class="w-7 h-7 text-slate-300 mx-auto mb-1"></i>
+                        <div class="text-[10px] text-slate-300 font-bold uppercase tracking-widest">Temps Réel</div>
                     </div>
                 </div>
             </div>
@@ -124,8 +123,8 @@
 
                 {{-- Header --}}
                 <div class="mb-10 animate-fade-up" style="animation-delay: 0.1s;">
-                    <h2 class="text-4xl font-black text-gray-900 dark:text-white tracking-tight mb-2">Bienvenue</h2>
-                    <p class="text-gray-500 dark:text-slate-400 font-medium">Connectez-vous à votre espace</p>
+                    <h2 class="text-4xl font-black text-slate-900 dark:text-white tracking-tight mb-2">Bienvenue</h2>
+                    <p class="text-slate-500 dark:text-slate-400 font-medium">Connectez-vous à votre espace</p>
                 </div>
 
                 {{-- Alerts --}}
@@ -150,21 +149,21 @@
                     style="animation-delay: 0.2s;">
                     @csrf
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 dark:text-slate-300 mb-2">Email</label>
+                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Email</label>
                         <div class="relative group">
                             <span
-                                class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
+                                class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
                                 <i data-lucide="mail" class="w-5 h-5"></i>
                             </span>
                             <input type="email" name="email" value="{{ old('email') }}" required
                                 placeholder="email@gmail.com"
-                                class="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white pl-12 pr-4 py-4 rounded-2xl text-base focus:outline-none focus:border-primary transition-all shadow-sm">
+                                class="w-full bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white pl-12 pr-4 py-4 rounded-2xl text-base focus:outline-none focus:border-primary transition-all shadow-sm">
                         </div>
                     </div>
 
                     <div>
                         <div class="flex justify-between items-center mb-2">
-                            <label class="block text-sm font-bold text-gray-700 dark:text-slate-300">Mot de
+                            <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">Mot de
                                 passe</label>
                             <a href="{{ route('forgot-password') }}"
                                 class="text-xs font-bold text-primary hover:text-primary-light transition-colors">Oublié
@@ -172,12 +171,12 @@
                         </div>
                         <div class="relative group">
                             <span
-                                class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
+                                class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
                                 <i data-lucide="lock" class="w-5 h-5"></i>
                             </span>
                             <input type="password" name="password" id="password" required placeholder="••••••••"
-                                class="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white pl-12 pr-12 py-4 rounded-2xl text-sm focus:outline-none focus:border-primary transition-all shadow-sm">
-                            <button type="button" onclick="togglePassword('password', 'eye-icon')" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary transition-colors">
+                                class="w-full bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white pl-12 pr-12 py-4 rounded-2xl text-sm focus:outline-none focus:border-primary transition-all shadow-sm">
+                            <button type="button" onclick="togglePassword('password', 'eye-icon')" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors">
                                 <i data-lucide="eye" id="eye-icon" class="w-5 h-5"></i>
                             </button>
                         </div>
@@ -191,7 +190,7 @@
 
                 {{-- Footer --}}
                 <div class="mt-10 text-center animate-fade-up" style="animation-delay: 0.3s;">
-                    <p class="text-sm text-gray-500 dark:text-slate-400">
+                    <p class="text-sm text-slate-500 dark:text-slate-400">
                         Nouveau sur Comptafriq ?
                         <a href="{{ route('signup') }}"
                             class="font-black text-primary hover:text-primary-light ml-1 underline transition-all">S'inscrire</a>

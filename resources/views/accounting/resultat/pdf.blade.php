@@ -3,9 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Compte de Résultat - {{ $user->entreprise->name ?? 'Logicompta' }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = { theme: { extend: { colors: { primary: '#003366' } } } }
+        tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], },
+                    colors: { primary: '#005b82' } } } }
     </script>
     <style>
         @media print {
@@ -13,19 +17,19 @@
             body { padding: 0 !important; margin: 0 !important; background: white !important; }
             @page { margin: 1cm; }
         }
-        body { font-family: sans-serif; font-size: 9px; }
+        body { font-family: 'Inter', sans-serif; font-size: 9px; }
         table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
-        th, td { border: 1px solid #ddd; padding: 6px; }
-        th { background: #f3f4f6; text-align: left; text-transform: uppercase; font-weight: bold; }
+        th, td { border: 1px solid #e2e8f0; padding: 6px; }
+        th { background: #f8fafc; text-align: left; text-transform: uppercase; font-weight: bold; }
         .group-total { font-weight: bold; background: #fafafa; font-style: italic; color: #555; }
-        .section-header { background: #003366; color: white !important; -webkit-print-color-adjust: exact; padding: 8px 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; }
+        .section-header { background: #005b82; color: white !important; -webkit-print-color-adjust: exact; padding: 8px 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; }
     </style>
 </head>
 <body class="bg-white p-4 md:p-8">
-    <div class="no-print mb-6 flex flex-col md:flex-row md:items-center justify-between gap-6 bg-gray-50 p-6 rounded-2xl border border-gray-200">
-        <p class="text-sm text-gray-600 font-medium italic">Vérifiez l'aperçu avant d'enregistrer en PDF.</p>
+    <div class="no-print mb-6 flex flex-col md:flex-row md:items-center justify-between gap-6 bg-slate-50 p-6 rounded-2xl border border-slate-200">
+        <p class="text-sm text-slate-600 font-medium italic">Vérifiez l'aperçu avant d'enregistrer en PDF.</p>
         <div class="flex flex-wrap gap-4">
-            <button onclick="window.close()" class="px-5 py-2.5 text-sm font-bold text-gray-600 hover:text-gray-900 border border-gray-300 rounded-xl hover:bg-white transition-all">Fermer</button>
+            <button onclick="window.close()" class="px-5 py-2.5 text-sm font-bold text-slate-600 hover:text-slate-900 border border-slate-300 rounded-xl hover:bg-white transition-all">Fermer</button>
             <button onclick="window.print()" class="px-8 py-2.5 bg-primary text-white font-bold rounded-xl shadow-lg hover:bg-primary-light transition-all flex items-center justify-center gap-2">
                 <i data-lucide="printer" class="w-4 h-4"></i>
                 Imprimer / Enregistrer PDF
@@ -33,19 +37,19 @@
         </div>
     </div>
 
-    <div class="mb-8 border-b-2 border-gray-900 pb-6 flex flex-col md:flex-row md:justify-between md:items-end gap-6">
+    <div class="mb-8 border-b-2 border-slate-900 pb-6 flex flex-col md:flex-row md:justify-between md:items-end gap-6">
         <div>
-            <h1 class="text-3xl font-black uppercase tracking-tighter text-gray-900">COMPTE DE RÉSULTAT</h1>
-            <p class="text-sm font-bold text-gray-500 italic uppercase">{{ $user->entreprise->name ?? 'MA SOCIETE' }}</p>
+            <h1 class="text-3xl font-black uppercase tracking-tighter text-slate-900">COMPTE DE RÉSULTAT</h1>
+            <p class="text-sm font-bold text-slate-500 italic uppercase">{{ $user->entreprise->name ?? 'MA SOCIETE' }}</p>
         </div>
-        <div class="text-right text-xs font-medium text-gray-400">
+        <div class="text-right text-xs font-medium text-slate-400">
             Édité le {{ now()->format('d/m/Y à H:i') }}
         </div>
     </div>
 
     <div class="flex flex-col xl:flex-row gap-6 mt-4">
         <!-- CHARGES -->
-        <div class="flex-1 overflow-x-auto shadow-sm rounded-xl border border-gray-100 p-0 overflow-hidden">
+        <div class="flex-1 overflow-x-auto shadow-sm rounded-xl border border-slate-100 p-0 overflow-hidden">
             <div class="section-header">CHARGE (EXPLOITATION & FINANCIÈRES)</div>
             <table class="w-full mb-0 min-w-[500px]">
                 <thead><tr><th>COMPTE</th><th>INTITULÉ</th><th style="width: 80px; text-align: right;">MONTANT</th></tr></thead>
@@ -58,7 +62,7 @@
                     @endforeach
                 </tbody>
                 <tfoot>
-                    <tr class="bg-gray-100 font-black text-gray-900 border-t-2 border-gray-400">
+                    <tr class="bg-slate-100 font-black text-slate-900 border-t-2 border-slate-400">
                         <td colspan="2" class="text-right uppercase">TOTAL DES CHARGES</td>
                         <td class="text-right text-sm">{{ number_format($charges['total'], 2, ',', ' ') }}</td>
                     </tr>
@@ -67,7 +71,7 @@
         </div>
 
         <!-- PRODUITS -->
-        <div class="flex-1 overflow-x-auto shadow-sm rounded-xl border border-gray-100 p-0 overflow-hidden mt-6 xl:mt-0">
+        <div class="flex-1 overflow-x-auto shadow-sm rounded-xl border border-slate-100 p-0 overflow-hidden mt-6 xl:mt-0">
             <div class="section-header">PRODUIT (VENTES & REVENUS)</div>
             <table class="w-full mb-0 min-w-[500px]">
                 <thead><tr><th>COMPTE</th><th>INTITULÉ</th><th style="width: 80px; text-align: right;">MONTANT</th></tr></thead>
@@ -80,7 +84,7 @@
                     @endforeach
                 </tbody>
                 <tfoot>
-                    <tr class="bg-gray-100 font-black text-gray-900 border-t-2 border-gray-400">
+                    <tr class="bg-slate-100 font-black text-slate-900 border-t-2 border-slate-400">
                         <td colspan="2" class="text-right uppercase">TOTAL DES PRODUITS</td>
                         <td class="text-right text-sm">{{ number_format($produits['total'], 2, ',', ' ') }}</td>
                     </tr>

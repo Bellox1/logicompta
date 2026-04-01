@@ -17,7 +17,7 @@ class UserSeeder extends Seeder
             'name' => 'Bellox Admin',
             'email' => 'admin@logicompta.bj',
             'password' => Hash::make('password'),
-            'entreprise_id' => \App\Models\Entreprise::first()?->id,
+            'entreprise_id' => \App\Models\Entreprise::first(['*'])?->id,
         ]);
     }
 }

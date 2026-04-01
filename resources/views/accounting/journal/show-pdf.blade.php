@@ -11,8 +11,9 @@
         tailwind.config = {
             theme: {
                 extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], },
                     colors: {
-                        primary: '#003366',
+                        primary: '#005b82',
                         'primary-light': '#0055aa',
                     }
                 }
@@ -43,7 +44,7 @@
         }
 
         body {
-            font-family: sans-serif;
+            font-family: 'Inter', sans-serif;
             background: white;
             -webkit-print-color-adjust: exact;
         }
@@ -57,13 +58,13 @@
 
         th,
         td {
-            border: 1px solid #ddd;
+            border: 1px solid #e2e8f0;
             padding: 8px;
             word-wrap: break-word;
         }
 
         th {
-            background-color: #f3f4f6 !important;
+            background-color: #f8fafc !important;
             font-weight: bold;
             text-transform: uppercase;
         }
@@ -76,11 +77,11 @@
 </head>
 
 <body class="bg-white p-2 md:p-8">
-    <div class="no-print mb-6 flex flex-col md:flex-row md:items-center justify-between gap-6 bg-gray-50 p-6 rounded-2xl border border-gray-200">
-        <p class="text-sm text-gray-600 font-medium italic text-center md:text-left">Aperçu avant impression. Sur téléphone, utilisez l'option "Enregistrer en PDF".</p>
+    <div class="no-print mb-6 flex flex-col md:flex-row md:items-center justify-between gap-6 bg-slate-50 p-6 rounded-2xl border border-slate-200">
+        <p class="text-sm text-slate-600 font-medium italic text-center md:text-left">Aperçu avant impression. Sur téléphone, utilisez l'option "Enregistrer en PDF".</p>
         <div class="flex justify-center gap-4">
             <button onclick="window.close()"
-                class="px-5 py-2.5 text-sm font-bold text-gray-600 hover:text-gray-900 border border-gray-300 rounded-xl hover:bg-white transition-all">Fermer</button>
+                class="px-5 py-2.5 text-sm font-bold text-slate-600 hover:text-slate-900 border border-slate-300 rounded-xl hover:bg-white transition-all">Fermer</button>
             <button onclick="window.print()"
                 class="px-8 py-2.5 bg-primary text-white font-bold rounded-xl shadow-lg hover:bg-primary-light transition-all flex items-center justify-center gap-2">
                 <i data-lucide="printer" class="w-4 h-4"></i>
@@ -90,36 +91,36 @@
     </div>
 
     <div class="w-full max-w-full overflow-hidden">
-        <div class="mb-8 border-b-2 border-gray-900 pb-6 flex flex-col md:flex-row md:justify-between md:items-end gap-4">
+        <div class="mb-8 border-b-2 border-slate-900 pb-6 flex flex-col md:flex-row md:justify-between md:items-end gap-4">
             <div>
                 <span class="inline-block px-2 py-0.5 bg-primary text-white text-[9px] font-black rounded uppercase tracking-widest mb-2">Pièce Comptable</span>
-                <h1 class="text-3xl font-black uppercase tracking-tighter text-gray-900">N° {{ str_replace('PC-', '', $entry->numero_piece) }}</h1>
-                <p class="text-base font-bold text-gray-500 italic uppercase mt-1">{{ $user->entreprise->name ?? 'MA SOCIETE' }}</p>
+                <h1 class="text-3xl font-black uppercase tracking-tighter text-slate-900">N° {{ str_replace('PC-', '', $entry->numero_piece) }}</h1>
+                <p class="text-base font-bold text-slate-500 italic uppercase mt-1">{{ $user->entreprise->name ?? 'MA SOCIETE' }}</p>
             </div>
             <div class="md:text-right">
-                <div class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Date</div>
+                <div class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Date</div>
                 <div class="text-xl font-black text-primary">{{ \Carbon\Carbon::parse($entry->date)->format('d/m/Y') }}</div>
             </div>
         </div>
 
         <div class="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="p-4 bg-gray-50 rounded-xl border border-gray-100">
-                <span class="block text-[9px] uppercase font-bold text-gray-400 mb-1 tracking-widest text-primary">Libellé</span>
-                <p class="text-sm font-semibold text-gray-800 italic">"{{ $entry->libelle }}"</p>
+            <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <span class="block text-[9px] uppercase font-bold text-slate-400 mb-1 tracking-widest text-primary">Libellé</span>
+                <p class="text-sm font-semibold text-slate-800 italic">"{{ $entry->libelle }}"</p>
             </div>
-            <div class="p-4 bg-gray-50 rounded-xl border border-gray-100 flex flex-col justify-center space-y-1">
+            <div class="p-4 bg-slate-50 rounded-xl border border-slate-100 flex flex-col justify-center space-y-1">
                 <div class="flex justify-between items-center text-xs">
-                    <span class="text-gray-400 font-bold uppercase text-[9px]">Journal</span>
-                    <span class="font-black text-gray-900 uppercase">{{ $entry->journal->name }}</span>
+                    <span class="text-slate-400 font-bold uppercase text-[9px]">Journal</span>
+                    <span class="font-black text-slate-900 uppercase">{{ $entry->journal->name }}</span>
                 </div>
                 <div class="flex justify-between items-center text-xs">
-                    <span class="text-gray-400 font-bold uppercase text-[9px]">Statut</span>
+                    <span class="text-slate-400 font-bold uppercase text-[9px]">Statut</span>
                     <span class="font-black text-green-600 uppercase">Validée</span>
                 </div>
             </div>
         </div>
 
-        <div class="border border-gray-200 rounded-xl overflow-hidden">
+        <div class="border border-slate-200 rounded-xl overflow-hidden">
             <table class="w-full">
                 <thead>
                     <tr>
@@ -134,14 +135,14 @@
                         <tr>
                             <td class="font-bold text-primary text-center">{{ $line->sousCompte->numero_sous_compte }}</td>
                             <td>
-                                <div class="font-bold text-gray-900 uppercase text-[10px]">{{ $line->sousCompte->libelle }}</div>
+                                <div class="font-bold text-slate-900 uppercase text-[10px]">{{ $line->sousCompte->libelle }}</div>
                                 @if($line->libelle && $line->libelle != $entry->libelle)
-                                    <div class="text-[9px] text-gray-500 italic">{{ $line->libelle }}</div>
+                                    <div class="text-[9px] text-slate-500 italic">{{ $line->libelle }}</div>
                                 @endif
                             </td>
-                            <td class="text-right font-bold text-gray-800">
+                            <td class="text-right font-bold text-slate-800">
                                 {{ $line->debit > 0 ? number_format($line->debit, 2, ',', ' ') : '-' }}</td>
-                            <td class="text-right font-bold text-gray-800">
+                            <td class="text-right font-bold text-slate-800">
                                 {{ $line->credit > 0 ? number_format($line->credit, 2, ',', ' ') : '-' }}</td>
                         </tr>
                     @endforeach
@@ -160,11 +161,11 @@
             </table>
         </div>
 
-        <div class="mt-10 pt-6 border-t border-gray-100 flex justify-between items-center italic">
-            <div class="text-[8px] text-gray-400 uppercase tracking-widest">
+        <div class="mt-10 pt-6 border-t border-slate-100 flex justify-between items-center italic">
+            <div class="text-[8px] text-slate-400 uppercase tracking-widest">
                 Généré par Logicompta le {{ now()->format('d/m/Y') }}
             </div>
-            <div class="text-[9px] text-gray-300 font-bold uppercase p-3 border border-gray-100 rounded-lg">
+            <div class="text-[9px] text-slate-300 font-bold uppercase p-3 border border-slate-100 rounded-lg">
                 Cachet & Signature
             </div>
         </div>

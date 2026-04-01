@@ -5,12 +5,12 @@
 @section('content')
 <div class="mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
     <div>
-        <a href="{{ route('accounting.archive.index') }}" class="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-primary mb-2 transition-colors">
+        <a href="{{ route('accounting.archive.index') }}" class="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-primary mb-2 transition-colors">
             <i data-lucide="arrow-left" class="w-4 h-4"></i>
             RETOUR AUX ARCHIVES
         </a>
-        <h1 class="text-3xl md:text-4xl font-black text-gray-800 tracking-tight">ARCHIVE EXERCICE {{ $year }}</h1>
-        <p class="text-sm text-gray-500 font-medium tracking-tight">Consultez l'historique scellé de l'année {{ $year }} ({{ $totalEntries }} écritures).</p>
+        <h1 class="text-3xl md:text-4xl font-black text-slate-800 tracking-tight">ARCHIVE EXERCICE {{ $year }}</h1>
+        <p class="text-sm text-slate-500 font-medium tracking-tight">Consultez l'historique scellé de l'année {{ $year }} ({{ $totalEntries }} écritures).</p>
     </div>
     <div class="flex items-center gap-2 text-[10px] font-black uppercase text-amber-600 bg-amber-50 border border-amber-200 px-4 py-2 rounded-full tracking-widest shadow-sm">
         <i data-lucide="lock" class="w-3 h-3"></i> Données Scellées
@@ -26,11 +26,11 @@
                     <i data-lucide="book-open" class="w-7 h-7"></i>
                 </div>
                 <div>
-                    <h2 class="text-xl font-black text-gray-800 leading-none">JOURNAL ARCHIVÉ</h2>
-                    <p class="text-xs text-gray-400 uppercase font-black tracking-widest mt-1">Écritures comptables {{ $year }}</p>
+                    <h2 class="text-xl font-black text-slate-800 leading-none">JOURNAL ARCHIVÉ</h2>
+                    <p class="text-xs text-slate-400 uppercase font-black tracking-widest mt-1">Écritures comptables {{ $year }}</p>
                 </div>
             </div>
-            <p class="text-sm text-gray-500 mb-8 flex-grow">
+            <p class="text-sm text-slate-500 mb-8 flex-grow">
                 Accédez à l'intégralité des écritures du journal enregistrées durant l'année {{ $year }}. Toutes les écritures sont marquées comme archivées.
             </p>
             <a href="{{ $links['journal'] }}" 
@@ -49,11 +49,11 @@
                     <i data-lucide="scale" class="w-7 h-7"></i>
                 </div>
                 <div>
-                    <h2 class="text-xl font-black text-gray-800 leading-none">BALANCE GÉNÉRALE</h2>
-                    <p class="text-xs text-gray-400 uppercase font-black tracking-widest mt-1">Exercice {{ $year }}</p>
+                    <h2 class="text-xl font-black text-slate-800 leading-none">BALANCE GÉNÉRALE</h2>
+                    <p class="text-xs text-slate-400 uppercase font-black tracking-widest mt-1">Exercice {{ $year }}</p>
                 </div>
             </div>
-            <p class="text-sm text-gray-500 mb-8 flex-grow">
+            <p class="text-sm text-slate-500 mb-8 flex-grow">
                 Visualisez la balance de clôture de l'exercice {{ $year }}. Tous les comptes avec mouvements sont récapitulés.
             </p>
             <a href="{{ $links['balance'] }}" 
@@ -72,11 +72,11 @@
                     <i data-lucide="landmark" class="w-7 h-7"></i>
                 </div>
                 <div>
-                    <h2 class="text-xl font-black text-gray-800 leading-none">BILAN ARCHIVÉ</h2>
-                    <p class="text-xs text-gray-400 uppercase font-black tracking-widest mt-1">Situation au 31/12/{{ $year }}</p>
+                    <h2 class="text-xl font-black text-slate-800 leading-none">BILAN ARCHIVÉ</h2>
+                    <p class="text-xs text-slate-400 uppercase font-black tracking-widest mt-1">Situation au 31/12/{{ $year }}</p>
                 </div>
             </div>
-            <p class="text-sm text-gray-500 mb-8 flex-grow">
+            <p class="text-sm text-slate-500 mb-8 flex-grow">
                 États financiers de clôture de l'année {{ $year }}. Actif, Passif et Capitaux propres tels qu'archivés.
             </p>
             <a href="{{ $links['bilan'] }}" 
@@ -95,11 +95,11 @@
                     <i data-lucide="bar-chart-3" class="w-7 h-7"></i>
                 </div>
                 <div>
-                    <h2 class="text-xl font-black text-gray-800 leading-none">COMPTE DE RÉSULTAT</h2>
-                    <p class="text-xs text-gray-400 uppercase font-black tracking-widest mt-1">Exercice {{ $year }}</p>
+                    <h2 class="text-xl font-black text-slate-800 leading-none">COMPTE DE RÉSULTAT</h2>
+                    <p class="text-xs text-slate-400 uppercase font-black tracking-widest mt-1">Exercice {{ $year }}</p>
                 </div>
             </div>
-            <p class="text-sm text-gray-500 mb-8 flex-grow">
+            <p class="text-sm text-slate-500 mb-8 flex-grow">
                 Détail des charges et produits pour l'exercice {{ $year }} et calcul du résultat net final.
             </p>
             <a href="{{ $links['resultat'] }}" 

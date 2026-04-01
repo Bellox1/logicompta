@@ -23,21 +23,20 @@ class JournalController extends Controller
                 ->with('warning', 'Veuillez configurer votre entreprise pour accéder au journal.');
         }
 
-        $query = JournalEntry::with(['journal', 'lines.sousCompte.account'])
-            ->where('entreprise_id', $user->entreprise_id);
-
-        $showArchived = $request->query('show_archived', '0');
-        if ($showArchived === '1') {
-            $query->where('is_archived', '=', true);
-        } elseif ($showArchived !== 'all') {
-            $query->where('is_archived', '=', false);
+        $query = JournalEntry::query()->with(['journal', 'lines.sousCompte.account'])
+            ->where('entreprise_id', '=', $user->entreprise_id, 'and');
+        
+        if ($request->query('show_archived') == '1') {
+            $query->where('is_archived', '=', true, 'and');
+        } else {
+            $query->where('is_archived', '=', false, 'and');
         }
 
-        if ($request->filled('start_date')) {
-            $query->where('date', '>=', $request->start_date);
+        if ($request->start_date) {
+            $query->where('date', '>=', $request->start_date, 'and');
         }
-        if ($request->filled('end_date')) {
-            $query->where('date', '<=', $request->end_date);
+        if ($request->end_date) {
+            $query->where('date', '<=', $request->end_date, 'and');
         }
 
         $sort = $request->query('sort', 'date');
@@ -53,18 +52,38 @@ class JournalController extends Controller
         return view('accounting.journal.index', compact('entries'));
     }
 
-    public function exportPdf()
+    public function exportPdf(Request $request)
     {
         $user = Auth::user();
         if (!$user || !$user->entreprise_id) {
             return redirect()->route('entreprise.setup');
         }
 
-        $entries = JournalEntry::with(['journal', 'lines.sousCompte.account'])
-            ->where('entreprise_id', $user->entreprise_id)
-            ->orderBy('date', 'asc')
-            ->orderBy('id', 'asc')
-            ->get();
+        $query = JournalEntry::query()->with(['journal', 'lines.sousCompte.account'])
+            ->where('entreprise_id', '=', $user->entreprise_id, 'and');
+        
+        if ($request->query('show_archived') == '1') {
+            $query->where('is_archived', '=', true, 'and');
+        } else {
+            $query->where('is_archived', '=', false, 'and');
+        }
+
+        if ($request->start_date) {
+            $query->where('date', '>=', $request->start_date, 'and');
+        }
+        if ($request->end_date) {
+            $query->where('date', '<=', $request->end_date, 'and');
+        }
+
+        $sort = $request->query('sort', 'date');
+        $order = $request->query('order', 'asc');
+        
+        $query->orderBy($sort, $order);
+        if ($sort !== 'id') {
+            $query->orderBy('id', 'asc');
+        }
+
+        $entries = $query->get();
             
         return view('accounting.journal.pdf', compact('entries', 'user'));
     }
@@ -78,20 +97,20 @@ class JournalController extends Controller
         }
         
         $journals = Journal::where(function($q) use ($user) {
-            $q->where('entreprise_id', $user->entreprise_id)
+            $q->where('entreprise_id', '=', $user->entreprise_id, 'and')
               ->orWhereNull('entreprise_id');
-        })->get();
+        }, null, null, 'and')->get();
 
-        $accounts = \App\Models\SousCompte::where('entreprise_id', '=', $user->entreprise_id)
+        $accounts = \App\Models\SousCompte::where('entreprise_id', '=', $user->entreprise_id, 'and')
             ->with('account')
             ->orderBy('numero_sous_compte')
             ->get();
         
         $currentYear = date('Y');
-        $latestEntry = JournalEntry::where('entreprise_id', '=', $user->entreprise_id)
-            ->whereYear('date', $currentYear)
+        $latestEntry = JournalEntry::where('entreprise_id', '=', $user->entreprise_id, 'and')
+            ->whereYear('date', '=', $currentYear, 'and')
             ->orderBy('id', 'desc')
-            ->first();
+            ->first(['*']);
         $nextNum = $latestEntry ? intval(preg_replace('/[^0-9]/', '', $latestEntry->numero_piece)) + 1 : 1;
         $nextPieceNumber = str_pad($nextNum, 6, '0', STR_PAD_LEFT);
 
@@ -138,7 +157,7 @@ class JournalController extends Controller
         try {
             DB::beginTransaction();
 
-            $latestEntry = JournalEntry::where('entreprise_id', '=', $entrepriseId)->orderBy('id', 'desc')->first();
+            $latestEntry = JournalEntry::where('entreprise_id', '=', $entrepriseId, 'and')->orderBy('id', 'desc')->first(['*']);
             $nextNum = $latestEntry ? intval(preg_replace('/[^0-9]/', '', $latestEntry->numero_piece)) + 1 : 1;
             $numeroPiece = str_pad($nextNum, 6, '0', STR_PAD_LEFT);
 
@@ -184,10 +203,10 @@ class JournalController extends Controller
 
 
         $journals = Journal::where(function($q) use ($user) {
-            $q->where('entreprise_id', $user->entreprise_id)
+            $q->where('entreprise_id', '=', $user->entreprise_id, 'and')
               ->orWhereNull('entreprise_id');
-        })->get();
-        $accounts = \App\Models\SousCompte::where('entreprise_id', $user->entreprise_id)
+        }, null, null, 'and')->get();
+        $accounts = \App\Models\SousCompte::where('entreprise_id', '=', $user->entreprise_id, 'and')
             ->with('account')
             ->orderBy('numero_sous_compte')
             ->get();
@@ -270,7 +289,7 @@ class JournalController extends Controller
     {
         $user = Auth::user();
         $entry = JournalEntry::with(['lines.sousCompte.account', 'journal'])
-            ->where('entreprise_id', $user->entreprise_id)
+            ->where('entreprise_id', '=', $user->entreprise_id, 'and')
             ->findOrFail($id);
         return view('accounting.journal.show', compact('entry'));
     }
@@ -279,7 +298,7 @@ class JournalController extends Controller
     {
         $user = Auth::user();
         $entry = JournalEntry::with(['lines.sousCompte.account', 'journal'])
-            ->where('entreprise_id', $user->entreprise_id)
+            ->where('entreprise_id', '=', $user->entreprise_id, 'and')
             ->findOrFail($id);
         return view('accounting.journal.show-pdf', compact('entry', 'user'));
     }
@@ -399,7 +418,7 @@ class JournalController extends Controller
 
             // Vérification des doublons
             $allPiecesInFile = $grouped->keys()->toArray();
-            $conflicts = JournalEntry::whereIn('numero_piece', $allPiecesInFile)->pluck('numero_piece')->toArray();
+            $conflicts = JournalEntry::whereIn('numero_piece', $allPiecesInFile)->where('entreprise_id', '=', $entrepriseId, 'and')->pluck('numero_piece')->toArray();
 
             if (!empty($conflicts)) {
                 $count = count($conflicts);
@@ -412,7 +431,7 @@ class JournalController extends Controller
         try {
             DB::beginTransaction();
             // 2. Traitement (Réindexation si demandé ou si pas de conflits)
-            $maxNum = JournalEntry::where('entreprise_id', $entrepriseId)
+            $maxNum = JournalEntry::where('entreprise_id', '=', $entrepriseId, 'and')
                 ->selectRaw('MAX(CAST(numero_piece AS INTEGER)) as max_val')
                 ->value('max_val') ?: 0;
             $nextNum = $maxNum + 1;
@@ -435,7 +454,7 @@ class JournalController extends Controller
                 }
 
                 $firstLine = $lines->first();
-                $journal = Journal::where('name', $firstLine['journal_name'])->first() ?? Journal::first();
+                $journal = Journal::where('name', '=', $firstLine['journal_name'], 'and')->first(['*']) ?? Journal::first();
                 
                 $entry = JournalEntry::create([
                     'journal_id' => $journal->id,
@@ -446,14 +465,12 @@ class JournalController extends Controller
                 ]);
 
                 foreach ($lines as $line) {
-                    $sousCompte = \App\Models\SousCompte::where('entreprise_id', '=', $entrepriseId)
-                        ->where('numero_sous_compte', '=', $line['account'])
-                        ->first();
+                    $sousCompte = \App\Models\SousCompte::where('entreprise_id', '=', $entrepriseId, 'and')
+                        ->where('numero_sous_compte', '=', $line['account'], 'and')
+                        ->first(['*']);
 
                     if (!$sousCompte) {
-                        // Fallback: Si c'est un compte général, on cherche s'il existe un sous-compte par défaut ou on en crée un?
-                        // Pour l'instant, on exige que le sous-compte existe ou on cherche le premier sous-compte de ce compte
-                        $account = Account::where('code_compte', $line['account'])->first();
+                        $account = Account::where('code_compte', '=', $line['account'], 'and')->first(['*']);
                         if (!$account) throw new \Exception("[Ligne {$line['line']}] Compte ou sous-compte non trouvé : " . $line['account']);
                         
                         // On prend le premier sous-compte associé ou on en crée un "Général"

@@ -21,7 +21,7 @@
                         sans: ['Inter', 'sans-serif']
                     },
                     colors: {
-                        primary: '#003366',
+                        primary: '#005b82',
                         'primary-light': '#004d99',
                     }
                 }
@@ -83,7 +83,7 @@
 
     {{-- Background Decoration --}}
     <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-        <div class="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] rounded-full bg-blue-600/10 blur-[120px]"></div>
+        <div class="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] rounded-full bg-primary/10 blur-[120px]"></div>
         <div class="absolute -bottom-[20%] -right-[10%] w-[50%] h-[50%] rounded-full bg-indigo-600/10 blur-[100px]"></div>
     </div>
 
@@ -93,7 +93,7 @@
             <img src="{{ asset('storage/images/logo.png') }}" alt="Comptafriq" class="w-48 mx-auto drop-shadow-[0_0_30px_rgba(0,51,102,0.4)]">
         </div>
         <h1 class="text-5xl font-black tracking-tight mb-4">Initialisation de l'espace</h1>
-        <p class="text-xl text-blue-200/70 max-w-lg mx-auto leading-relaxed">
+        <p class="text-xl text-slate-300/70 max-w-lg mx-auto leading-relaxed">
             Dernière étape ! Pour finaliser votre configuration, choisissez comment vous souhaitez intégrer notre écosystème.
         </p>
 
@@ -142,17 +142,17 @@
     {{-- Bottom Section: Actions --}}
     <div id="bottom-actions" class="relative z-10 w-full max-w-2xl pb-16 animate-fade-up delay-3">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <button onclick="showStep('join')" class="group flex items-center justify-between p-5 glass-card rounded-2xl hover:border-blue-500/50 hover:bg-white/[0.05] transition-all duration-500 hover:-translate-y-1">
+            <button onclick="showStep('join')" class="group flex items-center justify-between p-5 glass-card rounded-2xl hover:border-primary/50 hover:bg-white/[0.05] transition-all duration-500 hover:-translate-y-1">
                 <div class="flex items-center gap-4 text-left">
-                    <div class="w-12 h-12 bg-blue-500/10 text-blue-400 flex items-center justify-center rounded-xl group-hover:bg-blue-600 group-hover:text-white transition-all duration-500 shadow-xl">
+                    <div class="w-12 h-12 bg-primary/10 text-primary flex items-center justify-center rounded-xl group-hover:bg-primary group-hover:text-white transition-all duration-500 shadow-xl">
                         <i data-lucide="users" class="w-6 h-6"></i>
                     </div>
                     <div>
-                        <p class="text-sm font-black text-white group-hover:text-blue-400 transition-colors uppercase tracking-widest">Rejoindre</p>
+                        <p class="text-sm font-black text-white group-hover:text-primary transition-colors uppercase tracking-widest">Rejoindre</p>
                         <p class="text-[10px] text-slate-500 leading-none">J'ai un code d'accès</p>
                     </div>
                 </div>
-                <i data-lucide="arrow-right" class="w-4 h-4 text-slate-700 group-hover:text-blue-500 transition-colors"></i>
+                <i data-lucide="arrow-right" class="w-4 h-4 text-slate-700 group-hover:text-primary transition-colors"></i>
             </button>
 
             <button onclick="showStep('create')" class="group flex items-center justify-between p-5 glass-card rounded-2xl hover:border-emerald-500/50 hover:bg-white/[0.05] transition-all duration-500 hover:-translate-y-1">
@@ -179,12 +179,12 @@
                         text: 'Vous ne pourrez pas accéder aux fonctionnalités comptables tant que vous n\'avez pas configuré votre entreprise.',
                         icon: 'info',
                         showCancelButton: true,
-                        confirmButtonColor: '#003366',
-                        cancelButtonColor: '#d33',
+                        confirmButtonColor: '#005b82',
+                        cancelButtonColor: '#94a3b8',
                         confirmButtonText: 'Passer pour le moment',
                         cancelButtonText: 'Rester ici',
-                        background: '#161d31',
-                        color: '#fff'
+                        background: '#ffffff',
+                        color: '#111827'
                     }).then((result) => {
                         if (result.isConfirmed) {
                             document.getElementById('skip-form').submit();
@@ -208,13 +208,13 @@
                     input: 'text',
                     inputPlaceholder: 'EX: COMPTA-X1Y2',
                     icon: 'question',
-                    background: '#161d31',
-                    color: '#fff',
+                    background: '#ffffff',
+                    color: '#111827',
                     showCancelButton: true,
                     confirmButtonText: 'Rejoindre',
                     cancelButtonText: 'Annuler',
-                    confirmButtonColor: '#003366',
-                    cancelButtonColor: '#444',
+                    confirmButtonColor: '#005b82',
+                    cancelButtonColor: '#94a3b8',
                     didOpen: () => {
                         lucide.createIcons();
                         const input = Swal.getInput();
@@ -244,13 +244,13 @@
                     input: 'text',
                     inputPlaceholder: 'Ex: Ma Société SAS',
                     icon: 'success',
-                    background: '#161d31',
-                    color: '#fff',
+                    background: '#ffffff',
+                    color: '#111827',
                     showCancelButton: true,
                     confirmButtonText: 'Créer maintenant',
                     cancelButtonText: 'Annuler',
-                    confirmButtonColor: '#065f46',
-                    cancelButtonColor: '#444',
+                    confirmButtonColor: '#059669',
+                    cancelButtonColor: '#94a3b8',
                     didOpen: () => {
                         lucide.createIcons();
                     },

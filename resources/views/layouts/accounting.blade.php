@@ -106,26 +106,38 @@
             color: var(--text-main);
             border: 1px solid var(--border-color);
         }
-
         /* Specific fix for Date inputs to ensure they show up on mobile */
         @media (max-width: 768px) {
-            input[type="date"]::before {
-                color: #6b7280;
-                content: attr(placeholder);
-            }
-
             input[type="date"] {
                 width: 100% !important;
                 max-width: 100% !important;
                 min-width: 0 !important;
                 box-sizing: border-box !important;
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
+
+            /* Simulation d'un placeholder pour les inputs date (iPhone/Android) */
+            input[type="date"]::before {
+                color: #94a3b8; /* slate-400 */
+                content: attr(placeholder);
+                margin-right: 0.5em;
+                display: inline-block;
+            }
+            
+            input[type="date"]:focus::before,
+            input[type="date"]:valid::before,
+            input[type="date"]:not([value=""]):empty::before {
+                display: none !important;
+                content: "" !important;
             }
         }
 
         input[type="date"] {
-            min-height: 2.5rem;
+            min-height: 3rem;
             color-scheme: light;
-            /* Default light scheme */
+            display: flex;
+            align-items: center;
         }
 
         @media (prefers-color-scheme: dark) {
@@ -611,20 +623,43 @@
                     </div>
                 @endif
 
-                @if (session('warnings'))
+                @if (session('error_list'))
                     <div
-                        class="mb-6 p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/30 text-yellow-700 dark:text-yellow-400 flex flex-col gap-2 animate-fade-up">
+                        class="mb-6 p-5 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-700 flex flex-col gap-4 animate-fade-up">
                         <div class="flex items-center gap-3">
-                            <i data-lucide="alert-triangle" class="w-5 h-5 flex-shrink-0"></i>
-                            <span class="font-bold flex-1">Quelques lignes ont été ignorées :</span>
+                            <div class="w-8 h-8 bg-rose-500 text-white flex items-center justify-center rounded-lg shadow-lg">
+                                <i data-lucide="x-circle" class="w-5 h-5"></i>
+                            </div>
+                            <span class="font-black uppercase text-xs tracking-widest flex-1">{{ session('error') ?? "Des erreurs ont été détectées :" }}</span>
                             <button onclick="this.parentElement.parentElement.remove()"
-                                class="p-1 hover:bg-black/5 rounded-lg transition-colors">
+                                class="p-2 hover:bg-rose-500/10 rounded-xl transition-all">
                                 <i data-lucide="x" class="w-4 h-4"></i>
                             </button>
                         </div>
-                        <ul class="list-disc list-inside text-xs space-y-1 ml-8">
+                        <ul class="list-disc list-inside text-[11px] font-bold space-y-1.5 ml-11">
+                            @foreach(session('error_list') as $error)
+                                <li class="opacity-90 italic">{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                @if (session('warnings'))
+                    <div
+                        class="mb-6 p-5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-700 flex flex-col gap-4 animate-fade-up">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 bg-amber-500 text-white flex items-center justify-center rounded-lg shadow-lg">
+                                <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+                            </div>
+                            <span class="font-black uppercase text-xs tracking-widest flex-1">Attention :</span>
+                            <button onclick="this.parentElement.parentElement.remove()"
+                                class="p-2 hover:bg-amber-500/10 rounded-xl transition-all">
+                                <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        <ul class="list-disc list-inside text-[11px] font-bold space-y-1.5 ml-11">
                             @foreach(session('warnings') as $warning)
-                                <li>{{ $warning }}</li>
+                                <li class="opacity-90 italic">{{ $warning }}</li>
                             @endforeach
                         </ul>
                     </div>

@@ -20,7 +20,7 @@
     @if(session('needs_reindex'))
         <div class="mb-10 p-5 bg-rose-50 border border-rose-100 rounded-2xl animate-fade-in no-print">
             <div class="flex flex-col sm:flex-row items-center gap-5">
-                <form action="{{ route('accounting.journal.import.process') }}" method="POST">
+                <form action="{{ route('accounting.journal.import.preview') }}" method="POST">
                     @csrf
                     <input type="hidden" name="force_reindex" value="1">
                     <button type="submit" class="px-6 py-3 bg-rose-600 text-white font-bold rounded-xl hover:bg-rose-700 transition-all text-xs uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-rose-200">
@@ -33,7 +33,7 @@
         </div>
     @endif
 
-    <form id="import-form" action="{{ route('accounting.journal.import.process') }}" method="POST" enctype="multipart/form-data" class="flex flex-col flex-grow gap-12 sm:gap-16">
+    <form id="import-form" action="{{ route('accounting.journal.import.preview') }}" method="POST" enctype="multipart/form-data" class="flex flex-col flex-grow gap-12 sm:gap-16">
         @csrf
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 xl:gap-16 items-start">

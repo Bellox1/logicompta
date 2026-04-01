@@ -7,6 +7,7 @@ use App\Models\GeneralAccounting\Account;
 use App\Models\GeneralAccounting\Journal;
 use App\Models\GeneralAccounting\JournalEntry;
 use App\Models\GeneralAccounting\JournalEntryLine;
+use App\Models\SousCompte;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -317,196 +318,247 @@ class JournalController extends Controller
         return view('accounting.journal.import');
     }
 
-    public function importProcess(Request $request)
+    public function importPreview(Request $request)
     {
         $user = Auth::user();
         $entrepriseId = $user->entreprise_id;
 
-         // Cas 1 : Validation de la réindexation (Données en session)
-        if ($request->has('force_reindex') && session()->has('pending_import')) {
-            $rows = session('pending_import');
-            $grouped = collect($rows)->groupBy('piece');
-            session()->forget('pending_import');
-            $forceReindex = true;
-        } 
-        // Cas 2 : Nouvel import (Fichier CSV)
-        else {
-            $request->validate(['file' => 'required|file|mimes:csv,txt']);
-            $file = $request->file('file');
+        if ($request->isMethod('get')) {
+            $rows = session('pending_journal_preview');
+            if (!$rows) return redirect()->route('accounting.journal.import');
             
-            // Detect delimiter efficiently
-            $fp = fopen($file->getRealPath(), 'r');
-            $firstLine = fgets($fp);
-            fclose($fp);
-            
-            $delimiters = [';', ',', "\t"];
-            $delimiter = ';';
-            $maxCount = 0;
-            foreach ($delimiters as $d) {
-                $count = substr_count($firstLine, $d);
-                if ($count > $maxCount) {
-                    $maxCount = $count;
-                    $delimiter = $d;
+            // On recalcule le statut pour l'affichage (car non envoyé par le formulaire)
+            $previewData = [];
+            foreach ($rows as $row) {
+                $status = 'ok';
+                $isMain = Account::where('code_compte', $row['account'])->exists();
+                if ($isMain) {
+                    $status = 'error_main';
+                } else {
+                    $sc = SousCompte::where('entreprise_id', $entrepriseId)->where('numero_sous_compte', $row['account'])->exists();
+                    if (!$sc) {
+                        $parent = Account::whereRaw('? LIKE code_compte || "%"', [$row['account']])->orderByRaw('LENGTH(code_compte) DESC')->first();
+                        if (!$parent) $status = 'error_no_parent';
+                    }
                 }
+                $previewData[] = array_merge($row, ['status' => $status]);
             }
+            return view('accounting.journal.import-preview', compact('previewData'));
+        }
 
-            $handle = fopen($file->getRealPath(), 'r');
-            $header = fgetcsv($handle, 1000, $delimiter);
-            if (!$header) {
-                if ($handle) fclose($handle);
-                return back()->with('error', 'En-tête manquant.');
-            }
-
-            $map = $this->mapCsvHeaders($header);
-            
-            $required = [
-                'account' => 'COMPTE (ou N° COMPTE)',
-                'debit' => 'DÉBIT',
-                'credit' => 'CRÉDIT'
-            ];
-            
-            foreach ($required as $key => $label) {
-                if (!isset($map[$key])) {
-                    fclose($handle);
-                    return back()->with('error', "La colonne obligatoire [$label] est introuvable. Colonnes : " . implode(', ', $header));
-                }
-            }
-
-            $rows = [];
-            $lastDate = now()->format('Y-m-d');
-            $lastPiece = 'IMP-' . date('Ymd-His');
-            $lastJournal = 'AC';
-            $lineNum = 1;
-
-            while (($data = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
-                $lineNum++;
-                if (count($data) < count($header)) continue;
-                
-                $rowDate = isset($map['date']) && !empty($data[$map['date']]) ? $this->formatImportDate($data[$map['date']]) : $lastDate;
-                $rowPiece = isset($map['piece']) && !empty($data[$map['piece']]) ? trim($data[$map['piece']]) : $lastPiece;
-                $rowJournal = isset($map['journal']) && !empty($data[$map['journal']]) ? trim($data[$map['journal']]) : $lastJournal;
-
-                // Nettoyage agressif des nombres (enlève espaces, NBSP, etc.)
-                $parseNumber = function($val) {
-                    if (empty($val)) return 0;
-                    // Supprimer les espaces standard, insécables (NBSP), etc.
-                    $clean = preg_replace('/[\s\x{00A0}\x{202F}]/u', '', $val);
-                    // Remplacer la virgule par un point
-                    $clean = str_replace(',', '.', $clean);
-                    // Garder seulement les chiffres et le point (ou signe moins)
-                    $clean = preg_replace('/[^0-9\.-]/', '', $clean);
-                    return abs(floatval($clean));
-                };
-
-                $rows[] = [
-                    'line' => $lineNum,
-                    'date' => $rowDate,
-                    'piece' => $rowPiece,
-                    'journal_name' => $rowJournal,
-                    'account' => trim($data[$map['account']]),
-                    'label' => isset($map['label']) ? trim($data[$map['label']]) : 'Importation',
-                    'debit' => $parseNumber($data[$map['debit']]),
-                    'credit' => $parseNumber($data[$map['credit']]),
-                ];
-
-                $lastDate = $rowDate;
-                $lastPiece = $rowPiece;
-                $lastJournal = $rowJournal;
-            }
-            fclose($handle);
-
-            if (empty($rows)) return back()->with('error', 'Le fichier est vide.');
-            
-            $grouped = collect($rows)->groupBy('piece');
-            $forceReindex = false;
-
-            // Vérification des doublons
-            $allPiecesInFile = $grouped->keys()->toArray();
-            $conflicts = JournalEntry::whereIn('numero_piece', $allPiecesInFile)->where('entreprise_id', '=', $entrepriseId, 'and')->pluck('numero_piece')->toArray();
-
-            if (!empty($conflicts)) {
-                $count = count($conflicts);
-                session(['pending_import' => $rows]); // On stocke pour le prochain clic
-                return back()->with('error', "Attention : $count numéro(s) de pièce existent déjà.")
-                             ->with('needs_reindex', true);
+        $request->validate(['file' => 'required|file']);
+        $file = $request->file('file');
+        
+        $fp = fopen($file->getRealPath(), 'r');
+        $firstLine = fgets($fp);
+        fclose($fp);
+        
+        $delimiters = [';', ',', "\t"];
+        $delimiter = ';';
+        $maxCount = 0;
+        foreach ($delimiters as $d) {
+            $count = substr_count($firstLine, $d);
+            if ($count > $maxCount) {
+                $maxCount = $count;
+                $delimiter = $d;
             }
         }
 
+        $handle = fopen($file->getRealPath(), 'r');
+        $header = fgetcsv($handle, 1000, $delimiter);
+        if (!$header) {
+            if ($handle) fclose($handle);
+            return back()->with('error', 'En-tête manquant.');
+        }
+
+        $map = $this->mapCsvHeaders($header);
+        $required = ['account' => 'COMPTE', 'debit' => 'DÉBIT', 'credit' => 'CRÉDIT'];
+        foreach ($required as $key => $label) {
+            if (!isset($map[$key])) {
+                fclose($handle);
+                return back()->with('error', "Colonne obligatoire [$label] manquante.");
+            }
+        }
+
+        $previewData = [];
+        $lineNum = 1;
+
+        $parseNumber = function($val) {
+            if (empty($val)) return 0;
+            $clean = preg_replace('/[\s\x{00A0}\x{202F}]/u', '', $val);
+            $clean = str_replace(',', '.', $clean);
+            $clean = preg_replace('/[^0-9\.-]/', '', $clean);
+            return abs(floatval($clean));
+        };
+
+        while (($data = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
+            $lineNum++;
+            if (count($data) < count($header)) continue;
+            
+            $rowDate = isset($map['date']) && !empty($data[$map['date']]) ? $this->formatImportDate($data[$map['date']]) : date('Y-m-d');
+            $rowPiece = isset($map['piece']) && !empty($data[$map['piece']]) ? trim($data[$map['piece']]) : 'AUTO';
+            $rowJournal = isset($map['journal']) && !empty($data[$map['journal']]) ? trim($data[$map['journal']]) : 'AC';
+            $accountNum = trim($data[$map['account']]);
+
+            // Validation de base pour le statut
+            $status = 'ok';
+            $isMain = Account::where('code_compte', $accountNum)->exists();
+            if ($isMain) {
+                $status = 'error_main';
+            } else {
+                $sc = SousCompte::where('entreprise_id', $entrepriseId)->where('numero_sous_compte', $accountNum)->exists();
+                if (!$sc) {
+                    $parent = Account::whereRaw('? LIKE code_compte || "%"', [$accountNum])->orderByRaw('LENGTH(code_compte) DESC')->first();
+                    if (!$parent) {
+                        $status = 'error_no_parent';
+                    }
+                }
+            }
+
+            $previewData[] = [
+                'line' => $lineNum,
+                'date' => $rowDate,
+                'piece' => $rowPiece,
+                'journal' => $rowJournal,
+                'account' => $accountNum,
+                'label' => isset($map['label']) ? trim($data[$map['label']]) : 'Importation',
+                'debit' => $parseNumber($data[$map['debit']]),
+                'credit' => $parseNumber($data[$map['credit']]),
+                'status' => $status
+            ];
+        }
+        fclose($handle);
+
+        if (empty($previewData)) return back()->with('error', 'Le fichier est vide.');
+
+        session(['pending_journal_preview' => $previewData]);
+        return view('accounting.journal.import-preview', compact('previewData'));
+    }
+
+    public function importProcess(Request $request)
+    {
+        $user = Auth::user();
+        $entrepriseId = $user->entreprise_id;
+        $rows = $request->input('rows', []);
+
+        if (empty($rows)) return redirect()->route('accounting.journal.import')->with('error', 'Aucune donnée soumise.');
+
+        // On met à jour la session avec les données actuelles (au cas où on revient en arrière pour erreur)
+        session(['pending_journal_preview' => $rows]);
+
+        $errors = [];
+        $grouped = collect($rows)->groupBy('piece');
+        $validatedPieces = [];
+
+        // 1. Validation de l'équilibre et des comptes après modif
+        foreach ($grouped as $pieceNum => $lines) {
+            $pieceTotalDebit = 0;
+            $pieceTotalCredit = 0;
+            $pieceLines = [];
+            $pieceErrors = [];
+
+            foreach ($lines as $line) {
+                $accountNum = trim($line['account'] ?? '');
+                $debit = floatval($line['debit'] ?? 0);
+                $credit = floatval($line['credit'] ?? 0);
+                
+                $pieceTotalDebit += $debit;
+                $pieceTotalCredit += $credit;
+
+                // Re-vérification stricte
+                $isMain = Account::where('code_compte', $accountNum)->exists();
+                if ($isMain) {
+                    $pieceErrors[] = "La pièce $pieceNum (Ligne " . ($line['line'] ?? '?') . ") utilise le compte général $accountNum (Interdit).";
+                }
+
+                $sousCompte = SousCompte::where('entreprise_id', $entrepriseId)->where('numero_sous_compte', $accountNum)->first();
+                
+                if (!$sousCompte) {
+                    $parent = Account::whereRaw('? LIKE code_compte || "%"', [$accountNum])->orderByRaw('LENGTH(code_compte) DESC')->first();
+                    if (!$parent) {
+                        $pieceErrors[] = "Le compte " . $accountNum . " (Ligne " . ($line['line'] ?? '') . ") n'a pas de compte parent trouvé.";
+                    } else {
+                        $pieceLines[] = [
+                            'is_new' => true,
+                            'account_id' => $parent->id,
+                            'numero' => $accountNum,
+                            'libelle' => 'Général ' . $parent->libelle,
+                            'debit' => $debit,
+                            'credit' => $credit,
+                            'label' => $line['label'] ?? 'Import'
+                        ];
+                    }
+                } else {
+                    $pieceLines[] = [
+                        'is_new' => false,
+                        'sous_compte_id' => $sousCompte->id,
+                        'debit' => $debit,
+                        'credit' => $credit,
+                        'label' => $line['label'] ?? 'Import'
+                    ];
+                }
+            }
+
+            if (abs($pieceTotalDebit - $pieceTotalCredit) > 0.1) {
+                $pieceErrors[] = "La pièce $pieceNum est déséquilibrée (D: $pieceTotalDebit, C: $pieceTotalCredit).";
+            }
+
+            if (!empty($pieceErrors)) {
+                $errors = array_merge($errors, $pieceErrors);
+            } else {
+                $first = collect($lines)->first();
+                $validatedPieces[] = [
+                    'piece' => $pieceNum,
+                    'date' => $first['date'] ?? date('Y-m-d'),
+                    'journal' => $first['journal'] ?? 'AC',
+                    'label' => $first['label'] ?? 'Import',
+                    'lines' => $pieceLines
+                ];
+            }
+        }
+
+        if (!empty($errors)) {
+            return back()->with('error_list', $errors)->with('error', "Des erreurs subsistent dans les données.");
+        }
+
+        // 2. Enregistrement final
         try {
             DB::beginTransaction();
-            // 2. Traitement (Réindexation si demandé ou si pas de conflits)
-            $maxNum = JournalEntry::where('entreprise_id', '=', $entrepriseId, 'and')
-                ->selectRaw('MAX(CAST(numero_piece AS INTEGER)) as max_val')
-                ->value('max_val') ?: 0;
-            $nextNum = $maxNum + 1;
-
-            foreach ($grouped as $originalPiece => $lines) {
-                // Utiliser une tolérance plus souple pour les arrondis (0.1 -> 1.0)
-                $totalDebit = round($lines->sum('debit'), 2);
-                $totalCredit = round($lines->sum('credit'), 2);
-
-                if (abs($totalDebit - $totalCredit) > 0.05) {
-                    throw new \Exception("Déséquilibre sur la pièce $originalPiece (Débit: $totalDebit, Crédit: $totalCredit)");
-                }
-
-                // Attribution du numéro
-                if ($request->has('force_reindex')) {
-                    $usedPieceNumber = str_pad($nextNum, 6, '0', STR_PAD_LEFT);
-                    $nextNum++;
-                } else {
-                    $usedPieceNumber = $originalPiece;
-                }
-
-                $firstLine = $lines->first();
-                $journal = Journal::where('name', '=', $firstLine['journal_name'], 'and')->first(['*']) ?? Journal::first();
+            foreach ($validatedPieces as $vPiece) {
+                $journal = Journal::where('name', $vPiece['journal'])->first() ?? Journal::first();
                 
                 $entry = JournalEntry::create([
-                    'journal_id' => $journal->id,
-                    'numero_piece' => $usedPieceNumber,
-                    'date' => $firstLine['date'],
-                    'libelle' => $firstLine['label'],
                     'entreprise_id' => $entrepriseId,
+                    'journal_id' => $journal->id,
+                    'numero_piece' => $vPiece['piece'],
+                    'date' => $vPiece['date'],
+                    'libelle' => $vPiece['label']
                 ]);
 
-                foreach ($lines as $line) {
-                    $sousCompte = \App\Models\SousCompte::where('entreprise_id', '=', $entrepriseId, 'and')
-                        ->where('numero_sous_compte', '=', $line['account'], 'and')
-                        ->first(['*']);
-
-                    if (!$sousCompte) {
-                        // Tentative de trouver le compte par correspondance exacte ou par préfixe
-                        $account = Account::where('code_compte', '=', $line['account'], 'and')->first(['*']);
-                        
-                        if (!$account) {
-                            // Recherche par préfixe (le plus long d'abord)
-                            $account = Account::whereRaw('? LIKE code_compte || "%"', [$line['account']], 'and')
-                                ->orderByRaw('LENGTH(code_compte) DESC')
-                                ->first();
-                        }
-
-                        if (!$account) throw new \Exception("[Ligne {$line['line']}] Compte ou sous-compte non trouvé : " . $line['account']);
-                        
-                        // Création automatique du sous-compte pour ce parent
-                        $sousCompte = \App\Models\SousCompte::firstOrCreate(
-                            ['entreprise_id' => $entrepriseId, 'numero_sous_compte' => $line['account']],
-                            ['account_id' => $account->id, 'libelle' => 'Général ' . $account->libelle]
+                foreach ($vPiece['lines'] as $vLine) {
+                    $scId = $vLine['sous_compte_id'] ?? null;
+                    if ($vLine['is_new']) {
+                        $sc = \App\Models\SousCompte::firstOrCreate(
+                            ['entreprise_id' => $entrepriseId, 'numero_sous_compte' => $vLine['numero']],
+                            ['account_id' => $vLine['account_id'], 'libelle' => $vLine['libelle']]
                         );
+                        $scId = $sc->id;
                     }
 
                     JournalEntryLine::create([
                         'journal_entry_id' => $entry->id,
-                        'sous_compte_id' => $sousCompte->id,
-                        'debit' => $line['debit'],
-                        'credit' => $line['credit'],
-                        'libelle' => $line['label'],
+                        'sous_compte_id' => $scId,
+                        'debit' => $vLine['debit'],
+                        'credit' => $vLine['credit'],
+                        'libelle' => $vLine['label']
                     ]);
                 }
             }
             DB::commit();
-            return redirect()->route('accounting.journal.index')->with('success', count($grouped) . " écritures importées.");
+            return redirect()->route('accounting.journal.index')->with('success', count($validatedPieces) . " écritures importées.");
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Erreur : ' . $e->getMessage());
+            return back()->with('error', "Erreur technique : " . $e->getMessage());
         }
     }
 
@@ -514,13 +566,13 @@ class JournalController extends Controller
     {
         $map = [];
         $columns = [
-            'date' => ['date', 'dates', 'le', 'jour'],
-            'piece' => ['piece', 'num pc', 'num_pc', 'réf', 'ref', 'numero_piece', 'pc', 'n° pièce', 'n pièce'],
-            'journal' => ['journalCode', 'journal', 'code_journal', 'code journal', 'jrn'],
-            'account' => ['account', 'compte', 'n° de compte', 'code_compte', 'code compte', 'n° compte', 'n compte', 'num compte', 'no compte', 'compte n°', 'n° de compte', 'sous-compte', 'sous compte', 'sous_compte', 'num sous-compte'],
-            'label' => ['label', 'libelles', 'libellés', 'operation', 'libelle', 'libellé', 'intitulé / libellé', 'intitulé', 'désignation'],
-            'debit' => ['debit', 'débit', 'montant_debit', 'entrant', 'somme débit'],
-            'credit' => ['credit', 'crédit', 'montant_credit', 'sortant', 'somme crédit'],
+            'date' => ['date', 'dates', 'le', 'jour', 'période'],
+            'piece' => ['piece', 'pièce', 'num pc', 'num_pc', 'réf', 'ref', 'numero_piece', 'pc', 'n° pièce', 'n pièce', 'numéro', 'numero', 'n°', 'no'],
+            'journal' => ['journalCode', 'journal', 'code_journal', 'code journal', 'jrn', 'libellé journal'],
+            'account' => ['account', 'compte', 'n° de compte', 'code_compte', 'code compte', 'n° compte', 'n compte', 'num compte', 'no compte', 'compte n°', 'n° de compte', 'sous-compte', 'sous compte', 'sous_compte', 'num sous-compte', 'n° sc', 'compte général'],
+            'label' => ['label', 'libelles', 'libellés', 'operation', 'libelle', 'libellé', 'intitulé / libellé', 'intitulé', 'désignation', 'description'],
+            'debit' => ['debit', 'débit', 'montant_debit', 'entrant', 'somme débit', 'débits'],
+            'credit' => ['credit', 'crédit', 'montant_credit', 'sortant', 'somme crédit', 'crédits'],
         ];
 
         foreach ($header as $index => $colName) {
@@ -528,25 +580,35 @@ class JournalController extends Controller
             $rawName = preg_replace('/[\x00-\x1F\x7F-\xFF]/', '', mb_strtolower(trim($colName)));
             $cleanName = preg_replace('/[^a-z0-9]/', '', $rawName);
             
+            if (empty($cleanName)) {
+                // Cas des colonnes nommées "N°" ou "#" qui deviennent vides après nettoyage a-z0-9
+                if (str_contains($rawName, 'n') || str_contains($rawName, '#')) {
+                    if (!isset($map['piece'])) $map['piece'] = $index;
+                }
+                continue;
+            }
+
             foreach ($columns as $key => $aliases) {
                 foreach ($aliases as $alias) {
                     $cleanAlias = preg_replace('/[^a-z0-9]/', '', mb_strtolower($alias));
                     
-                    // Match EXACT (après nettoyage) -> Sortie immédiate pour cette colonne
+                    // Match EXACT (après nettoyage)
                     if ($cleanName === $cleanAlias) {
-                        // Priorité absolue au sous-compte
+                        // Priorité absolue au sous-compte pour la colonne 'account'
                         if ($key === 'account' && str_contains($cleanName, 'sous')) {
                             $map[$key] = $index;
                             continue 3; 
                         }
-                        if (!isset($map[$key]) || ($key === 'account' && !str_contains($cleanName, 'sous'))) {
+                        // Si exact match, on affecte et on passe à la colonne suivante (continue 3 sort des 2 boucles aliases)
+                        if (!isset($map[$key])) {
                              $map[$key] = $index;
+                             continue 3;
                         }
                     }
 
-                    // Match PARTIEL (si le nom de la colonne contient un mot clé métier)
+                    // Match PARTIEL (si le nom de la colonne contient un mot clé métier significatif)
                     if (strlen($cleanAlias) >= 4 && str_contains($cleanName, $cleanAlias)) {
-                        if (!isset($map[$key]) || ($key === 'account' && str_contains($cleanName, 'sous'))) {
+                        if (!isset($map[$key])) {
                             $map[$key] = $index;
                         }
                     }
@@ -554,13 +616,13 @@ class JournalController extends Controller
             }
         }
         
-        // Second pass if mandatory column missing
+        // Second pass if mandatory column missing (hard filters)
         if (!isset($map['account']) || !isset($map['debit']) || !isset($map['credit'])) {
             foreach ($header as $index => $colName) {
                 $colName = mb_strtolower(trim($colName));
-                if (!isset($map['account']) && (str_contains($colName, 'compte') || $colName == 'acc' || $colName == 'n')) $map['account'] = $index;
-                if (!isset($map['debit']) && str_contains($colName, 'deb')) $map['debit'] = $index;
-                if (!isset($map['credit']) && str_contains($colName, 'cred')) $map['credit'] = $index;
+                if (!isset($map['account']) && (str_contains($colName, 'compte') || $colName == 'acc')) $map['account'] = $index;
+                if (!isset($map['debit']) && (str_contains($colName, 'deb') || str_contains($colName, 'entrant'))) $map['debit'] = $index;
+                if (!isset($map['credit']) && (str_contains($colName, 'cred') || str_contains($colName, 'sortant'))) $map['credit'] = $index;
             }
         }
 

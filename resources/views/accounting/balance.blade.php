@@ -44,12 +44,12 @@
     <form action="{{ request()->url() }}" method="GET" class="mb-10 grid grid-cols-1 md:flex md:flex-row md:items-end gap-5 bg-card-bg border border-border p-6 rounded-3xl shadow-sm no-print">
         <div class="w-full md:flex-1">
             <label class="block text-[11px] font-black text-text-secondary mb-2 uppercase tracking-wider px-1 italic">Période du</label>
-            <input type="date" name="start_date" value="{{ request('start_date') }}" 
+            <input type="date" name="start_date" value="{{ request('start_date') }}" placeholder="JJ/MM/AAAA"
                    class="w-full bg-bg border border-border px-4 py-3 text-sm font-black outline-none focus:border-primary transition-all rounded-xl dark:text-white">
         </div>
         <div class="w-full md:flex-1">
             <label class="block text-[11px] font-black text-text-secondary mb-2 uppercase tracking-wider px-1 italic">Au</label>
-            <input type="date" name="end_date" value="{{ request('end_date') }}" 
+            <input type="date" name="end_date" value="{{ request('end_date') }}" placeholder="JJ/MM/AAAA"
                    class="w-full bg-bg border border-border px-4 py-3 text-sm font-black outline-none focus:border-primary transition-all rounded-xl dark:text-white">
         </div>
         <div class="flex items-center gap-3">

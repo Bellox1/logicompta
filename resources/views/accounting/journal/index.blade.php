@@ -117,21 +117,15 @@
     <!-- Filtre par période -->
     <form action="{{ request()->url() }}" method="GET"
         class="mb-10 grid grid-cols-1 md:flex md:flex-row md:items-end gap-3 md:gap-5 bg-card-bg p-4 md:p-8 border border-border shadow-sm no-print overflow-hidden max-w-full">
-        <div class="w-full md:flex-1 md:min-w-[200px]">
-            <label
-                class="block text-[10px] uppercase font-bold text-text-secondary mb-2 tracking-widest px-1 flex items-center gap-2">
-                <i data-lucide="calendar" class="w-3 h-3"></i> Période du
-            </label>
+        <div class="w-full md:flex-1">
+            <label class="block text-[11px] font-black text-text-secondary mb-2 uppercase tracking-wider px-1 italic">Période du</label>
             <input type="date" name="start_date" value="{{ request('start_date') }}" placeholder="JJ/MM/AAAA"
-                class="w-full bg-white border border-border px-4 py-3 text-sm font-bold text-text-main outline-none focus:border-primary transition-all rounded-xl box-border max-w-full">
+                   class="w-full bg-bg border border-border px-4 py-3 text-sm font-black outline-none focus:border-primary transition-all rounded-xl dark:text-white">
         </div>
-        <div class="w-full md:flex-1 md:min-w-[200px]">
-            <label
-                class="block text-[10px] uppercase font-bold text-text-secondary mb-2 tracking-widest px-1 flex items-center gap-2">
-                <i data-lucide="calendar" class="w-3 h-3"></i> Au
-            </label>
+        <div class="w-full md:flex-1">
+            <label class="block text-[11px] font-black text-text-secondary mb-2 uppercase tracking-wider px-1 italic">Au</label>
             <input type="date" name="end_date" value="{{ request('end_date') }}" placeholder="JJ/MM/AAAA"
-                class="w-full bg-white border border-border px-4 py-3 text-sm font-bold text-text-main outline-none focus:border-primary transition-all rounded-xl box-border max-w-full">
+                   class="w-full bg-bg border border-border px-4 py-3 text-sm font-black outline-none focus:border-primary transition-all rounded-xl dark:text-white">
         </div>
         <div class="w-full md:w-auto flex flex-col md:flex-row gap-3">
             <button type="submit"

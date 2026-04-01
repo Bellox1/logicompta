@@ -19,10 +19,16 @@ class ArchiveController extends Controller
         if (!$user || !$user->entreprise_id) return redirect()->route('entreprise.setup');
 
         // Récupérer les années uniques avec le nombre d'écritures archivées
-        $archivedYears = JournalEntry::where('entreprise_id', '=', $user->entreprise_id)
-            ->where('is_archived', '=', true)
-            ->selectRaw('strftime("%Y", date) as year, count(*) as total') // SQLite syntax
-            ->groupBy('year')
+        $query = JournalEntry::where('entreprise_id', '=', $user->entreprise_id)
+            ->where('is_archived', '=', true);
+            
+        if (DB::getDriverName() === 'sqlite') {
+            $query->selectRaw('strftime("%Y", date) as year, count(*) as total');
+        } else {
+            $query->selectRaw('YEAR(date) as year, count(*) as total');
+        }
+
+        $archivedYears = $query->groupBy('year')
             ->orderBy('year', 'desc')
             ->get();
 

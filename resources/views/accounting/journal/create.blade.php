@@ -60,7 +60,7 @@
                 </div>
                 <div>
                     <label class="block text-[11px] font-bold text-text-secondary mb-2 uppercase tracking-wider">Date</label>
-                    <input type="date" name="date" value="{{ old('date', date('Y-m-d')) }}" required
+                    <input type="date" name="date" value="{{ old('date', date('Y-m-d')) }}" required placeholder="JJ/MM/AAAA"
                         class="w-full bg-white border border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all text-sm font-black text-text-main">
                 </div>
                 <div>

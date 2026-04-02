@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\GeneralAccounting\JournalController;
+use App\Http\Controllers\GeneralAccounting\JournalDataController;
 use App\Http\Controllers\GeneralAccounting\LedgerController;
 use App\Http\Controllers\GeneralAccounting\TrialBalanceController;
 use App\Http\Controllers\GeneralAccounting\FinancialStatementController;
@@ -68,18 +69,19 @@ Route::prefix('accounting')->name('accounting.')->middleware(['web', 'auth'])->g
     Route::post('/entreprise/create', [EntrepriseController::class, 'webCreate'])->name('entreprise.create');
 
     Route::get('/journal', [JournalController::class, 'index'])->name('journal.index');
-    Route::get('/journal/export-pdf', [JournalController::class, 'exportPdf'])->name('journal.export.pdf');
+    Route::get('/journal/export-pdf', [JournalDataController::class, 'exportPdf'])->name('journal.export.pdf');
     Route::get('/journal/create', [JournalController::class, 'create'])->name('journal.create');
     Route::post('/journal/store', [JournalController::class, 'store'])->name('journal.store');
-    Route::get('/journal/import', [JournalController::class, 'importForm'])->name('journal.import');
-    Route::post('/journal/import/preview', [JournalController::class, 'importPreview'])->name('journal.import.preview');
-    Route::get('/journal/import/preview', [JournalController::class, 'importPreview']); // Allow GET for refreshing/back
-    Route::post('/journal/import/process', [JournalController::class, 'importProcess'])->name('journal.import.process');
+    Route::get('/journal/import', [JournalDataController::class, 'importForm'])->name('journal.import');
+    Route::post('/journal/import/preview', [JournalDataController::class, 'importPreview'])->name('journal.import.preview');
+    Route::get('/journal/import/preview', [JournalDataController::class, 'importPreview']); // Allow GET for refreshing/back
+    Route::post('/journal/import/process', [JournalDataController::class, 'importProcess'])->name('journal.import.process');
     Route::get('/journal/{id}', [JournalController::class, 'show'])->name('journal.show');
     Route::get('/journal/{id}/edit', [JournalController::class, 'edit'])->name('journal.edit');
     Route::post('/journal/{id}/update', [JournalController::class, 'update'])->name('journal.update');
     Route::delete('/journal/{id}', [JournalController::class, 'destroy'])->name('journal.destroy');
-    Route::get('/journal/{id}/pdf', [JournalController::class, 'showPdf'])->name('journal.show.pdf');
+    Route::get('/journal/{id}/pdf', [JournalDataController::class, 'showPdf'])->name('journal.show.pdf');
+    Route::post('/journal/ocr-import', [JournalDataController::class, 'ocrImport'])->name('journal.ocr_import');
     
     // Paramétrage des journaux
     Route::get('/journals-settings', [JournalSettingsController::class, 'index'])->name('journals-settings.index');

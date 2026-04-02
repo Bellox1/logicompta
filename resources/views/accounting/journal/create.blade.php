@@ -21,6 +21,26 @@
             </a>
         </div>
     </div>
+    
+    <!-- Zone Import OCR -->
+    <div class="mb-8 p-6 bg-indigo-50 border-2 border-dashed border-indigo-200 rounded-3xl group hover:border-indigo-400 transition-all cursor-pointer relative overflow-hidden" id="ocr-dropzone">
+        <div class="flex items-center gap-6 relative z-10">
+            <div class="w-14 h-14 bg-indigo-600 text-white flex items-center justify-center rounded-2xl shadow-indigo-200 shadow-lg group-hover:scale-110 transition-transform">
+                <i data-lucide="scan-text" class="w-7 h-7"></i>
+            </div>
+            <div class="flex-1">
+                <h3 class="text-indigo-900 font-black uppercase tracking-tight text-lg">Import Intelligent (OCR)</h3>
+                <p class="text-indigo-600/70 text-sm font-bold italic">Glissez une facture ici ou cliquez pour remplir automatiquement les champs</p>
+            </div>
+            <div id="ocr-status" class="hidden">
+                 <div class="flex items-center gap-2 text-indigo-600 font-bold text-sm animate-pulse">
+                    <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>
+                    Analyse en cours...
+                 </div>
+            </div>
+        </div>
+        <input type="file" id="ocr-file-input" class="hidden" accept="image/*,application/pdf">
+    </div>
 
     <form action="{{ route('accounting.journal.store') }}" method="POST" id="journalform">
         @csrf
@@ -465,6 +485,83 @@
             document.getElementById('journalform').addEventListener('submit', function() {
                 localStorage.removeItem(STORAGE_KEY);
             });
+
+            // --- OCR Logic ---
+            const dropzone = document.getElementById('ocr-dropzone');
+            const fileInput = document.getElementById('ocr-file-input');
+            const ocrStatus = document.getElementById('ocr-status');
+
+            dropzone.addEventListener('click', () => fileInput.click());
+
+            fileInput.addEventListener('change', function() {
+                if (this.files.length > 0) handleOcrUpload(this.files[0]);
+            });
+
+            dropzone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropzone.classList.add('bg-indigo-100', 'border-indigo-400');
+            });
+
+            dropzone.addEventListener('dragleave', () => {
+                dropzone.classList.remove('bg-indigo-100', 'border-indigo-400');
+            });
+
+            dropzone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropzone.classList.remove('bg-indigo-100', 'border-indigo-400');
+                if (e.dataTransfer.files.length > 0) handleOcrUpload(e.dataTransfer.files[0]);
+            });
+
+            function handleOcrUpload(file) {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('_token', '{{ csrf_token() }}');
+
+                ocrStatus.classList.remove('hidden');
+                
+                fetch('{{ route("accounting.journal.ocr_import") }}', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                         Swal.fire('Erreur OCR', data.error, 'error');
+                    } else {
+                        // Remplissage auto
+                        if (data.date) document.querySelector('input[name="date"]').value = data.date;
+                        if (data.libelle) document.querySelector('input[name="libelle"]').value = data.libelle;
+                        
+                        if (data.amount) {
+                            const firstDebit = document.querySelector('.debit-input');
+                            if (firstDebit) {
+                                firstDebit.value = formatAmount(data.amount);
+                                firstDebit.dispatchEvent(new Event('input'));
+                                // Focus sur le compte pour aider l'utilisateur
+                                firstDebit.closest('tr').querySelector('select').focus();
+                            }
+                        }
+                        
+                        Swal.fire({
+                            title: 'Succès !',
+                            text: 'Données extraites de la facture avec succès.',
+                            icon: 'success',
+                            toast: true,
+                            position: 'top-end',
+                            timer: 3000,
+                            showConfirmButton: false
+                        });
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    Swal.fire('Erreur', 'Impossible de contacter le service OCR.', 'error');
+                })
+                .finally(() => {
+                    ocrStatus.classList.add('hidden');
+                    fileInput.value = '';
+                });
+            }
 
             // Initial load
             loadDraft();

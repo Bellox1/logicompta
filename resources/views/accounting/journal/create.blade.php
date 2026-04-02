@@ -23,17 +23,32 @@
     </div>
     
     <!-- Zone Import OCR -->
-    <div class="mb-8 p-6 bg-indigo-50 border-2 border-dashed border-indigo-200 rounded-3xl group hover:border-indigo-400 transition-all cursor-pointer relative overflow-hidden" id="ocr-dropzone">
+    <div class="mb-8 p-6 bg-primary/5 border-2 border-dashed border-primary/30 rounded-3xl group hover:border-primary/60 transition-all relative overflow-hidden" id="ocr-dropzone">
         <div class="flex items-center gap-6 relative z-10">
-            <div class="w-14 h-14 bg-indigo-600 text-white flex items-center justify-center rounded-2xl shadow-indigo-200 shadow-lg group-hover:scale-110 transition-transform">
+            <div class="w-14 h-14 bg-primary text-white flex items-center justify-center rounded-2xl shadow-lg group-hover:scale-110 transition-transform cursor-pointer" id="ocr-icon-zone">
                 <i data-lucide="scan-text" class="w-7 h-7"></i>
             </div>
-            <div class="flex-1">
-                <h3 class="text-indigo-900 font-black uppercase tracking-tight text-lg">Import Intelligent (OCR)</h3>
-                <p class="text-indigo-600/70 text-sm font-bold italic">Glissez une facture ici ou cliquez pour remplir automatiquement les champs</p>
+            <div class="flex-1 cursor-pointer" id="ocr-text-zone">
+                <h3 class="text-primary font-black uppercase tracking-tight text-lg">Import Intelligent (OCR)</h3>
+                <p class="text-primary/60 text-sm font-bold italic">Glissez une facture ici ou cliquez pour remplir automatiquement les champs</p>
             </div>
+
+            <!-- Sélecteur de service OCR -->
+            <div class="flex items-center gap-1 bg-white border border-primary/20 rounded-xl p-1 shadow-sm" onclick="event.stopPropagation()">
+                <button type="button" id="btn-tesseract"
+                    class="ocr-service-btn px-3 py-1.5 rounded-lg text-xs font-black transition-all bg-primary text-white"
+                    data-service="tesseract">
+                    <i data-lucide="cpu" class="w-3 h-3 inline mr-1"></i> Local
+                </button>
+                <button type="button" id="btn-mindee"
+                    class="ocr-service-btn px-3 py-1.5 rounded-lg text-xs font-black transition-all text-primary/40 hover:text-primary"
+                    data-service="mindee">
+                    <i data-lucide="cloud" class="w-3 h-3 inline mr-1"></i> Mindee
+                </button>
+            </div>
+
             <div id="ocr-status" class="hidden">
-                 <div class="flex items-center gap-2 text-indigo-600 font-bold text-sm animate-pulse">
+                 <div class="flex items-center gap-2 text-primary font-bold text-sm animate-pulse">
                     <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>
                     Analyse en cours...
                  </div>
@@ -491,7 +506,25 @@
             const fileInput = document.getElementById('ocr-file-input');
             const ocrStatus = document.getElementById('ocr-status');
 
-            dropzone.addEventListener('click', () => fileInput.click());
+            // Service actif (tesseract par défaut)
+            let activeOcrService = 'tesseract';
+
+            // Gestion du toggle Tesseract / Mindee
+            document.querySelectorAll('.ocr-service-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    activeOcrService = this.dataset.service;
+                    document.querySelectorAll('.ocr-service-btn').forEach(b => {
+                        b.classList.remove('bg-primary', 'text-white');
+                        b.classList.add('text-primary/40', 'hover:text-primary');
+                    });
+                    this.classList.add('bg-primary', 'text-white');
+                    this.classList.remove('text-primary/40', 'hover:text-primary');
+                });
+            });
+
+            // Clic sur la zone ou l'icône/texte ouvre le fichier
+            document.getElementById('ocr-icon-zone').addEventListener('click', () => fileInput.click());
+            document.getElementById('ocr-text-zone').addEventListener('click', () => fileInput.click());
 
             fileInput.addEventListener('change', function() {
                 if (this.files.length > 0) handleOcrUpload(this.files[0]);
@@ -499,16 +532,16 @@
 
             dropzone.addEventListener('dragover', (e) => {
                 e.preventDefault();
-                dropzone.classList.add('bg-indigo-100', 'border-indigo-400');
+                dropzone.classList.add('bg-primary/10', 'border-primary/50');
             });
 
             dropzone.addEventListener('dragleave', () => {
-                dropzone.classList.remove('bg-indigo-100', 'border-indigo-400');
+                dropzone.classList.remove('bg-primary/10', 'border-primary/50');
             });
 
             dropzone.addEventListener('drop', (e) => {
                 e.preventDefault();
-                dropzone.classList.remove('bg-indigo-100', 'border-indigo-400');
+                dropzone.classList.remove('bg-primary/10', 'border-primary/50');
                 if (e.dataTransfer.files.length > 0) handleOcrUpload(e.dataTransfer.files[0]);
             });
 
@@ -516,6 +549,7 @@
                 const formData = new FormData();
                 formData.append('file', file);
                 formData.append('_token', '{{ csrf_token() }}');
+                formData.append('service', activeOcrService); // Tesseract ou Mindee
 
                 ocrStatus.classList.remove('hidden');
                 
@@ -544,7 +578,7 @@
                         
                         Swal.fire({
                             title: 'Succès !',
-                            text: 'Données extraites de la facture avec succès.',
+                            text: `Données extraites via ${data.service === 'mindee' ? 'Mindee ☁️' : 'Tesseract 🖥️'}.`,
                             icon: 'success',
                             toast: true,
                             position: 'top-end',

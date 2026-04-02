@@ -11,6 +11,7 @@ use App\Http\Controllers\GeneralAccounting\JournalSettingsController;
 use App\Http\Controllers\GeneralAccounting\SupportController;
 use App\Http\Controllers\GeneralAccounting\AccountController;
 use App\Http\Controllers\GeneralAccounting\ArchiveController;
+use App\Http\Controllers\GeneralAccounting\OcrController;
 use App\Http\Controllers\EntrepriseController;
 use App\Http\Controllers\AuthController;
 
@@ -81,7 +82,8 @@ Route::prefix('accounting')->name('accounting.')->middleware(['web', 'auth'])->g
     Route::post('/journal/{id}/update', [JournalController::class, 'update'])->name('journal.update');
     Route::delete('/journal/{id}', [JournalController::class, 'destroy'])->name('journal.destroy');
     Route::get('/journal/{id}/pdf', [JournalDataController::class, 'showPdf'])->name('journal.show.pdf');
-    Route::post('/journal/ocr-import', [JournalDataController::class, 'ocrImport'])->name('journal.ocr_import');
+    // OCR : redirigé vers OcrController (Tesseract local) — anciennement Google Vision API
+    Route::post('/journal/ocr-import', [OcrController::class, 'ocrImport'])->name('journal.ocr_import');
     
     // Paramétrage des journaux
     Route::get('/journals-settings', [JournalSettingsController::class, 'index'])->name('journals-settings.index');

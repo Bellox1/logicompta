@@ -11,7 +11,7 @@ use App\Models\SousCompte;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Http;
+// use Illuminate\Support\Facades\Http; // Plus nécessaire : l'OCR est géré par OcrController (Tesseract local)
 
 class JournalDataController extends Controller
 {
@@ -66,86 +66,98 @@ class JournalDataController extends Controller
         return view('accounting.journal.show-pdf', compact('entry', 'user'));
     }
 
-    /**
-     * Importation OCR Google Vision
+    /*
+     * -----------------------------------------------------------------------
+     * MÉTHODE OBSOLÈTE : ocrImport via Google Vision API
+     * -----------------------------------------------------------------------
+     * Cette méthode a été remplacée par OcrController@ocrImport
+     * qui utilise Tesseract OCR (solution locale, gratuite, sans API externe).
+     *
+     * Route concernée : POST /journal/ocr-import
+     * Nouveau handler : App\Http\Controllers\GeneralAccounting\OcrController
+     *
+     * Pour réactiver Google Vision, décommenter ce bloc et
+     * réactiver le use Illuminate\Support\Facades\Http;
+     * -----------------------------------------------------------------------
      */
-    public function ocrImport(Request $request)
-    {
-        $request->validate(['file' => 'required|image|max:5120']);
-        $file = $request->file('file');
-        $apiKey = env('GOOGLE_VISION_API_KEY');
 
-        if (!$apiKey || $apiKey === 'xxxxxxx') {
-            return response()->json(['error' => 'Clé API Google Vision non configurée.'], 400);
-        }
-
-        try {
-            $imageData = base64_encode(file_get_contents($file->getRealPath()));
-            
-            $response = Http::post("https://vision.googleapis.com/v1/images:annotate?key={$apiKey}", [
-                'requests' => [
-                    [
-                        'image' => ['content' => $imageData],
-                        'features' => [['type' => 'TEXT_DETECTION']]
-                    ]
-                ]
-            ]);
-
-            if ($response->failed()) {
-                return response()->json(['error' => 'Erreur API Vision: ' . $response->body()], 500);
-            }
-
-            $result = $response->json();
-            $fullText = $result['responses'][0]['fullTextAnnotation']['text'] ?? '';
-
-            if (empty($fullText)) {
-                return response()->json(['error' => 'Aucun texte détecté sur la facture.'], 404);
-            }
-
-            $data = [
-                'raw_text' => $fullText,
-                'date' => null,
-                'amount' => null,
-                'libelle' => 'Achat selon facture'
-            ];
-
-            $datePatterns = [
-                '/\b(\d{1,2})[\/\.-](\d{1,2})[\/\.-](\d{2,4})\b/',
-                '/\b(\d{4})[\/\.-](\d{1,2})[\/\.-](\d{1,2})\b/'
-            ];
-            foreach ($datePatterns as $pattern) {
-                if (preg_match($pattern, $fullText, $matches)) {
-                    if (strlen($matches[3] ?? '') == 2) $matches[3] = '20'.$matches[3];
-                    $year = $matches[3] ?? date('Y');
-                    $month = $matches[2] ?? date('m');
-                    $day = $matches[1] ?? date('d');
-                    $data['date'] = "$year-$month-$day";
-                    break;
-                }
-            }
-
-            preg_match_all('/\b\d+[\s,.]\d{2,3}[:]*\s*([\d\s,.]+)\b|\b\d{2,}\b/', $fullText, $amounts);
-            $numericAmounts = [];
-            foreach ($amounts[0] as $amt) {
-                $clean = preg_replace('/[^0-9.]/', '', str_replace(',', '.', $amt));
-                if (is_numeric($clean)) $numericAmounts[] = (float)$clean;
-            }
-            
-            if (preg_match('/(?:TOTAL|TTC|NET|PAYER)\s*[:]*\s*([\d\s,.]+)/i', $fullText, $m)) {
-                $cleanMatch = preg_replace('/[^0-9.]/', '', str_replace(',', '.', $m[1]));
-                if (is_numeric($cleanMatch)) $data['amount'] = (float)$cleanMatch;
-            }
-            
-            if (!$data['amount'] && !empty($numericAmounts)) {
-                $data['amount'] = max($numericAmounts);
-            }
-
-            return response()->json($data);
-
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Erreur technique: ' . $e->getMessage()], 500);
-        }
-    }
+    // public function ocrImport(Request $request)
+    // {
+    //     $request->validate(['file' => 'required|image|max:5120']);
+    //     $file = $request->file('file');
+    //     $apiKey = env('GOOGLE_VISION_API_KEY');
+    //
+    //     if (!$apiKey || $apiKey === 'xxxxxxx') {
+    //         return response()->json(['error' => 'Clé API Google Vision non configurée.'], 400);
+    //     }
+    //
+    //     try {
+    //         $imageData = base64_encode(file_get_contents($file->getRealPath()));
+    //         
+    //         $response = Http::post("https://vision.googleapis.com/v1/images:annotate?key={$apiKey}", [
+    //             'requests' => [
+    //                 [
+    //                     'image' => ['content' => $imageData],
+    //                     'features' => [['type' => 'TEXT_DETECTION']]
+    //                 ]
+    //             ]
+    //         ]);
+    //
+    //         if ($response->failed()) {
+    //             return response()->json(['error' => 'Erreur API Vision: ' . $response->body()], 500);
+    //         }
+    //
+    //         $result = $response->json();
+    //         $fullText = $result['responses'][0]['fullTextAnnotation']['text'] ?? '';
+    //
+    //         if (empty($fullText)) {
+    //             return response()->json(['error' => 'Aucun texte détecté sur la facture.'], 404);
+    //         }
+    //
+    //         $data = [
+    //             'raw_text' => $fullText,
+    //             'date' => null,
+    //             'amount' => null,
+    //             'libelle' => 'Achat selon facture'
+    //         ];
+    //
+    //         $datePatterns = [
+    //             '/\b(\d{1,2})[\/\.-](\d{1,2})[\/\.-](\d{2,4})\b/',
+    //             '/\b(\d{4})[\/\.-](\d{1,2})[\/\.-](\d{1,2})\b/'
+    //         ];
+    //         foreach ($datePatterns as $pattern) {
+    //             if (preg_match($pattern, $fullText, $matches)) {
+    //                 if (strlen($matches[3] ?? '') == 2) $matches[3] = '20'.$matches[3];
+    //                 $year = $matches[3] ?? date('Y');
+    //                 $month = $matches[2] ?? date('m');
+    //                 $day = $matches[1] ?? date('d');
+    //                 $data['date'] = "$year-$month-$day";
+    //                 break;
+    //             }
+    //         }
+    //
+    //         preg_match_all('/\b\d+[\s,.]\d{2,3}[:]*\s*([\d\s,.]+)\b|\b\d{2,}\b/', $fullText, $amounts);
+    //         $numericAmounts = [];
+    //         foreach ($amounts[0] as $amt) {
+    //             $clean = preg_replace('/[^0-9.]/', '', str_replace(',', '.', $amt));
+    //             if (is_numeric($clean)) $numericAmounts[] = (float)$clean;
+    //         }
+    //         
+    //         if (preg_match('/(?:TOTAL|TTC|NET|PAYER)\s*[:]*\s*([\d\s,.]+)/i', $fullText, $m)) {
+    //             $cleanMatch = preg_replace('/[^0-9.]/', '', str_replace(',', '.', $m[1]));
+    //             if (is_numeric($cleanMatch)) $data['amount'] = (float)$cleanMatch;
+    //         }
+    //         
+    //         if (!$data['amount'] && !empty($numericAmounts)) {
+    //             $data['amount'] = max($numericAmounts);
+    //         }
+    //
+    //         return response()->json($data);
+    //
+    //     } catch (\Exception $e) {
+    //         return response()->json(['error' => 'Erreur technique: ' . $e->getMessage()], 500);
+    //     }
+    // }
 
     /* --- IMPORT CSV METHODS --- */
 

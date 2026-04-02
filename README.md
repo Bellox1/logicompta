@@ -52,3 +52,33 @@ Le code a été scindé pour une meilleure lisibilité et performance :
 - **`FinancialStatementController`** : Génère le **Bilan** (Actif/Passif) et le **Compte de Résultat** (Pertes/Profits).
 - **`SupportController`** : Gère la page d'**Aide** et le référentiel interactif du **Plan Comptable** SYSCOHADA.
 - **`EntrepriseController`** : Gère la configuration initiale ("Démarrer la gestion") et la liaison avec les entités.
+En production: 
+sudo apt install tesseract-ocr tesseract-ocr-fra
+composer require thiagoalessio/tesseract_ocr
+
+
+scan facture
+Utilisateur clique sur icône/texte  ──┐
+Utilisateur glisse une image         ──┼──→  handleOcrUpload(file)
+                                        │
+                    ┌───────────────────┘
+                    │
+            FormData { file, _token, service }
+                    │
+            service = "tesseract" ou "mindee"
+            (choisi via le toggle dans la dropzone)
+                    │
+            POST /accounting/journal/ocr-import
+                    │
+            ┌───────┴────────┐
+            │                │
+      Tesseract (local)    Mindee (cloud)
+      ImageMagick preproc  api.mindee.net
+      → parse regex        → structuré
+            │                │
+            └───────┬────────┘
+                    │
+      { date, amount, libelle, service, ... }
+                    │
+      Remplit auto le formulaire
+      Toast: "Extrait via Tesseract 🖥️" ou "Mindee ☁️"

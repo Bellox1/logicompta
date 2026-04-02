@@ -153,6 +153,23 @@
         </div>
     </form>
 
+    @if($entries->count() > 0)
+    <div class="flex items-center justify-between bg-white border border-border px-5 py-3 mb-4 shadow-sm">
+        <span class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Totaux {{ request('show_archived') ? 'de l\'archive' : 'de l\'exercice' }}</span>
+        <div class="flex items-center gap-6">
+            <div class="flex items-center gap-2">
+                <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Débit</span>
+                <span class="text-sm font-black text-gray-800 tabular-nums">{{ number_format($globalTotalDebit, 2, ',', ' ') }}</span>
+            </div>
+            <div class="w-px h-5 bg-border"></div>
+            <div class="flex items-center gap-2">
+                <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Crédit</span>
+                <span class="text-sm font-black text-gray-800 tabular-nums">{{ number_format($globalTotalCredit, 2, ',', ' ') }}</span>
+            </div>
+        </div>
+    </div>
+    @endif
+
     <div class="bg-card-bg border border-border rounded-none shadow-sm mb-8">
         <div class="table-responsive">
             <table class="w-full text-left border-collapse min-w-[1000px] sticky-thead">
@@ -195,15 +212,7 @@
                     </tr>
                 </thead>
                 <tbody class="italic">
-                    @php
-                        $pageTotalDebit = 0;
-                        $pageTotalCredit = 0;
-                    @endphp
                     @forelse($entries as $entry)
-                        @php
-                            $pageTotalDebit += $entry->lines->sum('debit');
-                            $pageTotalCredit += $entry->lines->sum('credit');
-                        @endphp
                         @foreach ($entry->lines as $index => $line)
                             <tr class="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
                                 @if ($index === 0)
@@ -296,15 +305,6 @@
                             </td>
                         </tr>
                     @endforelse
-
-                    @if($entries->count() > 0)
-                        <tr class="bg-white text-text-main font-black not-italic border-t-2 border-slate-950">
-                            <td colspan="5" class="px-5 py-6 text-right uppercase tracking-[0.2em] text-[10px] whitespace-nowrap">Totaux cumulés (Page actuelle)</td>
-                            <td class="px-5 py-6 text-right whitespace-nowrap text-base">{{ number_format($pageTotalDebit, 2, ',', ' ') }}</td>
-                            <td class="px-5 py-6 text-right whitespace-nowrap text-base">{{ number_format($pageTotalCredit, 2, ',', ' ') }}</td>
-                            <td class="bg-slate-50"></td>
-                        </tr>
-                    @endif
                 </tbody>
             </table>
         </div>

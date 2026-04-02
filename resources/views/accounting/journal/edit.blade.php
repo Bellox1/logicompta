@@ -115,15 +115,15 @@
                                     </select>
                                 </td>
                                 <td class="px-4 py-3">
-                                    <input type="number" step="0.01" name="lines[{{ $index }}][debit]"
+                                    <input type="text" inputmode="decimal" name="lines[{{ $index }}][debit]"
                                         class="debit-input w-full bg-white dark:bg-white/5 border border-border rounded-xl px-3 py-2 text-sm text-right font-black focus:ring-2 focus:ring-primary outline-none"
-                                        value="{{ (isset($line['debit']) && $line['debit'] != 0) ? $line['debit'] : '' }}"
+                                        value="{{ (isset($line['debit']) && $line['debit'] != 0) ? rtrim(rtrim(number_format((float)$line['debit'], 2, '.', ''), '0'), '.') : '' }}"
                                         placeholder="0">
                                 </td>
                                 <td class="px-4 py-3">
-                                    <input type="number" step="0.01" name="lines[{{ $index }}][credit]"
+                                    <input type="text" inputmode="decimal" name="lines[{{ $index }}][credit]"
                                         class="credit-input w-full bg-white dark:bg-white/5 border border-border rounded-xl px-3 py-2 text-sm text-right font-black focus:ring-2 focus:ring-primary outline-none"
-                                        value="{{ (isset($line['credit']) && $line['credit'] != 0) ? $line['credit'] : '' }}"
+                                        value="{{ (isset($line['credit']) && $line['credit'] != 0) ? rtrim(rtrim(number_format((float)$line['credit'], 2, '.', ''), '0'), '.') : '' }}"
                                         placeholder="0">
                                 </td>
                                 <td class="px-4 py-3">
@@ -277,6 +277,10 @@
                 return diff;
             }
 
+            function formatAmount(n) {
+                return Number.isInteger(n) ? String(n) : parseFloat(n.toFixed(2)).toString();
+            }
+
             function smartFillImbalance(input) {
                 if (equilibre_first) return;
                 if (parseFloat(input.value || 0) !== 0) return;
@@ -287,15 +291,23 @@
 
                 if ((input.classList.contains('debit-input') && diff < 0) ||
                     (input.classList.contains('credit-input') && diff > 0)) {
-                    input.value = absDiff.toFixed(2);
+                    input.value = formatAmount(absDiff);
                     input.classList.add('bg-blue-50', 'dark:bg-blue-900/10');
                     setTimeout(() => input.classList.remove('bg-blue-50', 'dark:bg-blue-900/10'), 500);
                     calculate();
                 }
             }
 
+            function sanitizeAmount(input) {
+                let v = input.value.replace(/,/g, '').replace(/[^0-9.]/g, '');
+                const parts = v.split('.');
+                if (parts.length > 2) v = parts[0] + '.' + parts.slice(1).join('');
+                if (input.value !== v) input.value = v;
+            }
+
             function handleInput(e) {
                 const input = e.target;
+                sanitizeAmount(input);
                 const row = input.closest('tr');
                 const val = parseFloat(input.value || 0);
 

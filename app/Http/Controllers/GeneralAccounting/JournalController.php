@@ -49,8 +49,28 @@ class JournalController extends Controller
         }
 
         $entries = $query->paginate(50)->withQueryString();
-            
-        return view('accounting.journal.index', compact('entries'));
+
+        // Totaux globaux (toute la période filtrée, pas seulement la page)
+        $totalsQuery = JournalEntryLine::query()
+            ->join('journal_entries', 'journal_entries.id', '=', 'journal_entry_lines.journal_entry_id')
+            ->where('journal_entries.entreprise_id', $user->entreprise_id);
+
+        if ($request->query('show_archived') == '1') {
+            $totalsQuery->where('journal_entries.is_archived', true);
+        } else {
+            $totalsQuery->where('journal_entries.is_archived', false);
+        }
+        if ($request->start_date) {
+            $totalsQuery->where('journal_entries.date', '>=', $request->start_date);
+        }
+        if ($request->end_date) {
+            $totalsQuery->where('journal_entries.date', '<=', $request->end_date);
+        }
+
+        $globalTotalDebit  = $totalsQuery->sum('journal_entry_lines.debit');
+        $globalTotalCredit = $totalsQuery->sum('journal_entry_lines.credit');
+
+        return view('accounting.journal.index', compact('entries', 'globalTotalDebit', 'globalTotalCredit'));
     }
 
     public function exportPdf(Request $request)

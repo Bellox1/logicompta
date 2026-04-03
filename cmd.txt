@@ -1,3 +1,15 @@
-# Commandes à exécuter suite à la mise à jour multi-entreprise (03/04/2026) :
+# --- COMMANDES À EXÉCUTER POUR METTRE À JOUR LE SYSTÈME ---
+
+# 1. Mettre à jour la base de données (Soft Deletes & Traçabilité)
 php artisan migrate
+
+# 2. Vider les caches pour prendre en compte les changements de modèles et de routes
 php artisan optimize:clear
+
+# 3. Générer les journaux par défaut pour les entreprises EXISTANTES
+# (Lancer tinker, puis coller la ligne PHP ci-dessous)
+php artisan tinker
+\App\Models\Entreprise::all()->each(fn($e) => \App\Models\GeneralAccounting\Journal::createDefaultJournals($e->id));
+
+# 4. Relancer le serveur si besoin
+php artisan serve

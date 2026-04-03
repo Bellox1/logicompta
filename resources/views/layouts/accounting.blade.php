@@ -494,7 +494,7 @@
                     class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-black transition-all {{ request()->routeIs('accounting.dashboard') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
                     <i class="w-4 h-4 {{ request()->routeIs('accounting.dashboard') ? 'text-white' : '' }}"
                         data-lucide="layout-dashboard"></i>
-                    <span class="sidebar-label transition-all duration-300 uppercase italic">Tableau de bord</span>
+                    <span class="sidebar-label transition-all duration-300 uppercase">Tableau de bord</span>
                 </a>
 
                 <div
@@ -505,13 +505,13 @@
                     class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-black transition-all {{ request()->routeIs('accounting.journal.index') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
                     <i class="w-4 h-4 {{ request()->routeIs('accounting.journal.index') ? 'text-white' : '' }}"
                         data-lucide="book"></i>
-                    <span class="sidebar-label transition-all duration-300 uppercase italic">Journal</span>
+                    <span class="sidebar-label transition-all duration-300 uppercase">Journal</span>
                 </a>
                 <a href="{{ route('accounting.journal.create') }}"
                     class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-black transition-all {{ request()->routeIs('accounting.journal.create') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
                     <i class="w-4 h-4 {{ request()->routeIs('accounting.journal.create') ? 'text-white' : '' }}"
                         data-lucide="plus-circle"></i>
-                    <span class="sidebar-label transition-all duration-300 uppercase italic">Saisie active</span>
+                    <span class="sidebar-label transition-all duration-300 uppercase">Saisie active</span>
                 </a>
 
                 <div
@@ -522,33 +522,32 @@
                     class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-black transition-all {{ request()->routeIs('accounting.ledger') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
                     <i class="w-4 h-4 {{ request()->routeIs('accounting.ledger') ? 'text-white' : '' }}"
                         data-lucide="list-checks"></i>
-                    <span class="sidebar-label transition-all duration-300 uppercase italic">Grand Livre</span>
+                    <span class="sidebar-label transition-all duration-300 uppercase">Grand Livre</span>
                 </a>
                 <a href="{{ route('accounting.balance') }}"
                     class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-black transition-all {{ request()->routeIs('accounting.balance') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
                     <i class="w-4 h-4 {{ request()->routeIs('accounting.balance') ? 'text-white' : '' }}"
                         data-lucide="layers"></i>
-                    <span class="sidebar-label transition-all duration-300 uppercase italic">Balance</span>
+                    <span class="sidebar-label transition-all duration-300 uppercase">Balance</span>
                 </a>
                 <a href="{{ route('accounting.bilan') }}"
                     class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-black transition-all {{ request()->routeIs('accounting.bilan') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
                     <i class="w-4 h-4 {{ request()->routeIs('accounting.bilan') ? 'text-white' : '' }}"
                         data-lucide="file-bar-chart"></i>
-                    <span class="sidebar-label transition-all duration-300 uppercase italic">Bilan</span>
+                    <span class="sidebar-label transition-all duration-300 uppercase">Bilan</span>
                 </a>
                 <a href="{{ route('accounting.resultat') }}"
                     class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-black transition-all {{ request()->routeIs('accounting.resultat') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
                     <i class="w-4 h-4 {{ request()->routeIs('accounting.resultat') ? 'text-white' : '' }}"
                         data-lucide="trending-up"></i>
-                    <span class="sidebar-label transition-all duration-300 uppercase italic">Résultat</span>
+                    <span class="sidebar-label transition-all duration-300 uppercase">Résultat</span>
                 </a>
                 <a href="{{ route('accounting.archive.index') }}"
                     class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-black transition-all {{ request()->routeIs('accounting.archive.index') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
                     <i class="w-4 h-4 {{ request()->routeIs('accounting.archive.*') ? 'text-white' : '' }}"
                         data-lucide="archive"></i>
-                    <span class="sidebar-label transition-all duration-300 uppercase italic">Archives</span>
+                    <span class="sidebar-label transition-all duration-300 uppercase">Archives</span>
                 </a>
-
                 <div
                     class="sidebar-label text-[13px] uppercase font-bold text-slate-500 mt-6 px-3 mb-2 tracking-widest hidden md:block opacity-80">
                     PARAMÈTRES</div>
@@ -557,7 +556,7 @@
                     class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-black transition-all {{ request()->routeIs('accounting.account.*') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
                     <i class="w-4 h-4 {{ request()->routeIs('accounting.account.*') ? 'text-white' : '' }}"
                         data-lucide="package"></i>
-                    <span class="sidebar-label transition-all duration-300 uppercase italic">Plan Comptable</span>
+                    <span class="sidebar-label transition-all duration-300 uppercase">Plan Comptable</span>
                 </a>
 
                 <div
@@ -567,7 +566,7 @@
                     class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-black transition-all {{ request()->routeIs('accounting.help') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
                     <i class="w-4 h-4 {{ request()->routeIs('accounting.help') ? 'text-white' : '' }}"
                         data-lucide="help-circle"></i>
-                    <span class="sidebar-label transition-all duration-300 uppercase italic">Guide & Aide</span>
+                    <span class="sidebar-label transition-all duration-300 uppercase">Guide & Aide</span>
                 </a>
             </nav>
 

@@ -42,7 +42,12 @@ class LedgerController extends Controller
             $data = collect();
         } else {
             // 2. Construire la requête sur les lignes avec jointure explicite pour le tri
-            $query = JournalEntryLine::with(['entry.journal', 'sousCompte.account'])
+            $query = JournalEntryLine::withTrashed()->with([
+                'entry' => function($q) { $q->withTrashed(); },
+                'entry.journal' => function($q) { $q->withTrashed(); },
+                'sousCompte' => function($q) { $q->withTrashed(); },
+                'sousCompte.account'
+            ])
                 ->join('journal_entries', 'journal_entry_lines.journal_entry_id', '=', 'journal_entries.id')
                 ->join('sous_comptes', 'journal_entry_lines.sous_compte_id', '=', 'sous_comptes.id')
                 ->where('journal_entries.entreprise_id', $entrepriseId);
@@ -113,7 +118,12 @@ class LedgerController extends Controller
         if (empty($accountIds) && ($mode !== 'all')) {
             $data = collect();
         } else {
-            $query = JournalEntryLine::with(['entry.journal', 'sousCompte.account'])
+            $query = JournalEntryLine::withTrashed()->with([
+                'entry' => function($q) { $q->withTrashed(); },
+                'entry.journal' => function($q) { $q->withTrashed(); },
+                'sousCompte' => function($q) { $q->withTrashed(); },
+                'sousCompte.account'
+            ])
                 ->join('journal_entries', 'journal_entry_lines.journal_entry_id', '=', 'journal_entries.id')
                 ->join('sous_comptes', 'journal_entry_lines.sous_compte_id', '=', 'sous_comptes.id')
                 ->where('journal_entries.entreprise_id', $entrepriseId);

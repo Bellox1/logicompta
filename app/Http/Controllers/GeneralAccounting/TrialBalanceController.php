@@ -20,9 +20,10 @@ class TrialBalanceController extends Controller
         $endDate = $request->query('end_date');
 
         // On ne récupère que les comptes qui ont des mouvements pour cette entreprise sur la période
+        // On récupère les comptes avec leurs lignes, incluant celles dont le sous-compte ou la ligne est supprimé(e)
         $accounts = Account::with(['entryLines' => function($q) use ($entrepriseId, $startDate, $endDate, $request) {
-            $q->whereHas('entry', function($qe) use ($entrepriseId, $startDate, $endDate, $request) {
-                $qe->where('entreprise_id', $entrepriseId);
+            $q->withTrashed()->whereHas('entry', function($qe) use ($entrepriseId, $startDate, $endDate, $request) {
+                $qe->withTrashed()->where('entreprise_id', $entrepriseId);
                 $showArchived = $request->query('show_archived', '0');
                 if ($showArchived === '1') {
                     $qe->where('is_archived', '=', true);
@@ -119,8 +120,8 @@ class TrialBalanceController extends Controller
         $endDate = $request->query('end_date');
 
         $accounts = Account::with(['entryLines' => function($q) use ($entrepriseId, $startDate, $endDate, $request) {
-            $q->whereHas('entry', function($qe) use ($entrepriseId, $startDate, $endDate, $request) {
-                $qe->where('entreprise_id', $entrepriseId);
+            $q->withTrashed()->whereHas('entry', function($qe) use ($entrepriseId, $startDate, $endDate, $request) {
+                $qe->withTrashed()->where('entreprise_id', $entrepriseId);
                 $showArchived = $request->query('show_archived', '0');
                 if ($showArchived === '1') {
                     $qe->where('is_archived', '=', true);

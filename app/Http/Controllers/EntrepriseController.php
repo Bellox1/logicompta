@@ -379,4 +379,42 @@ class EntrepriseController extends Controller
 
         return back()->with('success', 'Entreprise changée avec succès.');
     }
+
+    /**
+     * Mettre à jour les informations de l'entreprise active
+     */
+    public function update(Request $request)
+    {
+        $user = \Auth::user();
+        $entreprise = $user->entreprise;
+
+        if (!$entreprise) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Aucune entreprise active trouvée'
+            ], 404);
+        }
+
+        // Vérifier si l'utilisateur est admin de cette entreprise
+        if ($user->role !== 'admin') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Seul l\'administrateur peut modifier les informations de l\'entreprise'
+            ], 403);
+        }
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $entreprise->update([
+            'name' => $request->name,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Informations de l\'entreprise mises à jour avec succès',
+            'entreprise' => $entreprise
+        ]);
+    }
 }

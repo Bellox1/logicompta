@@ -28,7 +28,12 @@ class JournalController extends Controller
         }
 
         // Grâce au trait BelongsToEntreprise, le scope entreprise est appliqué automatiquement.
-        $query = JournalEntry::query()->with(['journal', 'lines.sousCompte.account']);
+        // On utilise withTrashed() pour que les écritures liées à des comptes supprimés restent visibles.
+        $query = JournalEntry::query()->with([
+            'journal', 
+            'lines.sousCompte' => function($q) { $q->withTrashed(); },
+            'lines.sousCompte.account'
+        ]);
         
         if ($request->query('show_archived') == '1') {
             $query->where('is_archived', true);
@@ -174,7 +179,11 @@ class JournalController extends Controller
     public function show($id)
     {
         $user = Auth::user();
-        $entry = JournalEntry::with(['lines.sousCompte.account', 'journal'])
+        $entry = JournalEntry::withTrashed()->with([
+            'lines.sousCompte' => function($q) { $q->withTrashed(); },
+            'lines.sousCompte.account', 
+            'journal' => function($q) { $q->withTrashed(); }
+        ])
             ->where('entreprise_id', $user->entreprise_id)
             ->findOrFail($id);
         return view('accounting.journal.show', compact('entry'));
@@ -183,7 +192,10 @@ class JournalController extends Controller
     public function edit($id)
     {
         $user = Auth::user();
-        $entry = JournalEntry::with(['lines.sousCompte.account'])->findOrFail($id);
+        $entry = JournalEntry::withTrashed()->with([
+            'lines.sousCompte' => function($q) { $q->withTrashed(); },
+            'lines.sousCompte.account'
+        ])->findOrFail($id);
         if ($entry->entreprise_id != $user->entreprise_id) abort(403);
 
         $journals = Journal::where(function($q) use ($user) {

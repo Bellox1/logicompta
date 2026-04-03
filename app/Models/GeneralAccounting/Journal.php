@@ -9,9 +9,35 @@ use App\Traits\BelongsToEntreprise;
 
 class Journal extends Model
 {
-    use BelongsToEntreprise;
+    use BelongsToEntreprise, \App\Traits\AuditTraceable;
 
     protected $fillable = ['name', 'description', 'entreprise_id'];
+
+    /**
+     * Boot the model and handle cascading soft deletes
+     */
+    protected static function boot()
+    {
+        parent::boot();
+        
+        static::deleting(function ($journal) {
+            // Si c'est une suppression classique (pas forceDelete)
+            if (!$journal->isForceDeleting()) {
+                // On supprime toutes les écritures liées (ceci déclenchera l'AuditTraceable de chaque écriture)
+                $journal->journalEntries()->get()->each->delete();
+            }
+        });
+
+        static::restoring(function ($journal) {
+            // Restaurer aussi les écritures ? Optionnel, mais recommandé pour la cohérence
+            $journal->journalEntries()->withTrashed()->get()->each->restore();
+        });
+    }
+
+    public function journalEntries()
+    {
+        return $this->hasMany(JournalEntry::class, 'journal_id');
+    }
 
     public function entries(): HasMany
     {

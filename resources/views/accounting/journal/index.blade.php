@@ -154,17 +154,20 @@
     </form>
 
     @if($entries->count() > 0)
-    <div class="flex items-center justify-between bg-white border border-border px-5 py-3 mb-4 shadow-sm">
-        <span class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Totaux {{ request('show_archived') ? 'de l\'archive' : 'de l\'exercice' }}</span>
-        <div class="flex items-center gap-6">
-            <div class="flex items-center gap-2">
-                <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Débit</span>
-                <span class="text-sm font-black text-gray-800 tabular-nums">{{ number_format($globalTotalDebit, 2, ',', ' ') }}</span>
+    <div class="flex items-center justify-between bg-card-bg border border-border px-8 py-5 mb-8 shadow-md rounded-[1.5rem]">
+        <div class="flex flex-col">
+            <span class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Récapitulatif Global</span>
+            <span class="text-xs font-bold text-text-secondary italic">{{ request('show_archived') ? 'Session archive' : 'Exercice en cours' }}</span>
+        </div>
+        <div class="flex items-center gap-12">
+            <div class="flex flex-col items-end">
+                <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 opacity-60">Total Débit</span>
+                <span class="text-2xl font-black text-emerald-500 dark:text-emerald-400 tabular-nums">{{ number_format($globalTotalDebit, 2, ',', ' ') }}</span>
             </div>
-            <div class="w-px h-5 bg-border"></div>
-            <div class="flex items-center gap-2">
-                <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Crédit</span>
-                <span class="text-sm font-black text-gray-800 tabular-nums">{{ number_format($globalTotalCredit, 2, ',', ' ') }}</span>
+            <div class="w-px h-10 bg-border opacity-50"></div>
+            <div class="flex flex-col items-end">
+                <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 opacity-60">Total Crédit</span>
+                <span class="text-2xl font-black text-rose-500 dark:text-rose-400 tabular-nums">{{ number_format($globalTotalCredit, 2, ',', ' ') }}</span>
             </div>
         </div>
     </div>
@@ -231,11 +234,14 @@
 
                                 <td
                                     class="px-5 py-6 text-sm font-bold text-text-main not-italic transition-all {{ $loop->last ? 'border-b-2 border-slate-300 dark:border-slate-700' : '' }}">
-                                    {{ $line->sousCompte->numero_sous_compte }}
+                                    {{ $line->sousCompte?->numero_sous_compte ?? 'N/A' }}
+                                    @if($line->sousCompte?->trashed())
+                                        <span class="ml-1 text-[8px] bg-rose-500 text-white px-1 rounded uppercase">Supprimé</span>
+                                    @endif
                                 </td>
                                 <td
                                     class="px-5 py-6 text-[10px] font-black uppercase tracking-widest text-text-secondary not-italic w-[180px] transition-all {{ $loop->last ? 'border-b-2 border-slate-300 dark:border-slate-700' : '' }}">
-                                    {{ $line->sousCompte->libelle }}
+                                    {{ $line->sousCompte?->libelle ?? 'Compte inconnu' }}
                                 </td>
                                 <td
                                     class="px-5 py-6 text-sm text-text-secondary font-medium transition-all {{ $loop->last ? 'border-b-2 border-slate-300 dark:border-slate-700' : '' }}">

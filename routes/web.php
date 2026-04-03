@@ -12,6 +12,7 @@ use App\Http\Controllers\GeneralAccounting\SupportController;
 use App\Http\Controllers\GeneralAccounting\AccountController;
 use App\Http\Controllers\GeneralAccounting\ArchiveController;
 use App\Http\Controllers\GeneralAccounting\OcrController;
+use App\Http\Controllers\GeneralAccounting\TraceabiliteController;
 use App\Http\Controllers\EntrepriseController;
 use App\Http\Controllers\AuthController;
 
@@ -42,9 +43,14 @@ Route::get('/forgot-password', function () {
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->name('forgot-password.post');
 
 // Route pour la page de profil
-Route::get('/profile', function () {
-    return view('profile');
-})->name('profile');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/profile', function () {
+        return view('profile', ['user' => Auth::user()]);
+    })->name('profile');
+    Route::post('/profile/update', [AuthController::class, 'updateProfile'])->name('profile.update');
+    Route::post('/profile/password', [AuthController::class, 'updatePassword'])->name('profile.password');
+    Route::post('/entreprise/update', [EntrepriseController::class, 'update'])->name('entreprise.update');
+});
 
 Route::get('/reset-password', function () {
     return view('reset-password');
@@ -117,7 +123,12 @@ Route::prefix('accounting')->name('accounting.')->middleware(['web', 'auth'])->g
     Route::put('/compte/sous-compte/{id}', [AccountController::class, 'updateSousCompte'])->name('account.update_sous_compte');
     Route::delete('/compte/sous-compte/{id}', [AccountController::class, 'destroySousCompte'])->name('account.destroy_sous_compte');
 
-    // Archives
+    // Archives & Traçabilité
     Route::get('/archives', [ArchiveController::class, 'index'])->name('archive.index');
     Route::get('/archives/{year}', [ArchiveController::class, 'show'])->name('archive.show');
+    
+    Route::get('/traceabilite', [TraceabiliteController::class, 'index'])->name('traceabilite.index');
+    Route::post('/traceabilite/{id}/restore', [TraceabiliteController::class, 'restore'])->name('traceabilite.restore');
+    Route::delete('/traceabilite/{id}', [TraceabiliteController::class, 'forceDelete'])->name('traceabilite.force_delete');
+    Route::delete('/traceabilite/clear-all', [TraceabiliteController::class, 'clearAll'])->name('traceabilite.clear_all');
 });

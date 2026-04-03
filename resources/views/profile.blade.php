@@ -1,346 +1,387 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil - Comptafriq</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .profile-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        }
-    </style>
-</head>
-<body class="flex items-center justify-center min-h-screen p-4">
-    <div class="w-full max-w-4xl">
+@extends('layouts.accounting')
+
+@section('title', 'Profil Utilisateur')
+
+@section('content')
+    <div class="w-full space-y-8 pb-10">
         <!-- Header -->
-        <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-white mb-2">
-                <i class="fas fa-user-circle mr-3"></i>Profil Utilisateur
+        <div>
+            <h1 class="text-4xl font-black text-text-main flex items-center gap-3 uppercase tracking-tight">
+                <i data-lucide="user-circle" class="w-10 h-10 text-primary"></i>
+                Mon Profil
             </h1>
-            <p class="text-white/80">Gérez vos informations personnelles</p>
+            <p class="text-text-secondary font-medium mt-2">Gérez vos informations et sécurisez votre accès à la plateforme.
+            </p>
         </div>
 
-        <!-- Profile Card -->
-        <div class="profile-card rounded-2xl p-8">
-            <!-- Alert for temporary access -->
-            <div id="tempAccessAlert" class="hidden mb-6 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-lg">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <i class="fas fa-exclamation-triangle text-yellow-400 text-xl"></i>
+        <!-- Main Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Left Column: Summary & Quick Info -->
+            <div class="space-y-6">
+                <div class="bg-primary rounded-[2.5rem] p-8 text-white shadow-xl relative overflow-hidden">
+                    <div class="absolute -right-10 -bottom-10 opacity-10">
+                        <i data-lucide="user" class="w-48 h-48"></i>
                     </div>
-                    <div class="ml-3">
-                        <p class="text-sm text-yellow-700">
-                            <strong>🔑 Accès temporaire activé</strong> - Vous avez accès via mot de passe oublié. 
-                            <a href="#" onclick="showPasswordModal()" class="underline font-medium">Pensez à définir un nouveau mot de passe</a>.
-                        </p>
+                    <div class="relative z-10">
+                        <div
+                            class="w-20 h-20 bg-white/20 backdrop-blur-md rounded-3xl flex items-center justify-center text-3xl font-black mb-6">
+                            {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                        </div>
+                        <h2 class="text-2xl font-black mb-1">{{ auth()->user()->name }}</h2>
+                        <p class="text-white/80 font-bold text-sm mb-6">{{ auth()->user()->email }}</p>
+                        <span
+                            class="inline-block px-4 py-1.5 bg-white text-primary rounded-xl text-[10px] font-black uppercase tracking-widest">
+                            {{ ucfirst(auth()->user()->role) }}
+                        </span>
                     </div>
                 </div>
-            </div>
 
-            <div class="grid md:grid-cols-3 gap-8">
-                <!-- Profile Picture Section -->
-                <div class="text-center">
-                    <div class="relative inline-block">
-                        <div class="w-32 h-32 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-4xl font-bold shadow-lg">
-                            <i class="fas fa-user"></i>
+                <div class="bg-card-bg border border-border rounded-[2.5rem] p-8 shadow-sm">
+                    <h4 class="text-xs font-black text-text-main uppercase tracking-widest mb-6">Détails du compte</h4>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center py-3">
+                            <span class="text-text-secondary text-sm font-bold">Inscrit le</span>
+                            <span
+                                class="text-text-main font-black text-xs">{{ auth()->user()->created_at->format('d/m/Y') }}</span>
                         </div>
-                        <button class="absolute bottom-0 right-0 bg-purple-600 text-white rounded-full p-2 hover:bg-purple-700 transition">
-                            <i class="fas fa-camera text-sm"></i>
-                        </button>
                     </div>
-                    <h3 class="mt-4 text-xl font-semibold text-slate-800" id="profileName">Chargement...</h3>
-                    <p class="text-slate-600" id="profileEmail">Chargement...</p>
-                    <span class="inline-block mt-2 px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium" id="profileRole">
-                        Chargement...
-                    </span>
                 </div>
+                
+                @php
+                    $user = auth()->user();
+                    $entreprise = $user->entreprise;
+                    $isAdmin = $user->role === 'admin';
+                @endphp
 
-                <!-- Profile Information -->
-                <div class="md:col-span-2">
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-2xl font-bold text-slate-800">Informations du profil</h2>
-                        <button onclick="toggleEditMode()" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition">
-                            <i class="fas fa-edit mr-2"></i>Modifier
-                        </button>
-                    </div>
-
-                    <!-- View Mode -->
-                    <div id="viewMode" class="space-y-4">
-                        <div class="grid md:grid-cols-2 gap-4">
-                            <div class="bg-slate-50 p-4 rounded-lg">
-                                <label class="text-sm text-slate-600 font-medium">Nom complet</label>
-                                <p class="text-lg font-semibold text-slate-800" id="displayName">Chargement...</p>
-                            </div>
-                            <div class="bg-slate-50 p-4 rounded-lg">
-                                <label class="text-sm text-slate-600 font-medium">Email</label>
-                                <p class="text-lg font-semibold text-slate-800" id="displayEmail">Chargement...</p>
-                            </div>
-                            <div class="bg-slate-50 p-4 rounded-lg">
-                                <label class="text-sm text-slate-600 font-medium">Rôle</label>
-                                <p class="text-lg font-semibold text-slate-800" id="displayRole">Chargement...</p>
-                            </div>
-                            <div class="bg-slate-50 p-4 rounded-lg">
-                                <label class="text-sm text-slate-600 font-medium">Date d'inscription</label>
-                                <p class="text-lg font-semibold text-slate-800" id="displayDate">Chargement...</p>
+                @if ($isAdmin && $entreprise)
+                    <!-- Section 3: Enterprise Info -->
+                    <div
+                        class="bg-card-bg border border-border rounded-[2.5rem] p-8 shadow-sm border-l-8 border-l-emerald-500">
+                        <div class="flex flex-col gap-4 mb-6">
+                            <h2 class="text-lg font-black text-text-main uppercase tracking-tight">Paramètres Entreprise
+                            </h2>
+                            <div
+                                class="self-start px-4 py-2 bg-emerald-500/10 text-emerald-600 rounded-xl border border-emerald-500/20 font-mono text-xs font-bold uppercase">
+                                Code: {{ $entreprise->code }}
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Edit Mode (Hidden by default) -->
-                    <div id="editMode" class="hidden space-y-4">
-                        <div class="grid md:grid-cols-2 gap-4">
+                        <div class="space-y-6">
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-2">Nom complet</label>
-                                <input type="text" id="editName" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                <label
+                                    class="block text-[10px] font-black text-text-secondary uppercase tracking-widest mb-3">Nom
+                                    de l'organisation</label>
+                                <input type="text" id="editEntrepriseName" value="{{ $entreprise->name }}"
+                                    class="w-full px-5 py-3 bg-white dark:bg-black border border-border rounded-xl text-sm focus:border-primary transition-all font-bold">
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-2">Email</label>
-                                <input type="email" id="editEmail" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                            <div class="flex justify-end pt-2">
+                                <button onclick="saveEntreprise()"
+                                    class="w-full py-3 bg-emerald-500 text-white font-black rounded-xl text-xs uppercase tracking-widest shadow-xl shadow-emerald-500/20 hover:scale-105 active:scale-95 transition-all">Mettre
+                                    à jour</button>
                             </div>
-                        </div>
-                        <div class="flex gap-4">
-                            <button onclick="saveProfile()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
-                                <i class="fas fa-save mr-2"></i>Enregistrer
-                            </button>
-                            <button onclick="cancelEdit()" class="bg-slate-600 text-white px-6 py-2 rounded-lg hover:bg-slate-700 transition">
-                                <i class="fas fa-times mr-2"></i>Annuler
-                            </button>
                         </div>
                     </div>
-                </div>
+                @endif
             </div>
 
-            <!-- Quick Actions -->
-            <div class="mt-8 pt-8 border-t border-slate-200">
-                <h3 class="text-lg font-semibold text-slate-800 mb-4">Actions rapides</h3>
-                <div class="grid md:grid-cols-3 gap-4">
-                    <button onclick="showPasswordModal()" class="bg-primary text-white p-4 rounded-lg hover:bg-primary transition">
-                        <i class="fas fa-key mr-2"></i>Changer le mot de passe
-                    </button>
-                    <button onclick="showDeleteModal()" class="bg-red-600 text-white p-4 rounded-lg hover:bg-red-700 transition">
-                        <i class="fas fa-trash mr-2"></i>Supprimer le compte
-                    </button>
-                    <button onclick="logout()" class="bg-slate-600 text-white p-4 rounded-lg hover:bg-slate-700 transition">
-                        <i class="fas fa-sign-out-alt mr-2"></i>Déconnexion
+            <!-- Right Column: Forms -->
+            <div class="lg:col-span-2 space-y-8">
+
+                <!-- Section 1: Personal Information -->
+                <div class="bg-card-bg border border-border rounded-[2.5rem] p-10 shadow-sm">
+                    <div class="flex items-center justify-between mb-8">
+                        <h2 class="text-xl font-black text-text-main uppercase tracking-tight">Informations Personnelles
+                        </h2>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                        <div>
+                            <label
+                                class="block text-[10px] font-black text-text-secondary uppercase tracking-widest mb-3">Nom
+                                complet</label>
+                            <input type="text" id="editName" value="{{ auth()->user()->name }}"
+                                class="w-full px-5 py-4 bg-white dark:bg-black border border-border rounded-2xl text-sm focus:border-primary transition-all font-bold">
+                        </div>
+                        <div>
+                            <label
+                                class="block text-[10px] font-black text-text-secondary uppercase tracking-widest mb-3">Email
+                                de contact</label>
+                            <input type="email" id="editEmail" value="{{ auth()->user()->email }}"
+                                class="w-full px-5 py-4 bg-white dark:bg-black border border-border rounded-2xl text-sm focus:border-primary transition-all font-bold">
+                        </div>
+                    </div>
+                    <div class="mt-8 flex justify-end">
+                        <button onclick="saveProfile()"
+                            class="px-8 py-4 bg-primary text-white font-black rounded-2xl text-xs uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all">Mettre
+                            à jour le profil</button>
+                    </div>
+                </div>
+
+                <!-- Section 2: Security (Password Change) -->
+                <div class="bg-card-bg border border-border rounded-[2.5rem] p-10 shadow-sm border-l-8 border-l-amber-500">
+                    <h2 class="text-xl font-black text-text-main uppercase tracking-tight mb-8">Sécurité & Accès</h2>
+                    <div class="grid grid-cols-1 gap-6">
+                        <div>
+                            <label
+                                class="block text-[10px] font-black text-text-secondary uppercase tracking-widest mb-3">Mot
+                                de passe actuel</label>
+                            <div class="relative">
+                                <input type="password" id="current_password" placeholder="••••••••"
+                                    class="w-full pl-5 pr-12 py-4 bg-white dark:bg-black border border-border rounded-2xl text-sm focus:border-primary transition-all font-bold">
+                                <button type="button" onclick="togglePassword('current_password', this)"
+                                    class="absolute right-4 top-1/2 -translate-y-1/2 text-text-secondary hover:text-primary transition-colors">
+                                    <i data-lucide="eye" class="w-5 h-5"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label
+                                    class="block text-[10px] font-black text-text-secondary uppercase tracking-widest mb-3">Nouveau
+                                    mot de passe</label>
+                                <div class="relative">
+                                    <input type="password" id="new_password" placeholder="Minimum 8 caractères"
+                                        class="w-full pl-5 pr-12 py-4 bg-white dark:bg-black border border-border rounded-2xl text-sm focus:border-primary transition-all font-bold">
+                                    <button type="button" onclick="togglePassword('new_password', this)"
+                                        class="absolute right-4 top-1/2 -translate-y-1/2 text-text-secondary hover:text-primary transition-colors">
+                                        <i data-lucide="eye" class="w-5 h-5"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-[10px] font-black text-text-secondary uppercase tracking-widest mb-3">Confirmation</label>
+                                <div class="relative">
+                                    <input type="password" id="new_password_confirmation"
+                                        placeholder="Répéter le mot de passe"
+                                        class="w-full pl-5 pr-12 py-4 bg-white dark:bg-black border border-border rounded-2xl text-sm focus:border-primary transition-all font-bold">
+                                    <button type="button" onclick="togglePassword('new_password_confirmation', this)"
+                                        class="absolute right-4 top-1/2 -translate-y-1/2 text-text-secondary hover:text-primary transition-colors">
+                                        <i data-lucide="eye" class="w-5 h-5"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-8 flex justify-end">
+                        <button onclick="savePassword()"
+                            class="px-8 py-4 bg-amber-500 text-white font-black rounded-2xl text-xs uppercase tracking-widest shadow-xl shadow-amber-500/20 hover:scale-105 active:scale-95 transition-all">Changer
+                            le mot de passe</button>
+                    </div>
+                </div>
+
+
+                <!-- Section 4: Critical Actions -->
+                <div class="pt-8 text-center">
+                    <button onclick="showDeleteModal()"
+                        class="text-[10px] font-black text-rose-500 uppercase tracking-[0.2em] hover:text-rose-700 transition-colors">
+                        Désactiver ou supprimer mon compte définitivement
                     </button>
                 </div>
             </div>
-        </div>
-
-        <!-- Back Button -->
-        <div class="text-center mt-6">
-            <a href="{{ url('/') }}" class="text-white hover:text-white/80 transition">
-                <i class="fas fa-arrow-left mr-2"></i>Retour à l'accueil
-            </a>
         </div>
     </div>
+@endsection
 
-    <!-- Success Message -->
-    <div id="successMessage" class="hidden fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg">
-        <i class="fas fa-check-circle mr-2"></i>
-        <span id="successText">Opération réussie</span>
-    </div>
-
+@section('scripts')
     <script>
-        let currentUser = null;
+        async function saveProfile() {
+            const nameInput = document.getElementById('editName');
+            const emailInput = document.getElementById('editEmail');
+            const name = nameInput.value;
+            const email = emailInput.value;
 
-        // Load user profile
-        async function loadProfile() {
-            try {
-                // Check if we have direct access via token
-                const urlParams = new URLSearchParams(window.location.search);
-                const token = urlParams.get('token');
-                const email = urlParams.get('email');
-                
-                if (token && email) {
-                    // Direct access via email token
-                    await loadProfileViaToken(token, email);
-                    return;
-                }
-                
-                // Normal authentication check - utiliser session web
-                const response = await fetch('{{ url("/api/user") }}', {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
-                    }
+            if (name === nameInput.defaultValue && email === emailInput.defaultValue) {
+                Swal.fire({
+                    title: 'Aucun changement',
+                    text: 'Vos informations sont déjà à jour.',
+                    icon: 'info',
+                    timer: 2000,
+                    showConfirmButton: false,
+                    background: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#161615' : '#fff',
+                    color: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#fff' : '#000'
                 });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    currentUser = data.user;
-                    displayProfile();
-                } else {
-                    throw new Error('Erreur lors du chargement du profil');
-                }
-            } catch (error) {
-                console.error('Erreur:', error);
-                // showMessage('Erreur lors du chargement du profil', 'error'); // Désactivé
+                return;
             }
-        }
 
-        // Load profile via email token
-        async function loadProfileViaToken(token, email) {
             try {
-                const response = await fetch('{{ url("/api/user-by-token") }}', {
+                const response = await fetch('{{ route('profile.update') }}', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                     },
-                    body: JSON.stringify({ token, email })
+                    body: JSON.stringify({
+                        name,
+                        email
+                    })
                 });
 
+                const data = await response.json();
                 if (response.ok) {
-                    const data = await response.json();
-                    currentUser = data.user;
-                    displayProfile();
-                    
-                    // Show temporary access alert
-                    document.getElementById('tempAccessAlert').classList.remove('hidden');
-                    // showMessage('🔑 Accès temporaire activé - Pensez à définir un nouveau mot de passe', 'success'); // Désactivé
+                    Swal.fire({
+                        title: 'Profil Mis à Jour',
+                        text: 'Vos informations ont été sauvegardées.',
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false,
+                        background: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#161615' :
+                            '#fff',
+                        color: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#fff' : '#000'
+                    }).then(() => window.location.reload());
                 } else {
-                    throw new Error('Token invalide ou expiré');
-                }
-            } catch (error) {
-                console.error('Erreur token:', error);
-                // showMessage('Token invalide. Veuillez vous connecter normalement.', 'error'); // Désactivé
-                setTimeout(() => {
-                    window.location.href = '{{ url("/login") }}';
-                }, 3000);
-            }
-        }
-
-        function displayProfile() {
-            if (!currentUser) return;
-
-            document.getElementById('profileName').textContent = currentUser.name;
-            document.getElementById('profileEmail').textContent = currentUser.email;
-            document.getElementById('profileRole').textContent = currentUser.role;
-            document.getElementById('displayName').textContent = currentUser.name;
-            document.getElementById('displayEmail').textContent = currentUser.email;
-            document.getElementById('displayRole').textContent = currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1);
-            document.getElementById('displayDate').textContent = new Date().toLocaleDateString('fr-FR');
-        }
-
-        function toggleEditMode() {
-            const viewMode = document.getElementById('viewMode');
-            const editMode = document.getElementById('editMode');
-            
-            if (editMode.classList.contains('hidden')) {
-                // Switch to edit mode
-                viewMode.classList.add('hidden');
-                editMode.classList.remove('hidden');
-                document.getElementById('editName').value = currentUser.name;
-                document.getElementById('editEmail').value = currentUser.email;
-            } else {
-                // Switch to view mode
-                editMode.classList.add('hidden');
-                viewMode.classList.remove('hidden');
-            }
-        }
-
-        function cancelEdit() {
-            toggleEditMode();
-        }
-
-        async function saveProfile() {
-            try {
-                // Check if we're in direct access mode
-                const urlParams = new URLSearchParams(window.location.search);
-                const token = urlParams.get('token');
-                const email = urlParams.get('email');
-                
-                let response;
-                
-                if (token && email) {
-                    // Update via token access
-                    const name = document.getElementById('editName').value;
-                    const userEmail = document.getElementById('editEmail').value;
-                    
-                    response = await fetch('{{ url("/api/update-profile-by-token") }}', {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ token, email, name, new_email: userEmail })
+                    Swal.fire({
+                        title: 'Erreur',
+                        text: data.message || 'Mise à jour échouée',
+                        icon: 'error',
+                        background: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#161615' :
+                            '#fff',
                     });
-                } else {
-                    // Normal authenticated update - utiliser session web
-                    const name = document.getElementById('editName').value;
-                    const userEmail = document.getElementById('editEmail').value;
-
-                    response = await fetch('{{ url("/api/user") }}', {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
-                        },
-                        body: JSON.stringify({ name, email: userEmail })
-                    });
-                }
-
-                if (response.ok) {
-                    const data = await response.json();
-                    currentUser = data.user;
-                    displayProfile();
-                    toggleEditMode();
-                    // showMessage('Profil mis à jour avec succès', 'success'); // Désactivé
-                } else {
-                    throw new Error('Erreur lors de la mise à jour');
                 }
             } catch (error) {
                 console.error('Erreur:', error);
-                // showMessage('Erreur lors de la mise à jour du profil', 'error'); // Désactivé
             }
         }
 
-        function showPasswordModal() {
-            // showMessage('Fonctionnalité de changement de mot de passe bientôt disponible', 'info'); // Désactivé
+        async function savePassword() {
+            const current_password = document.getElementById('current_password').value;
+            const password = document.getElementById('new_password').value;
+            const password_confirmation = document.getElementById('new_password_confirmation').value;
+
+            if (!current_password || !password || !password_confirmation) {
+                Swal.fire({
+                    title: 'Attention',
+                    text: 'Veuillez remplir tous les champs de sécurité.',
+                    icon: 'warning',
+                    background: '#fff'
+                });
+                return;
+            }
+
+            try {
+                const response = await fetch('{{ route('profile.password') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({
+                        current_password,
+                        password,
+                        password_confirmation
+                    })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    document.getElementById('current_password').value = '';
+                    document.getElementById('new_password').value = '';
+                    document.getElementById('new_password_confirmation').value = '';
+                    Swal.fire({
+                        title: 'Mot de passe changé',
+                        text: 'Votre sécurité a été mise à jour.',
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false,
+                        background: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#161615' :
+                            '#fff',
+                        color: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#fff' : '#000'
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Échec',
+                        text: data.message ||
+                            'Le mot de passe actuel est erroné ou les nouveaux ne correspondent pas.',
+                        icon: 'error',
+                        background: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#161615' :
+                            '#fff',
+                    });
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        }
+
+        async function saveEntreprise() {
+            const nameInput = document.getElementById('editEntrepriseName');
+            const name = nameInput.value;
+
+            if (name === nameInput.defaultValue) {
+                Swal.fire({
+                    title: 'Aucun changement',
+                    text: 'Le nom de l\'organisation est déjà à jour.',
+                    icon: 'info',
+                    timer: 2000,
+                    showConfirmButton: false,
+                    background: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#161615' : '#fff',
+                    color: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#fff' : '#000'
+                });
+                return;
+            }
+
+            try {
+                const response = await fetch('{{ route('entreprise.update') }}', {                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({
+                        name
+                    })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    Swal.fire({
+                        title: 'Entreprise mise à jour',
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false,
+                        background: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#161615' :
+                            '#fff',
+                        color: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#fff' : '#000'
+                    }).then(() => window.location.reload());
+                } else {
+                    Swal.fire({
+                        title: 'Erreur',
+                        text: data.message || 'Erreur',
+                        icon: 'error',
+                        background: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#161615' :
+                            '#fff'
+                    });
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
         }
 
         function showDeleteModal() {
-            if (confirm('Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irreversible.')) {
-                // showMessage('Fonctionnalité de suppression bientôt disponible', 'info'); // Désactivé
-            }
+            Swal.fire({
+                title: 'Action critique',
+                text: 'Pour supprimer votre compte, veuillez contacter le support à support@comptafriq.com.',
+                icon: 'warning',
+                background: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#161615' : '#fff',
+                color: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#fff' : '#000'
+            });
         }
 
-        function showMessage(message, type = 'success') {
-            const messageEl = document.getElementById('successMessage');
-            const textEl = document.getElementById('successText');
-            
-            textEl.textContent = message;
-            
-            if (type === 'error') {
-                messageEl.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg';
-            } else if (type === 'info') {
-                messageEl.className = 'fixed top-4 right-4 bg-primary text-white px-6 py-3 rounded-lg shadow-lg';
+        function togglePassword(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const iconContainer = btn;
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                iconContainer.innerHTML = '<i data-lucide="eye-off" class="w-5 h-5"></i>';
             } else {
-                messageEl.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg';
+                input.type = 'password';
+                iconContainer.innerHTML = '<i data-lucide="eye" class="w-5 h-5"></i>';
             }
-            
-            messageEl.classList.remove('hidden');
-            
-            setTimeout(() => {
-                messageEl.classList.add('hidden');
-            }, 3000);
+            lucide.createIcons();
         }
 
-        // Load profile on page load
-        document.addEventListener('DOMContentLoaded', loadProfile);
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
     </script>
-</body>
-</html>
+@endsection

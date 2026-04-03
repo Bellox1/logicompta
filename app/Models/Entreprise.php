@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Entreprise extends Model
 {
-    use HasFactory;
+    use HasFactory, \App\Traits\AuditTraceable;
 
     protected $fillable = ['name', 'code'];
 
@@ -16,9 +17,8 @@ class Entreprise extends Model
      */
     public static function generateCode(string $name): string
     {
-        $prefix = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $name), 0, 6));
-        $suffix = strtoupper(substr(md5(uniqid()), 0, 4));
-        return $prefix . '-' . $suffix;
+        // Génération d'un code aléatoire sécurisé sans lien avec le nom de l'entreprise
+        return 'SOC-' . strtoupper(substr(bin2hex(random_bytes(4)), 0, 8));
     }
 
     /**

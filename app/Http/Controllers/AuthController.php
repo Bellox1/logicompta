@@ -275,6 +275,43 @@ class AuthController extends Controller
     }
 
     /**
+     * Mettre à jour le mot de passe
+     */
+    public function updatePassword(Request $request)
+    {
+        $user = $request->user();
+
+        $validator = Validator::make($request->all(), [
+            'current_password' => 'required',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur de validation',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'L\'actuel mot de passe est incorrect'
+            ], 422);
+        }
+
+        $user->update([
+            'password' => Hash::make($request->password)
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Mot de passe mis à jour avec succès'
+        ]);
+    }
+
+    /**
      * Obtenir l'utilisateur via token d'accès direct
      */
     public function getUserByToken(Request $request)

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class JournalEntryLine extends Model
 {
+    use \App\Traits\AuditTraceable;
     protected $fillable = ['journal_entry_id', 'sous_compte_id', 'debit', 'credit', 'libelle'];
 
     public function entry(): BelongsTo

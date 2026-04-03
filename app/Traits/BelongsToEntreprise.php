@@ -11,7 +11,7 @@ trait BelongsToEntreprise
         static::addGlobalScope('entreprise', function (Builder $builder) {
             $entrepriseId = session('active_entreprise_id');
             if ($entrepriseId) {
-                $builder->where('entreprise_id', $entrepriseId);
+                $builder->where('entreprise_id', '=', $entrepriseId);
             }
         });
 

@@ -292,8 +292,8 @@
                 if ((input.classList.contains('debit-input') && diff < 0) ||
                     (input.classList.contains('credit-input') && diff > 0)) {
                     input.value = formatAmount(absDiff);
-                    input.classList.add('bg-blue-50', 'dark:bg-blue-900/10');
-                    setTimeout(() => input.classList.remove('bg-blue-50', 'dark:bg-blue-900/10'), 500);
+                    input.classList.add('bg-primary/5', 'dark:bg-primary/10');
+                    setTimeout(() => input.classList.remove('bg-primary/5', 'dark:bg-primary/10'), 500);
                     calculate();
                 }
             }

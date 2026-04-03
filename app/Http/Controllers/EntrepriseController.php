@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Entreprise;
 use App\Models\User;
+use App\Models\GeneralAccounting\Journal;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class EntrepriseController extends Controller
 {
@@ -47,10 +49,14 @@ class EntrepriseController extends Controller
                 if (!$entreprise) {
                     throw new \Exception('Code entreprise introuvable.');
                 }
-                $user->update([
-                    'entreprise_id' => $entreprise->id,
-                    'role'          => ($user->role === 'admin' ? 'admin' : 'comptable'), // Garder admin si c'est déjà son rôle
+                $user->entreprises()->syncWithoutDetaching([
+                    $entreprise->id => [
+                        'role' => ($user->role === 'admin' ? 'admin' : 'comptable'),
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]
                 ]);
+                session(['active_entreprise_id' => $entreprise->id]);
             } 
             elseif ($request->action === 'create') {
                 do {
@@ -62,10 +68,17 @@ class EntrepriseController extends Controller
                     'code' => $code,
                 ]);
 
-                $user->update([
-                    'entreprise_id' => $entreprise->id,
-                    'role'          => 'admin', // Créateur = Admin
+                $user->entreprises()->syncWithoutDetaching([
+                    $entreprise->id => [
+                        'role' => 'admin',
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]
                 ]);
+                session(['active_entreprise_id' => $entreprise->id]);
+                
+                // Créer les journaux par défaut pour cette nouvelle entreprise
+                Journal::createDefaultJournals($entreprise->id);
             }
 
             // 3. Finalisation (nettoyage session et connexion si nécessaire)
@@ -125,10 +138,14 @@ class EntrepriseController extends Controller
                 if (!$entreprise) {
                     throw new \Exception('Code entreprise introuvable.');
                 }
-                $user->update([
-                    'entreprise_id' => $entreprise->id,
-                    'role'          => 'comptable',
+                $user->entreprises()->syncWithoutDetaching([
+                    $entreprise->id => [
+                        'role' => 'comptable',
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]
                 ]);
+                session(['active_entreprise_id' => $entreprise->id]);
             } 
             elseif ($request->action === 'create') {
                 do {
@@ -140,10 +157,17 @@ class EntrepriseController extends Controller
                     'code' => $code,
                 ]);
 
-                $user->update([
-                    'entreprise_id' => $entreprise->id,
-                    'role'          => 'admin',
+                $user->entreprises()->syncWithoutDetaching([
+                    $entreprise->id => [
+                        'role' => 'admin',
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]
                 ]);
+                session(['active_entreprise_id' => $entreprise->id]);
+
+                // Créer les journaux par défaut pour cette nouvelle entreprise
+                Journal::createDefaultJournals($entreprise->id);
             }
 
             // 3. Créer le token de session
@@ -180,10 +204,14 @@ class EntrepriseController extends Controller
         }
 
         $user = User::findOrFail($request->user_id);
-        $user->update([
-            'entreprise_id' => $entreprise->id,
-            'role'          => 'comptable',
+        $user->entreprises()->syncWithoutDetaching([
+            $entreprise->id => [
+                'role' => 'comptable',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
         ]);
+        session(['active_entreprise_id' => $entreprise->id]);
 
         return response()->json([
             'success'    => true,
@@ -214,10 +242,17 @@ class EntrepriseController extends Controller
             'code' => $code,
         ]);
 
-        $user->update([
-            'entreprise_id' => $entreprise->id,
-            'role'          => 'admin',
+        $user->entreprises()->syncWithoutDetaching([
+            $entreprise->id => [
+                'role' => 'admin',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
         ]);
+        session(['active_entreprise_id' => $entreprise->id]);
+
+        // Créer les journaux par défaut pour cette nouvelle entreprise
+        Journal::createDefaultJournals($entreprise->id);
 
         return response()->json([
             'success'    => true,
@@ -256,10 +291,14 @@ class EntrepriseController extends Controller
         }
 
         $user = \Auth::user();
-        $user->update([
-            'entreprise_id' => $entreprise->id,
-            'role'          => 'comptable',
+        $user->entreprises()->syncWithoutDetaching([
+            $entreprise->id => [
+                'role' => 'comptable',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
         ]);
+        session(['active_entreprise_id' => $entreprise->id]);
 
         return redirect()->route('accounting.dashboard')->with('success', 'Vous avez rejoint l\'entreprise "' . $entreprise->name . '" avec succès !');
     }
@@ -285,10 +324,17 @@ class EntrepriseController extends Controller
             'code' => $code,
         ]);
 
-        $user->update([
-            'entreprise_id' => $entreprise->id,
-            'role'          => 'admin',
+        $user->entreprises()->syncWithoutDetaching([
+            $entreprise->id => [
+                'role' => 'admin',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
         ]);
+        session(['active_entreprise_id' => $entreprise->id]);
+
+        // Créer les journaux par défaut pour cette nouvelle entreprise
+        Journal::createDefaultJournals($entreprise->id);
 
         return redirect()->route('accounting.dashboard')->with('success', 'Entreprise "' . $entreprise->name . '" créée avec succès !');
     }
@@ -298,9 +344,9 @@ class EntrepriseController extends Controller
      */
     public function info(Request $request)
     {
-        $user = User::with('entreprise')->find($request->input('user_id'));
+        $user = User::with('entreprises')->find($request->input('user_id'));
 
-        if (!$user || !$user->hasEntreprise()) {
+        if (!$user || $user->entreprises->isEmpty()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Aucune entreprise associée.'
@@ -311,5 +357,26 @@ class EntrepriseController extends Controller
             'success'    => true,
             'entreprise' => $user->entreprise,
         ]);
+    }
+
+    /**
+     * Web - Changer l'entreprise active
+     */
+    public function switch(Request $request)
+    {
+        $request->validate([
+            'entreprise_id' => 'required|exists:entreprises,id',
+        ]);
+
+        $user = \Auth::user();
+        
+        // Vérifier que l'utilisateur appartient bien à cette entreprise
+        if (!$user->entreprises()->where('entreprise_id', $request->entreprise_id)->exists()) {
+            return back()->with('error', 'Accès non autorisé à cette entreprise.');
+        }
+
+        session(['active_entreprise_id' => $request->entreprise_id]);
+
+        return back()->with('success', 'Entreprise changée avec succès.');
     }
 }

@@ -27,8 +27,8 @@ class JournalController extends Controller
                 ->with('warning', 'Veuillez configurer votre entreprise pour accéder au journal.');
         }
 
-        $query = JournalEntry::query()->with(['journal', 'lines.sousCompte.account'])
-            ->where('entreprise_id', $user->entreprise_id);
+        // Grâce au trait BelongsToEntreprise, le scope entreprise est appliqué automatiquement.
+        $query = JournalEntry::query()->with(['journal', 'lines.sousCompte.account']);
         
         if ($request->query('show_archived') == '1') {
             $query->where('is_archived', true);
@@ -54,9 +54,9 @@ class JournalController extends Controller
         $entries = $query->paginate(50)->withQueryString();
 
         // Totaux globaux (toute la période filtrée, pas seulement la page)
+        // Les totaux sont également filtrés par le scope global du modèle JournalEntry (automatiquement appliqué via la jointure)
         $totalsQuery = JournalEntryLine::query()
-            ->join('journal_entries', 'journal_entries.id', '=', 'journal_entry_lines.journal_entry_id')
-            ->where('journal_entries.entreprise_id', $user->entreprise_id);
+            ->join('journal_entries', 'journal_entries.id', '=', 'journal_entry_lines.journal_entry_id');
 
         if ($request->query('show_archived') == '1') {
             $totalsQuery->where('journal_entries.is_archived', true);
@@ -83,10 +83,8 @@ class JournalController extends Controller
             return redirect()->route('entreprise.setup');
         }
         
-        $journals = Journal::where(function($q) use ($user) {
-            $q->where('entreprise_id', '=', $user->entreprise_id)
-              ->orWhereNull('entreprise_id');
-        })->get();
+        // On récupère uniquement les journaux de l'entreprise
+        $journals = Journal::all();
 
         $accounts = SousCompte::where('entreprise_id', $user->entreprise_id)
             ->with('account')

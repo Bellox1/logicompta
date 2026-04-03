@@ -12,10 +12,8 @@ class JournalSettingsController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $journals = Journal::where(function($q) use ($user) {
-            $q->where('entreprise_id', $user->entreprise_id)
-              ->orWhereNull('entreprise_id');
-        })->get();
+        // Grâce au trait BelongsToEntreprise, Journal::all() filtre déjà par active_entreprise_id
+        $journals = Journal::all();
         return view('accounting.journals-settings.index', compact('journals'));
     }
 
@@ -46,9 +44,10 @@ class JournalSettingsController extends Controller
         $user = Auth::user();
         $journal = Journal::findOrFail($id);
         
-        // On ne modifie pas les journaux globaux sauf si on est admin (optionnel)
-        if ($journal->entreprise_id != $user->entreprise_id && !is_null($journal->entreprise_id)) {
-            abort(403);
+        // La vérification est déjà en partie gérée par le Global Scope du trait,
+        // mais on s'assure que l'utilisateur ne tente pas d'accéder à un journal global ou d'autrui.
+        if ($journal->entreprise_id != $user->entreprise_id) {
+            abort(403, "Accès non autorisé à ce journal.");
         }
 
         return view('accounting.journals-settings.edit', compact('journal'));
@@ -58,8 +57,8 @@ class JournalSettingsController extends Controller
     {
         $user = Auth::user();
         $journal = Journal::findOrFail($id);
-        if ($journal->entreprise_id != $user->entreprise_id && !is_null($journal->entreprise_id)) {
-            abort(403);
+        if ($journal->entreprise_id != $user->entreprise_id) {
+            abort(403, "Accès non autorisé.");
         }
         
         $request->validate([
@@ -79,8 +78,8 @@ class JournalSettingsController extends Controller
     {
         $user = Auth::user();
         $journal = Journal::findOrFail($id);
-        if ($journal->entreprise_id != $user->entreprise_id && !is_null($journal->entreprise_id)) {
-            abort(403);
+        if ($journal->entreprise_id != $user->entreprise_id) {
+            abort(403, "Accès non autorisé.");
         }
         
         // Vérifier si le journal a des entrées

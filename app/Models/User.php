@@ -22,8 +22,6 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'entreprise_id',
-        'role',
     ];
 
     /**
@@ -50,10 +48,38 @@ class User extends Authenticatable
     }
 
     /**
-     * L'entreprise à laquelle appartient l'utilisateur
+     * Les entreprises auxquelles appartient l'utilisateur
      */
-    public function entreprise()
+    public function entreprises()
     {
-        return $this->belongsTo(Entreprise::class);
+        return $this->belongsToMany(Entreprise::class, 'entreprise_users')
+                    ->withPivot('role')
+                    ->withTimestamps();
+    }
+
+    /**
+     * Accesseur pour l'entreprise active (rétrocompatibilité)
+     */
+    public function getEntrepriseIdAttribute()
+    {
+        return session('active_entreprise_id') ?? $this->entreprises()->first()?->id;
+    }
+
+    public function getEntrepriseAttribute()
+    {
+        $id = $this->entreprise_id;
+        return $id ? Entreprise::find($id, ['*']) : null;
+    }
+
+    /**
+     * Accesseur pour le rôle dans l'entreprise active (rétrocompatibilité)
+     */
+    public function getRoleAttribute()
+    {
+        $entreId = $this->entreprise_id;
+        if (!$entreId) return 'utilisateur';
+        
+        $pivot = $this->entreprises()->where('entreprise_id', '=', $entreId)->first()?->pivot;
+        return $pivot ? $pivot->role : 'utilisateur';
     }
 }

@@ -6,8 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+use App\Traits\BelongsToEntreprise;
+
 class JournalEntry extends Model
 {
+    use BelongsToEntreprise;
+
     protected $fillable = ['journal_id', 'numero_piece', 'date', 'libelle', 'entreprise_id', 'is_archived', 'archived_at'];
 
     public function journal(): BelongsTo

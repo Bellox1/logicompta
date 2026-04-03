@@ -106,6 +106,7 @@
             color: var(--text-main);
             border: 1px solid var(--border-color);
         }
+
         /* Specific fix for Date inputs to ensure they show up on mobile */
         @media (max-width: 768px) {
             input[type="date"] {
@@ -119,12 +120,13 @@
 
             /* Simulation d'un placeholder pour les inputs date (iPhone/Android) */
             input[type="date"]::before {
-                color: #94a3b8; /* slate-400 */
+                color: #94a3b8;
+                /* slate-400 */
                 content: attr(placeholder);
                 margin-right: 0.5em;
                 display: inline-block;
             }
-            
+
             input[type="date"]:focus::before,
             input[type="date"]:valid::before,
             input[type="date"]:not([value=""]):empty::before {
@@ -161,8 +163,8 @@
                 --border-color: #1e1e1e;
                 --text-main: #ffffff;
                 --text-secondary: #a1a1aa;
-                --primary: #2563eb;
-                --primary-light: #3b82f6;
+                --primary: #005b82;
+                --primary-light: #004d99;
             }
 
             input,
@@ -489,80 +491,96 @@
 
             <nav class="flex-1 flex flex-col gap-1 overflow-y-auto mt-4 px-2">
                 <a href="{{ route('accounting.dashboard') }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.dashboard') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
-                    <i class="w-4 h-4 {{ request()->routeIs('accounting.dashboard') ? 'text-white' : '' }}" data-lucide="layout-dashboard"></i>
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-black transition-all {{ request()->routeIs('accounting.dashboard') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
+                    <i class="w-4 h-4 {{ request()->routeIs('accounting.dashboard') ? 'text-white' : '' }}"
+                        data-lucide="layout-dashboard"></i>
                     <span class="sidebar-label transition-all duration-300 uppercase italic">Tableau de bord</span>
                 </a>
 
-                <div class="sidebar-label text-[10px] uppercase font-black text-text-secondary mt-6 px-3 mb-2 tracking-widest hidden md:block opacity-60">
+                <div
+                    class="sidebar-label text-[13px] uppercase font-black text-text-secondary mt-6 px-3 mb-2 tracking-widest hidden md:block opacity-60">
                     PRODUITS & SERVICES</div>
 
                 <a href="{{ route('accounting.journal.index') }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.journal.index') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
-                    <i class="w-4 h-4 {{ request()->routeIs('accounting.journal.index') ? 'text-white' : '' }}" data-lucide="book"></i>
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-black transition-all {{ request()->routeIs('accounting.journal.index') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
+                    <i class="w-4 h-4 {{ request()->routeIs('accounting.journal.index') ? 'text-white' : '' }}"
+                        data-lucide="book"></i>
                     <span class="sidebar-label transition-all duration-300 uppercase italic">Journal</span>
                 </a>
                 <a href="{{ route('accounting.journal.create') }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.journal.create') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
-                    <i class="w-4 h-4 {{ request()->routeIs('accounting.journal.create') ? 'text-white' : '' }}" data-lucide="plus-circle"></i>
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-black transition-all {{ request()->routeIs('accounting.journal.create') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
+                    <i class="w-4 h-4 {{ request()->routeIs('accounting.journal.create') ? 'text-white' : '' }}"
+                        data-lucide="plus-circle"></i>
                     <span class="sidebar-label transition-all duration-300 uppercase italic">Saisie active</span>
                 </a>
-                
-                <div class="sidebar-label text-[10px] uppercase font-black text-text-secondary mt-6 px-3 mb-2 tracking-widest hidden md:block opacity-60">
+
+                <div
+                    class="sidebar-label text-[13px] uppercase font-black text-text-secondary mt-6 px-3 mb-2 tracking-widest hidden md:block opacity-60">
                     PILOTAGE</div>
 
                 <a href="{{ route('accounting.ledger') }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.ledger') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
-                    <i class="w-4 h-4 {{ request()->routeIs('accounting.ledger') ? 'text-white' : '' }}" data-lucide="list-checks"></i>
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-black transition-all {{ request()->routeIs('accounting.ledger') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
+                    <i class="w-4 h-4 {{ request()->routeIs('accounting.ledger') ? 'text-white' : '' }}"
+                        data-lucide="list-checks"></i>
                     <span class="sidebar-label transition-all duration-300 uppercase italic">Grand Livre</span>
                 </a>
                 <a href="{{ route('accounting.balance') }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.balance') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
-                    <i class="w-4 h-4 {{ request()->routeIs('accounting.balance') ? 'text-white' : '' }}" data-lucide="layers"></i>
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-black transition-all {{ request()->routeIs('accounting.balance') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
+                    <i class="w-4 h-4 {{ request()->routeIs('accounting.balance') ? 'text-white' : '' }}"
+                        data-lucide="layers"></i>
                     <span class="sidebar-label transition-all duration-300 uppercase italic">Balance</span>
                 </a>
                 <a href="{{ route('accounting.bilan') }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.bilan') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
-                    <i class="w-4 h-4 {{ request()->routeIs('accounting.bilan') ? 'text-white' : '' }}" data-lucide="file-bar-chart"></i>
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-black transition-all {{ request()->routeIs('accounting.bilan') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
+                    <i class="w-4 h-4 {{ request()->routeIs('accounting.bilan') ? 'text-white' : '' }}"
+                        data-lucide="file-bar-chart"></i>
                     <span class="sidebar-label transition-all duration-300 uppercase italic">Bilan</span>
                 </a>
                 <a href="{{ route('accounting.resultat') }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.resultat') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
-                    <i class="w-4 h-4 {{ request()->routeIs('accounting.resultat') ? 'text-white' : '' }}" data-lucide="trending-up"></i>
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-black transition-all {{ request()->routeIs('accounting.resultat') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
+                    <i class="w-4 h-4 {{ request()->routeIs('accounting.resultat') ? 'text-white' : '' }}"
+                        data-lucide="trending-up"></i>
                     <span class="sidebar-label transition-all duration-300 uppercase italic">Résultat</span>
                 </a>
                 <a href="{{ route('accounting.archive.index') }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.archive.index') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
-                    <i class="w-4 h-4 {{ request()->routeIs('accounting.archive.*') ? 'text-white' : '' }}" data-lucide="archive"></i>
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-black transition-all {{ request()->routeIs('accounting.archive.index') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
+                    <i class="w-4 h-4 {{ request()->routeIs('accounting.archive.*') ? 'text-white' : '' }}"
+                        data-lucide="archive"></i>
                     <span class="sidebar-label transition-all duration-300 uppercase italic">Archives</span>
                 </a>
-                
-                <div class="sidebar-label text-[11px] uppercase font-bold text-slate-500 mt-6 px-3 mb-2 tracking-widest hidden md:block opacity-80">
+
+                <div
+                    class="sidebar-label text-[13px] uppercase font-bold text-slate-500 mt-6 px-3 mb-2 tracking-widest hidden md:block opacity-80">
                     PARAMÈTRES</div>
 
                 <a href="{{ route('accounting.account.index') }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.account.*') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
-                    <i class="w-4 h-4 {{ request()->routeIs('accounting.account.*') ? 'text-white' : '' }}" data-lucide="package"></i>
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-black transition-all {{ request()->routeIs('accounting.account.*') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
+                    <i class="w-4 h-4 {{ request()->routeIs('accounting.account.*') ? 'text-white' : '' }}"
+                        data-lucide="package"></i>
                     <span class="sidebar-label transition-all duration-300 uppercase italic">Plan Comptable</span>
                 </a>
-                
-                <div class="sidebar-label text-[10px] uppercase font-black text-text-secondary mt-6 px-3 mb-2 tracking-widest hidden md:block opacity-60">
+
+                <div
+                    class="sidebar-label text-[13px] uppercase font-black text-text-secondary mt-6 px-3 mb-2 tracking-widest hidden md:block opacity-60">
                     SUPPORT</div>
                 <a href="{{ route('accounting.help') }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.help') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
-                    <i class="w-4 h-4 {{ request()->routeIs('accounting.help') ? 'text-white' : '' }}" data-lucide="help-circle"></i>
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-black transition-all {{ request()->routeIs('accounting.help') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
+                    <i class="w-4 h-4 {{ request()->routeIs('accounting.help') ? 'text-white' : '' }}"
+                        data-lucide="help-circle"></i>
                     <span class="sidebar-label transition-all duration-300 uppercase italic">Guide & Aide</span>
                 </a>
             </nav>
 
             <div class="mt-auto pt-4 border-t border-border no-print">
-                <div id="system-date-container" class="px-4 py-3 text-xs flex items-center gap-4 sidebar-label no-print border-t border-border mt-4">
+                <div id="system-date-container"
+                    class="px-4 py-3 text-xs flex items-center gap-4 sidebar-label no-print border-t border-border mt-4">
                     <i data-lucide="clock" class="w-4 h-4 text-text-secondary"></i>
-                    <div id="system-datetime-display" class="text-text-main font-black transition-all duration-300 whitespace-nowrap italic uppercase tracking-wider">
+                    <div id="system-datetime-display"
+                        class="text-text-main font-black transition-all duration-300 whitespace-nowrap italic uppercase tracking-wider">
                         --/--/---- --:--:--
                     </div>
                 </div>
-                
+
                 <form action="{{ route('logout') }}" method="POST" id="logout-form" class="hidden">
                     @csrf
                 </form>
@@ -572,7 +590,7 @@
                         text: 'Voulez-vous vraiment vous déconnecter ?',
                         icon: 'question',
                         showCancelButton: true,
-                        confirmButtonColor: '#2563eb',
+                        confirmButtonColor: '#005b82',
                         cancelButtonColor: '#64748b',
                         confirmButtonText: 'OUI, ME DÉCONNECTER',
                         cancelButtonText: 'ANNULER',
@@ -595,7 +613,8 @@
         <!-- Main Content Wrapper -->
         <div class="flex-1 flex flex-col h-full overflow-hidden">
             <!-- Main Header (Mobile Only) -->
-            <header class="flex h-16 items-center justify-between border-b border-border bg-card-bg px-6 md:px-10 sticky top-0 z-[1998] md:hidden">
+            <header
+                class="flex h-16 items-center justify-between border-b border-border bg-card-bg px-6 md:px-10 sticky top-0 z-[1998] md:hidden">
                 <button id="open-mobile-sidebar"
                     class="p-2 bg-white dark:bg-white/5 rounded-lg border border-border dark:border-white/10 z-10">
                     <i data-lucide="menu" class="w-5 h-5 dark:text-slate-300"></i>
@@ -627,17 +646,19 @@
                     <div
                         class="mb-6 p-5 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-700 flex flex-col gap-4 animate-fade-up">
                         <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 bg-rose-500 text-white flex items-center justify-center rounded-lg shadow-lg">
+                            <div
+                                class="w-8 h-8 bg-rose-500 text-white flex items-center justify-center rounded-lg shadow-lg">
                                 <i data-lucide="x-circle" class="w-5 h-5"></i>
                             </div>
-                            <span class="font-black uppercase text-xs tracking-widest flex-1">{{ session('error') ?? "Des erreurs ont été détectées :" }}</span>
+                            <span
+                                class="font-black uppercase text-xs tracking-widest flex-1">{{ session('error') ?? 'Des erreurs ont été détectées :' }}</span>
                             <button onclick="this.parentElement.parentElement.remove()"
                                 class="p-2 hover:bg-rose-500/10 rounded-xl transition-all">
                                 <i data-lucide="x" class="w-4 h-4"></i>
                             </button>
                         </div>
                         <ul class="list-disc list-inside text-[11px] font-bold space-y-1.5 ml-11">
-                            @foreach(session('error_list') as $error)
+                            @foreach (session('error_list') as $error)
                                 <li class="opacity-90 italic">{{ $error }}</li>
                             @endforeach
                         </ul>
@@ -648,7 +669,8 @@
                     <div
                         class="mb-6 p-5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-700 flex flex-col gap-4 animate-fade-up">
                         <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 bg-amber-500 text-white flex items-center justify-center rounded-lg shadow-lg">
+                            <div
+                                class="w-8 h-8 bg-amber-500 text-white flex items-center justify-center rounded-lg shadow-lg">
                                 <i data-lucide="alert-triangle" class="w-5 h-5"></i>
                             </div>
                             <span class="font-black uppercase text-xs tracking-widest flex-1">Attention :</span>
@@ -658,7 +680,7 @@
                             </button>
                         </div>
                         <ul class="list-disc list-inside text-[11px] font-bold space-y-1.5 ml-11">
-                            @foreach(session('warnings') as $warning)
+                            @foreach (session('warnings') as $warning)
                                 <li class="opacity-90 italic">{{ $warning }}</li>
                             @endforeach
                         </ul>
@@ -695,18 +717,18 @@
 
         // High Precision Real-time Clock (DB Synced)
         let serverTimeOffset = 0;
-        
+
         const fetchSystemDate = async () => {
             try {
                 const startTime = Date.now();
-                const response = await fetch('{{ route("accounting.system-date") }}');
+                const response = await fetch('{{ route('accounting.system-date') }}');
                 const data = await response.json();
-                
+
                 // Calculer le décalage entre le client et le serveur
                 const serverTime = new Date(data.datetime).getTime();
                 const clientTime = Date.now();
                 serverTimeOffset = serverTime - clientTime;
-                
+
                 updateClockDisplay();
             } catch (error) {
                 console.error('Erreur synchronisation horloge:', error);
@@ -716,16 +738,16 @@
         const updateClockDisplay = () => {
             const display = document.getElementById('system-datetime-display');
             if (!display) return;
-            
+
             const now = new Date(Date.now() + serverTimeOffset);
-            
+
             const day = String(now.getDate()).padStart(2, '0');
             const month = String(now.getMonth() + 1).padStart(2, '0');
             const year = now.getFullYear();
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const seconds = String(now.getSeconds()).padStart(2, '0');
-            
+
             display.innerText = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
         };
 

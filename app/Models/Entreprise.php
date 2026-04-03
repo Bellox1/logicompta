@@ -26,6 +26,18 @@ class Entreprise extends Model
      */
     public function users()
     {
-        return $this->hasMany(User::class);
+        return $this->belongsToMany(User::class, 'entreprise_users')
+                    ->withPivot('role')
+                    ->withTimestamps();
+    }
+
+    public function journals()
+    {
+        return $this->hasMany(\App\Models\GeneralAccounting\Journal::class);
+    }
+
+    public function journalEntries()
+    {
+        return $this->hasMany(\App\Models\GeneralAccounting\JournalEntry::class);
     }
 }

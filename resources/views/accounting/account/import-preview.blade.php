@@ -97,7 +97,7 @@
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">À mettre à jour</span>
-                        <span class="text-primary bg-blue-50 px-3 py-1 rounded-lg font-bold text-xs">{{ $updateCount }}</span>
+                        <span class="text-primary bg-primary/5 px-3 py-1 rounded-lg font-bold text-xs">{{ $updateCount }}</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Invalides</span>

@@ -68,6 +68,7 @@ Route::prefix('accounting')->name('accounting.')->middleware(['web', 'auth'])->g
 
     Route::post('/entreprise/join', [EntrepriseController::class, 'webJoin'])->name('entreprise.join');
     Route::post('/entreprise/create', [EntrepriseController::class, 'webCreate'])->name('entreprise.create');
+    Route::post('/entreprise/switch', [EntrepriseController::class, 'switch'])->name('entreprise.switch');
 
     Route::get('/journal', [JournalController::class, 'index'])->name('journal.index');
     Route::get('/journal/export-pdf', [JournalDataController::class, 'exportPdf'])->name('journal.export.pdf');

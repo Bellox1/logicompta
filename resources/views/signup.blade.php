@@ -213,7 +213,7 @@
                     </p>
 
                     <button type="submit"
-                        class="w-full py-4 bg-primary text-white font-black rounded-2xl hover:bg-primary-light transition-all shadow-lg shadow-primary/40 text-sm uppercase tracking-widest active:scale-[0.98]">
+                        class="w-full py-4 bg-primary text-white font-black rounded-2xl hover:bg-primary-light transition-all shadow-lg shadow-primary/20 text-sm uppercase tracking-widest active:scale-[0.98]">
                         S'inscrire
                     </button>
                 </form>

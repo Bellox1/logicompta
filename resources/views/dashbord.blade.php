@@ -19,28 +19,50 @@
                 </p>
             </div>
             @if($user->entreprise)
-            <div class="px-2 py-1 text-center min-w-[180px]">
-                <p class="text-[10px] uppercase font-bold tracking-widest text-slate-300 mb-0.5">Entreprise</p>
-                <p class="font-bold text-white">{{ $user->entreprise->name }}</p>
-                <p class="text-[10px] text-blue-300 mt-0.5 font-mono">ID: {{ $user->entreprise->code }}</p>
+            <div onclick="showEnterpriseModal()" class="flex items-center gap-6 bg-white/10 backdrop-blur-md px-6 py-4 rounded-3xl border border-white/20 shadow-2xl cursor-pointer hover:bg-white/20 transition-all group">
+                <div class="hidden sm:flex w-12 h-12 bg-white/20 rounded-2xl items-center justify-center text-white shrink-0 group-hover:scale-110 transition-transform">
+                    <i data-lucide="building-2" class="w-6 h-6"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-300 opacity-80">Structure active (cliquez pour changer)</span>
+                    <h2 class="text-lg font-black tracking-tight leading-tight">{{ $user->entreprise->name }}</h2>
+                    <div class="flex items-center gap-3 mt-1">
+                        <code id="company-code" 
+                              onclick="event.stopPropagation(); copyToClipboard('{{ $user->entreprise->code }}', 'copy-btn-{{ $user->entreprise->id }}')"
+                              class="text-[11px] font-mono bg-black/20 px-2 py-0.5 rounded border border-white/10 text-white leading-none cursor-pointer hover:bg-black/40 transition-colors">
+                            Code/ID: {{ $user->entreprise->code }}
+                        </code>
+                        <button id="copy-btn-{{ $user->entreprise->id }}"
+                                onclick="event.stopPropagation(); copyToClipboard('{{ $user->entreprise->code }}', this)" 
+                                class="p-1 hover:bg-white/20 rounded transition-all text-slate-300 hover:text-white" 
+                                title="Copier le code">
+                            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
             @endif
         </div>
     </div>
 
     {{-- Bandeau Alerte : pas d'entreprise --}}
-    @if(!$user->entreprise)
     <div class="animate-fade-up">
-        <div class="bg-primary/5 dark:bg-primary/10 border border-slate-300 dark:border-blue-900/50 rounded-[2.5rem] p-8">
+        <div class="bg-primary/5 dark:bg-primary/10 border border-slate-300 dark:border-primary/50 rounded-[2.5rem] p-8">
             <div class="flex flex-col lg:flex-row lg:items-center gap-8">
                 <div class="flex items-start gap-6 flex-1">
-                    <div class="w-16 h-16 bg-primary/10 text-primary dark:text-primary rounded-2xl flex items-center justify-center flex-shrink-0 animate-float">
+                    <div class="w-16 h-16 bg-primary/10 text-primary dark:text-primary rounded-2xl flex items-center justify-center flex-shrink-0">
                         <i data-lucide="building-2" class="w-8 h-8"></i>
                     </div>
                     <div>
-                        <h3 class="text-xl font-black text-text-main">Aucune entreprise associée</h3>
+                        <h3 class="text-xl font-black text-text-main">
+                            @if(!$user->entreprise) 
+                                Aucune entreprise associée 
+                            @else 
+                                Gérer vos structures 
+                            @endif
+                        </h3>
                         <p class="text-text-secondary text-sm mt-1 leading-relaxed max-w-xl">
-                            Démarez votre expérience complète en associant votre compte à une structure existante ou en créant la vôtre dès maintenant.
+                            Démarez votre expérience complète en associant votre compte à une structure existante ou en créant la vôtre.
                         </p>
                     </div>
                 </div>
@@ -53,7 +75,7 @@
                                 <i data-lucide="hash" class="w-4 h-4"></i>
                             </span>
                             <input type="text" name="code" placeholder="CODE..." required
-                                   class="pl-10 pr-4 py-3 border border-slate-200 dark:border-blue-900/50 rounded-2xl bg-white dark:bg-[#0a0f1e] text-slate-800 dark:text-white font-mono text-sm uppercase focus:outline-none focus:border-primary transition-all w-48"
+                                   class="pl-10 pr-4 py-3 border border-slate-200 dark:border-primary/50 rounded-2xl bg-white dark:bg-[#0a0f1e] text-slate-800 dark:text-white font-mono text-sm uppercase focus:outline-none focus:border-primary transition-all w-48"
                                    oninput="this.value=this.value.toUpperCase()">
                         </div>
                         <button type="submit"
@@ -67,6 +89,67 @@
                     </a>
                 </div>
             </div>
+        </div>
+    </div>
+
+    {{-- Modal Sélection Entreprise --}}
+    @if($user->entreprises->count() > 0)
+    <div id="enterprise-selection-modal" class="{{ session()->has('active_entreprise_id') ? 'hidden' : '' }} fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade">
+        <div class="bg-card-bg border border-border rounded-[2.5rem] w-full max-w-2xl overflow-hidden shadow-2xl animate-scale-up">
+            <div class="p-8 border-b border-border bg-slate-50 dark:bg-white/5">
+                <h2 class="text-2xl font-black text-text-main">Sélectionnez votre espace de travail</h2>
+                <p class="text-text-secondary text-sm mt-2">Choisissez l'entreprise sur laquelle vous souhaitez travailler aujourd'hui.</p>
+            </div>
+            
+            <div class="p-8 max-h-[60vh] overflow-y-auto">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    @foreach($user->entreprises as $entreprise)
+                    <form action="{{ route('accounting.entreprise.switch') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="entreprise_id" value="{{ $entreprise->id }}">
+                        <button type="submit" class="w-full group text-left p-6 rounded-3xl border {{ ($user->entreprise && $user->entreprise->id == $entreprise->id) ? 'border-primary bg-primary/5' : 'border-border' }} hover:border-primary hover:bg-primary/5 transition-all duration-300 flex items-start gap-4">
+                            <div class="w-12 h-12 {{ ($user->entreprise && $user->entreprise->id == $entreprise->id) ? 'bg-primary text-white' : 'bg-primary/10 text-primary' }} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i data-lucide="building-2" class="w-6 h-6"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-black text-text-main group-hover:text-primary transition-colors">{{ $entreprise->name }}</h4>
+                                <p class="text-xs text-text-secondary mt-1 uppercase font-mono tracking-tighter opacity-70">Code: {{ $entreprise->code }}</p>
+                                <span class="inline-block mt-2 px-2 py-1 bg-slate-100 dark:bg-white/10 rounded text-[10px] font-bold uppercase text-slate-500">
+                                    {{ $entreprise->pivot->role }}
+                                </span>
+                            </div>
+                        </button>
+                    </form>
+                    @endforeach
+                </div>
+            </div>
+
+            <div class="p-8 bg-slate-50 dark:bg-white/5 border-t border-border flex justify-end">
+                <button onclick="document.getElementById('enterprise-selection-modal').classList.add('hidden')" class="text-text-secondary text-xs uppercase font-black hover:text-text-main transition-colors">
+                    Fermer
+                </button>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    {{-- Liste des entreprises de l'utilisateur (pour switcher rapidement) --}}
+    @if($user->entreprises->count() > 1)
+    <div>
+        <p class="text-xs uppercase font-bold tracking-widest text-text-secondary mb-4">Vos autres structures</p>
+        <div class="flex flex-wrap gap-4">
+            @foreach($user->entreprises as $entreprise)
+                @if($entreprise->id != ($user->entreprise->id ?? 0))
+                <form action="{{ route('accounting.entreprise.switch') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="entreprise_id" value="{{ $entreprise->id }}">
+                    <button type="submit" class="flex items-center gap-3 px-5 py-3 bg-card-bg border border-border rounded-2xl hover:border-primary hover:text-primary transition-all shadow-sm">
+                        <i data-lucide="building-2" class="w-4 h-4"></i>
+                        <span class="text-sm font-bold">{{ $entreprise->name }}</span>
+                    </button>
+                </form>
+                @endif
+            @endforeach
         </div>
     </div>
     @endif
@@ -182,7 +265,83 @@
 @endsection
 
 @section('scripts')
+<style>
+@keyframes fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+@keyframes scale-up {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+.animate-fade {
+    animation: fade 0.3s ease-out forwards;
+}
+.animate-scale-up {
+    animation: scale-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+</style>
 <script>
 lucide.createIcons();
+
+function showEnterpriseModal() {
+    const modal = document.getElementById('enterprise-selection-modal');
+    if (modal) {
+        modal.classList.remove('hidden');
+    } else {
+        // Si le modal n'est pas dans le DOM (pas généré car active_id présent), 
+        // on pourrait le charger ou juste utiliser la liste "vos autres structures"
+    }
+}
+
+function copyToClipboard(text, btnOrId) {
+    let btn = (typeof btnOrId === 'string') ? document.getElementById(btnOrId) : btnOrId;
+    if (!btn || btn.classList.contains('copying')) return;
+
+    const icon = btn.querySelector('i');
+    if (icon && !icon.hasAttribute('data-original')) {
+        icon.setAttribute('data-original', icon.getAttribute('data-lucide') || 'copy');
+    }
+
+    const showSuccess = () => {
+        btn.classList.add('copying', 'scale-110');
+        if (icon) {
+            icon.setAttribute('data-lucide', 'check');
+            if(typeof lucide !== 'undefined') lucide.createIcons();
+        }
+        
+        setTimeout(() => {
+            if (icon) {
+                icon.setAttribute('data-lucide', icon.getAttribute('data-original'));
+                if(typeof lucide !== 'undefined') lucide.createIcons();
+            }
+            btn.classList.remove('copying', 'scale-110');
+        }, 1500);
+    };
+
+    const fallbackCopy = (t) => {
+        const textArea = document.createElement("textarea");
+        textArea.value = t;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-9999px";
+        textArea.style.top = "0";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+            const successful = document.execCommand('copy');
+            if (successful) showSuccess();
+        } catch (err) {
+            console.error('Fallback copy fail', err);
+        }
+        document.body.removeChild(textArea);
+    };
+
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(showSuccess, () => fallbackCopy(text));
+    } else {
+        fallbackCopy(text);
+    }
+}
 </script>
 @endsection

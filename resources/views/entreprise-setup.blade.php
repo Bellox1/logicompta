@@ -21,8 +21,8 @@
                         sans: ['Inter', 'sans-serif']
                     },
                     colors: {
-                        primary: '#2563eb',
-                        'primary-light': '#3b82f6',
+                        primary: '#005b82',
+                        'primary-light': '#004d99',
                     }
                 }
             }
@@ -84,7 +84,7 @@
     {{-- Background Decoration --}}
     <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
         <div class="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] rounded-full bg-primary/10 blur-[120px]"></div>
-        <div class="absolute -bottom-[20%] -right-[10%] w-[50%] h-[50%] rounded-full bg-indigo-600/10 blur-[100px]"></div>
+        <div class="absolute -bottom-[20%] -right-[10%] w-[50%] h-[50%] rounded-full bg-primary/10 blur-[100px]"></div>
     </div>
 
     {{-- Top Section: Logo & Welcome --}}
@@ -98,7 +98,7 @@
         </p>
 
         @if (session('pending_user'))
-            <div class="inline-flex items-center gap-2 px-4 py-2 mt-8 rounded-full bg-white/5 border border-white/10 text-blue-300 text-xs font-bold uppercase tracking-widest animate-fade-up delay-1">
+            <div class="inline-flex items-center gap-2 px-4 py-2 mt-8 rounded-full bg-white/5 border border-white/10 text-slate-300 text-xs font-bold uppercase tracking-widest animate-fade-up delay-1">
                 <i data-lucide="user" class="w-4 h-4"></i>
                 Session active : <span class="lowercase tracking-normal font-normal opacity-80 ml-1">{{ strtolower(session('pending_user')['email']) }}</span>
             </div>
@@ -179,7 +179,7 @@
                         text: 'Vous ne pourrez pas accéder aux fonctionnalités comptables tant que vous n\'avez pas configuré votre entreprise.',
                         icon: 'info',
                         showCancelButton: true,
-                        confirmButtonColor: '#2563eb',
+                        confirmButtonColor: '#005b82',
                         cancelButtonColor: '#1e293b',
                         confirmButtonText: 'Passer pour le moment',
                         cancelButtonText: 'Rester ici',
@@ -213,7 +213,7 @@
                     showCancelButton: true,
                     confirmButtonText: 'Rejoindre',
                     cancelButtonText: 'Annuler',
-                    confirmButtonColor: '#2563eb',
+                    confirmButtonColor: '#005b82',
                     cancelButtonColor: '#1e293b',
                     didOpen: () => {
                         lucide.createIcons();

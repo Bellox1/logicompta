@@ -105,8 +105,8 @@ class OcrController extends Controller
         try {
             $ocr = new TesseractOCR($imagePath);
             $ocr->lang('fra', 'eng'); // Français + Anglais
-            $ocr->psm(6);             // PSM 6 : bloc de texte uniforme
-            $ocr->oem(1);             // OEM 1 : LSTM seulement (plus rapide)
+            $ocr->psm(3);             // PSM 3 : Entièrement automatique (mieux pour les colonnes/tableaux)
+            $ocr->oem(1);             // OEM 1 : LSTM seulement (plus rapide/moderne)
 
             $fullText = $ocr->run();
 
@@ -249,75 +249,189 @@ class OcrController extends Controller
      * ========================================================================= */
 
     /**
-     * Analyse le texte brut pour en extraire une date et un montant.
-     * Utilisé uniquement pour le service Tesseract (Mindee renvoie du structuré).
+     * Analyse le texte brut et extrait un maximum de champs de la facture.
+     * Utilisé uniquement pour Tesseract (Mindee renvoie du structuré).
+     *
+     * Champs tentés :
+     *  - date, date_echeance
+     *  - montant_ht, tva_taux, tva_montant, montant_ttc (= amount)
+     *  - numero_facture, numero_avoir
+     *  - fournisseur (premier nom détecté)
+     *  - siret, numero_tva
+     *  - telephone, email
+     *  - mode_paiement
+     *  - lignes (tableau des lignes article détectées)
      */
     private function parseText(string $fullText): array
     {
         $data = [
-            'raw_text' => $fullText,
-            'date'     => null,
-            'amount'   => null,
-            'libelle'  => 'Achat selon facture',
-            'supplier' => null,
+            'raw_text'        => $fullText,
+            // --- Montants ---
+            'amount'          => null,   // Montant TTC (principal, utilisé par le formulaire)
+            'montant_ttc'     => null,
+            'montant_ht'      => null,
+            'tva_taux'        => null,
+            'tva_montant'     => null,
+            // --- Dates ---
+            'date'            => null,
+            'date_echeance'   => null,
+            // --- Identification ---
+            'libelle'         => 'Achat selon facture',
+            'fournisseur'     => null,
+            'numero_facture'  => null,
+            'numero_avoir'    => null,
+            'siret'           => null,
+            'numero_tva'      => null,
+            // --- Coordonnées ---
+            'telephone'       => null,
+            'email'           => null,
+            'mode_paiement'   => null,
+            // --- Lignes détail ---
+            'lignes'          => [],
+            // --- Méta ---
+            'service'         => 'tesseract',
         ];
 
-        // --- Détection de la date ---
-        // Formats supportés : JJ/MM/AAAA  JJ-MM-AAAA  JJ.MM.AAAA  AAAA-MM-JJ
-        $datePatterns = [
-            '/\b(\d{1,2})[\/\.\-](\d{1,2})[\/\.\-](\d{2,4})\b/', // JJ/MM/AAAA
-            '/\b(\d{4})[\/\.\-](\d{1,2})[\/\.\-](\d{1,2})\b/',   // AAAA-MM-JJ
+        // ================================================================
+        // 1. MONTANT TTC (priorité 1 : libellé explicite)
+        // ================================================================
+        $ttcPatterns = [
+            '/(?:TOTAL\s*TTC|MONTANT\s*TTC|NET\s*[AÀ]\s*PAYER|TTC)[^\d]{0,15}([\d\s,.]+)/i',
+            '/(?:TOTAL\s*GÉNÉRAL|TOTAL\s*FACTURE|TOTAL)[^\d]{0,10}([\d\s,.]+)/i',
         ];
-        foreach ($datePatterns as $pattern) {
-            if (preg_match($pattern, $fullText, $matches)) {
-                if (strlen($matches[3] ?? '') == 2) {
-                    $matches[3] = '20' . $matches[3];
-                }
-                $year  = $matches[3] ?? date('Y');
-                $month = str_pad($matches[2] ?? date('m'), 2, '0', STR_PAD_LEFT);
-                $day   = str_pad($matches[1] ?? date('d'), 2, '0', STR_PAD_LEFT);
-                $data['date'] = "$year-$month-$day";
+        foreach ($ttcPatterns as $p) {
+            if (preg_match($p, $fullText, $m)) {
+                $clean = (float) preg_replace('/[^0-9.]/', '', str_replace(',', '.', $m[1]));
+                if ($clean > 0) { $data['montant_ttc'] = $clean; $data['amount'] = $clean; break; }
+            }
+        }
+
+        // ================================================================
+        // 2. MONTANT HT
+        // ================================================================
+        if (preg_match('/(?:TOTAL\s*HT|MONTANT\s*HT|HT)[^\d]{0,15}([\d\s,.]+)/i', $fullText, $m)) {
+            $clean = (float) preg_replace('/[^0-9.]/', '', str_replace(',', '.', $m[1]));
+            if ($clean > 0) $data['montant_ht'] = $clean;
+        }
+
+        // ================================================================
+        // 3. TVA taux et montant
+        // ================================================================
+        if (preg_match('/TVA\s*[:\-]?\s*([\d,\.]+)\s*%/i', $fullText, $m)) {
+            $data['tva_taux'] = (float) str_replace(',', '.', $m[1]);
+        }
+        if (preg_match('/(?:MONTANT\s*TVA|TVA)[^\d]{0,15}([\d\s,.]+)/i', $fullText, $m)) {
+            $clean = (float) preg_replace('/[^0-9.]/', '', str_replace(',', '.', $m[1]));
+            if ($clean > 0 && $clean < 1000000) $data['tva_montant'] = $clean;
+        }
+
+        // Fallback montant : plus grand nombre du texte
+        if (!$data['amount']) {
+            preg_match_all('/\b\d+[,.]?\d{2}\b/', $fullText, $amounts);
+            $nums = array_filter(array_map(fn($a) => (float) str_replace(',', '.', $a), $amounts[0]), fn($n) => $n > 10);
+            if (!empty($nums)) { $data['amount'] = max($nums); $data['montant_ttc'] = max($nums); }
+        }
+
+        // ================================================================
+        // 4. DATE DE FACTURE
+        // ================================================================
+        $datePatterns = [
+            '/(?:date|le|émis|du)[^\d]{0,10}(\d{1,2})[\/\.\-](\d{1,2})[\/\.\-](\d{2,4})/i',
+            '/\b(\d{1,2})[\/\.\-](\d{1,2})[\/\.\-](\d{2,4})\b/',
+            '/\b(\d{4})[\/\.\-](\d{1,2})[\/\.\-](\d{1,2})\b/',
+        ];
+        foreach ($datePatterns as $p) {
+            if (preg_match($p, $fullText, $m) && count($m) >= 4) {
+                $y = strlen($m[3]) == 2 ? '20'.$m[3] : $m[3];
+                $data['date'] = $y.'-'.str_pad($m[2],2,'0',STR_PAD_LEFT).'-'.str_pad($m[1],2,'0',STR_PAD_LEFT);
                 break;
             }
         }
 
-        // --- Détection du montant ---
-        // Priorité 1 : ligne TOTAL TTC / NET À PAYER / MONTANT TTC
-        if (preg_match(
-            '/(?:TOTAL\s*TTC|MONTANT\s*TTC|NET\s*[AÀ]\s*PAYER|TOTAL\s*GÉNÉRAL|PAYER)[^\d]{0,10}([\d\s,.]+)/i',
-            $fullText, $m
-        )) {
-            $clean = preg_replace('/[^0-9.]/', '', str_replace(',', '.', $m[1]));
-            if (is_numeric($clean) && (float)$clean > 0) {
-                $data['amount'] = (float)$clean;
-            }
+        // ================================================================
+        // 5. DATE D'ÉCHÉANCE
+        // ================================================================
+        if (preg_match('/(?:échéan|due date|payer avant|régler avant)[^\d]{0,15}(\d{1,2})[\/\.\-](\d{1,2})[\/\.\-](\d{2,4})/i', $fullText, $m)) {
+            $y = strlen($m[3]) == 2 ? '20'.$m[3] : $m[3];
+            $data['date_echeance'] = $y.'-'.str_pad($m[2],2,'0',STR_PAD_LEFT).'-'.str_pad($m[1],2,'0',STR_PAD_LEFT);
         }
 
-        // Priorité 2 : ligne TOTAL / TTC seul
-        if (!$data['amount'] && preg_match(
-            '/(?:TOTAL|TTC)[^\d]{0,10}([\d\s,.]+)/i',
-            $fullText, $m
-        )) {
-            $clean = preg_replace('/[^0-9.]/', '', str_replace(',', '.', $m[1]));
-            if (is_numeric($clean) && (float)$clean > 0) {
-                $data['amount'] = (float)$clean;
-            }
+        // ================================================================
+        // 6. NUMÉRO DE FACTURE
+        // ================================================================
+        if (preg_match('/(?:facture\s*n[°o]?|invoice\s*n[°o]?|n[°o]\s*facture|réf[.\s:]*)\s*[:\-]?\s*([A-Z0-9\-\/]+)/i', $fullText, $m)) {
+            $data['numero_facture'] = trim($m[1]);
         }
 
-        // Priorité 3 : plus grand nombre numérique du document
-        if (!$data['amount']) {
-            preg_match_all('/\b\d+[,.]?\d{2}\b/', $fullText, $amounts);
-            $nums = [];
-            foreach ($amounts[0] as $amt) {
-                $clean = (float) str_replace(',', '.', $amt);
-                if ($clean > 10) { // Ignorer quantités / numéros de pièce
-                    $nums[] = $clean;
+        // ================================================================
+        // 7. NUMÉRO D'AVOIR
+        // ================================================================
+        if (preg_match('/(?:avoir\s*n[°o]?|note\s*de\s*crédit)\s*[:\-]?\s*([A-Z0-9\-\/]+)/i', $fullText, $m)) {
+            $data['numero_avoir'] = trim($m[1]);
+        }
+
+        // ================================================================
+        // 8. FOURNISSEUR (première ligne non vide du document)
+        // ================================================================
+        $lines = array_filter(array_map('trim', explode("\n", $fullText)));
+        $firstLine = reset($lines);
+        if ($firstLine && strlen($firstLine) > 2 && strlen($firstLine) < 80) {
+            $data['fournisseur'] = $firstLine;
+            $data['libelle'] = "Achat — $firstLine";
+        }
+
+        // ================================================================
+        // 9. SIRET / SIREN
+        // ================================================================
+        if (preg_match('/(?:SIRET|SIREN)\s*[:\-]?\s*(\d[\d\s]{12,17})/i', $fullText, $m)) {
+            $data['siret'] = preg_replace('/\s/', '', $m[1]);
+        }
+
+        // ================================================================
+        // 10. NUMÉRO DE TVA INTRACOMMUNAUTAIRE
+        // ================================================================
+        if (preg_match('/(?:N[°o]?\s*TVA|TVA\s*intra)[^\w]{0,5}([A-Z]{2}[\d]{9,12})/i', $fullText, $m)) {
+            $data['numero_tva'] = trim($m[1]);
+        }
+
+        // ================================================================
+        // 11. TÉLÉPHONE
+        // ================================================================
+        if (preg_match('/(?:tel[.\s:]*|tél[.\s:]*|phone[.\s:]*|contact[.\s:]*)?(\+?[\d\s\.\-]{10,17})(?:\s|$)/i', $fullText, $m)) {
+            $candidate = preg_replace('/\s/', '', $m[1]);
+            if (strlen($candidate) >= 10) $data['telephone'] = $candidate;
+        }
+
+        // ================================================================
+        // 12. EMAIL
+        // ================================================================
+        if (preg_match('/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/', $fullText, $m)) {
+            $data['email'] = $m[0];
+        }
+
+        // ================================================================
+        // 13. MODE DE PAIEMENT
+        // ================================================================
+        if (preg_match('/(?:mode\s*(?:de\s*)?paiement|règlement|payment)[^\n]{0,5}([^\n]+)/i', $fullText, $m)) {
+            $data['mode_paiement'] = trim($m[1]);
+        } elseif (preg_match('/\b(virement|chèque|espèces|carte|CB|prélèvement|mobile money|wave|orange money|momo)\b/i', $fullText, $m)) {
+            $data['mode_paiement'] = ucfirst(strtolower($m[1]));
+        }
+
+        // ================================================================
+        // 14. LIGNES DE DÉTAIL (description + montant sur la même ligne)
+        // ================================================================
+        $lignes = [];
+        foreach ($lines as $line) {
+            // Ligne avec texte + nombre (potentiellement une ligne d'article)
+            if (preg_match('/^(.{3,40}?)\s+([\d\s,.]+)\s*$/', $line, $m)) {
+                $montant = (float) preg_replace('/[^0-9.]/', '', str_replace(',', '.', $m[2]));
+                if ($montant > 0 && $montant < 10000000) {
+                    $lignes[] = ['description' => trim($m[1]), 'montant' => $montant];
                 }
             }
-            if (!empty($nums)) {
-                $data['amount'] = max($nums);
-            }
         }
+        $data['lignes'] = array_slice($lignes, 0, 15); // Max 15 lignes
 
         return $data;
     }

@@ -23,25 +23,24 @@
     </div>
     
     <!-- Zone Import OCR -->
-    <div class="mb-8 p-6 bg-primary/5 border-2 border-dashed border-primary/30 rounded-3xl group hover:border-primary/60 transition-all relative overflow-hidden" id="ocr-dropzone">
-        <div class="flex items-center gap-6 relative z-10">
-            <div class="w-14 h-14 bg-primary text-white flex items-center justify-center rounded-2xl shadow-lg group-hover:scale-110 transition-transform cursor-pointer" id="ocr-icon-zone">
-                <i data-lucide="scan-text" class="w-7 h-7"></i>
+    <div class="mb-8 p-4 md:p-6 bg-primary/5 border-2 border-dashed border-primary/30 rounded-3xl group hover:border-primary/60 transition-all relative overflow-hidden" id="ocr-dropzone">
+        <div class="flex flex-col md:flex-row items-center gap-4 md:gap-6 relative z-10">
+            <div class="w-12 h-12 md:w-14 md:h-14 bg-primary text-white flex items-center justify-center rounded-2xl shadow-lg group-hover:scale-110 transition-transform cursor-pointer shrink-0" id="ocr-icon-zone">
+                <i data-lucide="scan-text" class="w-6 h-6 md:w-7 md:h-7"></i>
             </div>
-            <div class="flex-1 cursor-pointer" id="ocr-text-zone">
-                <h3 class="text-primary font-black uppercase tracking-tight text-lg">Import Intelligent (OCR)</h3>
-                <p class="text-primary/60 text-sm font-bold italic">Glissez une facture ici ou cliquez pour remplir automatiquement les champs</p>
+            <div class="flex-1 cursor-pointer text-center md:text-left" id="ocr-text-zone">
+                <h3 class="text-primary font-black uppercase tracking-tight text-base md:text-lg">Import Facture</h3>
+                <p class="text-primary/60 text-[11px] md:text-sm font-bold italic">Glissez une facture ou cliquez pour remplir les champs</p>
             </div>
 
-            <!-- Sélecteur de service OCR -->
-            <div class="flex items-center gap-1 bg-white border border-primary/20 rounded-xl p-1 shadow-sm" onclick="event.stopPropagation()">
+            <div class="flex items-center gap-1 bg-white border border-primary/20 rounded-xl p-1 shadow-sm shrink-0" onclick="event.stopPropagation()">
                 <button type="button" id="btn-tesseract"
-                    class="ocr-service-btn px-3 py-1.5 rounded-lg text-xs font-black transition-all bg-primary text-white"
+                    class="ocr-service-btn px-2.5 py-1.5 md:px-3 md:py-1.5 rounded-lg text-[10px] md:text-xs font-black transition-all bg-primary text-white"
                     data-service="tesseract">
                     <i data-lucide="cpu" class="w-3 h-3 inline mr-1"></i> Local
                 </button>
                 <button type="button" id="btn-mindee"
-                    class="ocr-service-btn px-3 py-1.5 rounded-lg text-xs font-black transition-all text-primary/40 hover:text-primary"
+                    class="ocr-service-btn px-2.5 py-1.5 md:px-3 md:py-1.5 rounded-lg text-[10px] md:text-xs font-black transition-all text-primary/40 hover:text-primary"
                     data-service="mindee">
                     <i data-lucide="cloud" class="w-3 h-3 inline mr-1"></i> Mindee
                 </button>
@@ -50,11 +49,66 @@
             <div id="ocr-status" class="hidden">
                  <div class="flex items-center gap-2 text-primary font-bold text-sm animate-pulse">
                     <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>
-                    Analyse en cours...
+                    Analyse...
                  </div>
             </div>
         </div>
         <input type="file" id="ocr-file-input" class="hidden" accept="image/*,application/pdf">
+    </div>
+
+    <!-- Modal Debug OCR -->
+    <div id="ocr-debug-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col overflow-hidden">
+            <!-- Header -->
+            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                        <i data-lucide="bug" class="w-4 h-4 text-white"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-black text-text-main text-sm uppercase tracking-wider">Debug OCR</h4>
+                        <p id="ocr-debug-service" class="text-xs text-text-secondary font-bold italic"></p>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('ocr-debug-modal').classList.add('hidden')" 
+                    class="text-slate-400 hover:text-slate-700 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <!-- Contenu scrollable -->
+            <div class="flex-1 overflow-y-auto p-6 space-y-4">
+                <!-- Tableau des champs parsés -->
+                <div>
+                    <p class="text-[10px] font-black uppercase tracking-widest text-text-secondary mb-2">Données extraites</p>
+                    <table class="w-full text-sm border border-slate-100 rounded-xl overflow-hidden">
+                        <thead class="bg-slate-50">
+                            <tr>
+                                <th class="px-4 py-2 text-left text-[10px] font-black uppercase text-text-secondary tracking-widest">Champ</th>
+                                <th class="px-4 py-2 text-left text-[10px] font-black uppercase text-text-secondary tracking-widest">Valeur</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ocr-debug-table" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+                <!-- Texte brut -->
+                <div>
+                    <p class="text-[10px] font-black uppercase tracking-widest text-text-secondary mb-2">Texte brut extrait</p>
+                    <pre id="ocr-debug-rawtext" class="bg-slate-50 border border-slate-200 rounded-xl p-4 text-xs text-slate-700 whitespace-pre-wrap max-h-48 overflow-y-auto font-mono"></pre>
+                </div>
+                <!-- JSON complet -->
+                <div>
+                    <p class="text-[10px] font-black uppercase tracking-widest text-text-secondary mb-2">Réponse JSON complète</p>
+                    <pre id="ocr-debug-json" class="bg-slate-900 text-green-400 rounded-xl p-4 text-xs overflow-x-auto font-mono max-h-48 overflow-y-auto"></pre>
+                </div>
+            </div>
+            <!-- Footer -->
+            <div class="px-6 py-3 border-t border-slate-100 flex justify-end">
+                <button onclick="document.getElementById('ocr-debug-modal').classList.add('hidden')" 
+                    class="px-5 py-2 bg-primary text-white rounded-xl text-xs font-black hover:opacity-90 transition-all">
+                    Fermer
+                </button>
+            </div>
+        </div>
     </div>
 
     <form action="{{ route('accounting.journal.store') }}" method="POST" id="journalform">
@@ -386,8 +440,8 @@
                 if ((input.classList.contains('debit-input') && diff < 0) ||
                     (input.classList.contains('credit-input') && diff > 0)) {
                     input.value = formatAmount(absDiff);
-                    input.classList.add('bg-blue-50', 'dark:bg-blue-900/10');
-                    setTimeout(() => input.classList.remove('bg-blue-50', 'dark:bg-blue-900/10'), 500);
+                    input.classList.add('bg-primary/5', 'dark:bg-primary/10');
+                    setTimeout(() => input.classList.remove('bg-primary/5', 'dark:bg-primary/10'), 500);
                     calculate();
                 }
             }
@@ -562,29 +616,17 @@
                     if (data.error) {
                          Swal.fire('Erreur OCR', data.error, 'error');
                     } else {
-                        // Remplissage auto
-                        if (data.date) document.querySelector('input[name="date"]').value = data.date;
-                        if (data.libelle) document.querySelector('input[name="libelle"]').value = data.libelle;
-                        
-                        if (data.amount) {
-                            const firstDebit = document.querySelector('.debit-input');
-                            if (firstDebit) {
-                                firstDebit.value = formatAmount(data.amount);
-                                firstDebit.dispatchEvent(new Event('input'));
-                                // Focus sur le compte pour aider l'utilisateur
-                                firstDebit.closest('tr').querySelector('select').focus();
-                            }
-                        }
-                        
-                        Swal.fire({
-                            title: 'Succès !',
-                            text: `Données extraites via ${data.service === 'mindee' ? 'Mindee ☁️' : 'Tesseract 🖥️'}.`,
-                            icon: 'success',
-                            toast: true,
-                            position: 'top-end',
-                            timer: 3000,
-                            showConfirmButton: false
-                        });
+                        // -----------------------------------------------
+                        // PHASE EXPLORATION : formulaire non rempli
+                        // On analyse d'abord les données disponibles
+                        // avant de décider quoi mapper où.
+                        // -----------------------------------------------
+                        // if (data.date)   document.querySelector('input[name="date"]').value = data.date;
+                        // if (data.libelle) document.querySelector('input[name="libelle"]').value = data.libelle;
+                        // if (data.amount) { ... }
+
+                        // Afficher toutes les données brutes dans la modal
+                        showOcrDebug(data);
                     }
                 })
                 .catch(err => {
@@ -596,6 +638,137 @@
                     fileInput.value = '';
                 });
             }
+
+            // --- Fonction Debug OCR ---
+            function showOcrDebug(data) {
+                const tbody = document.getElementById('ocr-debug-table');
+                tbody.innerHTML = '';
+
+                let hasValidFields = false;
+
+                // -------------------------------------------------
+                // 1. Champs analysés par l'IA (On n'affiche que ce qui a été TROUVÉ)
+                // -------------------------------------------------
+                const skip = new Set(['raw_text', 'lignes', 'service', 'amount', 'libelle', 'mindee']);
+                
+                // Cas spécial : Montant principal
+                if (data.amount) {
+                    hasValidFields = true;
+                    tbody.innerHTML += `
+                        <tr class="bg-primary/5 border-l-4 border-primary group">
+                            <td class="px-3 py-2 text-[10px] font-black text-primary uppercase tracking-wider">MONTANT TTC</td>
+                            <td class="px-3 py-2 text-sm font-black text-primary flex flex-wrap items-center justify-between gap-2">
+                                <span>${parseFloat(data.amount).toLocaleString()} XOF</span>
+                                <button onclick="fillField('amount', '${data.amount}')" class="bg-primary text-white px-3 py-2 md:px-2 md:py-1 rounded text-[10px] md:text-[9px] hover:scale-105 transition-transform uppercase font-black shadow-sm">
+                                    Injecter
+                                </button>
+                            </td>
+                        </tr>`;
+                }
+
+                Object.entries(data).forEach(([key, val]) => {
+                    if (skip.has(key)) return;
+                    const isValide = val !== null && val !== undefined && val !== '' && val !== '—';
+                    if (!isValide) return; // ON CACHE LES VIDES
+
+                    hasValidFields = true;
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-3 py-2 text-[10px] font-black text-text-secondary uppercase tracking-wider w-1/3">${key.replace('_', ' ')}</td>
+                            <td class="px-3 py-2 text-xs flex flex-wrap items-center justify-between gap-2">
+                                <span class="font-bold text-text-main break-all">${val}</span>
+                                <div class="flex gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button onclick="fillField('libelle', '${val.toString().replace(/'/g, "\\'")}')" class="p-1.5 bg-primary/5 md:bg-transparent hover:bg-primary/10 rounded text-primary transition-colors" title="Vers Libellé">
+                                        <i data-lucide="type" class="w-4 h-4 md:w-3 md:h-3"></i>
+                                    </button>
+                                    <button onclick="fillField('date', '${val.toString().replace(/'/g, "\\'")}')" class="p-1.5 bg-primary/5 md:bg-transparent hover:bg-primary/10 rounded text-primary transition-colors" title="Vers Date">
+                                        <i data-lucide="calendar" class="w-4 h-4 md:w-3 md:h-3"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>`;
+                });
+
+                if (!hasValidFields) {
+                    tbody.innerHTML = `<tr><td colspan="2" class="px-4 py-8 text-center text-xs text-slate-400 italic">Aucune donnée structurée détectée. Utilisez le texte brut ci-dessous.</td></tr>`;
+                }
+
+                // -------------------------------------------------
+                // 2. Toutes les lignes détectées (Mode Manuel)
+                // -------------------------------------------------
+                const rawLines = (data.raw_text || '').split('\n').map(l => l.trim()).filter(l => l.length > 0);
+                let linesHtml = '';
+                
+                rawLines.forEach((line, i) => {
+                    linesHtml += `
+                        <tr class="hover:bg-slate-50 group">
+                            <td class="px-2 py-1.5 text-[9px] text-slate-300 font-mono w-8 text-right border-r border-slate-50 bg-slate-50/30">${i+1}</td>
+                            <td class="px-3 py-1.5 text-xs font-mono text-slate-600 flex flex-wrap items-center justify-between gap-2 overflow-hidden">
+                                <span class="truncate max-w-[150px] md:max-w-none flex-1">${line}</span>
+                                <div class="flex gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                                    <button onclick="fillField('libelle', '${line.replace(/'/g, "\\'")}')" class="px-2 py-1 bg-slate-100 md:bg-slate-50 hover:bg-primary hover:text-white rounded text-[9px] font-black uppercase transition-all">Libellé</button>
+                                    <button onclick="fillField('amount', '${line.replace(/'/g, "\\'")}')" class="px-2 py-1 bg-slate-100 md:bg-slate-50 hover:bg-primary hover:text-white rounded text-[9px] font-black uppercase transition-all">Montant</button>
+                                </div>
+                            </td>
+                        </tr>`;
+                });
+
+                document.getElementById('ocr-debug-rawtext').innerHTML = `
+                    <div class="border border-slate-100 rounded-xl overflow-hidden shadow-sm">
+                        <table class="w-full text-left divide-y divide-slate-50">
+                            <tbody class="divide-y divide-slate-50 bg-white">
+                                ${linesHtml || '<tr><td colspan="2" class="p-4 text-center text-xs text-slate-400">Aucun texte détecté.</td></tr>'}
+                            </tbody>
+                        </table>
+                    </div>`;
+
+                // -------------------------------------------------
+                // 3. JSON complet
+                // -------------------------------------------------
+                document.getElementById('ocr-debug-json').textContent =
+                    JSON.stringify(data, null, 2);
+
+                // Header
+                document.getElementById('ocr-debug-service').textContent =
+                    data.service === 'mindee' ? 'Mindee Cloud API' : 'Tesseract OCR local — Mode exploration';
+
+                // Affichage
+                document.getElementById('ocr-debug-modal').classList.remove('hidden');
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            }
+
+            // --- Injection manuelle depuis Debug ---
+            window.fillField = function(target, value) {
+                if (!value || value === 'null') return;
+                
+                if (target === 'date') {
+                    const input = document.querySelector('input[name="date"]');
+                    if (input) input.value = value;
+                } else if (target === 'libelle') {
+                    const input = document.querySelector('input[name="libelle"]');
+                    if (input) input.value = value;
+                } else if (target === 'amount') {
+                    const firstDebit = document.querySelector('.debit-input');
+                    if (firstDebit) {
+                        // Nettoyer la valeur si c'est un montant (enlever espaces, etc)
+                        const cleanValue = parseFloat(value.toString().replace(/[^0-9.]/g, ''));
+                        if (!isNaN(cleanValue)) {
+                            firstDebit.value = formatAmount(cleanValue);
+                            firstDebit.dispatchEvent(new Event('input'));
+                        }
+                    }
+                }
+                
+                // Petit feedback visuel
+                Swal.fire({
+                    title: 'Injecté !',
+                    icon: 'success',
+                    toast: true,
+                    position: 'bottom-start',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            };
 
             // Initial load
             loadDraft();

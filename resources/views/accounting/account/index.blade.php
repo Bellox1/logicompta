@@ -4,9 +4,18 @@
 
 @section('content')
     <div>
-    <div class="mb-10">
-        <h1 class="text-3xl font-black text-text-main uppercase tracking-tight">Plan Comptable & Sous-comptes</h1>
-        <p class="text-sm text-text-secondary mt-1 font-bold italic">Consultez le référentiel SYSCOHADA et gérez vos sous-comptes personnalisés</p>
+    <div class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div>
+            <h1 class="text-3xl font-black text-text-main uppercase tracking-tight">Plan Comptable & Sous-comptes</h1>
+            <p class="text-sm text-text-secondary mt-1 font-bold italic">Consultez le référentiel SYSCOHADA et gérez vos sous-comptes personnalisés</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <a href="{{ route('accounting.journals-settings.index') }}" 
+                class="px-6 py-3 bg-white border border-border text-text-main font-black rounded-xl hover:-translate-y-0.5 transition-all text-xs flex items-center gap-2 shadow-sm italic uppercase scroll-smooth tracking-widest">
+                <i data-lucide="settings-2" class="w-4 h-4 text-primary"></i>
+                Configuration Journaux
+            </a>
+        </div>
     </div>
 
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">

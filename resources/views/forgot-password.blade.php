@@ -89,7 +89,7 @@
                 <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left">
                     <div class="flex items-start gap-4">
                         <div class="bg-primary/20 p-3 rounded-xl">
-                            <i data-lucide="mail" class="w-6 h-6 text-blue-300"></i>
+                            <i data-lucide="mail" class="w-6 h-6 text-slate-300"></i>
                         </div>
                         <div>
                             <p class="text-white text-sm font-bold">Vérifiez votre email</p>
@@ -134,7 +134,7 @@
                     </div>
 
                     <button type="submit"
-                        class="w-full py-4 bg-primary text-white font-black rounded-2xl hover:bg-primary-light transition-all shadow-lg shadow-blue-900/40 text-sm uppercase tracking-widest active:scale-[0.98]">
+                        class="w-full py-4 bg-primary text-white font-black rounded-2xl hover:bg-primary-light transition-all shadow-lg shadow-primary/20 text-sm uppercase tracking-widest active:scale-[0.98]">
                         Envoyer le lien
                     </button>
                 </form>

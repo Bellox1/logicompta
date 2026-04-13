@@ -41,7 +41,7 @@ class TraceabiliteController extends Controller
     {
         // Vérifier si Admin via l'accesseur role du modèle User
         if (Auth::user()->role !== 'admin') {
-            return back()->with('error', 'Action réservée à l\'administrateur.');
+            return back()->with('error', 'Impossible de supprimer, ceci est réservé uniquement au créateur de la société..');
         }
 
         $log = Traceabilite::findOrFail($id);
@@ -57,7 +57,7 @@ class TraceabiliteController extends Controller
     public function clearAll()
     {
         if (Auth::user()->role !== 'admin') {
-             return back()->with('error', 'Action réservée à l\'administrateur.');
+             return back()->with('error', 'Impossible de supprimer, ceci est réservé uniquement au créateur de la société..');
         }
 
         Traceabilite::where('entreprise_id', session('active_entreprise_id'))->delete();

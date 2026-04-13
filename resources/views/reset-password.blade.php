@@ -7,8 +7,7 @@
     <title>Comptafriq - Nouveau mot de passe</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
-        rel="stylesheet">
+    <!-- Font: Arial -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
@@ -17,7 +16,7 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif']
+                        sans: ['Arial', 'sans-serif']
                     },
                     colors: {
                         primary: '#005b82',
@@ -29,7 +28,7 @@
     </script>
     <style>
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
         }

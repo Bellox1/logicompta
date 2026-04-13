@@ -3,15 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Bilan Financier - {{ $user->entreprise->name ?? 'Logicompta' }}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Font: Arial -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'], },
+                    fontFamily: { sans: ['Arial', 'sans-serif'], },
                     colors: {
                         primary: '#005b82',
                         'primary-light': '#0055aa',
@@ -26,11 +24,11 @@
             body { padding: 0 !important; margin: 0 !important; background: white !important; }
             @page { margin: 1cm; }
         }
-        body { font-family: 'Inter', sans-serif; font-size: 10px; }
+        body { font-family: Arial, sans-serif; font-size: 10px; }
         table { border-collapse: collapse; width: 100%; border: 2px solid #005b82; }
         th, td { border: 1px solid #94a3b8; padding: 6px; }
         th { background: #f8fafc; text-transform: uppercase; }
-        .total-row { background: #eee; font-weight: bold; font-family: 'Inter', sans-serif; }
+        .total-row { background: #eee; font-weight: bold; font-family: Arial, sans-serif; }
     </style>
 </head>
 <body class="bg-white p-4 md:p-8">

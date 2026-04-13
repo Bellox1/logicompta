@@ -4,15 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Journal Comptable - {{ $user->entreprise->name ?? 'Logicompta' }}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Font: Arial -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'], },
+                    fontFamily: { sans: ['Arial', 'sans-serif'], },
                     colors: {
                         primary: '#005b82',
                         'primary-light': '#0055aa',
@@ -39,7 +37,7 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: Arial, sans-serif;
             background: white;
         }
 
@@ -114,9 +112,9 @@
                                 {{ str_replace('PC-', '', $entry->numero_piece) }}
                             </td>
                         @endif
-                        <td class="font-bold text-slate-700">{{ $line->sousCompte->numero_sous_compte }}</td>
+                        <td class="font-bold text-slate-700">{{ $line->sousCompte->numero_sous_compte ?? '???' }}</td>
                         <td>
-                            <div class="font-bold text-slate-900">{{ $line->sousCompte->libelle }}</div>
+                            <div class="font-bold text-slate-900">{{ $line->sousCompte->libelle ?? 'Compte inconnu' }}</div>
                             <div class="text-[10px] text-slate-500 italic">{{ $line->libelle ?: $entry->libelle }}</div>
                         </td>
                         <td class="text-right font-bold">

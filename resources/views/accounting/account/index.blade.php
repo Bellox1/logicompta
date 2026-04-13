@@ -7,11 +7,11 @@
     <div class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
             <h1 class="text-3xl font-black text-text-main uppercase tracking-tight">Plan Comptable & Sous-comptes</h1>
-            <p class="text-sm text-text-secondary mt-1 font-bold italic">Consultez le référentiel SYSCOHADA et gérez vos sous-comptes personnalisés</p>
+            <p class="text-sm text-text-secondary mt-1 font-bold">Consultez le référentiel SYSCOHADA et gérez vos sous-comptes personnalisés</p>
         </div>
         <div class="flex items-center gap-3">
             <a href="{{ route('accounting.journals-settings.index') }}" 
-                class="px-6 py-3 bg-white border border-border text-text-main font-black rounded-xl hover:-translate-y-0.5 transition-all text-xs flex items-center gap-2 shadow-sm italic uppercase scroll-smooth tracking-widest">
+                class="px-6 py-3 bg-white border border-border text-text-main font-black rounded-xl hover:-translate-y-0.5 transition-all text-xs flex items-center gap-2 shadow-sm uppercase scroll-smooth tracking-widest">
                 <i data-lucide="settings-2" class="w-4 h-4 text-primary"></i>
                 Configuration Journaux
             </a>
@@ -28,7 +28,7 @@
                                 <i data-lucide="book-open" class="w-5 h-5 text-primary"></i>
                                 Référentiel SYSCOHADA
                             </h2>
-                            <p class="text-[10px] text-text-secondary font-black uppercase tracking-wider italic">Plan comptable officiel</p>
+                            <p class="text-[10px] text-text-secondary font-black uppercase tracking-wider">Plan comptable officiel</p>
                         </div>
                         <div class="relative max-w-xs w-full">
                             <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
@@ -41,9 +41,16 @@
                         @foreach ($accounts as $classe => $classAccounts)
                             <div class="classe-group">
                                 <div class="bg-white px-6 py-2 border-y border-border sticky top-0 z-10">
-                                    <span class="text-[10px] font-black text-text-secondary uppercase tracking-widest italic">Classe {{ $classe }}</span>
+                                    <span class="text-[10px] font-black text-text-secondary uppercase tracking-widest">Classe {{ $classe }}</span>
                                 </div>
-                                <table class="w-full text-left">
+                                 <table class="w-full text-left">
+                                    <thead class="bg-slate-50 border-b border-border">
+                                        <tr class="text-[10px] uppercase font-black text-text-secondary tracking-widest">
+                                            <th class="px-6 py-2">Numéro</th>
+                                            <th class="px-6 py-2">Intitulé</th>
+                                            <th class="px-6 py-2 text-right">Sous-compte</th>
+                                        </tr>
+                                    </thead>
                                     <tbody class="divide-y divide-slate-50 text-[13px]">
                                         @foreach ($classAccounts as $account)
                                             <tr class="hover:bg-slate-50/50 transition-colors account-row"
@@ -51,13 +58,13 @@
                                                 <td class="px-6 py-4 font-mono font-bold text-primary w-32">
                                                     {{ $account->code_compte }}
                                                 </td>
-                                                <td class="px-6 py-4 font-black text-text-main">
+                                                <td class="px-6 py-4 font-black text-text-main truncate max-w-md">
                                                     {{ $account->libelle }}
                                                 </td>
-                                                <td class="px-6 py-4 text-right">
+                                                <td class="px-6 py-4 text-right whitespace-nowrap">
                                                     <button onclick="openSubAccountModal({{ $account->id }}, '{{ $account->code_compte }}', '{{ addslashes($account->libelle) }}')" 
-                                                        class="px-4 py-2 bg-white border border-border text-text-secondary font-black rounded-xl hover:bg-slate-50 transition-all text-[10px] uppercase flex items-center gap-2 ml-auto shadow-sm">
-                                                        <i data-lucide="plus" class="w-3.5 h-3.5 text-primary"></i> Sous-compte
+                                                        class="text-primary hover:text-primary-light font-black text-[11px] uppercase flex items-center gap-1.5 ml-auto transition-colors whitespace-nowrap">
+                                                        <i data-lucide="plus-circle" class="w-4 h-4"></i> Sous-compte
                                                     </button>
                                                 </td>
                                             </tr>
@@ -79,7 +86,7 @@
                                 <i data-lucide="layers" class="w-5 h-5 text-primary"></i>
                                 Mes Sous-comptes
                             </h2>
-                            <p class="text-[10px] text-text-secondary font-black uppercase tracking-wider italic">Interface de saisie</p>
+                            <p class="text-[10px] text-text-secondary font-black uppercase tracking-wider">Interface de saisie</p>
                         </div>
                         <a href="{{ route('accounting.account.import') }}" 
                             class="px-4 py-2 bg-primary text-white font-bold rounded-lg hover:opacity-90 transition-all text-xs flex items-center gap-2">
@@ -145,7 +152,7 @@
         <div id="subAccountModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[9999] hidden items-center justify-center p-4">
             <div class="bg-card-bg rounded-3xl shadow-2xl max-w-md w-full relative overflow-hidden animate-in fade-in zoom-in duration-200 border border-border">
                 <div class="p-8 border-b border-border flex justify-between items-center bg-white/50">
-                    <h3 class="text-xl font-black text-text-main uppercase tracking-widest italic">Nouveau Sous-compte</h3>
+                    <h3 class="text-xl font-black text-text-main uppercase tracking-widest">Nouveau Sous-compte</h3>
                     <button type="button" onclick="closeSubAccountModal()" class="text-text-secondary hover:text-rose-500 transition-colors">
                         <i data-lucide="x" class="w-6 h-6"></i>
                     </button>

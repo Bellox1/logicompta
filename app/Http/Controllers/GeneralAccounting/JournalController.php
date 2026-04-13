@@ -259,6 +259,11 @@ class JournalController extends Controller
     {
         $user = Auth::user();
         $entry = JournalEntry::where('entreprise_id', $user->entreprise_id)->findOrFail($id);
+
+        // Seul l'admin (créateur) peut supprimer
+        if ($user->role !== 'admin') {
+            return back()->with('error', 'Impossible de supprimer, ceci est réservé uniquement au créateur de la société..');
+        }
         $entry->delete();
         return redirect()->route('accounting.journal.index')->with('success', 'Suppression réussie.');
     }

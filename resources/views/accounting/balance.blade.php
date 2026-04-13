@@ -25,7 +25,7 @@
                 <div>
                     <h3 class="text-lg font-black text-text-main uppercase leading-none">Archives de l'exercice
                         {{ date('Y', strtotime(request('start_date'))) }}</h3>
-                    <p class="text-xs text-text-secondary font-black uppercase tracking-widest mt-1 italic">Données scellées
+                    <p class="text-xs text-text-secondary font-black uppercase tracking-widest mt-1">Données scellées
                         et définitives</p>
                 </div>
             </div>
@@ -39,7 +39,7 @@
     <div class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6 no-print">
         <div>
             <h1 class="text-3xl font-black text-text-main uppercase tracking-tight">Balance Générale</h1>
-            <p class="text-sm text-text-secondary mt-1 font-bold italic">Vérification de l'équilibre arithmétique de vos
+            <p class="text-sm text-text-secondary mt-1 font-bold">Vérification de l'équilibre arithmétique de vos
                 comptes</p>
         </div>
         <div class="flex items-center gap-3 no-print">
@@ -62,14 +62,14 @@
             class="mb-10 grid grid-cols-1 md:flex md:flex-row md:items-end gap-5 bg-card-bg border border-border p-6 rounded-3xl shadow-sm no-print">
             <div class="w-full md:flex-1">
                 <label
-                    class="block text-[11px] font-black text-text-secondary mb-2 uppercase tracking-wider px-1 italic">Période
+                    class="block text-[11px] font-black text-text-secondary mb-2 uppercase tracking-wider px-1">Période
                     du</label>
                 <input type="date" name="start_date" value="{{ request('start_date') }}" placeholder="JJ/MM/AAAA"
                     class="w-full bg-bg border border-border px-4 py-3 text-sm font-black outline-none focus:border-primary transition-all rounded-xl dark:text-white">
             </div>
             <div class="w-full md:flex-1">
                 <label
-                    class="block text-[11px] font-black text-text-secondary mb-2 uppercase tracking-wider px-1 italic">Au</label>
+                    class="block text-[11px] font-black text-text-secondary mb-2 uppercase tracking-wider px-1">Au</label>
                 <input type="date" name="end_date" value="{{ request('end_date') }}" placeholder="JJ/MM/AAAA"
                     class="w-full bg-bg border border-border px-4 py-3 text-sm font-black outline-none focus:border-primary transition-all rounded-xl dark:text-white">
             </div>
@@ -90,12 +90,12 @@
 
     <div class="bg-card-bg border border-border rounded-[2.5rem] shadow-sm overflow-hidden mb-12" id="balance-table">
         <div class="bg-white/50 border-b border-border px-8 py-8 text-center">
-            <h2 class="text-xl font-black text-text-main uppercase tracking-[0.2em] italic">État de la Balance au
+            <h2 class="text-xl font-black text-text-main uppercase tracking-[0.2em]">État de la Balance au
                 {{ date('d/m/Y') }}</h2>
         </div>
 
         <div class="table-responsive">
-            <table class="w-full border-collapse min-w-[1000px]">
+            <table class="w-full border-collapse min-w-[1000px] sticky-thead">
                 <thead>
                     <tr class="bg-primary text-white text-[10px] uppercase font-black tracking-widest border-b border-black">
                         <th rowspan="2" class="px-4 py-4 text-left border-r border-black" style="width: 120px;">NUMÉRO DE COMPTES</th>
@@ -123,7 +123,7 @@
                             <!-- Comptes individuels du groupe -->
                             @foreach ($group['accounts'] as $acc)
                                 <tr class="border-b border-black hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
-                                    <td class="px-4 py-3 font-mono font-bold text-text-main border-r border-black italic">
+                                    <td class="px-4 py-3 font-mono font-bold text-text-main border-r border-black">
                                         {{ $acc['code'] }}</td>
                                     <td class="px-4 py-3 text-text-secondary border-r border-black font-medium uppercase">
                                         {{ $acc['libelle'] }}</td>
@@ -151,7 +151,7 @@
                             @endforeach
 
                             <!-- Sous-Total du Groupe -->
-                            <tr class="bg-slate-50 dark:bg-white/5 font-bold italic border-b border-black">
+                            <tr class="bg-slate-50 dark:bg-white/5 font-bold border-b border-black">
                                 <td colspan="2" class="px-4 py-3 text-[10px] uppercase tracking-widest border-r border-black text-text-secondary">Sous-Total {{ $prefix }}</td>
                                 <td class="px-4 py-3 text-right border-r border-black whitespace-nowrap">-</td>
                                 <td class="px-4 py-3 text-right border-r border-black whitespace-nowrap">-</td>
@@ -176,7 +176,7 @@
                         <tr>
                             <td colspan="8" class="px-6 py-20 text-center">
                                 <i data-lucide="file-warning" class="w-12 h-12 mx-auto mb-4 text-slate-200"></i>
-                                <p class="text-slate-500 font-medium italic">Aucune donnée disponible pour établir la balance.</p>
+                                <p class="text-slate-500 font-medium">Aucune donnée disponible pour établir la balance.</p>
                             </td>
                         </tr>
                     @endforelse
@@ -203,7 +203,7 @@
         $isEquilibre = abs($grandTotal['mouv_debit'] - $grandTotal['mouv_credit']) < 0.001;
     @endphp
 
-    @if (!$isEquilibre)
+    {{-- @if (!$isEquilibre)
         <div
             class="mt-8 bg-red-50 border-2 border-red-200 rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6 text-red-700 animate-pulse no-print">
             <div class="bg-red-100 p-4 rounded-full">
@@ -218,7 +218,7 @@
                 </p>
             </div>
         </div>
-    @endif
+    @endif --}}
 
     {{-- Données JSON pour l'export Excel propre --}}
     <script>

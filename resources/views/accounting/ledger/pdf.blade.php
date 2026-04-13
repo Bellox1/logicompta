@@ -4,13 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grand Livre - {{ $user->entreprise->name ?? 'Logicompta' }}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Font: Arial -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], },
+            theme: { extend: { fontFamily: { sans: ['Arial', 'sans-serif'], },
                     colors: { primary: '#005b82', 'primary-light': '#0055aa' } } }
         }
     </script>
@@ -21,7 +19,7 @@
             @page { margin: 1cm; }
             .page-break { page-break-after: always; }
         }
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: Arial, sans-serif; }
         table { border-collapse: collapse; width: 100%; font-size: 9px; }
         th, td { border: 1px solid #e2e8f0; padding: 4px; }
         th { background-color: #f8fafc; text-transform: uppercase; font-weight: bold; }

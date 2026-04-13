@@ -11,7 +11,7 @@
             </div>
             <div>
                 <h3 class="text-lg font-black text-text-main uppercase leading-none">Archives de l'exercice {{ date('Y', strtotime(request('start_date'))) }}</h3>
-                <p class="text-xs text-text-secondary font-black uppercase tracking-widest mt-1 italic">Données scellées et définitives</p>
+                <p class="text-xs text-text-secondary font-black uppercase tracking-widest mt-1">Données scellées et définitives</p>
             </div>
         </div>
         <a href="{{ route('accounting.archive.index') }}" class="text-[10px] font-black uppercase text-primary bg-white border border-primary px-3 py-1.5 rounded-lg hover:bg-primary hover:text-white transition-all">
@@ -23,7 +23,7 @@
 <div class="mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
     <div>
         <h1 class="text-3xl font-black text-text-main uppercase tracking-tight">Bilan Patrimonial</h1>
-        <p class="text-sm text-text-secondary mt-1 font-bold italic">État de santé financière au {{ date('d/m/Y') }}</p>
+        <p class="text-sm text-text-secondary mt-1 font-bold">État de santé financière au {{ date('d/m/Y') }}</p>
     </div>
     <div class="flex flex-wrap gap-4 no-print">
         <div class="relative group">
@@ -82,18 +82,18 @@
                 </div>
                 <div>
                     <h2 class="text-xl font-black uppercase tracking-widest leading-none mb-1 text-text-main">Actif</h2>
-                    <p class="text-xs font-black text-text-secondary uppercase tracking-tighter opacity-80 italic">Emplois de l'entreprise</p>
+                    <p class="text-xs font-black text-text-secondary uppercase tracking-tighter opacity-80">Emplois de l'entreprise</p>
                 </div>
             </div>
             <div class="text-right">
-                <div class="text-[10px] uppercase font-black tracking-widest leading-none opacity-40 italic">Total Actif</div>
-                <div class="text-2xl font-black italic whitespace-nowrap text-text-main">{{ number_format($actif->sum('solde'), 2, ',', ' ') }} F</div>
+                <div class="text-[10px] uppercase font-black tracking-widest leading-none opacity-40">Total Actif</div>
+                <div class="text-2xl font-black whitespace-nowrap text-text-main">{{ number_format($actif->sum('solde'), 2, ',', ' ') }} F</div>
             </div>
         </div>
         
         <div class="table-responsive flex-1" id="bilan-actif">
-            <table class="w-full text-left border-collapse min-w-[600px]">
-                <thead class="bg-slate-50 border-b border-slate-100 italic">
+            <table class="w-full text-left border-collapse min-w-[600px] sticky-thead">
+                <thead class="bg-slate-50 border-b border-slate-100">
                     <tr>
                         <th class="px-6 py-4 text-xs font-bold uppercase tracking-widest text-slate-400">Rubrique</th>
                         <th class="px-6 py-4 text-right text-xs font-bold uppercase tracking-widest text-slate-400">Montant Net</th>
@@ -104,7 +104,7 @@
                         <tr class="hover:bg-green-50/30 transition-colors">
                             <td class="px-6 py-4">
                                 <span class="block text-sm font-black text-text-main uppercase">{{ $item['libelle'] }}</span>
-                                <span class="text-[10px] uppercase font-black text-text-secondary italic">Ressource durable</span>
+                                <span class="text-[10px] uppercase font-black text-text-secondary">Ressource durable</span>
                             </td>
                             <td class="px-6 py-4 text-right whitespace-nowrap">
                                 <span class="text-lg font-bold text-text-main">{{ number_format($item['solde'], 2, ',', ' ') }}</span>
@@ -124,7 +124,7 @@
         
         <div class="p-6 bg-slate-50 dark:bg-black/20 border-t border-border flex justify-between items-center">
             <span class="text-xs font-black uppercase tracking-widest text-text-secondary">Total Bilan (Actif)</span>
-            <span class="text-2xl font-black text-text-main italic underline decoration-green-500/30 decoration-4 underline-offset-4 whitespace-nowrap">{{ number_format($actif->sum('solde'), 2, ',', ' ') }} F</span>
+            <span class="text-2xl font-black text-text-main underline decoration-green-500/30 decoration-4 underline-offset-4 whitespace-nowrap">{{ number_format($actif->sum('solde'), 2, ',', ' ') }} F</span>
         </div>
     </div>
 
@@ -137,18 +137,18 @@
                 </div>
                 <div>
                     <h2 class="text-xl font-black uppercase tracking-widest leading-none mb-1 text-text-main">Passif</h2>
-                    <p class="text-xs font-black text-text-secondary uppercase tracking-tighter opacity-80 italic">Ressources de l'entreprise</p>
+                    <p class="text-xs font-black text-text-secondary uppercase tracking-tighter opacity-80">Ressources de l'entreprise</p>
                 </div>
             </div>
             <div class="text-right">
-                <div class="text-[10px] uppercase font-black tracking-widest leading-none opacity-40 italic">Total Passif</div>
-                <div class="text-2xl font-black italic whitespace-nowrap text-text-main">{{ number_format($passif->sum('solde'), 2, ',', ' ') }} F</div>
+                <div class="text-[10px] uppercase font-black tracking-widest leading-none opacity-40">Total Passif</div>
+                <div class="text-2xl font-black whitespace-nowrap text-text-main">{{ number_format($passif->sum('solde'), 2, ',', ' ') }} F</div>
             </div>
         </div>
         
         <div class="table-responsive flex-1" id="bilan-passif">
-            <table class="w-full text-left border-collapse min-w-[600px]">
-                <thead class="bg-slate-50 border-b border-slate-100 italic">
+            <table class="w-full text-left border-collapse min-w-[600px] sticky-thead">
+                <thead class="bg-slate-50 border-b border-slate-100">
                     <tr>
                         <th class="px-6 py-4 text-xs font-bold uppercase tracking-widest text-slate-400">Rubrique</th>
                         <th class="px-6 py-4 text-right text-xs font-bold uppercase tracking-widest text-slate-400">Montant Net</th>
@@ -159,7 +159,7 @@
                         <tr class="hover:bg-primary/5 transition-colors">
                             <td class="px-6 py-4">
                                 <span class="block text-sm font-black text-text-main uppercase">{{ $item['libelle'] }}</span>
-                                <span class="text-[10px] uppercase font-black text-text-secondary italic">Dettes / Capitaux</span>
+                                <span class="text-[10px] uppercase font-black text-text-secondary">Dettes / Capitaux</span>
                             </td>
                             <td class="px-6 py-4 text-right whitespace-nowrap">
                                 <span class="text-lg font-black text-text-main">{{ number_format($item['solde'], 2, ',', ' ') }}</span>
@@ -167,7 +167,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="2" class="px-6 py-16 text-center text-slate-400 italic font-medium">
+                            <td colspan="2" class="px-6 py-16 text-center text-slate-400 font-medium">
                                 <i data-lucide="info" class="w-10 h-10 mx-auto mb-3 opacity-20"></i>
                                 Aucun compte de passif mouvementé.
                             </td>
@@ -178,8 +178,8 @@
         </div>
         
         <div class="p-6 bg-white/50 border-t border-border flex justify-between items-center">
-            <span class="text-xs font-black uppercase tracking-widest text-text-secondary italic">Total Bilan (Passif)</span>
-            <span class="text-2xl font-black text-text-main italic underline decoration-primary/30 decoration-4 underline-offset-4 whitespace-nowrap">{{ number_format($passif->sum('solde'), 2, ',', ' ') }} F</span>
+            <span class="text-xs font-black uppercase tracking-widest text-text-secondary">Total Bilan (Passif)</span>
+            <span class="text-2xl font-black text-text-main underline decoration-primary/30 decoration-4 underline-offset-4 whitespace-nowrap">{{ number_format($passif->sum('solde'), 2, ',', ' ') }} F</span>
         </div>
     </div>
 </div>
@@ -188,7 +188,7 @@
     $difference = $actif->sum('solde') - $passif->sum('solde');
 @endphp
 
-@if(abs($difference) > 0.001)
+{{-- @if(abs($difference) > 0.001)
 <div class="bg-red-500/10 border border-red-500/20 rounded-3xl p-8 flex flex-col md:flex-row items-center gap-8 text-red-700 dark:text-red-400 animate-pulse mt-8">
     <div class="bg-red-500/20 p-5 rounded-2xl shadow-lg">
         <i data-lucide="octagon-alert" class="w-10 h-10"></i>
@@ -200,7 +200,7 @@
         </p>
     </div>
 </div>
-@endif
+@endif --}}
 
 @endsection
 

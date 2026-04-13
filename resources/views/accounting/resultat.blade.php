@@ -11,7 +11,7 @@
             </div>
             <div>
                 <h3 class="text-lg font-black text-text-main uppercase leading-none">Archives de l'exercice {{ date('Y', strtotime(request('start_date'))) }}</h3>
-                <p class="text-xs text-text-secondary font-black uppercase tracking-widest mt-1 italic">Données scellées et définitives</p>
+                <p class="text-xs text-text-secondary font-black uppercase tracking-widest mt-1">Données scellées et définitives</p>
             </div>
         </div>
         <a href="{{ route('accounting.archive.index') }}" class="text-[10px] font-black uppercase text-primary bg-white border border-primary px-3 py-1.5 rounded-lg hover:bg-primary hover:text-white transition-all">
@@ -23,7 +23,7 @@
 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 no-print">
     <div>
         <h1 class="text-3xl font-black text-text-main uppercase tracking-tight">Compte de Résultat</h1>
-        <p class="text-sm text-text-secondary mt-1 font-bold italic tracking-widest uppercase">Performance de l'exercice au {{ date('d/m/Y') }}</p>
+        <p class="text-sm text-text-secondary mt-1 font-bold tracking-widest uppercase">Performance de l'exercice au {{ date('d/m/Y') }}</p>
     </div>
     <div class="flex flex-wrap gap-4 no-print">
         <div class="relative group">
@@ -80,14 +80,14 @@
     <!-- SECTION CHARGES (CLASSE 6) -->
     <div class="bg-card-bg border border-border rounded-3xl shadow-sm overflow-hidden flex flex-col">
         <div class="bg-primary text-white px-6 py-6 flex items-center justify-between">
-            <h2 class="text-lg font-black uppercase tracking-[0.3em] italic">Charges</h2>
-            <div class="bg-white/10 px-4 py-1.5 rounded-xl text-[10px] uppercase font-black italic">Nature des dépenses</div>
+            <h2 class="text-lg font-black uppercase tracking-[0.3em]">Charges</h2>
+            <div class="bg-white/10 px-4 py-1.5 rounded-xl text-[10px] uppercase font-black">Nature des dépenses</div>
         </div>
         
         <div class="table-responsive flex-1" id="resultat-charges">
-            <table class="w-full text-left border-collapse min-w-[600px]">
+            <table class="w-full text-left border-collapse min-w-[600px] sticky-thead">
                 <thead>
-                    <tr class="bg-white/50 text-[10px] uppercase font-black text-text-secondary border-b border-border italic">
+                    <tr class="bg-white/50 text-[10px] uppercase font-black text-text-secondary border-b border-border">
                         <th class="px-4 py-4 border-r border-border">Compte</th>
                         <th class="px-4 py-4 border-r border-border">Intitulé</th>
                         <th class="px-4 py-4 text-right">Montant</th>
@@ -97,13 +97,13 @@
                     @forelse($charges['groups'] as $prefix => $group)
                         @foreach($group['accounts'] as $acc)
                             <tr class="border-b border-border hover:bg-slate-50/50 transition-colors">
-                                <td class="px-4 py-4 font-mono font-black text-text-main border-r border-border italic">{{ $acc['code'] }}</td>
+                                <td class="px-4 py-4 font-mono font-black text-text-main border-r border-border">{{ $acc['code'] }}</td>
                                 <td class="px-4 py-4 text-text-secondary border-r border-border font-black uppercase">{{ $acc['libelle'] }}</td>
                                 <td class="px-4 py-4 text-right font-black text-text-main whitespace-nowrap">{{ number_format($acc['montant'], 2, ',', ' ') }}</td>
                             </tr>
                         @endforeach
                         <!-- Sous Total Groupe -->
-                        <tr class="bg-slate-50/50 border-b border-slate-100 italic font-bold text-slate-500">
+                        <tr class="bg-slate-50/50 border-b border-slate-100 font-bold text-slate-500">
                             <td colspan="2" class="px-4 py-2 border-r border-slate-200">Sous Total {{ $group['prefix'] }}</td>
                             <td class="px-4 py-2 text-right whitespace-nowrap">{{ number_format($group['total'], 2, ',', ' ') }}</td>
                         </tr>
@@ -112,7 +112,7 @@
                             <td colspan="3" class="px-6 py-20 text-center">
                                 <div class="flex flex-col items-center justify-center text-text-secondary/40">
                                     <i data-lucide="file-warning" class="w-12 h-12 mb-4 opacity-20"></i>
-                                    <span class="text-[10px] font-black uppercase tracking-[0.3em] italic">Aucun mouvement de charge enregistré</span>
+                                    <span class="text-[10px] font-black uppercase tracking-[0.3em]">Aucun mouvement de charge enregistré</span>
                                 </div>
                             </td>
                         </tr>
@@ -122,22 +122,22 @@
         </div>
         
         <div class="p-6 bg-primary text-white flex justify-between items-center mt-auto border-t-4 border-white/20">
-            <span class="text-xs font-black uppercase tracking-[0.2em] italic">Total des Charges (VI)</span>
-            <span class="text-2xl font-black italic whitespace-nowrap">{{ number_format($totalCharges, 2, ',', ' ') }} F</span>
+            <span class="text-xs font-black uppercase tracking-[0.2em]">Total des Charges (VI)</span>
+            <span class="text-2xl font-black whitespace-nowrap">{{ number_format($totalCharges, 2, ',', ' ') }} F</span>
         </div>
     </div>
 
     <!-- SECTION PRODUITS (CLASSE 7) -->
     <div class="bg-card-bg border border-border rounded-3xl shadow-sm overflow-hidden flex flex-col">
         <div class="bg-primary text-white px-6 py-6 flex items-center justify-between">
-            <h2 class="text-lg font-black uppercase tracking-[0.3em] italic">Produits</h2>
-            <div class="bg-white/10 px-4 py-1.5 rounded-xl text-[10px] uppercase font-black italic">Nature des revenus</div>
+            <h2 class="text-lg font-black uppercase tracking-[0.3em]">Produits</h2>
+            <div class="bg-white/10 px-4 py-1.5 rounded-xl text-[10px] uppercase font-black">Nature des revenus</div>
         </div>
         
         <div class="table-responsive flex-1" id="resultat-produits">
-            <table class="w-full text-left border-collapse min-w-[600px]">
+            <table class="w-full text-left border-collapse min-w-[600px] sticky-thead">
                 <thead>
-                    <tr class="bg-white/50 text-[10px] uppercase font-black text-text-secondary border-b border-border italic">
+                    <tr class="bg-white/50 text-[10px] uppercase font-black text-text-secondary border-b border-border">
                         <th class="px-4 py-4 border-r border-border">Compte</th>
                         <th class="px-4 py-4 border-r border-border">Intitulé</th>
                         <th class="px-4 py-4 text-right">Montant</th>
@@ -147,13 +147,13 @@
                     @forelse($produits['groups'] as $prefix => $group)
                         @foreach($group['accounts'] as $acc)
                             <tr class="border-b border-border hover:bg-slate-50/50 transition-colors">
-                                <td class="px-4 py-4 font-mono font-black text-text-main border-r border-border italic">{{ $acc['code'] }}</td>
+                                <td class="px-4 py-4 font-mono font-black text-text-main border-r border-border">{{ $acc['code'] }}</td>
                                 <td class="px-4 py-4 text-text-secondary border-r border-border font-black uppercase">{{ $acc['libelle'] }}</td>
                                 <td class="px-4 py-4 text-right font-black text-text-main whitespace-nowrap">{{ number_format($acc['montant'], 2, ',', ' ') }}</td>
                             </tr>
                         @endforeach
                         <!-- Sous Total Groupe -->
-                        <tr class="bg-slate-50/50 border-b border-slate-100 italic font-bold text-slate-500">
+                        <tr class="bg-slate-50/50 border-b border-slate-100 font-bold text-slate-500">
                             <td colspan="2" class="px-4 py-2 border-r border-slate-200">Sous Total {{ $group['prefix'] }}</td>
                             <td class="px-4 py-2 text-right whitespace-nowrap">{{ number_format($group['total'], 2, ',', ' ') }}</td>
                         </tr>
@@ -162,7 +162,7 @@
                             <td colspan="3" class="px-6 py-20 text-center">
                                 <div class="flex flex-col items-center justify-center text-text-secondary/40">
                                     <i data-lucide="file-warning" class="w-12 h-12 mb-4 opacity-20"></i>
-                                    <span class="text-[10px] font-black uppercase tracking-[0.3em] italic">Aucun mouvement de produit enregistré</span>
+                                    <span class="text-[10px] font-black uppercase tracking-[0.3em]">Aucun mouvement de produit enregistré</span>
                                 </div>
                             </td>
                         </tr>
@@ -172,8 +172,8 @@
         </div>
         
         <div class="p-6 bg-primary text-white flex justify-between items-center mt-auto border-t-4 border-white/20">
-            <span class="text-xs font-black uppercase tracking-[0.2em] italic">Total des Produits (VII)</span>
-            <span class="text-2xl font-black italic whitespace-nowrap">{{ number_format($totalProduits, 2, ',', ' ') }} F</span>
+            <span class="text-xs font-black uppercase tracking-[0.2em]">Total des Produits (VII)</span>
+            <span class="text-2xl font-black whitespace-nowrap">{{ number_format($totalProduits, 2, ',', ' ') }} F</span>
         </div>
     </div>
 </div>
@@ -185,9 +185,9 @@
     </div>
     
     <div class="relative z-10">
-        <h3 class="text-sm font-black uppercase tracking-[0.5em] mb-8 text-primary italic">RÉSULTAT NET DE L'EXERCICE</h3>
-        <div class="text-5xl md:text-8xl font-black tracking-tighter italic mb-8 {{ $profit >= 0 ? 'text-green-700' : 'text-red-700' }} whitespace-nowrap overflow-hidden text-ellipsis shadow-sm">
-            {{ number_format(abs($profit), 2, ',', ' ') }} <span class="text-sm md:text-2xl font-normal not-italic opacity-40">FCFA</span>
+        <h3 class="text-sm font-black uppercase tracking-[0.5em] mb-8 text-primary">RÉSULTAT NET DE L'EXERCICE</h3>
+        <div class="text-5xl md:text-8xl font-black tracking-tighter mb-8 {{ $profit >= 0 ? 'text-green-700' : 'text-red-700' }} whitespace-nowrap overflow-hidden text-ellipsis shadow-sm">
+            {{ number_format(abs($profit), 2, ',', ' ') }} <span class="text-sm md:text-2xl font-normal opacity-40">FCFA</span>
         </div>
         
         <div class="mt-8 flex justify-center">
@@ -203,7 +203,7 @@
                 </div>
             @endif
         </div>
-        <p class="mt-10 text-text-secondary italic font-black text-xs tracking-[0.2em] max-w-lg mx-auto uppercase opacity-60">
+        <p class="mt-10 text-text-secondary font-black text-xs tracking-[0.2em] max-w-lg mx-auto uppercase opacity-60">
             {{ $profit >= 0 ? 'La performance renforce les capitaux propres de l\'entité.' : 'Les charges excèdent les produits générés sur la période.' }}
         </p>
     </div>

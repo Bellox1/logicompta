@@ -3,12 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Compte de Résultat - {{ $user->entreprise->name ?? 'Logicompta' }}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Font: Arial -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], },
+        tailwind.config = { theme: { extend: { fontFamily: { sans: ['Arial', 'sans-serif'], },
                     colors: { primary: '#005b82' } } } }
     </script>
     <style>
@@ -17,7 +15,7 @@
             body { padding: 0 !important; margin: 0 !important; background: white !important; }
             @page { margin: 1cm; }
         }
-        body { font-family: 'Inter', sans-serif; font-size: 9px; }
+        body { font-family: Arial, sans-serif; font-size: 9px; }
         table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
         th, td { border: 1px solid #e2e8f0; padding: 6px; }
         th { background: #f8fafc; text-align: left; text-transform: uppercase; font-weight: bold; }

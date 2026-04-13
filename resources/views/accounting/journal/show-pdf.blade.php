@@ -11,7 +11,7 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'], },
+                    fontFamily: { sans: ['Arial', 'sans-serif'], },
                     colors: {
                         primary: '#005b82',
                         'primary-light': '#0055aa',
@@ -44,7 +44,7 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: Arial, sans-serif;
             background: white;
             -webkit-print-color-adjust: exact;
         }
@@ -133,9 +133,9 @@
                 <tbody>
                     @foreach($entry->lines as $line)
                         <tr>
-                            <td class="font-bold text-primary text-center">{{ $line->sousCompte->numero_sous_compte }}</td>
+                            <td class="font-bold text-primary text-center">{{ $line->sousCompte->numero_sous_compte ?? '???' }}</td>
                             <td>
-                                <div class="font-bold text-slate-900 uppercase text-[10px]">{{ $line->sousCompte->libelle }}</div>
+                                <div class="font-bold text-slate-900 uppercase text-[10px]">{{ $line->sousCompte->libelle ?? 'Compte inconnu' }}</div>
                                 @if($line->libelle && $line->libelle != $entry->libelle)
                                     <div class="text-[9px] text-slate-500 italic">{{ $line->libelle }}</div>
                                 @endif

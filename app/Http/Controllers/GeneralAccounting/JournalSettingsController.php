@@ -81,6 +81,11 @@ class JournalSettingsController extends Controller
         if ($journal->entreprise_id != $user->entreprise_id) {
             abort(403, "Accès non autorisé.");
         }
+
+        // Seul l'admin (créateur) peut supprimer
+        if ($user->role !== 'admin') {
+            return back()->with('error', 'Impossible de supprimer, ceci est réservé uniquement au créateur de la société..');
+        }
         
         // Vérifier si le journal a des entrées
         if ($journal->entries()->exists()) {

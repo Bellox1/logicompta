@@ -14,8 +14,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
-        rel="stylesheet">
+    <!-- Font: Arial (System) -->
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Tom Select -->
@@ -31,7 +30,7 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
+                        sans: ['Arial', 'sans-serif'],
                     },
                     colors: {
                         primary: 'var(--primary)',
@@ -265,7 +264,7 @@
             margin: 0;
             padding: 0;
             min-height: 100dvh;
-            font-family: 'Outfit', sans-serif;
+            font-family: Arial, sans-serif;
             overflow-x: hidden;
             position: relative;
             width: 100%;
@@ -459,7 +458,7 @@
     <div class="flex h-[100dvh] overflow-hidden relative">
         <!-- Sidebar -->
         <aside id="sidebar"
-            class="sidebar sidebar-transition w-[260px] h-full bg-sidebar-bg border-r border-border flex flex-shrink-0 flex-col py-3 px-4 shadow-sm z-[2000] overflow-y-auto">
+            class="sidebar sidebar-transition w-[260px] h-full bg-sidebar-bg border-r border-border flex flex-shrink-0 flex-col pt-1 pb-3 px-4 shadow-sm z-[2000] overflow-y-auto">
             <script>
                 // Appliquer la classe si nécessaire avant que l'élément soit affiché
                 if (localStorage.getItem('sidebar-collapsed') === 'true' && window.innerWidth > 768) {
@@ -484,12 +483,12 @@
                 <i data-lucide="x"></i>
             </button>
 
-            <div class="flex items-center mb-8 px-2 transition-all duration-300">
+            <div class="flex items-center mb-1 px-2 transition-all duration-300">
                 <img src="{{ asset('storage/images/logo.png') }}" alt="Comptafriq Logo"
-                    class="h-24 w-auto object-contain dark:filter-none filter invert dark:brightness-110">
+                    class="h-16 w-auto object-contain dark:filter-none filter invert dark:brightness-110">
             </div>
 
-            <nav class="flex-1 flex flex-col gap-1 overflow-y-auto mt-4 px-2">
+            <nav class="flex-1 flex flex-col gap-1 overflow-y-auto mt-0 px-2">
                 <a href="{{ route('accounting.dashboard') }}"
                     class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-black transition-all {{ request()->routeIs('accounting.dashboard') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
                     <i class="w-4 h-4 {{ request()->routeIs('accounting.dashboard') ? 'text-white' : '' }}"
@@ -499,7 +498,7 @@
 
                 <div
                     class="sidebar-label text-[13px] uppercase font-black text-text-secondary mt-6 px-3 mb-2 tracking-widest hidden md:block opacity-60">
-                    PRODUITS & SERVICES</div>
+                    Base</div>
 
                 <a href="{{ route('accounting.journal.index') }}"
                     class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-black transition-all {{ request()->routeIs('accounting.journal.index') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
@@ -511,7 +510,7 @@
                     class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-black transition-all {{ request()->routeIs('accounting.journal.create') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
                     <i class="w-4 h-4 {{ request()->routeIs('accounting.journal.create') ? 'text-white' : '' }}"
                         data-lucide="plus-circle"></i>
-                    <span class="sidebar-label transition-all duration-300 uppercase">Saisie active</span>
+                    <span class="sidebar-label transition-all duration-300 uppercase">Saisie</span>
                 </a>
 
                 <div
@@ -570,12 +569,20 @@
                 </a>
             </nav>
 
-            <div class="mt-auto pt-4 border-t border-border no-print">
+            <div class="mt-auto no-print">
+                @if(auth()->check() && auth()->user()->entreprise)
+                <div class="px-4 py-2 text-xs border-t border-border no-print">
+                    <div class="text-text-main font-black truncate uppercase tracking-widest text-[11px]">
+                        {{ auth()->user()->entreprise->name }}
+                    </div>
+                </div>
+                @endif
+
                 <div id="system-date-container"
-                    class="px-4 py-3 text-xs flex items-center gap-4 sidebar-label no-print border-t border-border mt-4">
-                    <i data-lucide="clock" class="w-4 h-4 text-text-secondary"></i>
+                    class="px-4 py-2 text-[10px] flex items-center gap-3 sidebar-label no-print border-t border-border">
+                    <i data-lucide="clock" class="w-3.5 h-3.5 text-text-secondary"></i>
                     <div id="system-datetime-display"
-                        class="text-text-main font-black transition-all duration-300 whitespace-nowrap italic uppercase tracking-wider">
+                        class="text-text-main font-bold whitespace-nowrap tracking-tight">
                         --/--/---- --:--:--
                     </div>
                 </div>
@@ -630,15 +637,37 @@
             <!-- Scrollable Content Area - Enable full auto overflow for sticky headers -->
             <main class="main-content flex-1 overflow-auto p-6 md:p-10 transition-all scroll-smooth relative">
                 @if (session('success'))
-                    <div
-                        class="mb-6 p-4 rounded-xl bg-green-500/10 border border-green-500/30 text-green-700 dark:text-green-400 flex items-center gap-3 animate-fade-up">
+                    <div id="success-alert"
+                        class="mb-6 p-4 rounded-xl bg-green-500/10 border border-green-500/30 text-green-700 dark:text-green-400 flex items-center gap-3 animate-fade-up relative overflow-hidden">
                         <i data-lucide="check-circle" class="w-5 h-5 flex-shrink-0"></i>
                         <span class="flex-1">{{ session('success') }}</span>
                         <button onclick="this.parentElement.remove()"
                             class="p-1 hover:bg-black/5 rounded-lg transition-colors">
                             <i data-lucide="x" class="w-4 h-4"></i>
                         </button>
+                        <!-- Progress line -->
+                        <div id="success-progress" class="absolute bottom-0 left-0 h-0.5 bg-green-500 transition-all duration-[3000ms] ease-linear w-full"></div>
                     </div>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', () => {
+                            const progress = document.getElementById('success-progress');
+                            if (progress) {
+                                // Forcer un reflow pour que la transition se déclenche
+                                setTimeout(() => {
+                                    progress.style.width = '0%';
+                                }, 50);
+                            }
+                            
+                            setTimeout(() => {
+                                const alert = document.getElementById('success-alert');
+                                if (alert) {
+                                    alert.style.transition = 'opacity 0.5s ease';
+                                    alert.style.opacity = '0';
+                                    setTimeout(() => alert.remove(), 500);
+                                }
+                            }, 3000);
+                        });
+                    </script>
                 @endif
 
                 @if (session('error_list'))

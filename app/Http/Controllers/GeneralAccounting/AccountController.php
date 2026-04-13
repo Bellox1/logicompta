@@ -105,6 +105,11 @@ class AccountController extends Controller
     {
         $user = Auth::user();
         $sousCompte = SousCompte::where('entreprise_id', $user->entreprise_id)->findOrFail($id);
+
+        // Seul l'admin (créateur) peut supprimer
+        if ($user->role !== 'admin') {
+            return back()->with('error', 'Impossible de supprimer, ceci est réservé uniquement au créateur de la société..');
+        }
         
         $sousCompte->delete();
 

@@ -370,14 +370,15 @@ class EntrepriseController extends Controller
 
         $user = \Auth::user();
         
+        $entreprise = $user->entreprises()->where('entreprise_id', $request->entreprise_id)->first();
         // Vérifier que l'utilisateur appartient bien à cette entreprise
-        if (!$user->entreprises()->where('entreprise_id', $request->entreprise_id)->exists()) {
+        if (!$entreprise) {
             return back()->with('error', 'Accès non autorisé à cette entreprise.');
         }
 
         session(['active_entreprise_id' => $request->entreprise_id]);
 
-        return back()->with('success', 'Entreprise changée avec succès.');
+        return back()->with('success', "Session ouverte: " . $entreprise->name);
     }
 
     /**

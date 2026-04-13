@@ -26,25 +26,25 @@
                     @if($user->role == 'admin') 🔑 Administateur @elseif($user->role == 'comptable') 📊 Comptable @else 👤 Utilisateur @endif
                 </p>
             </div>
-            <div class="flex items-center gap-4">
+            <div class="flex w-full md:w-auto items-center mt-2 md:mt-0">
                 @if($user->entreprise)
-                <div onclick="showEnterpriseModal()" class="flex items-center gap-6 bg-white/10 backdrop-blur-md px-6 py-4 rounded-3xl border border-white/20 shadow-2xl cursor-pointer hover:bg-white/20 transition-all group shrink-0">
+                <div onclick="showEnterpriseModal()" class="w-full md:w-auto flex items-center gap-3 sm:gap-6 bg-white/10 backdrop-blur-md px-4 sm:px-6 py-3 sm:py-4 rounded-2xl sm:rounded-3xl border border-white/20 shadow-2xl cursor-pointer hover:bg-white/20 transition-all group overflow-hidden">
                     <div class="hidden sm:flex w-12 h-12 bg-white/20 rounded-2xl items-center justify-center text-white shrink-0 group-hover:scale-110 transition-transform">
                         <i data-lucide="building-2" class="w-6 h-6"></i>
                     </div>
-                    <div class="flex flex-col">
-                        <span class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-300 opacity-80">Structure active (cliquez pour changer)</span>
-                        <h2 class="text-lg font-black tracking-tight leading-tight">{{ $user->entreprise->name }}</h2>
+                    <div class="flex flex-col min-w-0 w-full">
+                        <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.1em] sm:tracking-[0.2em] text-slate-300 opacity-80 truncate">Structure active (cliquer)</span>
+                        <h2 class="text-base sm:text-lg font-black tracking-tight leading-tight truncate">{{ $user->entreprise->name }}</h2>
                         @if($user->role == 'admin')
-                        <div class="flex items-center gap-3 mt-1">
+                        <div class="flex items-center gap-2 sm:gap-3 mt-1 overflow-hidden w-full">
                             <code id="company-code" 
                                    onclick="event.stopPropagation(); copyToClipboard('{{ $user->entreprise->code }}', 'copy-btn-{{ $user->entreprise->id }}')"
-                                   class="text-[11px] font-mono bg-black/20 px-2 py-0.5 rounded border border-white/10 text-white leading-none cursor-pointer hover:bg-black/40 transition-colors">
+                                   class="text-[10px] sm:text-[11px] font-mono bg-black/20 px-2 py-0.5 rounded border border-white/10 text-white leading-none cursor-pointer hover:bg-black/40 transition-colors truncate">
                                 Code/ID: {{ $user->entreprise->code }}
                             </code>
                             <button id="copy-btn-{{ $user->entreprise->id }}"
                                     onclick="event.stopPropagation(); copyToClipboard('{{ $user->entreprise->code }}', this)" 
-                                    class="p-1 hover:bg-white/20 rounded transition-all text-slate-300 hover:text-white" 
+                                    class="p-1 hover:bg-white/20 rounded transition-all text-slate-300 hover:text-white shrink-0" 
                                     title="Copier le code">
                                 <i data-lucide="copy" class="w-3.5 h-3.5"></i>
                             </button>
@@ -89,7 +89,7 @@
                     <div class="w-14 h-14 bg-white/20 text-white rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                         <i data-lucide="shield-check" class="w-7 h-7"></i>
                     </div>
-                    <h3 class="text-xl font-black mb-2 uppercase tracking-tight italic">Boîte Noire</h3>
+                    <h3 class="text-xl font-black mb-2 uppercase tracking-tight">Boîte Noire</h3>
                     <p class="text-sm text-white/80 leading-relaxed mb-6 font-medium">Traçabilité totale et récupération des données effacées par erreur.</p>
                     <div class="flex items-center text-white font-black text-[10px] gap-2 uppercase tracking-[0.2em]">
                         Ouvrir la sécurité <i data-lucide="terminal" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
@@ -193,7 +193,7 @@
 <div id="enterprise-selection-modal" class="{{ session()->has('active_entreprise_id') ? 'hidden' : '' }} fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
     <div class="bg-card-bg border border-border rounded-[2.5rem] w-full max-w-2xl overflow-hidden shadow-2xl">
         <div class="p-8 border-b border-border bg-slate-50">
-            <h2 class="text-2xl font-black text-text-main italic uppercase tracking-tighter">SÉLECTIONNEZ VOTRE ESPACE</h2>
+            <h2 class="text-2xl font-black text-text-main uppercase tracking-tighter">SÉLECTIONNEZ VOTRE ESPACE</h2>
         </div>
         <div class="p-8 max-h-[60vh] overflow-y-auto">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -206,7 +206,7 @@
                             <i data-lucide="building-2" class="w-6 h-6"></i>
                         </div>
                         <div class="flex-1">
-                            <h4 class="font-black text-text-main uppercase text-sm italic">{{ $entreprise->name }}</h4>
+                            <h4 class="font-black text-text-main uppercase text-sm">{{ $entreprise->name }}</h4>
                             @if($user->role == 'admin')
                             <p class="text-xs text-text-secondary mt-1 uppercase font-mono tracking-tighter opacity-70">Code: {{ $entreprise->code }}</p>
                             @endif
@@ -215,7 +215,21 @@
                     </button>
                 </form>
                 @endforeach
+
+                <!-- Carte Ajouter une Société -->
+                <a href="{{ url('/entreprise-setup') }}" class="group p-6 rounded-3xl border border-dashed border-slate-300 hover:border-primary hover:bg-primary/5 transition-all flex items-start gap-4 cursor-pointer">
+                    <div class="w-12 h-12 bg-slate-100 text-slate-400 group-hover:bg-primary/10 group-hover:text-primary rounded-2xl flex items-center justify-center transition-colors">
+                        <i data-lucide="plus" class="w-6 h-6"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-black text-slate-400 group-hover:text-primary uppercase text-sm">Ajouter une Société</h4>
+                        <p class="text-[10px] text-slate-400 mt-1 uppercase font-bold tracking-tighter">Créer ou rejoindre un espace</p>
+                    </div>
+                </a>
             </div>
+
+            <!-- Le bandeau précédent a été retiré pour utiliser la carte unifiée -->
+        </div>
         </div>
     </div>
 </div>

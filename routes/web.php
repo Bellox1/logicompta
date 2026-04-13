@@ -91,6 +91,7 @@ Route::prefix('accounting')->name('accounting.')->middleware(['web', 'auth'])->g
     Route::get('/journal/{id}/pdf', [JournalDataController::class, 'showPdf'])->name('journal.show.pdf');
     // OCR : redirigé vers OcrController (Tesseract local) — anciennement Google Vision API
     Route::post('/journal/ocr-import', [OcrController::class, 'ocrImport'])->name('journal.ocr_import');
+    Route::post('/journal/ocr-ai-process', [OcrController::class, 'processWithAI'])->name('journal.ocr_ai_process');
     
     // Paramétrage des journaux
     Route::get('/journals-settings', [JournalSettingsController::class, 'index'])->name('journals-settings.index');

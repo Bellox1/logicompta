@@ -92,8 +92,8 @@
                 </div>
                 <!-- Texte brut -->
                 <div>
-                    <p class="text-[10px] font-black uppercase tracking-widest text-text-secondary mb-2">Texte brut extrait</p>
-                    <pre id="ocr-debug-rawtext" class="bg-slate-50 border border-slate-200 rounded-xl p-4 text-xs text-slate-700 whitespace-pre-wrap max-h-48 overflow-y-auto font-mono"></pre>
+                    <p class="text-[10px] font-black uppercase tracking-widest text-text-secondary mb-2">Texte brut extrait (Modifiable pour l'IA)</p>
+                    <textarea id="ocr-debug-rawtext-area" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 text-xs text-slate-700 whitespace-pre-wrap h-48 overflow-y-auto font-mono focus:border-primary outline-none transition-all"></textarea>
                 </div>
                 <!-- JSON complet -->
                 <div>
@@ -101,10 +101,14 @@
                     <pre id="ocr-debug-json" class="bg-slate-900 text-green-400 rounded-xl p-4 text-xs overflow-x-auto font-mono max-h-48 overflow-y-auto"></pre>
                 </div>
             </div>
-            <!-- Footer -->
-            <div class="px-6 py-3 border-t border-slate-100 flex justify-end">
+            <div class="px-6 py-3 border-t border-slate-100 flex justify-between items-center bg-slate-50/50">
+                <button type="button" id="btn-ai-process-raw" onclick="processWithAI()"
+                    class="px-5 py-2.5 bg-slate-900 text-white rounded-xl text-xs font-black hover:bg-slate-800 transition-all flex items-center gap-2 shadow-md">
+                    <i data-lucide="sparkles" class="w-4 h-4 text-primary"></i>
+                    Magique : Appliquer l'IA
+                </button>
                 <button onclick="document.getElementById('ocr-debug-modal').classList.add('hidden')" 
-                    class="px-5 py-2 bg-primary text-white rounded-xl text-xs font-black hover:opacity-90 transition-all">
+                    class="px-5 py-2.5 bg-white border border-border text-text-secondary rounded-xl text-xs font-black hover:bg-slate-50 transition-all">
                     Fermer
                 </button>
             </div>
@@ -556,6 +560,7 @@
             });
 
             // --- OCR Logic ---
+            let lastOcrData = null;
             const dropzone = document.getElementById('ocr-dropzone');
             const fileInput = document.getElementById('ocr-file-input');
             const ocrStatus = document.getElementById('ocr-status');
@@ -641,6 +646,7 @@
 
             // --- Fonction Debug OCR ---
             function showOcrDebug(data) {
+                lastOcrData = data;
                 const tbody = document.getElementById('ocr-debug-table');
                 tbody.innerHTML = '';
 
@@ -694,36 +700,12 @@
                 }
 
                 // -------------------------------------------------
-                // 2. Toutes les lignes détectées (Mode Manuel)
+                // 3. Texte brut dans le textarea (Modifiable)
                 // -------------------------------------------------
-                const rawLines = (data.raw_text || '').split('\n').map(l => l.trim()).filter(l => l.length > 0);
-                let linesHtml = '';
-                
-                rawLines.forEach((line, i) => {
-                    linesHtml += `
-                        <tr class="hover:bg-slate-50 group">
-                            <td class="px-2 py-1.5 text-[9px] text-slate-300 font-mono w-8 text-right border-r border-slate-50 bg-slate-50/30">${i+1}</td>
-                            <td class="px-3 py-1.5 text-xs font-mono text-slate-600 flex flex-wrap items-center justify-between gap-2 overflow-hidden">
-                                <span class="truncate max-w-[150px] md:max-w-none flex-1">${line}</span>
-                                <div class="flex gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                                    <button onclick="fillField('libelle', '${line.replace(/'/g, "\\'")}')" class="px-2 py-1 bg-slate-100 md:bg-slate-50 hover:bg-primary hover:text-white rounded text-[9px] font-black uppercase transition-all">Libellé</button>
-                                    <button onclick="fillField('amount', '${line.replace(/'/g, "\\'")}')" class="px-2 py-1 bg-slate-100 md:bg-slate-50 hover:bg-primary hover:text-white rounded text-[9px] font-black uppercase transition-all">Montant</button>
-                                </div>
-                            </td>
-                        </tr>`;
-                });
-
-                document.getElementById('ocr-debug-rawtext').innerHTML = `
-                    <div class="border border-slate-100 rounded-xl overflow-hidden shadow-sm">
-                        <table class="w-full text-left divide-y divide-slate-50">
-                            <tbody class="divide-y divide-slate-50 bg-white">
-                                ${linesHtml || '<tr><td colspan="2" class="p-4 text-center text-xs text-slate-400">Aucun texte détecté.</td></tr>'}
-                            </tbody>
-                        </table>
-                    </div>`;
+                document.getElementById('ocr-debug-rawtext-area').value = data.raw_text || '';
 
                 // -------------------------------------------------
-                // 3. JSON complet
+                // 4. JSON complet
                 // -------------------------------------------------
                 document.getElementById('ocr-debug-json').textContent =
                     JSON.stringify(data, null, 2);
@@ -769,6 +751,109 @@
                     showConfirmButton: false
                 });
             };
+
+            // --- IA Process Logic ---
+            window.processWithAI = function() {
+                const rawText = document.getElementById('ocr-debug-rawtext-area').value;
+                if (!rawText || rawText.trim().length < 10) {
+                    Swal.fire('Erreur', 'Pas assez de texte à analyser.', 'warning');
+                    return;
+                }
+
+                // Close modals and show loader
+                document.getElementById('ocr-debug-modal').classList.add('hidden');
+                
+                Swal.fire({
+                    title: 'L\'IA analyse...',
+                    html: 'Construction de l\'écriture comptable...',
+                    allowOutsideClick: false,
+                    didOpen: () => { Swal.showLoading(); }
+                });
+
+                fetch('{{ route("accounting.journal.ocr_ai_process") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ raw_text: rawText })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    Swal.close();
+                    console.log('Gemini Data:', data); // Debug
+                    if (data.error) {
+                        Swal.fire('Erreur IA', data.error, 'error');
+                    } else {
+                        applyAISuggestions(data);
+                    }
+                })
+                .catch(err => {
+                    Swal.close();
+                    Swal.fire('Erreur', 'Impossible de contacter l\'IA.', 'error');
+                });
+            };
+
+            function applyAISuggestions(data) {
+                // Mapping des données générales
+                if (data.date) document.querySelector('input[name="date"]').value = data.date;
+                if (data.libelle) document.querySelector('input[name="libelle"]').value = data.libelle;
+                
+                // On vide les lignes actuelles (sauf les 2 premières)
+                const rows = document.querySelectorAll('.line-row');
+                rows.forEach((row, i) => { if(i >= 2) row.remove(); });
+                
+                // Reset first 2 lines
+                const firstRows = document.querySelectorAll('.line-row');
+                firstRows.forEach(row => {
+                    row.querySelector('select').value = "";
+                    row.querySelector('.debit-input').value = "";
+                    row.querySelector('.credit-input').value = "";
+                    row.querySelector('textarea').value = "";
+                });
+
+                // Remplissage des lignes IA
+                if (data.lignes && data.lignes.length > 0) {
+                    data.lignes.forEach((line, index) => {
+                        let row = document.querySelectorAll('.line-row')[index];
+                        if (!row) {
+                            document.getElementById('add-line').click();
+                            row = document.querySelectorAll('.line-row')[index];
+                        }
+
+                        // Trouver le compte le plus proche
+                        const searchAccount = line.sous_compte || line.compte || line.code;
+                        if (searchAccount) {
+                            const options = Array.from(row.querySelector('select').options);
+                            const bestMatch = options.find(opt => 
+                                opt.text.startsWith(searchAccount) || 
+                                opt.text.includes(searchAccount) || 
+                                opt.value == searchAccount
+                            );
+                            if (bestMatch) {
+                                row.querySelector('select').value = bestMatch.value;
+                                row.querySelector('select').dispatchEvent(new Event('change'));
+                            }
+                        }
+
+                        row.querySelector('.debit-input').value = line.debit || "";
+                        row.querySelector('.credit-input').value = line.credit || "";
+                        if (line.libelle) row.querySelector('textarea').value = line.libelle;
+                        else if (data.libelle) row.querySelector('textarea').value = data.libelle;
+                    });
+                }
+
+                calculate();
+                saveDraft();
+
+                Swal.fire({
+                    title: 'Écriture générée !',
+                    text: 'Vérifiez les comptes et les montants avant de valider.',
+                    icon: 'success',
+                    timer: 3000
+                });
+            }
 
             // Initial load
             loadDraft();

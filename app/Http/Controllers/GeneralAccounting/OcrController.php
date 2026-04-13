@@ -5,6 +5,7 @@ namespace App\Http\Controllers\GeneralAccounting;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use App\Services\GeminiService;
 use thiagoalessio\TesseractOCR\TesseractOCR;
 
 /**
@@ -434,5 +435,24 @@ class OcrController extends Controller
         $data['lignes'] = array_slice($lignes, 0, 15); // Max 15 lignes
 
         return $data;
+    }
+
+    /**
+     * Traitement IA du texte brut (Gemini)
+     */
+    public function processWithAI(Request $request)
+    {
+        $request->validate([
+            'raw_text' => 'required|string',
+        ]);
+
+        $gemini = new GeminiService();
+        
+        try {
+            $result = $gemini->processOCR($request->raw_text);
+            return response()->json($result);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }

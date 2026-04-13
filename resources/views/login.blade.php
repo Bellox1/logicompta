@@ -8,7 +8,8 @@
     <title>Comptafriq - Connexion</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Font: Arial -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
@@ -17,7 +18,7 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Arial', 'sans-serif']
+                        sans: ['Inter', 'sans-serif']
                     },
                     colors: {
                         primary: '#005b82',
@@ -29,7 +30,7 @@
     </script>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Inter', sans-serif;
             margin: 0;
             padding: 0;
         }
@@ -175,7 +176,8 @@
                             </span>
                             <input type="password" name="password" id="password" required placeholder="••••••••"
                                 class="w-full bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white pl-12 pr-12 py-4 rounded-2xl text-sm focus:outline-none focus:border-primary transition-all shadow-sm">
-                            <button type="button" onclick="togglePassword('password', 'eye-icon')" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors">
+                            <button type="button" onclick="togglePassword('password', 'eye-icon')"
+                                class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors">
                                 <i data-lucide="eye" id="eye-icon" class="w-5 h-5"></i>
                             </button>
                         </div>
@@ -205,7 +207,7 @@
         function togglePassword(inputId, iconId) {
             const input = document.getElementById(inputId);
             const icon = document.getElementById(iconId);
-            
+
             if (input.type === 'password') {
                 input.type = 'text';
                 icon.setAttribute('data-lucide', 'eye-off');

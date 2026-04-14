@@ -78,9 +78,10 @@ Route::prefix('accounting')->name('accounting.')->middleware(['web', 'auth'])->g
 
     Route::get('/journal', [JournalController::class, 'index'])->name('journal.index');
     Route::get('/journal/export-pdf', [JournalDataController::class, 'exportPdf'])->name('journal.export.pdf');
-    Route::get('/journal/create', [JournalController::class, 'create'])->name('journal.create');
-    Route::post('/journal/store', [JournalController::class, 'store'])->name('journal.store');
+    Route::get('/journal/saisie', [JournalController::class, 'create'])->name('journal.create');
+    Route::post('/journal/saisie', [JournalController::class, 'store'])->name('journal.store');
     Route::get('/journal/import', [JournalDataController::class, 'importForm'])->name('journal.import');
+    Route::get('/journal/next-piece-number', [JournalController::class, 'getNextPieceNumber'])->name('journal.next-piece-number');
     Route::post('/journal/import/preview', [JournalDataController::class, 'importPreview'])->name('journal.import.preview');
     Route::get('/journal/import/preview', [JournalDataController::class, 'importPreview']); // Allow GET for refreshing/back
     Route::post('/journal/import/process', [JournalDataController::class, 'importProcess'])->name('journal.import.process');

@@ -3,22 +3,26 @@
 @section('title', 'Grand Livre')
 
 @section('content')
-@if(request('show_archived') == '1' && request('start_date'))
-    <div class="mb-6 bg-primary/10 border-l-4 border-primary p-4 flex items-center justify-between shadow-sm animate-fade-in no-print">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-primary text-white flex items-center justify-center rounded-xl">
-                <i data-lucide="archive" class="w-5 h-5"></i>
+    @if (request('show_archived') == '1' && request('start_date'))
+        <div
+            class="mb-6 bg-primary/10 border-l-4 border-primary p-4 flex items-center justify-between shadow-sm animate-fade-in no-print">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-primary text-white flex items-center justify-center rounded-xl">
+                    <i data-lucide="archive" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-black text-text-main uppercase leading-none">Archives de l'exercice
+                        {{ date('Y', strtotime(request('start_date'))) }}</h3>
+                    <p class="text-xs text-text-secondary font-black uppercase tracking-widest mt-1">Données scellées et
+                        définitives</p>
+                </div>
             </div>
-            <div>
-                <h3 class="text-lg font-black text-text-main uppercase leading-none">Archives de l'exercice {{ date('Y', strtotime(request('start_date'))) }}</h3>
-                <p class="text-xs text-text-secondary font-black uppercase tracking-widest mt-1">Données scellées et définitives</p>
-            </div>
+            <a href="{{ route('accounting.archive.index') }}"
+                class="text-[10px] font-black uppercase text-primary bg-white border border-primary px-3 py-1.5 rounded-lg hover:bg-primary hover:text-white transition-all">
+                Retour au Hub
+            </a>
         </div>
-        <a href="{{ route('accounting.archive.index') }}" class="text-[10px] font-black uppercase text-primary bg-white border border-primary px-3 py-1.5 rounded-lg hover:bg-primary hover:text-white transition-all">
-            Retour au Hub
-        </a>
-    </div>
-@endif
+    @endif
 
     <div class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6 no-print">
         <div>
@@ -30,7 +34,7 @@
                 class="px-5 py-2.5 {{ $mode === 'all' && !$selectedClass ? 'bg-primary text-white' : 'bg-white text-slate-600' }} border border-slate-200 rounded-lg text-xs font-semibold transition-all shadow-sm">
                 Vue complète
             </a>
-            
+
             <div class="relative">
                 <button id="class-dropdown-btn"
                     class="px-5 py-2.5 {{ $selectedClass ? 'bg-primary text-white' : 'bg-white text-slate-600' }} border border-slate-200 rounded-lg text-xs font-semibold transition-all shadow-sm flex items-center gap-2">
@@ -58,7 +62,8 @@
         <input type="hidden" name="mode" value="{{ request('mode', 'single') }}">
         <input type="hidden" name="class" value="{{ request('class') }}">
         <div class="w-full md:flex-1">
-            <label class="block text-[11px] font-black text-text-secondary mb-2 uppercase tracking-wider px-1">Période du</label>
+            <label class="block text-[11px] font-black text-text-secondary mb-2 uppercase tracking-wider px-1">Période
+                du</label>
             <input type="date" name="start_date" value="{{ request('start_date') }}" placeholder="JJ/MM/AAAA"
                 class="w-full bg-slate-50 border border-slate-200 px-4 py-3 text-sm font-semibold outline-none focus:border-primary transition-all rounded-lg">
         </div>
@@ -67,13 +72,14 @@
             <input type="date" name="end_date" value="{{ request('end_date') }}" placeholder="JJ/MM/AAAA"
                 class="w-full bg-slate-50 border border-slate-200 px-4 py-3 text-sm font-semibold outline-none focus:border-primary transition-all rounded-lg">
         </div>
-        <div class="flex items-center gap-3">
-            <button type="submit" class="px-8 py-3 bg-primary text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all shadow-sm rounded-lg flex items-center gap-2">
+        <div class="flex flex-col md:flex-row gap-3">
+            <button type="submit"
+                class="w-full md:w-auto px-5 py-2.5 bg-primary text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all shadow-sm rounded-lg flex items-center justify-center gap-2">
                 <i data-lucide="refresh-cw" class="w-4 h-4"></i> Actualiser
             </button>
             @if (request()->hasAny(['start_date', 'end_date']))
-                <a href="{{ request()->url() . (request('mode') ? '?mode=' . request('mode') : '') . (request('class') ? '&class=' . request('class') : '') }}"
-                    class="px-6 py-3 bg-slate-100 text-slate-500 text-xs font-bold uppercase tracking-widest hover:bg-slate-200 transition-all rounded-lg flex items-center gap-2 border border-slate-200">
+                <a href="{{ request()->url(['mode' => request('mode', 'single'), 'class' => request('class')]) }}"
+                    class="w-full md:w-auto px-5 py-2.5 bg-white text-slate-500 text-xs font-bold uppercase tracking-widest hover:bg-slate-50 transition-all rounded-lg flex items-center justify-center gap-2 border border-slate-200 shadow-sm">
                     <i data-lucide="x" class="w-4 h-4"></i> Effacer
                 </a>
             @endif
@@ -103,7 +109,9 @@
     <div class="bg-card-bg border border-border rounded-3xl p-6 shadow-sm mb-8 no-print">
         <div class="flex flex-col md:flex-row md:items-end gap-6">
             <div class="flex-1">
-                <label for="account_select" class="block text-[11px] font-black text-text-secondary mb-2 uppercase tracking-wider px-1">Filtrer par compte</label>
+                <label for="account_select"
+                    class="block text-[11px] font-black text-text-secondary mb-2 uppercase tracking-wider px-1">Filtrer par
+                    compte</label>
                 <select id="account_select"
                     class="w-full bg-bg border border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all text-sm font-black appearance-none cursor-pointer">
                     <option value="">-- Sélectionner un compte spécifique --</option>
@@ -143,17 +151,22 @@
                 <!-- Informations Compte -->
                 <div class="grid grid-cols-1 md:grid-cols-3 bg-white/50 border-b border-border p-8 gap-6">
                     <div>
-                        <span class="text-[10px] uppercase font-black text-text-secondary tracking-widest block mb-1">Intitulé du compte</span>
+                        <span
+                            class="text-[10px] uppercase font-black text-text-secondary tracking-widest block mb-1">Intitulé
+                            du compte</span>
                         <span class="text-base font-black text-text-main uppercase">{{ $account->libelle }}</span>
                     </div>
                     <div>
-                        <span class="text-[10px] uppercase font-black text-text-secondary tracking-widest block mb-1">Numéro</span>
+                        <span
+                            class="text-[10px] uppercase font-black text-text-secondary tracking-widest block mb-1">Numéro</span>
                         <span class="text-base font-black text-primary tracking-tighter">
                             {{ str_pad($account->code_compte, 9, '0', STR_PAD_RIGHT) }}
                         </span>
                     </div>
                     <div class="md:text-right">
-                        <span class="text-[10px] uppercase font-black text-text-secondary tracking-widest block mb-1">Dernière consultation</span>
+                        <span
+                            class="text-[10px] uppercase font-black text-text-secondary tracking-widest block mb-1">Dernière
+                            consultation</span>
                         <span class="text-xs font-black text-text-secondary">{{ date('d/m/Y H:i') }}</span>
                     </div>
                 </div>
@@ -163,11 +176,16 @@
                         data-account="{{ $account->code_compte }} - {{ $account->libelle }}">
                         <thead>
                             <tr class="text-text-secondary border-b border-border font-black">
-                                <th class="px-6 py-5 text-[10px] uppercase tracking-widest text-left" style="width: 120px;">Date</th>
-                                <th class="px-6 py-5 text-[10px] uppercase tracking-widest text-left" style="width: 100px;">Journal</th>
-                                <th class="px-6 py-5 text-[10px] uppercase tracking-widest text-left">Libellé de l'opération</th>
-                                <th class="px-6 py-5 text-[10px] uppercase tracking-widest text-right" style="width: 140px;">Débit</th>
-                                <th class="px-6 py-5 text-[10px] uppercase tracking-widest text-right" style="width: 140px;">Crédit</th>
+                                <th class="px-6 py-5 text-[10px] uppercase tracking-widest text-left" style="width: 120px;">
+                                    Date</th>
+                                <th class="px-6 py-5 text-[10px] uppercase tracking-widest text-left" style="width: 100px;">
+                                    Journal</th>
+                                <th class="px-6 py-5 text-[10px] uppercase tracking-widest text-left">Libellé de l'opération
+                                </th>
+                                <th class="px-6 py-5 text-[10px] uppercase tracking-widest text-right"
+                                    style="width: 140px;">Débit</th>
+                                <th class="px-6 py-5 text-[10px] uppercase tracking-widest text-right"
+                                    style="width: 140px;">Crédit</th>
                             </tr>
                         </thead>
                         <tbody class="text-[13px]">
@@ -206,7 +224,8 @@
                         @if (count($account->entryLines) > 0)
                             <tfoot class="bg-white/50 border-t border-border">
                                 <tr>
-                                    <td colspan="3" class="px-6 py-6 text-right text-[10px] font-black text-text-secondary uppercase tracking-widest">
+                                    <td colspan="3"
+                                        class="px-6 py-6 text-right text-[10px] font-black text-text-secondary uppercase tracking-widest">
                                         Total cumulé
                                     </td>
                                     <td class="px-6 py-6 text-right font-black text-text-main whitespace-nowrap">
@@ -220,9 +239,13 @@
                                     <td colspan="3"></td>
                                     <td colspan="2" class="px-6 py-10 text-right">
                                         <div class="flex items-center justify-end gap-6 whitespace-nowrap">
-                                            <span class="text-[10px] font-black text-text-secondary uppercase tracking-[0.2em]">Solde Net {{ $runningSolde >= 0 ? 'Débité' : 'Crédité' }} :</span>
-                                            <span class="text-3xl font-black {{ $runningSolde >= 0 ? 'text-green-700' : 'text-red-700' }}">
-                                                {{ number_format(abs($runningSolde), 2, ',', ' ') }} <span class="text-xs uppercase font-normal not-italic opacity-40 text-text-main">FCFA</span>
+                                            <span
+                                                class="text-[10px] font-black text-text-secondary uppercase tracking-[0.2em]">Solde
+                                                Net {{ $runningSolde >= 0 ? 'Débité' : 'Crédité' }} :</span>
+                                            <span
+                                                class="text-3xl font-black {{ $runningSolde >= 0 ? 'text-green-700' : 'text-red-700' }}">
+                                                {{ number_format(abs($runningSolde), 2, ',', ' ') }} <span
+                                                    class="text-xs uppercase font-normal not-italic opacity-40 text-text-main">FCFA</span>
                                             </span>
                                         </div>
                                     </td>

@@ -490,79 +490,86 @@
 
             <nav class="flex-1 flex flex-col gap-1 overflow-y-auto mt-0 px-2">
                 <a href="{{ route('accounting.dashboard') }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-black transition-all {{ request()->routeIs('accounting.dashboard') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
+                    class="flex items-center gap-3 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.dashboard') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
                     <i class="w-4 h-4 {{ request()->routeIs('accounting.dashboard') ? 'text-white' : '' }}"
                         data-lucide="layout-dashboard"></i>
                     <span class="sidebar-label transition-all duration-300 uppercase">Tableau de bord</span>
                 </a>
 
                 <div
-                    class="sidebar-label text-[13px] uppercase font-black text-text-secondary mt-6 px-3 mb-2 tracking-widest hidden md:block opacity-60">
+                    class="sidebar-label text-[11px] uppercase font-black text-text-secondary mt-4 px-3 mb-1.5 tracking-widest hidden md:block opacity-60">
                     Base</div>
 
                 <a href="{{ route('accounting.journal.index') }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-black transition-all {{ request()->routeIs('accounting.journal.index') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
+                    class="flex items-center gap-3 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.journal.index') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
                     <i class="w-4 h-4 {{ request()->routeIs('accounting.journal.index') ? 'text-white' : '' }}"
                         data-lucide="book"></i>
                     <span class="sidebar-label transition-all duration-300 uppercase">Journal</span>
                 </a>
                 <a href="{{ route('accounting.journal.create') }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-black transition-all {{ request()->routeIs('accounting.journal.create') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
+                    class="flex items-center gap-3 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.journal.create') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
                     <i class="w-4 h-4 {{ request()->routeIs('accounting.journal.create') ? 'text-white' : '' }}"
                         data-lucide="plus-circle"></i>
                     <span class="sidebar-label transition-all duration-300 uppercase">Saisie</span>
                 </a>
 
                 <div
-                    class="sidebar-label text-[13px] uppercase font-black text-text-secondary mt-6 px-3 mb-2 tracking-widest hidden md:block opacity-60">
+                    class="sidebar-label text-[11px] uppercase font-black text-text-secondary mt-4 px-3 mb-1.5 tracking-widest hidden md:block opacity-60">
                     PILOTAGE</div>
 
                 <a href="{{ route('accounting.ledger') }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-black transition-all {{ request()->routeIs('accounting.ledger') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
+                    class="flex items-center gap-3 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.ledger') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
                     <i class="w-4 h-4 {{ request()->routeIs('accounting.ledger') ? 'text-white' : '' }}"
                         data-lucide="list-checks"></i>
                     <span class="sidebar-label transition-all duration-300 uppercase">Grand Livre</span>
                 </a>
                 <a href="{{ route('accounting.balance') }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-black transition-all {{ request()->routeIs('accounting.balance') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
+                    class="flex items-center gap-3 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.balance') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
                     <i class="w-4 h-4 {{ request()->routeIs('accounting.balance') ? 'text-white' : '' }}"
                         data-lucide="layers"></i>
                     <span class="sidebar-label transition-all duration-300 uppercase">Balance</span>
                 </a>
                 <a href="{{ route('accounting.bilan') }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-black transition-all {{ request()->routeIs('accounting.bilan') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
+                    class="flex items-center gap-3 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.bilan') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
                     <i class="w-4 h-4 {{ request()->routeIs('accounting.bilan') ? 'text-white' : '' }}"
                         data-lucide="file-bar-chart"></i>
                     <span class="sidebar-label transition-all duration-300 uppercase">Bilan</span>
                 </a>
                 <a href="{{ route('accounting.resultat') }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-black transition-all {{ request()->routeIs('accounting.resultat') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
+                    class="flex items-center gap-3 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.resultat') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
                     <i class="w-4 h-4 {{ request()->routeIs('accounting.resultat') ? 'text-white' : '' }}"
                         data-lucide="trending-up"></i>
                     <span class="sidebar-label transition-all duration-300 uppercase">Résultat</span>
                 </a>
                 <a href="{{ route('accounting.archive.index') }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-black transition-all {{ request()->routeIs('accounting.archive.index') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
+                    class="flex items-center gap-3 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.archive.index') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
                     <i class="w-4 h-4 {{ request()->routeIs('accounting.archive.*') ? 'text-white' : '' }}"
                         data-lucide="archive"></i>
                     <span class="sidebar-label transition-all duration-300 uppercase">Archives</span>
                 </a>
                 <div
-                    class="sidebar-label text-[13px] uppercase font-bold text-slate-500 mt-6 px-3 mb-2 tracking-widest hidden md:block opacity-80">
+                    class="sidebar-label text-[11px] uppercase font-bold text-slate-500 mt-4 px-3 mb-1.5 tracking-widest hidden md:block opacity-80">
                     PARAMÈTRES</div>
 
                 <a href="{{ route('accounting.account.index') }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-black transition-all {{ request()->routeIs('accounting.account.*') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
+                    class="flex items-center gap-3 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.account.*') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
                     <i class="w-4 h-4 {{ request()->routeIs('accounting.account.*') ? 'text-white' : '' }}"
                         data-lucide="package"></i>
                     <span class="sidebar-label transition-all duration-300 uppercase">Plan Comptable</span>
                 </a>
 
+                <a href="{{ route('accounting.journals-settings.index') }}"
+                    class="flex items-center gap-3 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.journals-settings.*') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
+                    <i class="w-4 h-4 {{ request()->routeIs('accounting.journals-settings.*') ? 'text-white' : '' }}"
+                        data-lucide="book-marked"></i>
+                    <span class="sidebar-label transition-all duration-300 uppercase">Gestion des Journaux</span>
+                </a>
+
                 <div
-                    class="sidebar-label text-[13px] uppercase font-black text-text-secondary mt-6 px-3 mb-2 tracking-widest hidden md:block opacity-60">
+                    class="sidebar-label text-[11px] uppercase font-black text-text-secondary mt-4 px-3 mb-1.5 tracking-widest hidden md:block opacity-60">
                     SUPPORT</div>
                 <a href="{{ route('accounting.help') }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-black transition-all {{ request()->routeIs('accounting.help') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
+                    class="flex items-center gap-3 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.help') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
                     <i class="w-4 h-4 {{ request()->routeIs('accounting.help') ? 'text-white' : '' }}"
                         data-lucide="help-circle"></i>
                     <span class="sidebar-label transition-all duration-300 uppercase">Guide & Aide</span>
@@ -617,7 +624,7 @@
 
 
         <!-- Main Content Wrapper -->
-        <div class="flex-1 flex flex-col h-full overflow-hidden">
+        <div class="flex-1 min-w-0 flex flex-col h-full overflow-hidden">
             <!-- Main Header (Mobile Only) -->
             <header
                 class="flex h-16 items-center justify-between border-b border-border bg-card-bg px-6 md:px-10 sticky top-0 z-[1998] md:hidden">
@@ -635,39 +642,23 @@
             </header>
 
             <!-- Scrollable Content Area - Enable full auto overflow for sticky headers -->
-            <main class="main-content flex-1 overflow-auto p-6 md:p-10 transition-all scroll-smooth relative">
+            <main class="main-content flex-1 min-w-0 overflow-auto p-6 md:p-10 transition-all scroll-smooth relative">
+                @php
+                    $skipAutoHide = request()->routeIs('entreprise.setup');
+                @endphp
+
                 @if (session('success'))
-                    <div id="success-alert"
-                        class="mb-6 p-4 rounded-xl bg-green-500/10 border border-green-500/30 text-green-700 dark:text-green-400 flex items-center gap-3 animate-fade-up relative overflow-hidden">
+                    <div class="alert-box mb-6 p-4 rounded-xl bg-green-500/10 border border-green-500/30 text-green-700 dark:text-green-400 flex items-center gap-3 animate-fade-up relative overflow-hidden">
                         <i data-lucide="check-circle" class="w-5 h-5 flex-shrink-0"></i>
-                        <span class="flex-1">{{ session('success') }}</span>
+                        <span class="flex-1 font-bold">{{ session('success') }}</span>
                         <button onclick="this.parentElement.remove()"
                             class="p-1 hover:bg-black/5 rounded-lg transition-colors">
                             <i data-lucide="x" class="w-4 h-4"></i>
                         </button>
-                        <!-- Progress line -->
-                        <div id="success-progress" class="absolute bottom-0 left-0 h-0.5 bg-green-500 transition-all duration-[3000ms] ease-linear w-full"></div>
+                        @if(!$skipAutoHide)
+                            <div class="alert-progress absolute bottom-0 left-0 h-0.5 bg-green-500 w-full transition-all"></div>
+                        @endif
                     </div>
-                    <script>
-                        document.addEventListener('DOMContentLoaded', () => {
-                            const progress = document.getElementById('success-progress');
-                            if (progress) {
-                                // Forcer un reflow pour que la transition se déclenche
-                                setTimeout(() => {
-                                    progress.style.width = '0%';
-                                }, 50);
-                            }
-                            
-                            setTimeout(() => {
-                                const alert = document.getElementById('success-alert');
-                                if (alert) {
-                                    alert.style.transition = 'opacity 0.5s ease';
-                                    alert.style.opacity = '0';
-                                    setTimeout(() => alert.remove(), 500);
-                                }
-                            }, 3000);
-                        });
-                    </script>
                 @endif
 
                 @if (session('error_list'))
@@ -716,10 +707,9 @@
                 @endif
 
                 @if (session('error'))
-                    <div
-                        class="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-700 dark:text-red-400 flex items-center gap-3 animate-fade-up">
+                    <div class="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-700 dark:text-red-400 flex items-center gap-3 animate-fade-up relative overflow-hidden">
                         <i data-lucide="alert-circle" class="w-5 h-5 flex-shrink-0"></i>
-                        <span class="flex-1">{{ session('error') }}</span>
+                        <span class="flex-1 font-bold">{{ session('error') }}</span>
                         <button onclick="this.parentElement.remove()"
                             class="p-1 hover:bg-black/5 rounded-lg transition-colors">
                             <i data-lucide="x" class="w-4 h-4"></i>
@@ -1041,6 +1031,27 @@
                     if (!menu.contains(e.target)) menu.classList.add('hidden');
                 });
             }
+        });
+        // Gestion globale des alertes (Auto-hide + Progress bar)
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.alert-box').forEach(alert => {
+                const progress = alert.querySelector('.alert-progress');
+                if (progress) {
+                    // Animation de la barre de progression
+                    progress.style.transition = 'width 3s linear';
+                    setTimeout(() => {
+                        progress.style.width = '0%';
+                    }, 50);
+                    
+                    // Disparition de l'alerte
+                    setTimeout(() => {
+                        alert.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                        alert.style.opacity = '0';
+                        alert.style.transform = 'translateY(-10px)';
+                        setTimeout(() => alert.remove(), 500);
+                    }, 3000);
+                }
+            });
         });
     </script>
     @yield('scripts')

@@ -56,22 +56,26 @@
 @endsection
 
 @section('content')
-@if(request('show_archived') == '1' && request('start_date'))
-    <div class="mb-6 bg-primary/10 border-l-4 border-primary p-4 flex items-center justify-between shadow-sm animate-fade-in">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-primary text-white flex items-center justify-center rounded-xl">
-                <i data-lucide="archive" class="w-5 h-5"></i>
+    @if (request('show_archived') == '1' && request('start_date'))
+        <div
+            class="mb-6 bg-primary/10 border-l-4 border-primary p-4 flex items-center justify-between shadow-sm animate-fade-in">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-primary text-white flex items-center justify-center rounded-xl">
+                    <i data-lucide="archive" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-black text-gray-800 uppercase leading-none">Archives de l'exercice
+                        {{ date('Y', strtotime(request('start_date'))) }}</h3>
+                    <p class="text-xs text-gray-700 font-bold uppercase tracking-widest mt-1">Écritures scellées et protégées
+                        (Lecture seule)</p>
+                </div>
             </div>
-            <div>
-                <h3 class="text-lg font-black text-gray-800 uppercase leading-none">Archives de l'exercice {{ date('Y', strtotime(request('start_date'))) }}</h3>
-                <p class="text-xs text-gray-700 font-bold uppercase tracking-widest mt-1">Écritures scellées et protégées (Lecture seule)</p>
-            </div>
+            <a href="{{ route('accounting.archive.index') }}"
+                class="text-[10px] font-black uppercase text-primary bg-white border border-primary px-3 py-1.5 rounded-lg hover:bg-primary hover:text-white transition-all">
+                Retour au Hub
+            </a>
         </div>
-        <a href="{{ route('accounting.archive.index') }}" class="text-[10px] font-black uppercase text-primary bg-white border border-primary px-3 py-1.5 rounded-lg hover:bg-primary hover:text-white transition-all">
-            Retour au Hub
-        </a>
-    </div>
-@endif
+    @endif
 
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
@@ -118,14 +122,17 @@
     <form action="{{ request()->url() }}" method="GET"
         class="mb-10 grid grid-cols-1 md:flex md:flex-row md:items-end gap-3 md:gap-5 bg-card-bg p-4 md:p-8 border border-border shadow-sm no-print overflow-hidden max-w-full">
         <div class="w-full md:flex-1">
-            <label class="block text-[11px] font-black text-text-secondary mb-2 uppercase tracking-wider px-1 italic">Période du</label>
+            <label
+                class="block text-[11px] font-black text-text-secondary mb-2 uppercase tracking-wider px-1 italic">Période
+                du</label>
             <input type="date" name="start_date" value="{{ request('start_date') }}" placeholder="JJ/MM/AAAA"
-                   class="w-full bg-bg border border-border px-4 py-3 text-sm font-black outline-none focus:border-primary transition-all rounded-xl dark:text-white">
+                class="w-full bg-bg border border-border px-4 py-3 text-sm font-black outline-none focus:border-primary transition-all rounded-xl dark:text-white">
         </div>
         <div class="w-full md:flex-1">
-            <label class="block text-[11px] font-black text-text-secondary mb-2 uppercase tracking-wider px-1 italic">Au</label>
+            <label
+                class="block text-[11px] font-black text-text-secondary mb-2 uppercase tracking-wider px-1 italic">Au</label>
             <input type="date" name="end_date" value="{{ request('end_date') }}" placeholder="JJ/MM/AAAA"
-                   class="w-full bg-bg border border-border px-4 py-3 text-sm font-black outline-none focus:border-primary transition-all rounded-xl dark:text-white">
+                class="w-full bg-bg border border-border px-4 py-3 text-sm font-black outline-none focus:border-primary transition-all rounded-xl dark:text-white">
         </div>
         <div class="w-full md:w-auto flex flex-col md:flex-row gap-3">
             <button type="submit"
@@ -143,34 +150,44 @@
         <div class="w-full md:w-auto flex items-center h-full pt-6 md:pt-0">
             <label class="flex items-center gap-3 cursor-pointer group">
                 <div class="relative">
-                    <input type="checkbox" name="show_archived" value="1" {{ request('show_archived') ? 'checked' : '' }} 
-                           onchange="this.form.submit()" class="sr-only">
-                    <div class="w-10 h-5 bg-gray-200 rounded-full transition-colors group-hover:bg-gray-300 {{ request('show_archived') ? '!bg-primary' : '' }}"></div>
-                    <div class="absolute left-1 top-1 w-3 h-3 bg-white rounded-full transition-transform {{ request('show_archived') ? 'translate-x-5' : '' }}"></div>
+                    <input type="checkbox" name="show_archived" value="1"
+                        {{ request('show_archived') ? 'checked' : '' }} onchange="this.form.submit()" class="sr-only">
+                    <div
+                        class="w-10 h-5 bg-gray-200 rounded-full transition-colors group-hover:bg-gray-300 {{ request('show_archived') ? '!bg-primary' : '' }}">
+                    </div>
+                    <div
+                        class="absolute left-1 top-1 w-3 h-3 bg-white rounded-full transition-transform {{ request('show_archived') ? 'translate-x-5' : '' }}">
+                    </div>
                 </div>
                 <span class="text-[10px] uppercase font-bold text-gray-500 tracking-wider">Afficher les archives</span>
             </label>
         </div>
     </form>
 
-    @if($entries->count() > 0)
-    <div class="flex flex-col md:flex-row items-center justify-between bg-card-bg border border-border px-4 sm:px-8 py-4 sm:py-5 mb-8 shadow-md rounded-[1.2rem] sm:rounded-[1.5rem] gap-4 md:gap-0">
-        <div class="flex flex-col items-center md:items-start text-center md:text-left w-full md:w-auto">
-            <span class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Récapitulatif Global</span>
-            <span class="text-xs font-bold text-text-secondary italic">{{ request('show_archived') ? 'Session archive' : 'Exercice en cours' }}</span>
-        </div>
-        <div class="flex items-center justify-center gap-6 sm:gap-12 w-full md:w-auto">
-            <div class="flex flex-col items-end">
-                <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 opacity-60">Total Débit</span>
-                <span class="text-xl sm:text-2xl font-black text-emerald-500 dark:text-emerald-400 tabular-nums truncate whitespace-nowrap">{{ number_format($globalTotalDebit, 2, ',', ' ') }}</span>
+    @if ($entries->count() > 0)
+        <div
+            class="flex flex-col md:flex-row items-center justify-between bg-card-bg border border-border px-4 sm:px-8 py-4 sm:py-5 mb-8 shadow-md rounded-[1.2rem] sm:rounded-[1.5rem] gap-4 md:gap-0">
+            <div class="flex flex-col items-center md:items-start text-center md:text-left w-full md:w-auto">
+                <span class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Récapitulatif Global</span>
+                <span
+                    class="text-xs font-bold text-text-secondary italic">{{ request('show_archived') ? 'Session archive' : 'Exercice en cours' }}</span>
             </div>
-            <div class="w-px h-8 sm:h-10 bg-border opacity-50"></div>
-            <div class="flex flex-col items-start md:items-end">
-                <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 opacity-60">Total Crédit</span>
-                <span class="text-xl sm:text-2xl font-black text-rose-500 dark:text-rose-400 tabular-nums truncate whitespace-nowrap">{{ number_format($globalTotalCredit, 2, ',', ' ') }}</span>
+            <div class="flex items-center justify-center gap-6 sm:gap-12 w-full md:w-auto">
+                <div class="flex flex-col items-end">
+                    <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 opacity-60">Total
+                        Débit</span>
+                    <span
+                        class="text-xl sm:text-2xl font-black text-emerald-500 dark:text-emerald-400 tabular-nums truncate whitespace-nowrap">{{ number_format($globalTotalDebit, 2, ',', ' ') }}</span>
+                </div>
+                <div class="w-px h-8 sm:h-10 bg-border opacity-50"></div>
+                <div class="flex flex-col items-start md:items-end">
+                    <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 opacity-60">Total
+                        Crédit</span>
+                    <span
+                        class="text-xl sm:text-2xl font-black text-rose-500 dark:text-rose-400 tabular-nums truncate whitespace-nowrap">{{ number_format($globalTotalCredit, 2, ',', ' ') }}</span>
+                </div>
             </div>
         </div>
-    </div>
     @endif
 
     <div class="bg-card-bg border border-border rounded-none shadow-sm mb-8">
@@ -184,8 +201,10 @@
                                 class="flex items-center justify-center gap-2 w-full px-4 py-4 text-white hover:bg-white/5 transition-colors">
                                 <span>DATE</span>
                                 <div class="flex flex-col opacity-20 group-hover:opacity-100 transition-opacity">
-                                    <i data-lucide="chevron-up" class="w-3 h-3 {{ request('sort', 'date') == 'date' && request('order') == 'asc' ? 'text-white opacity-100 scale-125' : '' }}"></i>
-                                    <i data-lucide="chevron-down" class="w-3 h-3 -mt-1 {{ (request('sort', 'date') == 'date' && request('order', 'desc') == 'desc') ? 'text-white opacity-100 scale-125' : '' }}"></i>
+                                    <i data-lucide="chevron-up"
+                                        class="w-3 h-3 {{ request('sort', 'date') == 'date' && request('order') == 'asc' ? 'text-white opacity-100 scale-125' : '' }}"></i>
+                                    <i data-lucide="chevron-down"
+                                        class="w-3 h-3 -mt-1 {{ request('sort', 'date') == 'date' && request('order', 'desc') == 'desc' ? 'text-white opacity-100 scale-125' : '' }}"></i>
                                 </div>
                             </a>
                         </th>
@@ -195,8 +214,10 @@
                                 class="flex items-center justify-center gap-2 w-full px-4 py-4 text-white hover:bg-white/5 transition-colors">
                                 <span>Num PC</span>
                                 <div class="flex flex-col opacity-20 group-hover:opacity-100 transition-opacity">
-                                    <i data-lucide="chevron-up" class="w-3 h-3 {{ request('sort') == 'numero_piece' && request('order') == 'asc' ? 'text-white opacity-100 scale-125' : '' }}"></i>
-                                    <i data-lucide="chevron-down" class="w-3 h-3 -mt-1 {{ request('sort') == 'numero_piece' && request('order') == 'desc' ? 'text-white opacity-100 scale-125' : '' }}"></i>
+                                    <i data-lucide="chevron-up"
+                                        class="w-3 h-3 {{ request('sort') == 'numero_piece' && request('order') == 'asc' ? 'text-white opacity-100 scale-125' : '' }}"></i>
+                                    <i data-lucide="chevron-down"
+                                        class="w-3 h-3 -mt-1 {{ request('sort') == 'numero_piece' && request('order') == 'desc' ? 'text-white opacity-100 scale-125' : '' }}"></i>
                                 </div>
                             </a>
                         </th>
@@ -267,10 +288,12 @@
                                                 title="Modifier">
                                                 <i data-lucide="edit-3" class="w-5 h-5"></i>
                                             </a>
-                                            <form id="delete-entry-{{ $entry->id }}" action="{{ route('accounting.journal.destroy', $entry->id) }}" method="POST" class="inline">
+                                            <form id="delete-entry-{{ $entry->id }}"
+                                                action="{{ route('accounting.journal.destroy', $entry->id) }}"
+                                                method="POST" class="inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="button" 
+                                                <button type="button"
                                                     onclick="Swal.fire({
                                                         title: 'Supprimer cette écriture ?',
                                                         text: 'L\'opération sera définitivement supprimée.',
@@ -285,7 +308,8 @@
                                                             document.getElementById('delete-entry-{{ $entry->id }}').submit();
                                                         }
                                                     })"
-                                                    class="p-1.5 text-gray-400 hover:text-red-500 transition-all rounded-lg hover:bg-gray-100" title="Supprimer">
+                                                    class="p-1.5 text-gray-400 hover:text-red-500 transition-all rounded-lg hover:bg-gray-100"
+                                                    title="Supprimer">
                                                     <i data-lucide="x" class="w-5 h-5"></i>
                                                 </button>
                                             </form>

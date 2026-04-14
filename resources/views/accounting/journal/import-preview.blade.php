@@ -10,7 +10,7 @@
             <h1 class="text-3xl font-bold text-slate-800">Validation de l'import</h1>
             <p class="text-sm text-slate-500 mt-1 uppercase font-bold tracking-widest tracking-tighter">Modifiez les erreurs directement dans le tableau</p>
         </div>
-        <a href="{{ route('accounting.journal.import') }}" class="px-6 py-3 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-all text-xs flex items-center gap-2 shadow-sm">
+        <a href="{{ route('accounting.journal.import') }}" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-all text-xs flex items-center gap-2 shadow-sm">
             <i data-lucide="arrow-left" class="w-4 h-4"></i>
             Changer de fichier
         </a>
@@ -86,8 +86,8 @@
         </div>
 
         <!-- STICKY ACTIONS -->
-        <div class="fixed bottom-10 right-10 flex flex-col gap-4 shadow-2xl animate-fade-up z-[100]">
-            <div class="bg-slate-900 text-white p-6 rounded-2xl flex flex-col gap-4 min-w-[300px]">
+        <div class="fixed bottom-4 left-4 right-4 md:left-auto md:bottom-10 md:right-10 flex flex-col gap-4 shadow-2xl animate-fade-up z-[100]">
+            <div class="bg-slate-900 text-white p-5 md:p-6 rounded-2xl flex flex-col gap-4 min-w-[280px] md:min-w-[300px]">
                 <div class="flex justify-between items-center border-b border-slate-700 pb-4">
                     <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Total Débit</span>
                     <span id="global-debit" class="text-sm font-bold text-green-400">0,00 FCFA</span>
@@ -96,7 +96,7 @@
                     <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Total Crédit</span>
                     <span id="global-credit" class="text-sm font-bold text-rose-400">0,00 FCFA</span>
                 </div>
-                <button type="submit" class="w-full py-4 bg-primary text-white font-bold rounded-xl hover:opacity-90 transition-all text-sm flex items-center justify-center gap-3">
+                <button type="submit" class="w-full py-3 bg-primary text-white font-bold rounded-xl hover:opacity-90 transition-all text-xs flex items-center justify-center gap-3">
                     Confirmer l'importation
                     <i data-lucide="check" class="w-4 h-4"></i>
                 </button>

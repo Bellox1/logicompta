@@ -156,8 +156,10 @@
                         Pièce</label>
                     <input type="text" id="piece-number" name="numero_piece" value="{{ $nextPieceNumber }}" readonly
                         class="w-full bg-slate-50 border border-border rounded-xl px-4 py-3 text-sm font-black text-text-secondary cursor-not-allowed">
-                    <p id="archive-warning" class="hidden mt-1.5 text-[10px] font-bold text-amber-600 flex items-center gap-1">
-                        <span id="archive-warning-text">⚠️ Cette écriture sera archivée automatiquement (année différente)</span>
+                    <p id="archive-warning"
+                        class="hidden mt-1.5 text-[10px] font-bold text-amber-600 flex items-center gap-1">
+                        <span id="archive-warning-text">⚠️ Cette écriture sera archivée automatiquement (année
+                            différente)</span>
                     </p>
                 </div>
                 <div>
@@ -175,8 +177,8 @@
                 <div>
                     <label
                         class="block text-[11px] font-bold text-text-secondary mb-2 uppercase tracking-wider">Date</label>
-                    <input type="date" id="entry-date" name="date" value="{{ old('date', date('Y-m-d')) }}" required
-                        placeholder="JJ/MM/AAAA"
+                    <input type="date" id="entry-date" name="date" value="{{ old('date', date('Y-m-d')) }}"
+                        required placeholder="JJ/MM/AAAA"
                         class="w-full bg-white border border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all text-sm font-black text-text-main">
                 </div>
                 <div>
@@ -289,7 +291,7 @@
                         </div>
                     </div>
                     <button type="submit" id="submit-btn" disabled
-                        class="w-full md:w-auto px-10 py-4 bg-primary text-white font-black rounded-2xl hover:bg-primary-light disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-xl flex items-center justify-center gap-2 uppercase tracking-widest text-xs">
+                        class="w-full md:w-auto px-5 py-2.5 bg-primary text-white font-black rounded-xl hover:bg-primary-light disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-xl flex items-center justify-center gap-2 uppercase tracking-widest text-xs">
                         <i data-lucide="check-circle" class="w-5 h-5"></i>
                         Valider l'écriture
                     </button>
@@ -929,35 +931,41 @@
                 const date = dateInput ? dateInput.value : null;
                 if (!journalId || !date) return;
 
-                const fetchUrl = `{{ route('accounting.journal.next-piece-number', [], false) }}?journal_id=${journalId}&date=${date}`;
+                const fetchUrl =
+                    `{{ route('accounting.journal.next-piece-number', [], false) }}?journal_id=${journalId}&date=${date}`;
 
                 fetch(fetchUrl, {
-                    headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
-                    credentials: 'same-origin'
-                })
-                .then(r => r.json())
-                .then(data => {
-                    if (pieceNumberInput) {
-                        pieceNumberInput.value = data.next_number;
-                        // Animation flash
-                        pieceNumberInput.classList.add('ring-2', 'ring-primary');
-                        setTimeout(() => pieceNumberInput.classList.remove('ring-2', 'ring-primary'), 600);
-                    }
-                    if (archiveWarning) {
-                        if (data.will_be_archived) {
-                            const warningText = document.getElementById('archive-warning-text');
-                            if (warningText) {
-                                warningText.innerText = `⚠️ Cette écriture sera archivée automatiquement (année ${data.year})`;
-                            }
-                            archiveWarning.classList.remove('hidden');
-                        } else {
-                            archiveWarning.classList.add('hidden');
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json'
+                        },
+                        credentials: 'same-origin'
+                    })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (pieceNumberInput) {
+                            pieceNumberInput.value = data.next_number;
+                            // Animation flash
+                            pieceNumberInput.classList.add('ring-2', 'ring-primary');
+                            setTimeout(() => pieceNumberInput.classList.remove('ring-2', 'ring-primary'),
+                                600);
                         }
-                    }
-                })
-                .catch(err => {
-                    console.error("Erreur mise à jour N° pièce:", err);
-                });
+                        if (archiveWarning) {
+                            if (data.will_be_archived) {
+                                const warningText = document.getElementById('archive-warning-text');
+                                if (warningText) {
+                                    warningText.innerText =
+                                        `⚠️ Cette écriture sera archivée automatiquement (année ${data.year})`;
+                                }
+                                archiveWarning.classList.remove('hidden');
+                            } else {
+                                archiveWarning.classList.add('hidden');
+                            }
+                        }
+                    })
+                    .catch(err => {
+                        console.error("Erreur mise à jour N° pièce:", err);
+                    });
             };
 
             // Appel initial si un journal est déjà sélectionné

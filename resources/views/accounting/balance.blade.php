@@ -3,15 +3,15 @@
 @section('title', 'Balance Générale')
 
 @section('styles')
-<style>
-    div#balance-table, 
-    div#balance-table div, 
-    div#balance-table table, 
-    div#balance-table th, 
-    div#balance-table td {
-        border-color: #000000 !important;
-    }
-</style>
+    <style>
+        div#balance-table,
+        div#balance-table div,
+        div#balance-table table,
+        div#balance-table th,
+        div#balance-table td {
+            border-color: #000000 !important;
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -61,8 +61,7 @@
         <form action="{{ request()->url() }}" method="GET"
             class="mb-10 grid grid-cols-1 md:flex md:flex-row md:items-end gap-5 bg-card-bg border border-border p-6 rounded-3xl shadow-sm no-print">
             <div class="w-full md:flex-1">
-                <label
-                    class="block text-[11px] font-black text-text-secondary mb-2 uppercase tracking-wider px-1">Période
+                <label class="block text-[11px] font-black text-text-secondary mb-2 uppercase tracking-wider px-1">Période
                     du</label>
                 <input type="date" name="start_date" value="{{ request('start_date') }}" placeholder="JJ/MM/AAAA"
                     class="w-full bg-bg border border-border px-4 py-3 text-sm font-black outline-none focus:border-primary transition-all rounded-xl dark:text-white">
@@ -73,14 +72,14 @@
                 <input type="date" name="end_date" value="{{ request('end_date') }}" placeholder="JJ/MM/AAAA"
                     class="w-full bg-bg border border-border px-4 py-3 text-sm font-black outline-none focus:border-primary transition-all rounded-xl dark:text-white">
             </div>
-            <div class="flex items-center gap-3">
+            <div class="flex flex-col md:flex-row gap-3">
                 <button type="submit"
-                    class="px-8 py-3 bg-primary text-white text-xs font-black uppercase tracking-widest hover:bg-primary-light hover:-translate-y-0.5 transition-all shadow-lg rounded-xl flex items-center gap-2">
+                    class="w-full md:w-auto px-5 py-2.5 bg-primary text-white text-xs font-black uppercase tracking-widest hover:bg-primary-light hover:-translate-y-0.5 transition-all shadow-lg rounded-xl flex items-center justify-center gap-2">
                     <i data-lucide="refresh-cw" class="w-4 h-4"></i> Actualiser
                 </button>
                 @if (request()->hasAny(['start_date', 'end_date']))
                     <a href="{{ request()->url() }}"
-                        class="px-6 py-3 bg-white text-text-secondary text-xs font-black uppercase tracking-widest hover:bg-slate-50 transition-all rounded-xl flex items-center gap-2 border border-border shadow-sm">
+                        class="w-full md:w-auto px-5 py-2.5 bg-white text-text-secondary text-xs font-black uppercase tracking-widest hover:bg-slate-50 transition-all rounded-xl flex items-center justify-center gap-2 border border-border shadow-sm">
                         <i data-lucide="x" class="w-4 h-4"></i> Effacer
                     </a>
                 @endif
@@ -97,10 +96,13 @@
         <div class="table-responsive">
             <table class="w-full border-collapse min-w-[1000px] sticky-thead">
                 <thead>
-                    <tr class="bg-primary text-white text-[10px] uppercase font-black tracking-widest border-b border-black">
-                        <th rowspan="2" class="px-4 py-4 text-left border-r border-black" style="width: 120px;">NUMÉRO DE COMPTES</th>
+                    <tr
+                        class="bg-primary text-white text-[10px] uppercase font-black tracking-widest border-b border-black">
+                        <th rowspan="2" class="px-4 py-4 text-left border-r border-black" style="width: 120px;">NUMÉRO DE
+                            COMPTES</th>
                         <th rowspan="2" class="px-4 py-4 text-left border-r border-black">INTITULÉ DES COMPTES</th>
-                        <th colspan="2" class="px-4 py-3 text-center border-r border-black">SOLDES EN DÉBUT DE PERIODE</th>
+                        <th colspan="2" class="px-4 py-3 text-center border-r border-black">SOLDES EN DÉBUT DE PERIODE
+                        </th>
                         <th colspan="2" class="px-4 py-3 text-center border-r border-black">MOUVEMENTS DE LA PERIODE</th>
                         <th colspan="2" class="px-4 py-3 text-center">SOLDES EN FIN DE PERIODE</th>
                     </tr>
@@ -129,22 +131,30 @@
                                         {{ $acc['libelle'] }}</td>
 
                                     <!-- Soldes Début (Hypothétique/Fixe pour correspondre au design V1) -->
-                                    <td class="px-4 py-3 text-right font-medium text-slate-400 border-r border-black whitespace-nowrap">-</td>
-                                    <td class="px-4 py-3 text-right font-medium text-slate-400 border-r border-black whitespace-nowrap">-</td>
+                                    <td
+                                        class="px-4 py-3 text-right font-medium text-slate-400 border-r border-black whitespace-nowrap">
+                                        -</td>
+                                    <td
+                                        class="px-4 py-3 text-right font-medium text-slate-400 border-r border-black whitespace-nowrap">
+                                        -</td>
 
                                     <!-- Mouvements -->
-                                    <td class="px-4 py-3 text-right font-black text-text-main border-r border-black whitespace-nowrap">
+                                    <td
+                                        class="px-4 py-3 text-right font-black text-text-main border-r border-black whitespace-nowrap">
                                         {{ $acc['mouv_debit'] > 0 ? number_format($acc['mouv_debit'], 2, ',', ' ') : '0,00' }}
                                     </td>
-                                    <td class="px-4 py-3 text-right font-black text-text-main border-r border-black whitespace-nowrap">
+                                    <td
+                                        class="px-4 py-3 text-right font-black text-text-main border-r border-black whitespace-nowrap">
                                         {{ $acc['mouv_credit'] > 0 ? number_format($acc['mouv_credit'], 2, ',', ' ') : '0,00' }}
                                     </td>
 
                                     <!-- Soldes Fin -->
-                                    <td class="px-4 py-3 text-right font-black text-primary dark:text-primary-light border-r border-black whitespace-nowrap bg-primary/5">
+                                    <td
+                                        class="px-4 py-3 text-right font-black text-primary dark:text-primary-light border-r border-black whitespace-nowrap bg-primary/5">
                                         {{ $acc['fin_debit'] > 0 ? number_format($acc['fin_debit'], 2, ',', ' ') : '0,00' }}
                                     </td>
-                                    <td class="px-4 py-3 text-right font-black text-primary dark:text-primary-light whitespace-nowrap bg-primary/5">
+                                    <td
+                                        class="px-4 py-3 text-right font-black text-primary dark:text-primary-light whitespace-nowrap bg-primary/5">
                                         {{ $acc['fin_credit'] > 0 ? number_format($acc['fin_credit'], 2, ',', ' ') : '0,00' }}
                                     </td>
                                 </tr>
@@ -152,25 +162,42 @@
 
                             <!-- Sous-Total du Groupe -->
                             <tr class="bg-slate-50 dark:bg-white/5 font-bold border-b border-black">
-                                <td colspan="2" class="px-4 py-3 text-[10px] uppercase tracking-widest border-r border-black text-text-secondary">Sous-Total {{ $prefix }}</td>
+                                <td colspan="2"
+                                    class="px-4 py-3 text-[10px] uppercase tracking-widest border-r border-black text-text-secondary">
+                                    Sous-Total {{ $prefix }}</td>
                                 <td class="px-4 py-3 text-right border-r border-black whitespace-nowrap">-</td>
                                 <td class="px-4 py-3 text-right border-r border-black whitespace-nowrap">-</td>
-                                <td class="px-4 py-3 text-right border-r border-black whitespace-nowrap text-text-main">{{ number_format($group['group_totals']['mouv_debit'], 2, ',', ' ') }}</td>
-                                <td class="px-4 py-3 text-right border-r border-black whitespace-nowrap text-text-main">{{ number_format($group['group_totals']['mouv_credit'], 2, ',', ' ') }}</td>
-                                <td class="px-4 py-3 text-right border-r border-black text-primary whitespace-nowrap bg-primary/5">{{ number_format($group['group_totals']['fin_debit'], 2, ',', ' ') }}</td>
-                                <td class="px-4 py-3 text-right text-primary whitespace-nowrap bg-primary/5">{{ number_format($group['group_totals']['fin_credit'], 2, ',', ' ') }}</td>
+                                <td class="px-4 py-3 text-right border-r border-black whitespace-nowrap text-text-main">
+                                    {{ number_format($group['group_totals']['mouv_debit'], 2, ',', ' ') }}</td>
+                                <td class="px-4 py-3 text-right border-r border-black whitespace-nowrap text-text-main">
+                                    {{ number_format($group['group_totals']['mouv_credit'], 2, ',', ' ') }}</td>
+                                <td
+                                    class="px-4 py-3 text-right border-r border-black text-primary whitespace-nowrap bg-primary/5">
+                                    {{ number_format($group['group_totals']['fin_debit'], 2, ',', ' ') }}</td>
+                                <td class="px-4 py-3 text-right text-primary whitespace-nowrap bg-primary/5">
+                                    {{ number_format($group['group_totals']['fin_credit'], 2, ',', ' ') }}</td>
                             </tr>
                         @endforeach
 
                         <!-- Total de la Classe complète -->
                         <tr class="bg-primary text-white font-black border-b border-black">
-                            <td colspan="2" class="px-4 py-5 text-[11px] uppercase tracking-[0.2em] border-r border-white/20">Total Classe {{ $classId }}</td>
-                            <td class="px-4 py-5 text-right border-r border-white/20 whitespace-nowrap font-normal opacity-50">-</td>
-                            <td class="px-4 py-5 text-right border-r border-white/20 whitespace-nowrap font-normal opacity-50">-</td>
-                            <td class="px-4 py-5 text-right border-r border-white/20 whitespace-nowrap">{{ number_format($class['class_totals']['mouv_debit'], 2, ',', ' ') }}</td>
-                            <td class="px-4 py-5 text-right border-r border-white/20 whitespace-nowrap">{{ number_format($class['class_totals']['mouv_credit'], 2, ',', ' ') }}</td>
-                            <td class="px-4 py-5 text-right border-r border-white/20 whitespace-nowrap">{{ number_format($class['class_totals']['fin_debit'], 2, ',', ' ') }}</td>
-                            <td class="px-4 py-5 text-right whitespace-nowrap">{{ number_format($class['class_totals']['fin_credit'], 2, ',', ' ') }}</td>
+                            <td colspan="2"
+                                class="px-4 py-5 text-[11px] uppercase tracking-[0.2em] border-r border-white/20">Total
+                                Classe {{ $classId }}</td>
+                            <td
+                                class="px-4 py-5 text-right border-r border-white/20 whitespace-nowrap font-normal opacity-50">
+                                -</td>
+                            <td
+                                class="px-4 py-5 text-right border-r border-white/20 whitespace-nowrap font-normal opacity-50">
+                                -</td>
+                            <td class="px-4 py-5 text-right border-r border-white/20 whitespace-nowrap">
+                                {{ number_format($class['class_totals']['mouv_debit'], 2, ',', ' ') }}</td>
+                            <td class="px-4 py-5 text-right border-r border-white/20 whitespace-nowrap">
+                                {{ number_format($class['class_totals']['mouv_credit'], 2, ',', ' ') }}</td>
+                            <td class="px-4 py-5 text-right border-r border-white/20 whitespace-nowrap">
+                                {{ number_format($class['class_totals']['fin_debit'], 2, ',', ' ') }}</td>
+                            <td class="px-4 py-5 text-right whitespace-nowrap">
+                                {{ number_format($class['class_totals']['fin_credit'], 2, ',', ' ') }}</td>
                         </tr>
                     @empty
                         <tr>
@@ -185,13 +212,21 @@
                 @if (!empty($balanceData))
                     <tfoot class="border-t-2 border-black">
                         <tr class="bg-primary text-white font-black uppercase text-xs">
-                            <td colspan="2" class="px-6 py-6 tracking-[0.2em] border-r border-white/10">Total Balance Générale</td>
+                            <td colspan="2" class="px-6 py-6 tracking-[0.2em] border-r border-white/10">Total Balance
+                                Générale</td>
                             <td class="px-4 py-6 text-right border-r border-white/10 font-normal opacity-50">-</td>
                             <td class="px-4 py-6 text-right border-r border-white/10 font-normal opacity-50">-</td>
-                            <td class="px-4 py-6 text-right border-r border-white/10 font-mono text-white whitespace-nowrap">{{ number_format($grandTotal['mouv_debit'], 2, ',', ' ') }}</td>
-                            <td class="px-4 py-6 text-right border-r border-white/10 font-mono text-white whitespace-nowrap">{{ number_format($grandTotal['mouv_credit'], 2, ',', ' ') }}</td>
-                            <td class="px-4 py-6 text-right border-r border-white/10 font-mono text-white whitespace-nowrap">{{ number_format($grandTotal['fin_debit'], 2, ',', ' ') }}</td>
-                            <td class="px-4 py-6 text-right font-mono text-white whitespace-nowrap">{{ number_format($grandTotal['fin_credit'], 2, ',', ' ') }}</td>
+                            <td
+                                class="px-4 py-6 text-right border-r border-white/10 font-mono text-white whitespace-nowrap">
+                                {{ number_format($grandTotal['mouv_debit'], 2, ',', ' ') }}</td>
+                            <td
+                                class="px-4 py-6 text-right border-r border-white/10 font-mono text-white whitespace-nowrap">
+                                {{ number_format($grandTotal['mouv_credit'], 2, ',', ' ') }}</td>
+                            <td
+                                class="px-4 py-6 text-right border-r border-white/10 font-mono text-white whitespace-nowrap">
+                                {{ number_format($grandTotal['fin_debit'], 2, ',', ' ') }}</td>
+                            <td class="px-4 py-6 text-right font-mono text-white whitespace-nowrap">
+                                {{ number_format($grandTotal['fin_credit'], 2, ',', ' ') }}</td>
                         </tr>
                     </tfoot>
                 @endif

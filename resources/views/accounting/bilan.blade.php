@@ -48,7 +48,7 @@
 
 <!-- Filtre par période -->
 <div class="mb-10 no-print">
-    <form action="{{ request()->url() }}" method="GET" class="mb-10 grid grid-cols-1 md:flex md:flex-row md:items-end gap-5 bg-card-bg border border-border p-6 rounded-3xl shadow-sm no-print">
+    <form action="{{ request()->url() }}" method="GET" class="mb-10 grid grid-cols-1 md:flex md:flex-row md:items-end gap-5 bg-card-bg border border-border p-4 md:p-6 rounded-2xl md:rounded-3xl shadow-sm no-print">
         <div class="w-full md:flex-1">
             <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-2 uppercase tracking-wider px-1">Période du</label>
             <input type="date" name="start_date" value="{{ request('start_date') }}" 
@@ -59,23 +59,25 @@
             <input type="date" name="end_date" value="{{ request('end_date') }}" 
                    class="w-full bg-bg border border-border px-4 py-3 text-sm font-bold outline-none focus:border-primary transition-all rounded-xl dark:text-white">
         </div>
-        <div class="w-full md:w-auto flex flex-col md:flex-row gap-3">
-            <button type="submit" class="w-full md:px-10 py-3 bg-primary text-white text-[11px] font-black uppercase tracking-[0.2em] hover:bg-primary-light transition-all shadow-lg flex items-center justify-center gap-3">
-                <i data-lucide="refresh-cw" class="w-4 h-4"></i> Actualiser
-            </button>
-            @if(request()->hasAny(['start_date', 'end_date']))
-                <a href="{{ request()->url() }}" class="w-full md:px-8 py-3 bg-white text-text-secondary text-[11px] font-black uppercase tracking-[0.2em] hover:bg-slate-50 transition-all flex items-center justify-center gap-2 border border-border shadow-sm rounded-xl">
-                    <i data-lucide="x" class="w-4 h-4"></i> Effacer
-                </a>
-            @endif
-        </div>
+            <div class="w-full md:w-auto flex flex-col md:flex-row gap-3">
+                <button type="submit"
+                    class="w-full md:w-auto md:px-5 py-2.5 bg-primary text-white text-[11px] font-black uppercase tracking-[0.2em] hover:bg-primary-light transition-all shadow-lg flex items-center justify-center gap-3">
+                    <i data-lucide="refresh-cw" class="w-4 h-4"></i> Actualiser
+                </button>
+                @if (request()->hasAny(['start_date', 'end_date']))
+                    <a href="{{ request()->url() }}"
+                        class="w-full md:w-auto md:px-5 py-2.5 bg-white text-text-secondary text-[11px] font-black uppercase tracking-[0.2em] hover:bg-slate-50 transition-all flex items-center justify-center gap-2 border border-border shadow-sm rounded-xl">
+                        <i data-lucide="x" class="w-4 h-4"></i> Effacer
+                    </a>
+                @endif
+            </div>
     </form>
 </div>
 
 <div class="flex flex-col xl:flex-row gap-8 mb-12">
     <!-- ACTIF -->
     <div class="flex-1 min-w-0 bg-card-bg border border-border rounded-3xl shadow-sm overflow-hidden flex flex-col">
-        <div class="bg-white/50 p-6 flex items-center justify-between text-text-main border-b border-border">
+        <div class="bg-white/50 p-4 md:p-6 flex items-center justify-between text-text-main border-b border-border">
             <div class="flex items-center gap-4">
                 <div class="bg-green-50/50 p-2.5 rounded-xl border border-green-100">
                     <i data-lucide="trending-up" class="w-6 h-6 text-green-600"></i>
@@ -122,7 +124,7 @@
             </table>
         </div>
         
-        <div class="p-6 bg-slate-50 dark:bg-black/20 border-t border-border flex justify-between items-center">
+        <div class="p-4 md:p-6 bg-slate-50 dark:bg-black/20 border-t border-border flex justify-between items-center">
             <span class="text-xs font-black uppercase tracking-widest text-text-secondary">Total Bilan (Actif)</span>
             <span class="text-2xl font-black text-text-main underline decoration-green-500/30 decoration-4 underline-offset-4 whitespace-nowrap">{{ number_format($actif->sum('solde'), 2, ',', ' ') }} F</span>
         </div>
@@ -130,7 +132,7 @@
 
     <!-- PASSIF -->
     <div class="flex-1 min-w-0 bg-card-bg border border-border rounded-3xl shadow-sm overflow-hidden flex flex-col">
-        <div class="bg-white/50 p-6 flex items-center justify-between text-text-main border-b border-border">
+        <div class="bg-white/50 p-4 md:p-6 flex items-center justify-between text-text-main border-b border-border">
             <div class="flex items-center gap-4">
                 <div class="bg-primary/5 p-2.5 rounded-xl border border-primary/10">
                     <i data-lucide="trending-down" class="w-6 h-6 text-primary"></i>
@@ -177,7 +179,7 @@
             </table>
         </div>
         
-        <div class="p-6 bg-white/50 border-t border-border flex justify-between items-center">
+        <div class="p-4 md:p-6 bg-white/50 border-t border-border flex justify-between items-center">
             <span class="text-xs font-black uppercase tracking-widest text-text-secondary">Total Bilan (Passif)</span>
             <span class="text-2xl font-black text-text-main underline decoration-primary/30 decoration-4 underline-offset-4 whitespace-nowrap">{{ number_format($passif->sum('solde'), 2, ',', ' ') }} F</span>
         </div>

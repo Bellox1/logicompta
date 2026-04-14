@@ -10,7 +10,7 @@
             <h1 class="text-3xl font-bold text-slate-800">Import du Journal</h1>
             <p class="text-sm text-slate-500 mt-1 uppercase font-bold tracking-widest">Chargement massif via CSV</p>
         </div>
-        <a href="{{ route('accounting.journal.index') }}" class="px-6 py-3 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-all text-xs flex items-center gap-2">
+        <a href="{{ route('accounting.journal.index') }}" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-all text-xs flex items-center gap-2">
             <i data-lucide="x" class="w-4 h-4"></i>
             Quitter l'import
         </a>
@@ -23,7 +23,7 @@
                 <form action="{{ route('accounting.journal.import.preview') }}" method="POST">
                     @csrf
                     <input type="hidden" name="force_reindex" value="1">
-                    <button type="submit" class="px-6 py-3 bg-rose-600 text-white font-bold rounded-xl hover:bg-rose-700 transition-all text-xs uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-rose-200">
+                    <button type="submit" class="px-5 py-2.5 bg-rose-600 text-white font-bold rounded-xl hover:bg-rose-700 transition-all text-xs uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-rose-200">
                         <i data-lucide="refresh-cw" class="w-4 h-4"></i>
                         Réindexer et Importer
                     </button>
@@ -170,7 +170,7 @@
 
             <!-- COLONNE DROITE -->
             <div class="lg:col-span-4 flex flex-col gap-10">
-                <div class="bg-white border border-slate-200 rounded-xl p-8 sticky top-8 shadow-sm flex flex-col gap-6">
+                <div class="bg-white border border-slate-200 rounded-xl p-5 md:p-8 sticky top-8 shadow-sm flex flex-col gap-6">
                     <div>
                         <h3 class="text-[11px] font-bold uppercase tracking-widest text-slate-400 border-b border-slate-100 pb-4">Importation</h3>
                         <p class="text-[13px] text-slate-500 leading-relaxed mt-4">
@@ -194,7 +194,7 @@
                     </div>
                     
                     <button type="submit" 
-                        class="w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary-light transition-all text-sm flex items-center justify-center gap-3 shadow-lg shadow-primary/20">
+                        class="w-full py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary-light transition-all text-xs flex items-center justify-center gap-3 shadow-lg shadow-primary/20">
                         Démarrer l'importation
                         <i data-lucide="zap" class="w-4 h-4 text-yellow-300"></i>
                     </button>

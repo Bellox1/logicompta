@@ -9,31 +9,35 @@
             <p class="text-sm text-text-secondary mt-1 font-bold italic">Enregistrez vos flux financiers avec précision</p>
         </div>
         <div class="flex items-center gap-3">
-            <a href="{{ route('accounting.journal.index') }}" 
+            <a href="{{ route('accounting.journal.index') }}"
                 class="px-5 py-2.5 bg-white border border-border text-text-secondary font-black rounded-xl hover:-translate-y-0.5 transition-all text-xs flex items-center gap-2 shadow-sm">
                 <i data-lucide="history" class="w-4 h-4"></i>
                 Historique
             </a>
-            <a href="{{ route('accounting.journal.create') }}" 
+            <a href="{{ route('accounting.journal.create') }}"
                 class="px-5 py-2.5 bg-primary text-white font-semibold rounded-lg hover:opacity-90 transition-all text-xs flex items-center gap-2 shadow-sm">
                 <i data-lucide="plus-circle" class="w-4 h-4"></i>
                 Nouvelle saisie
             </a>
         </div>
     </div>
-    
+
     <!-- Zone Import OCR -->
-    <div class="mb-8 p-4 md:p-6 bg-primary/5 border-2 border-dashed border-primary/30 rounded-3xl group hover:border-primary/60 transition-all relative overflow-hidden" id="ocr-dropzone">
+    <div class="mb-8 p-4 md:p-6 bg-primary/5 border-2 border-dashed border-primary/30 rounded-3xl group hover:border-primary/60 transition-all relative overflow-hidden"
+        id="ocr-dropzone">
         <div class="flex flex-col md:flex-row items-center gap-4 md:gap-6 relative z-10">
-            <div class="w-12 h-12 md:w-14 md:h-14 bg-primary text-white flex items-center justify-center rounded-2xl shadow-lg group-hover:scale-110 transition-transform cursor-pointer shrink-0" id="ocr-icon-zone">
+            <div class="w-12 h-12 md:w-14 md:h-14 bg-primary text-white flex items-center justify-center rounded-2xl shadow-lg group-hover:scale-110 transition-transform cursor-pointer shrink-0"
+                id="ocr-icon-zone">
                 <i data-lucide="scan-text" class="w-6 h-6 md:w-7 md:h-7"></i>
             </div>
             <div class="flex-1 cursor-pointer text-center md:text-left" id="ocr-text-zone">
                 <h3 class="text-primary font-black uppercase tracking-tight text-base md:text-lg">Import Facture</h3>
-                <p class="text-primary/60 text-[11px] md:text-sm font-bold italic">Glissez une facture ou cliquez pour remplir les champs</p>
+                <p class="text-primary/60 text-[11px] md:text-sm font-bold italic">Glissez une facture ou cliquez pour
+                    remplir les champs</p>
             </div>
 
-            <div class="flex items-center gap-1 bg-white border border-primary/20 rounded-xl p-1 shadow-sm shrink-0" onclick="event.stopPropagation()">
+            <div class="flex items-center gap-1 bg-white border border-primary/20 rounded-xl p-1 shadow-sm shrink-0"
+                onclick="event.stopPropagation()">
                 <button type="button" id="btn-tesseract"
                     class="ocr-service-btn px-2.5 py-1.5 md:px-3 md:py-1.5 rounded-lg text-[10px] md:text-xs font-black transition-all bg-primary text-white"
                     data-service="tesseract">
@@ -47,17 +51,18 @@
             </div>
 
             <div id="ocr-status" class="hidden">
-                 <div class="flex items-center gap-2 text-primary font-bold text-sm animate-pulse">
+                <div class="flex items-center gap-2 text-primary font-bold text-sm animate-pulse">
                     <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>
                     Analyse...
-                 </div>
+                </div>
             </div>
         </div>
         <input type="file" id="ocr-file-input" class="hidden" accept="image/*,application/pdf">
     </div>
 
     <!-- Modal Debug OCR -->
-    <div id="ocr-debug-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+    <div id="ocr-debug-modal"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col overflow-hidden">
             <!-- Header -->
             <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
@@ -70,7 +75,7 @@
                         <p id="ocr-debug-service" class="text-xs text-text-secondary font-bold italic"></p>
                     </div>
                 </div>
-                <button onclick="document.getElementById('ocr-debug-modal').classList.add('hidden')" 
+                <button onclick="document.getElementById('ocr-debug-modal').classList.add('hidden')"
                     class="text-slate-400 hover:text-slate-700 transition-colors">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
@@ -79,12 +84,17 @@
             <div class="flex-1 overflow-y-auto p-6 space-y-4">
                 <!-- Tableau des champs parsés -->
                 <div>
-                    <p class="text-[10px] font-black uppercase tracking-widest text-text-secondary mb-2">Données extraites</p>
+                    <p class="text-[10px] font-black uppercase tracking-widest text-text-secondary mb-2">Données extraites
+                    </p>
                     <table class="w-full text-sm border border-slate-100 rounded-xl overflow-hidden">
                         <thead class="bg-slate-50">
                             <tr>
-                                <th class="px-4 py-2 text-left text-[10px] font-black uppercase text-text-secondary tracking-widest">Champ</th>
-                                <th class="px-4 py-2 text-left text-[10px] font-black uppercase text-text-secondary tracking-widest">Valeur</th>
+                                <th
+                                    class="px-4 py-2 text-left text-[10px] font-black uppercase text-text-secondary tracking-widest">
+                                    Champ</th>
+                                <th
+                                    class="px-4 py-2 text-left text-[10px] font-black uppercase text-text-secondary tracking-widest">
+                                    Valeur</th>
                             </tr>
                         </thead>
                         <tbody id="ocr-debug-table" class="divide-y divide-slate-100"></tbody>
@@ -92,13 +102,17 @@
                 </div>
                 <!-- Texte brut -->
                 <div>
-                    <p class="text-[10px] font-black uppercase tracking-widest text-text-secondary mb-2">Texte brut extrait (Modifiable pour l'IA)</p>
-                    <textarea id="ocr-debug-rawtext-area" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 text-xs text-slate-700 whitespace-pre-wrap h-48 overflow-y-auto font-mono focus:border-primary outline-none transition-all"></textarea>
+                    <p class="text-[10px] font-black uppercase tracking-widest text-text-secondary mb-2">Texte brut extrait
+                        (Modifiable pour l'IA)</p>
+                    <textarea id="ocr-debug-rawtext-area"
+                        class="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 text-xs text-slate-700 whitespace-pre-wrap h-48 overflow-y-auto font-mono focus:border-primary outline-none transition-all"></textarea>
                 </div>
                 <!-- JSON complet -->
                 <div>
-                    <p class="text-[10px] font-black uppercase tracking-widest text-text-secondary mb-2">Réponse JSON complète</p>
-                    <pre id="ocr-debug-json" class="bg-slate-900 text-green-400 rounded-xl p-4 text-xs overflow-x-auto font-mono max-h-48 overflow-y-auto"></pre>
+                    <p class="text-[10px] font-black uppercase tracking-widest text-text-secondary mb-2">Réponse JSON
+                        complète</p>
+                    <pre id="ocr-debug-json"
+                        class="bg-slate-900 text-green-400 rounded-xl p-4 text-xs overflow-x-auto font-mono max-h-48 overflow-y-auto"></pre>
                 </div>
             </div>
             <div class="px-6 py-3 border-t border-slate-100 flex justify-between items-center bg-slate-50/50">
@@ -107,7 +121,7 @@
                     <i data-lucide="sparkles" class="w-4 h-4 text-primary"></i>
                     Magique : Appliquer l'IA
                 </button>
-                <button onclick="document.getElementById('ocr-debug-modal').classList.add('hidden')" 
+                <button onclick="document.getElementById('ocr-debug-modal').classList.add('hidden')"
                     class="px-5 py-2.5 bg-white border border-border text-text-secondary rounded-xl text-xs font-black hover:bg-slate-50 transition-all">
                     Fermer
                 </button>
@@ -120,7 +134,8 @@
 
         @if ($errors->any())
             <div class="relative bg-rose-50 border border-rose-100 rounded-2xl p-5 mb-10 animate-fade-in no-print">
-                <button type="button" onclick="this.parentElement.remove()" class="absolute top-4 right-4 text-rose-300 hover:text-rose-600 transition-colors">
+                <button type="button" onclick="this.parentElement.remove()"
+                    class="absolute top-4 right-4 text-rose-300 hover:text-rose-600 transition-colors">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
                 <ul class="space-y-1">
@@ -137,29 +152,38 @@
         <div class="bg-card-bg border border-border rounded-3xl p-8 shadow-sm mb-8">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div>
-                    <label class="block text-[11px] font-bold text-text-secondary mb-2 uppercase tracking-wider">N° Pièce</label>
-                    <input type="text" value="{{ $nextPieceNumber }}" disabled
-                        class="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl px-4 py-3 text-text-secondary font-bold cursor-not-allowed italic">
+                    <label class="block text-[11px] font-bold text-text-secondary mb-2 uppercase tracking-wider">N°
+                        Pièce</label>
+                    <input type="text" id="piece-number" name="numero_piece" value="{{ $nextPieceNumber }}" readonly
+                        class="w-full bg-slate-50 border border-border rounded-xl px-4 py-3 text-sm font-black text-text-secondary cursor-not-allowed">
+                    <p id="archive-warning" class="hidden mt-1.5 text-[10px] font-bold text-amber-600 flex items-center gap-1">
+                        <span id="archive-warning-text">⚠️ Cette écriture sera archivée automatiquement (année différente)</span>
+                    </p>
                 </div>
                 <div>
-                    <label class="block text-[11px] font-bold text-text-secondary mb-2 uppercase tracking-wider">Journal</label>
-                    <select name="journal_id" required
+                    <label
+                        class="block text-[11px] font-bold text-text-secondary mb-2 uppercase tracking-wider">Journal</label>
+                    <select id="journal-select" name="journal_id" required
                         class="w-full bg-white border border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all text-sm font-black text-text-main">
                         @foreach ($journals as $journal)
                             <option value="{{ $journal->id }}"
-                                {{ old('journal_id') == $journal->id ? 'selected' : '' }}>{{ $journal->name }}</option>
+                                {{ old('journal_id', $selectedJournalId) == $journal->id ? 'selected' : '' }}>
+                                {{ $journal->name }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div>
-                    <label class="block text-[11px] font-bold text-text-secondary mb-2 uppercase tracking-wider">Date</label>
-                    <input type="date" name="date" value="{{ old('date', date('Y-m-d')) }}" required placeholder="JJ/MM/AAAA"
+                    <label
+                        class="block text-[11px] font-bold text-text-secondary mb-2 uppercase tracking-wider">Date</label>
+                    <input type="date" id="entry-date" name="date" value="{{ old('date', date('Y-m-d')) }}" required
+                        placeholder="JJ/MM/AAAA"
                         class="w-full bg-white border border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all text-sm font-black text-text-main">
                 </div>
                 <div>
-                    <label class="block text-[11px] font-bold text-text-secondary mb-2 uppercase tracking-wider">Libellé</label>
+                    <label
+                        class="block text-[11px] font-bold text-text-secondary mb-2 uppercase tracking-wider">Libellé</label>
                     <input type="text" name="libelle" placeholder="Ex: Achat fournitures..." required
-                        class="w-full bg-white border border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all text-sm font-black text-text-main" 
+                        class="w-full bg-white border border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all text-sm font-black text-text-main"
                         value="{{ old('libelle') }}">
                 </div>
             </div>
@@ -179,10 +203,14 @@
                 <table class="w-full border-collapse min-w-[800px]">
                     <thead>
                         <tr class="text-text-secondary border-b border-border font-black italic">
-                            <th class="px-6 py-4 text-[10px] uppercase font-black tracking-widest text-left" style="width: 30%;">Compte</th>
-                            <th class="px-6 py-4 text-[10px] uppercase font-black tracking-widest text-right" style="width: 15%;">Débit</th>
-                            <th class="px-6 py-4 text-[10px] uppercase font-black tracking-widest text-right" style="width: 15%;">Crédit</th>
-                            <th class="px-6 py-4 text-[10px] uppercase font-black tracking-widest text-left">Libellé de ligne</th>
+                            <th class="px-6 py-4 text-[10px] uppercase font-black tracking-widest text-left"
+                                style="width: 30%;">Compte</th>
+                            <th class="px-6 py-4 text-[10px] uppercase font-black tracking-widest text-right"
+                                style="width: 15%;">Débit</th>
+                            <th class="px-6 py-4 text-[10px] uppercase font-black tracking-widest text-right"
+                                style="width: 15%;">Crédit</th>
+                            <th class="px-6 py-4 text-[10px] uppercase font-black tracking-widest text-left">Libellé de
+                                ligne</th>
                             <th class="px-6 py-4" style="width: 50px;"></th>
                         </tr>
                     </thead>
@@ -210,13 +238,13 @@
                                 <td class="px-4 py-3">
                                     <input type="text" inputmode="decimal" name="lines[{{ $index }}][debit]"
                                         class="debit-input w-full bg-white dark:bg-white/5 border border-border rounded-xl px-3 py-2 text-sm text-right font-black focus:ring-2 focus:ring-primary outline-none"
-                                        value="{{ isset($oldLine['debit']) && $oldLine['debit'] != 0 ? rtrim(rtrim(number_format((float)$oldLine['debit'], 2, '.', ''), '0'), '.') : '' }}"
+                                        value="{{ isset($oldLine['debit']) && $oldLine['debit'] != 0 ? rtrim(rtrim(number_format((float) $oldLine['debit'], 2, '.', ''), '0'), '.') : '' }}"
                                         placeholder="0">
                                 </td>
                                 <td class="px-4 py-3">
                                     <input type="text" inputmode="decimal" name="lines[{{ $index }}][credit]"
                                         class="credit-input w-full bg-white dark:bg-white/5 border border-border rounded-xl px-3 py-2 text-sm text-right font-black focus:ring-2 focus:ring-primary outline-none"
-                                        value="{{ isset($oldLine['credit']) && $oldLine['credit'] != 0 ? rtrim(rtrim(number_format((float)$oldLine['credit'], 2, '.', ''), '0'), '.') : '' }}"
+                                        value="{{ isset($oldLine['credit']) && $oldLine['credit'] != 0 ? rtrim(rtrim(number_format((float) $oldLine['credit'], 2, '.', ''), '0'), '.') : '' }}"
                                         placeholder="0">
                                 </td>
                                 <td class="px-4 py-3">
@@ -225,7 +253,8 @@
                                 </td>
                                 <td class="px-4 py-3 text-center">
                                     @if ($index >= 2)
-                                        <button type="button" class="text-rose-400 hover:text-rose-600 transition-colors p-1"
+                                        <button type="button"
+                                            class="text-rose-400 hover:text-rose-600 transition-colors p-1"
                                             onclick="this.closest('tr').remove(); calculate();">
                                             <i data-lucide="x" class="w-5 h-5"></i>
                                         </button>
@@ -241,16 +270,22 @@
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-8">
                     <div class="flex flex-wrap gap-10">
                         <div>
-                            <div class="text-[10px] uppercase font-black text-text-secondary tracking-widest mb-1 italic">Total Débit</div>
-                            <div class="text-3xl font-black text-text-main"><span id="total-debit">0</span> <span class="text-sm font-medium text-text-secondary opacity-60">XOF</span></div>
+                            <div class="text-[10px] uppercase font-black text-text-secondary tracking-widest mb-1 italic">
+                                Total Débit</div>
+                            <div class="text-3xl font-black text-text-main"><span id="total-debit">0</span> <span
+                                    class="text-sm font-medium text-text-secondary opacity-60">XOF</span></div>
                         </div>
                         <div>
-                            <div class="text-[10px] uppercase font-black text-text-secondary tracking-widest mb-1 italic">Total Crédit</div>
-                            <div class="text-3xl font-black text-text-main"><span id="total-credit">0</span> <span class="text-sm font-medium text-text-secondary opacity-60">XOF</span></div>
+                            <div class="text-[10px] uppercase font-black text-text-secondary tracking-widest mb-1 italic">
+                                Total Crédit</div>
+                            <div class="text-3xl font-black text-text-main"><span id="total-credit">0</span> <span
+                                    class="text-sm font-medium text-text-secondary opacity-60">XOF</span></div>
                         </div>
                         <div id="balance-container">
-                            <div class="text-[10px] uppercase font-black text-text-secondary tracking-widest mb-1 italic">État d'Équilibre</div>
-                            <div id="balance-status" class="text-sm font-black text-rose-500 uppercase tracking-widest">Déséquilibre: 0 XOF</div>
+                            <div class="text-[10px] uppercase font-black text-text-secondary tracking-widest mb-1 italic">
+                                État d'Équilibre</div>
+                            <div id="balance-status" class="text-sm font-black text-rose-500 uppercase tracking-widest">
+                                Déséquilibre: 0 XOF</div>
                         </div>
                     </div>
                     <button type="submit" id="submit-btn" disabled
@@ -308,7 +343,7 @@
                     const debitInput = row.querySelector('.debit-input');
                     const creditInput = row.querySelector('.credit-input');
                     const libelleArea = row.querySelector('textarea[name$="[libelle]"]');
-                    
+
                     if (scSelect) {
                         draft.lines.push({
                             account_id: scSelect.value,
@@ -325,13 +360,13 @@
             function loadDraft() {
                 const saved = localStorage.getItem(STORAGE_KEY);
                 if (!saved) return;
-                
+
                 // Only load if the form is currently "fresh"
                 const currentLibelle = document.querySelector('input[name="libelle"]').value;
                 if (currentLibelle && currentLibelle.trim() !== "") return;
 
                 const draft = JSON.parse(saved);
-                
+
                 if (draft.journal_id) document.querySelector('select[name="journal_id"]').value = draft.journal_id;
                 if (draft.date) document.querySelector('input[name="date"]').value = draft.date;
                 if (draft.libelle) document.querySelector('input[name="libelle"]').value = draft.libelle;
@@ -339,7 +374,7 @@
                 if (draft.lines && draft.lines.length > 0) {
                     // Start from line 0
                     const rows = document.querySelectorAll('.line-row');
-                    
+
                     draft.lines.forEach((line, index) => {
                         let row;
                         if (index < rows.length) {
@@ -471,6 +506,13 @@
                     } else {
                         row.querySelector('.debit-input').value = '';
                     }
+
+                    // Logique d'ajout automatique de ligne
+                    const rows = document.querySelectorAll('.line-row');
+                    const lastRow = rows[rows.length - 1];
+                    if (row === lastRow) {
+                        document.getElementById('add-line').click();
+                    }
                 }
                 calculate();
                 saveDraft();
@@ -484,7 +526,10 @@
                     });
                 });
                 row.querySelectorAll('select').forEach(select => {
-                    select.addEventListener('change', () => { calculate(); saveDraft(); });
+                    select.addEventListener('change', () => {
+                        calculate();
+                        saveDraft();
+                    });
                 });
                 row.querySelectorAll('textarea').forEach(area => {
                     area.addEventListener('input', saveDraft);
@@ -507,7 +552,8 @@
                             input.setAttribute('name', name.replace(/\[\d+\]/, `[${lineCount}]`));
                         }
 
-                        if (input.classList.contains('debit-input') || input.classList.contains('credit-input')) {
+                        if (input.classList.contains('debit-input') || input.classList.contains(
+                                'credit-input')) {
                             input.value = '';
                         } else {
                             input.value = '';
@@ -535,24 +581,24 @@
                     const selectedDate = new Date(this.value);
                     const today = new Date();
                     today.setHours(0, 0, 0, 0);
-                    const minDate = new Date();
-                    minDate.setDate(today.getDate() - 5);
-                    minDate.setHours(0, 0, 0, 0);
                     const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 
-                    if (selectedDate < minDate) {
-                        alert('La date ne peut pas remonter à plus de 5 jours.');
-                        this.value = minDate.toISOString().split('T')[0];
-                    } else if (selectedDate > lastDayOfMonth) {
+                    if (selectedDate > lastDayOfMonth) {
                         alert('La date ne peut pas dépasser le mois en cours.');
                         this.value = today.toISOString().split('T')[0];
                     }
                     saveDraft();
+                    if (typeof refreshPieceNumber === 'function') refreshPieceNumber();
                 });
             }
-            
+
             document.querySelector('input[name="libelle"]').addEventListener('input', saveDraft);
-            document.querySelector('select[name="journal_id"]').addEventListener('change', saveDraft);
+
+            const journalSelect = document.querySelector('select[name="journal_id"]');
+            journalSelect.addEventListener('change', function() {
+                saveDraft();
+                if (typeof refreshPieceNumber === 'function') refreshPieceNumber();
+            });
 
             // Clear storage on submit
             document.getElementById('journalform').addEventListener('submit', function() {
@@ -611,37 +657,41 @@
                 formData.append('service', activeOcrService); // Tesseract ou Mindee
 
                 ocrStatus.classList.remove('hidden');
-                
-                fetch('{{ route("accounting.journal.ocr_import") }}', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.error) {
-                         Swal.fire('Erreur OCR', data.error, 'error');
-                    } else {
-                        // -----------------------------------------------
-                        // PHASE EXPLORATION : formulaire non rempli
-                        // On analyse d'abord les données disponibles
-                        // avant de décider quoi mapper où.
-                        // -----------------------------------------------
-                        // if (data.date)   document.querySelector('input[name="date"]').value = data.date;
-                        // if (data.libelle) document.querySelector('input[name="libelle"]').value = data.libelle;
-                        // if (data.amount) { ... }
 
-                        // Afficher toutes les données brutes dans la modal
-                        showOcrDebug(data);
-                    }
-                })
-                .catch(err => {
-                    console.error(err);
-                    Swal.fire('Erreur', 'Impossible de contacter le service OCR.', 'error');
-                })
-                .finally(() => {
-                    ocrStatus.classList.add('hidden');
-                    fileInput.value = '';
-                });
+                fetch('{{ route('accounting.journal.ocr_import') }}', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.error) {
+                            Swal.fire({
+                                title: 'Erreur OCR',
+                                text: data.error,
+                                icon: 'error'
+                            });
+                        } else {
+                            // -----------------------------------------------
+                            // PHASE EXPLORATION : formulaire non rempli
+                            // On analyse d'abord les données disponibles
+                            // avant de décider quoi mapper où.
+                            // -----------------------------------------------
+                            // if (data.date)   document.querySelector('input[name="date"]').value = data.date;
+                            // if (data.libelle) document.querySelector('input[name="libelle"]').value = data.libelle;
+                            // if (data.amount) { ... }
+
+                            // Afficher toutes les données brutes dans la modal
+                            showOcrDebug(data);
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        Swal.fire('Erreur', 'Impossible de contacter le service OCR.', 'error');
+                    })
+                    .finally(() => {
+                        ocrStatus.classList.add('hidden');
+                        fileInput.value = '';
+                    });
             }
 
             // --- Fonction Debug OCR ---
@@ -656,7 +706,7 @@
                 // 1. Champs analysés par l'IA (On n'affiche que ce qui a été TROUVÉ)
                 // -------------------------------------------------
                 const skip = new Set(['raw_text', 'lignes', 'service', 'amount', 'libelle', 'mindee']);
-                
+
                 // Cas spécial : Montant principal
                 if (data.amount) {
                     hasValidFields = true;
@@ -696,7 +746,8 @@
                 });
 
                 if (!hasValidFields) {
-                    tbody.innerHTML = `<tr><td colspan="2" class="px-4 py-8 text-center text-xs text-slate-400 italic">Aucune donnée structurée détectée. Utilisez le texte brut ci-dessous.</td></tr>`;
+                    tbody.innerHTML =
+                        `<tr><td colspan="2" class="px-4 py-8 text-center text-xs text-slate-400 italic">Aucune donnée structurée détectée. Utilisez le texte brut ci-dessous.</td></tr>`;
                 }
 
                 // -------------------------------------------------
@@ -722,7 +773,7 @@
             // --- Injection manuelle depuis Debug ---
             window.fillField = function(target, value) {
                 if (!value || value === 'null') return;
-                
+
                 if (target === 'date') {
                     const input = document.querySelector('input[name="date"]');
                     if (input) input.value = value;
@@ -740,7 +791,7 @@
                         }
                     }
                 }
-                
+
                 // Petit feedback visuel
                 Swal.fire({
                     title: 'Injecté !',
@@ -762,48 +813,54 @@
 
                 // Close modals and show loader
                 document.getElementById('ocr-debug-modal').classList.add('hidden');
-                
+
                 Swal.fire({
                     title: 'L\'IA analyse...',
                     html: 'Construction de l\'écriture comptable...',
                     allowOutsideClick: false,
-                    didOpen: () => { Swal.showLoading(); }
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
                 });
 
-                fetch('{{ route("accounting.journal.ocr_ai_process") }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({ raw_text: rawText })
-                })
-                .then(res => res.json())
-                .then(data => {
-                    Swal.close();
-                    console.log('Gemini Data:', data); // Debug
-                    if (data.error) {
-                        Swal.fire('Erreur IA', data.error, 'error');
-                    } else {
-                        applyAISuggestions(data);
-                    }
-                })
-                .catch(err => {
-                    Swal.close();
-                    Swal.fire('Erreur', 'Impossible de contacter l\'IA.', 'error');
-                });
+                fetch('{{ route('accounting.journal.ocr_ai_process') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            raw_text: rawText
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        Swal.close();
+                        console.log('Gemini Data:', data); // Debug
+                        if (data.error) {
+                            Swal.fire('Erreur IA', data.error, 'error');
+                        } else {
+                            applyAISuggestions(data);
+                        }
+                    })
+                    .catch(err => {
+                        Swal.close();
+                        Swal.fire('Erreur', 'Impossible de contacter l\'IA.', 'error');
+                    });
             };
 
             function applyAISuggestions(data) {
                 // Mapping des données générales
                 if (data.date) document.querySelector('input[name="date"]').value = data.date;
                 if (data.libelle) document.querySelector('input[name="libelle"]').value = data.libelle;
-                
+
                 // On vide les lignes actuelles (sauf les 2 premières)
                 const rows = document.querySelectorAll('.line-row');
-                rows.forEach((row, i) => { if(i >= 2) row.remove(); });
-                
+                rows.forEach((row, i) => {
+                    if (i >= 2) row.remove();
+                });
+
                 // Reset first 2 lines
                 const firstRows = document.querySelectorAll('.line-row');
                 firstRows.forEach(row => {
@@ -826,9 +883,9 @@
                         const searchAccount = line.sous_compte || line.compte || line.code;
                         if (searchAccount) {
                             const options = Array.from(row.querySelector('select').options);
-                            const bestMatch = options.find(opt => 
-                                opt.text.startsWith(searchAccount) || 
-                                opt.text.includes(searchAccount) || 
+                            const bestMatch = options.find(opt =>
+                                opt.text.startsWith(searchAccount) ||
+                                opt.text.includes(searchAccount) ||
                                 opt.value == searchAccount
                             );
                             if (bestMatch) {
@@ -851,13 +908,60 @@
                     title: 'Écriture générée !',
                     text: 'Vérifiez les comptes et les montants avant de valider.',
                     icon: 'success',
-                    timer: 3000
+                    timer: 3000,
+                    timerProgressBar: true
                 });
             }
 
             // Initial load
             loadDraft();
             calculate();
+
+            // ═══════════════════════════════════════════════════
+            // Rafraîchissement dynamique du N° de pièce
+            // ═══════════════════════════════════════════════════
+            const pieceNumberInput = document.getElementById('piece-number');
+            const archiveWarning = document.getElementById('archive-warning');
+
+            // On exporte en global pour l'appeler facilement d'en haut
+            window.refreshPieceNumber = function() {
+                const journalId = journalSelect ? journalSelect.value : null;
+                const date = dateInput ? dateInput.value : null;
+                if (!journalId || !date) return;
+
+                const fetchUrl = `{{ route('accounting.journal.next-piece-number', [], false) }}?journal_id=${journalId}&date=${date}`;
+
+                fetch(fetchUrl, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
+                    credentials: 'same-origin'
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (pieceNumberInput) {
+                        pieceNumberInput.value = data.next_number;
+                        // Animation flash
+                        pieceNumberInput.classList.add('ring-2', 'ring-primary');
+                        setTimeout(() => pieceNumberInput.classList.remove('ring-2', 'ring-primary'), 600);
+                    }
+                    if (archiveWarning) {
+                        if (data.will_be_archived) {
+                            const warningText = document.getElementById('archive-warning-text');
+                            if (warningText) {
+                                warningText.innerText = `⚠️ Cette écriture sera archivée automatiquement (année ${data.year})`;
+                            }
+                            archiveWarning.classList.remove('hidden');
+                        } else {
+                            archiveWarning.classList.add('hidden');
+                        }
+                    }
+                })
+                .catch(err => {
+                    console.error("Erreur mise à jour N° pièce:", err);
+                });
+            };
+
+            // Appel initial si un journal est déjà sélectionné
+            if (journalSelect && journalSelect.value) refreshPieceNumber();
         });
     </script>
 @endsection

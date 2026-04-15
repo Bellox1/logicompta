@@ -2,1052 +2,476 @@
 <html lang="fr">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#161615" media="(prefers-color-scheme: dark)">
-    <!-- CSRF Token -->
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Comptabilité - @yield('title')</title>
+    <title>@yield('title') | {{ config('app.name', 'COMPTAFIQ') }}</title>
+
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    <!-- Bootstrap v4.4.1 CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <!-- Font Awesome 6.4.0 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Font: Arial (System) -->
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <!-- Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
     <!-- Tom Select -->
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'media',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Arial', 'sans-serif'],
-                    },
-                    colors: {
-                        primary: 'var(--primary)',
-                        'primary-light': 'var(--primary-light)',
-                        accent: 'var(--accent)',
-                        bg: 'var(--bg)',
-                        'card-bg': 'var(--card-bg)',
-                        'sidebar-bg': 'var(--sidebar-bg)',
-                        border: 'var(--border-color)',
-                        'text-main': 'var(--text-main)',
-                        'text-secondary': 'var(--text-secondary)',
-                    }
-                }
-            }
-        }
-    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
         :root {
-            --bg: #ffffff;
-            --card-bg: #ffffff;
-            --sidebar-bg: #ffffff;
-            --border-color: #e2e8f0;
-            --text-main: #000000;
-            --text-secondary: #1e293b;
-            --primary: #005b82;
-            --primary-light: #0ea5e9;
-            --accent: #38bdf8;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --radius-main: 12px;
-            --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --primary-color: #0062cc;
+            --secondary-color: #1a1c2e;
+            --orange-color: #ff750f;
+            --dark-color: #1a1c2e;
+            --sidebar-bg: #fff;
+            --main-bg: #f8f9fc;
         }
 
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg: #020617;
-                --card-bg: #030712;
-                --sidebar-bg: #020617;
-                --border-color: #1e293b;
-                --text-main: #ffffff;
-                --text-secondary: #cbd5e1;
-            }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--main-bg);
+            color: #505050;
         }
 
-        /* Table Responsive Wrapper - Scroll horizontal local au cadre blanc */
-        .table-responsive {
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        .font-headline {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+            color: var(--dark-color);
+        }
+
+        /* Layout Structure */
+        .wrapper {
+            display: flex;
             width: 100%;
-            max-width: 100%;
-            overflow-x: auto;
-            overflow-y: visible;
+            align-items: stretch;
+        }
+
+        #sidebar {
+            min-width: 280px;
+            max-width: 280px;
+            background: var(--sidebar-bg);
+            color: var(--dark-color);
+            transition: all 0.3s;
+            border-right: 1px solid #eee;
+            height: 100vh;
+            position: fixed;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #sidebar.active {
+            margin-left: -280px !important;
+        }
+
+        #content {
+            width: calc(100% - 280px);
+            margin-left: 280px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #content.active {
+            width: 100%;
+            margin-left: 0;
+        }
+
+        /* Sidebar Elements */
+        .sidebar-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f8f9fa;
             position: relative;
-            background: var(--card-bg);
-            border-radius: 0;
-            display: block;
-            cursor: grab;
-            user-select: none;
-            scrollbar-width: thin;
-        }
-
-        .table-responsive:active {
-            cursor: grabbing;
-        }
-
-        /* Global Input Styling */
-        input,
-        select,
-        textarea {
-            background-color: var(--card-bg);
-            color: var(--text-main);
-            border: 1px solid var(--border-color);
-        }
-
-        /* Specific fix for Date inputs to ensure they show up on mobile */
-        @media (max-width: 768px) {
-            input[type="date"] {
-                width: 100% !important;
-                max-width: 100% !important;
-                min-width: 0 !important;
-                box-sizing: border-box !important;
-                padding-left: 1rem !important;
-                padding-right: 1rem !important;
-            }
-
-            /* Simulation d'un placeholder pour les inputs date (iPhone/Android) */
-            input[type="date"]::before {
-                color: #94a3b8;
-                /* slate-400 */
-                content: attr(placeholder);
-                margin-right: 0.5em;
-                display: inline-block;
-            }
-
-            input[type="date"]:focus::before,
-            input[type="date"]:valid::before,
-            input[type="date"]:not([value=""]):empty::before {
-                display: none !important;
-                content: "" !important;
-            }
-        }
-
-        input[type="date"] {
-            min-height: 3rem;
-            color-scheme: light;
+            min-height: 80px;
             display: flex;
             align-items: center;
         }
 
-        @media (prefers-color-scheme: dark) {
-            input[type="date"] {
-                color-scheme: dark !important;
-            }
-
-            /* Aggressive fix for Webkit calendar icon in dark mode */
-            input[type="date"]::-webkit-calendar-picker-indicator {
-                filter: invert(1) brightness(1.5) !important;
-                cursor: pointer;
-            }
+        .close-sidebar {
+            display: none;
+            position: absolute;
+            right: 15px;
+            top: 25px;
+            background: none;
+            border: none;
+            color: var(--dark-color);
+            font-size: 24px;
         }
 
-        @media (prefers-color-scheme: dark) {
-            :root {
-                color-scheme: dark;
-                --bg: #000000;
-                --card-bg: #000000;
-                --sidebar-bg: #000000;
-                --border-color: #1e1e1e;
-                --text-main: #ffffff;
-                --text-secondary: #a1a1aa;
-                --primary: #005b82;
-                --primary-light: #004d99;
-            }
-
-            input,
-            select,
-            textarea {
-                background-color: #1c1c1b !important;
-                color: #ffffff !important;
-                border-color: #404040 !important;
-            }
-
-            .table-responsive {
-                border-color: rgba(255, 255, 255, 0.1) !important;
-            }
-
-            h1,
-            h2,
-            h3,
-            h4,
-            .text-gray-950,
-            .text-slate-900,
-            .text-slate-800,
-            .text-black {
-                color: var(--text-main) !important;
-            }
-
-            .text-slate-700,
-            .text-slate-600 {
-                color: #d1d5db !important;
-                /* slate-300 */
-            }
-
-            /* Fix grey overlays on tables and rows */
-            .bg-slate-50,
-            .bg-slate-100,
-            .bg-slate-200,
-            [class*="bg-slate-50/"],
-            [class*="bg-slate-100/"],
-            [class*="bg-slate-200/"],
-            [class*="bg-white/5"],
-            [class*="bg-white/10"] {
-                background-color: rgba(255, 255, 255, 0.03) !important;
-            }
-
-            .bg-white,
-            .bg-card-bg {
-                background-color: var(--card-bg) !important;
-            }
-
-            .bg-bg {
-                background-color: var(--bg) !important;
-            }
-
-            /* Specific table headers/sections */
-            [class*="bg-primary/5"],
-            [class*="bg-primary/10"] {
-                background-color: rgba(59, 130, 246, 0.1) !important;
-                /* Lighter primary blue */
-            }
-
-            .border-slate-50,
-            .border-slate-100,
-            .border-slate-200,
-            .border-slate-300,
-            .border-slate-400 {
-                border-color: rgba(255, 255, 255, 0.05) !important;
-            }
-
-            .hover\:bg-slate-50:hover,
-            .hover\:bg-slate-50\/50:hover,
-            tr:hover {
-                background-color: rgba(255, 255, 255, 0.05) !important;
-            }
-
-            /* Form elements */
-            select,
-            input {
-                background-color: #1c1c1b !important;
-                color: #f3f4f6 !important;
-                border-color: #262624 !important;
-                color-scheme: dark;
-            }
-
-            input[type="date"]::-webkit-calendar-picker-indicator {
-                filter: invert(1);
-            }
+        ul.components {
+            padding: 10px 0;
+            flex-grow: 1;
+            overflow-y: auto;
         }
 
-        html {
-            background-color: var(--bg) !important;
-            overflow-x: hidden;
-            height: 100%;
-            overscroll-behavior: none;
+        ul li a {
+            padding: 7px 20px;
+            font-size: 12.5px;
+            display: block;
+            color: #64748b;
+            font-weight: 600;
+            text-decoration: none !important;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        body {
-            background-color: var(--bg) !important;
-            color: var(--text-main);
-            margin: 0;
-            padding: 0;
-            min-height: 100dvh;
-            font-family: Arial, sans-serif;
-            overflow-x: hidden;
-            position: relative;
-            width: 100%;
-            overscroll-behavior: none;
+        ul li a:hover,
+        ul li.active>a {
+            color: var(--primary-color);
+            background: rgba(0, 98, 204, 0.05);
+            border-left: 3px solid var(--primary-color);
         }
 
-        .sidebar-transition {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* iOS Specific fixes */
-        input,
-        select,
-        textarea {
-            box-sizing: border-box;
-            font-size: 16px;
-            /* Global fix for iOS zoom */
-        }
-
-        input[type="date"] {
-            -webkit-appearance: listbox;
-            /* Restore native date icons */
-        }
-
-        /* Sticky Table Headers - JS Powered Version */
-        .sticky-thead {
-            border-collapse: separate !important;
-            border-spacing: 0;
-            width: 100%;
-        }
-
-        /* thead will be translated via JS */
-        .sticky-thead thead {
-            position: relative;
-            z-index: 100 !important;
-        }
-
-        .sticky-thead thead th {
-            background-color: var(--primary) !important;
-            color: #ffffff !important;
-            padding: 1.25rem 1.5rem !important;
-            border: none !important;
-            box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+        .menu-label {
+            padding: 6px 20px;
+            font-size: 9px;
             text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #94a3b8;
             font-weight: 800;
-            font-size: 11px;
-            white-space: nowrap;
+            margin-top: 10px;
         }
 
-        /* Support Balance (2 niveaux de titres) */
-        .sticky-thead thead tr.row-sticky-2 th {
-            padding: 0.5rem 1.25rem !important;
-            font-size: 10px;
+        /* Header */
+        .main-header {
+            background: #fff;
+            padding: 15px 30px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 999;
         }
 
-        /* Scroll Principal de la page - Vertical uniquement */
-        .main-content {
-            overflow-y: auto !important;
-            overflow-x: hidden !important;
+        /* Alerts & Progress */
+        .alert-box {
             position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
 
-        @media (max-width: 768px) {
+        .alert-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            width: 100%;
+        }
 
-            html,
-            body {
-                overflow-x: hidden !important;
-                width: 100%;
-                position: relative;
+        /* Tables Premium Style */
+        .table-responsive {
+            border-radius: 12px;
+            background: #fff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Overlay mobile */
+        #sidebar-overlay {
+            display: none;
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(2px);
+            z-index: 1001;
+            top: 0;
+            left: 0;
+        }
+
+        @media (max-width: 992px) {
+            #sidebar {
+                margin-left: -280px;
+                z-index: 1002;
             }
 
-            .main-content {
-                padding: 0 0.5rem 1rem 0.5rem !important;
-                flex: 1;
-                min-width: 0;
-                width: 100%;
+            #sidebar.active {
+                margin-left: 0 !important;
+            }
+
+            #sidebar.active + #sidebar-overlay {
                 display: block;
             }
 
-            input,
-            select,
-            textarea {
-                font-size: 16px !important;
-            }
-        }
-
-        /* Sidebar Collapsed State (Initial) */
-        .sidebar-collapsed {
-            width: 80px !important;
-        }
-
-        .sidebar-collapsed .sidebar-label,
-        .sidebar-collapsed .sidebar-header-text {
-            display: none !important;
-        }
-
-        .rotate-180,
-        .sidebar-collapsed #toggle-chevron {
-            transform: rotate(180deg);
-        }
-
-        #toggle-chevron {
-            transition: transform 0.3s ease;
-            display: inline-block;
-        }
-
-        .sidebar-collapsed a i {
-            width: 1.5rem !important;
-            height: 1.5rem !important;
-        }
-
-        .sidebar-collapsed a {
-            justify-content: center !important;
-            padding-left: 0 !important;
-            padding-right: 0 !important;
-            gap: 0 !important;
-        }
-
-        /* Rétablissement des arrondis doux (Dougs Style) */
-        .main-content button,
-        .main-content .button,
-        .main-content a.inline-flex,
-        .main-content input[type="text"],
-        .main-content input[type="date"],
-        .main-content select,
-        .main-content .card,
-        .main-content .bg-card-bg {
-            border-radius: 8px !important;
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 260px;
-                height: 100dvh;
-                z-index: 2000;
-                transform: translateX(-100%);
-                padding-top: calc(1rem + env(safe-area-inset-top, 0));
-                padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0));
-                background-color: var(--sidebar-bg) !important;
+            #content {
+                width: 100%;
+                margin-left: 0;
             }
 
-            .sidebar.mobile-open {
-                transform: translateX(0);
-            }
-
-            /* Orientation de la transition vers le transform */
-            .sidebar-transition {
-                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            }
-
-            #sidebar-overlay {
-                transition: opacity 0.3s ease, visibility 0.3s;
-                visibility: hidden;
-                opacity: 0;
-                display: block !important;
-                /* On gère par visibility/opacity pour la fluidité */
-            }
-
-            #sidebar-overlay.active {
-                visibility: visible;
-                opacity: 1;
-            }
-
-            /* Propagation de la couleur du header vers le haut (encoche) */
-            header.md\:hidden {
-                padding-top: env(safe-area-inset-top, 0) !important;
-                height: calc(4rem + env(safe-area-inset-top, 0)) !important;
-                display: flex !important;
-                align-items: center !important;
+            .close-sidebar {
+                display: block;
             }
         }
     </style>
-    <script>
-        // Appliquer l'état du sidebar IMMÉDIATEMENT pour éviter le flash
-        (function() {
-            const collapsed = localStorage.getItem('sidebar-collapsed') === 'true';
-            if (collapsed && window.innerWidth > 768) {
-                document.documentElement.classList.add('sidebar-is-collapsed');
-            }
-        })();
-    </script>
 </head>
 
-<body class="bg-bg text-text-main min-h-screen antialiased">
-    <!-- Overlay for mobile (Visibility managed by JS) -->
-    <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/40 dark:bg-black/80 z-[1999] md:hidden"></div>
-
-    <div class="flex h-[100dvh] overflow-hidden relative">
-        <!-- Sidebar -->
-        <aside id="sidebar"
-            class="sidebar sidebar-transition w-[260px] h-full bg-sidebar-bg border-r border-border flex flex-shrink-0 flex-col pt-1 pb-3 px-4 shadow-sm z-[2000] overflow-y-auto">
-            <script>
-                // Appliquer la classe si nécessaire avant que l'élément soit affiché
-                if (localStorage.getItem('sidebar-collapsed') === 'true' && window.innerWidth > 768) {
-                    document.getElementById('sidebar').classList.add('sidebar-collapsed');
-                    document.getElementById('sidebar').classList.replace('w-[260px]', 'w-[80px]');
-                }
-            </script>
-            <!-- Toggle Button (Floating) -->
-            <button id="toggle-sidebar"
-                class="fixed left-[244px] top-10 sidebar-transition bg-accent text-white border-[3px] border-[#FDFDFC] dark:border-[#0a0a0a] w-8 h-8 rounded-full flex items-center justify-center shadow-lg hover:scale-110 hover:bg-primary transition-all z-[2001] hidden md:flex">
-                <script>
-                    if (localStorage.getItem('sidebar-collapsed') === 'true' && window.innerWidth > 768) {
-                        document.currentScript.parentElement.style.left = '64px';
-                    }
-                </script>
-                <i id="toggle-chevron" data-lucide="chevron-left"></i>
-            </button>
-
-            <!-- Mobile Close Button -->
-            <button id="close-mobile-sidebar"
-                class="md:hidden absolute top-4 right-4 text-text-muted dark:text-slate-300">
-                <i data-lucide="x"></i>
-            </button>
-
-            <div class="flex items-center mb-1 px-2 transition-all duration-300">
-                <img src="{{ asset('storage/images/logo.png') }}" alt="Comptafriq Logo"
-                    class="h-16 w-auto object-contain dark:filter-none filter invert dark:brightness-110">
+<body>
+    <div class="wrapper">
+        <nav id="sidebar">
+            <div class="sidebar-header d-flex justify-content-between align-items-center flex-nowrap">
+                <img src="{{ asset('storage/images/logo.png') }}" alt="Logo"
+                    style="max-width: 160px; max-height: 60px; object-fit: contain; flex-shrink: 1;">
+                <button
+                    class="close-sidebar btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center"
+                    onclick="toggleSidebar()"
+                    style="width: 30px; height: 30px; padding: 0; border: 1px solid #eee; cursor: pointer; z-index: 2000; position: relative; margin-left: 10px; flex-shrink: 0;">
+                    <i class="fas fa-chevron-left text-muted" style="font-size: 11px;"></i>
+                </button>
             </div>
 
-            <nav class="flex-1 flex flex-col gap-1 overflow-y-auto mt-0 px-2">
-                <a href="{{ route('accounting.dashboard') }}"
-                    class="flex items-center gap-3 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.dashboard') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
-                    <i class="w-4 h-4 {{ request()->routeIs('accounting.dashboard') ? 'text-white' : '' }}"
-                        data-lucide="layout-dashboard"></i>
-                    <span class="sidebar-label transition-all duration-300 uppercase">Tableau de bord</span>
-                </a>
+            <ul class="list-unstyled components">
+                <div class="menu-label">Base</div>
+                <li class="{{ request()->routeIs('accounting.dashboard') ? 'active' : '' }}">
+                    <a href="{{ route('accounting.dashboard') }}">
+                        <i class="fas fa-chart-line mr-2"></i> Tableau de bord
+                    </a>
+                </li>
+                <li class="{{ request()->routeIs('accounting.journal.index') ? 'active' : '' }}">
+                    <a href="{{ route('accounting.journal.index') }}">
+                        <i class="fas fa-book mr-2"></i> Journal
+                    </a>
+                </li>
+                <li class="{{ request()->routeIs('accounting.journal.create') ? 'active' : '' }}">
+                    <a href="{{ route('accounting.journal.create') }}">
+                        <i class="fas fa-plus-circle mr-2"></i> Saisie
+                    </a>
+                </li>
 
-                <div
-                    class="sidebar-label text-[11px] uppercase font-black text-text-secondary mt-4 px-3 mb-1.5 tracking-widest hidden md:block opacity-60">
-                    Base</div>
+                <div class="menu-label">Pilotage</div>
+                <li class="{{ request()->routeIs('accounting.ledger') ? 'active' : '' }}">
+                    <a href="{{ route('accounting.ledger') }}">
+                        <i class="fas fa-list-ul mr-2"></i> Grand Livre
+                    </a>
+                </li>
+                <li class="{{ request()->routeIs('accounting.balance') ? 'active' : '' }}">
+                    <a href="{{ route('accounting.balance') }}">
+                        <i class="fas fa-layer-group mr-2"></i> Balance
+                    </a>
+                </li>
+                <li class="{{ request()->routeIs('accounting.bilan') ? 'active' : '' }}">
+                    <a href="{{ route('accounting.bilan') }}">
+                        <i class="fas fa-file-invoice-dollar mr-2"></i> Bilan
+                    </a>
+                </li>
+                <li class="{{ request()->routeIs('accounting.resultat') ? 'active' : '' }}">
+                    <a href="{{ route('accounting.resultat') }}">
+                        <i class="fas fa-chart-bar mr-2"></i> Résultat
+                    </a>
+                </li>
+                <li class="{{ request()->routeIs('accounting.archive.index') ? 'active' : '' }}">
+                    <a href="{{ route('accounting.archive.index') }}">
+                        <i class="fas fa-archive mr-2"></i> Archives
+                    </a>
+                </li>
 
-                <a href="{{ route('accounting.journal.index') }}"
-                    class="flex items-center gap-3 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.journal.index') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
-                    <i class="w-4 h-4 {{ request()->routeIs('accounting.journal.index') ? 'text-white' : '' }}"
-                        data-lucide="book"></i>
-                    <span class="sidebar-label transition-all duration-300 uppercase">Journal</span>
-                </a>
-                <a href="{{ route('accounting.journal.create') }}"
-                    class="flex items-center gap-3 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.journal.create') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
-                    <i class="w-4 h-4 {{ request()->routeIs('accounting.journal.create') ? 'text-white' : '' }}"
-                        data-lucide="plus-circle"></i>
-                    <span class="sidebar-label transition-all duration-300 uppercase">Saisie</span>
-                </a>
+                <div class="menu-label">Paramètres</div>
+                <li class="{{ request()->routeIs('accounting.account.index') ? 'active' : '' }}">
+                    <a href="{{ route('accounting.account.index') }}">
+                        <i class="fas fa-clipboard-list mr-2"></i> Plan Comptable
+                    </a>
+                </li>
+                <li class="{{ request()->routeIs('accounting.journals-settings.index') ? 'active' : '' }}">
+                    <a href="{{ route('accounting.journals-settings.index') }}">
+                        <i class="fas fa-bookmark mr-2"></i> Gestion des Journaux
+                    </a>
+                </li>
 
-                <div
-                    class="sidebar-label text-[11px] uppercase font-black text-text-secondary mt-4 px-3 mb-1.5 tracking-widest hidden md:block opacity-60">
-                    PILOTAGE</div>
-
-                <a href="{{ route('accounting.ledger') }}"
-                    class="flex items-center gap-3 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.ledger') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
-                    <i class="w-4 h-4 {{ request()->routeIs('accounting.ledger') ? 'text-white' : '' }}"
-                        data-lucide="list-checks"></i>
-                    <span class="sidebar-label transition-all duration-300 uppercase">Grand Livre</span>
-                </a>
-                <a href="{{ route('accounting.balance') }}"
-                    class="flex items-center gap-3 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.balance') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
-                    <i class="w-4 h-4 {{ request()->routeIs('accounting.balance') ? 'text-white' : '' }}"
-                        data-lucide="layers"></i>
-                    <span class="sidebar-label transition-all duration-300 uppercase">Balance</span>
-                </a>
-                <a href="{{ route('accounting.bilan') }}"
-                    class="flex items-center gap-3 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.bilan') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
-                    <i class="w-4 h-4 {{ request()->routeIs('accounting.bilan') ? 'text-white' : '' }}"
-                        data-lucide="file-bar-chart"></i>
-                    <span class="sidebar-label transition-all duration-300 uppercase">Bilan</span>
-                </a>
-                <a href="{{ route('accounting.resultat') }}"
-                    class="flex items-center gap-3 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.resultat') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
-                    <i class="w-4 h-4 {{ request()->routeIs('accounting.resultat') ? 'text-white' : '' }}"
-                        data-lucide="trending-up"></i>
-                    <span class="sidebar-label transition-all duration-300 uppercase">Résultat</span>
-                </a>
-                <a href="{{ route('accounting.archive.index') }}"
-                    class="flex items-center gap-3 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.archive.index') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
-                    <i class="w-4 h-4 {{ request()->routeIs('accounting.archive.*') ? 'text-white' : '' }}"
-                        data-lucide="archive"></i>
-                    <span class="sidebar-label transition-all duration-300 uppercase">Archives</span>
-                </a>
-                <div
-                    class="sidebar-label text-[11px] uppercase font-bold text-slate-500 mt-4 px-3 mb-1.5 tracking-widest hidden md:block opacity-80">
-                    PARAMÈTRES</div>
-
-                <a href="{{ route('accounting.account.index') }}"
-                    class="flex items-center gap-3 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.account.*') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
-                    <i class="w-4 h-4 {{ request()->routeIs('accounting.account.*') ? 'text-white' : '' }}"
-                        data-lucide="package"></i>
-                    <span class="sidebar-label transition-all duration-300 uppercase">Plan Comptable</span>
-                </a>
-
-                <a href="{{ route('accounting.journals-settings.index') }}"
-                    class="flex items-center gap-3 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.journals-settings.*') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
-                    <i class="w-4 h-4 {{ request()->routeIs('accounting.journals-settings.*') ? 'text-white' : '' }}"
-                        data-lucide="book-marked"></i>
-                    <span class="sidebar-label transition-all duration-300 uppercase">Gestion des Journaux</span>
-                </a>
-
-                <div
-                    class="sidebar-label text-[11px] uppercase font-black text-text-secondary mt-4 px-3 mb-1.5 tracking-widest hidden md:block opacity-60">
-                    SUPPORT</div>
-                <a href="{{ route('accounting.help') }}"
-                    class="flex items-center gap-3 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all {{ request()->routeIs('accounting.help') ? 'text-white bg-primary shadow-lg shadow-primary/20' : 'text-text-secondary hover:text-primary' }}">
-                    <i class="w-4 h-4 {{ request()->routeIs('accounting.help') ? 'text-white' : '' }}"
-                        data-lucide="help-circle"></i>
-                    <span class="sidebar-label transition-all duration-300 uppercase">Guide & Aide</span>
-                </a>
-            </nav>
-
-            <div class="mt-auto no-print">
-                @if(auth()->check() && auth()->user()->entreprise)
-                <div class="px-4 py-2 text-xs border-t border-border no-print">
-                    <div class="text-text-main font-black truncate uppercase tracking-widest text-[11px]">
-                        {{ auth()->user()->entreprise->name }}
+                <div class="menu-label">Support</div>
+                <li class="{{ request()->routeIs('accounting.help') ? 'active' : '' }}">
+                    <a href="{{ route('accounting.help') }}">
+                        <i class="fas fa-question-circle mr-2"></i> Guide & Aide
+                    </a>
+                </li>
+            </ul>
+@if (auth()->check() && auth()->user()->entreprise)
+                    <div class="px-4 py-2 small border-top bg-light">
+                        <div class="text-muted uppercase font-weight-bold" style="font-size: 9px; letter-spacing: 1px;">
+                            Entreprise</div>
+                        <div class="text-dark font-weight-bold truncate" style="font-size: 13px;">
+                            {{ auth()->user()->entreprise->name }}</div>
                     </div>
-                </div>
                 @endif
 
-                <div id="system-date-container"
-                    class="px-4 py-2 text-[10px] flex items-center gap-3 sidebar-label no-print border-t border-border">
-                    <i data-lucide="clock" class="w-3.5 h-3.5 text-text-secondary"></i>
-                    <div id="system-datetime-display"
-                        class="text-text-main font-bold whitespace-nowrap tracking-tight">
-                        --/--/---- --:--:--
-                    </div>
+                <div id="system-date-container" class="px-4 py-3 border-top d-flex align-items-center bg-white">
+                    <i class="far fa-clock text-muted mr-2" style="font-size: 16px;"></i>
+                    <div id="system-datetime-display" class="font-weight-bold text-dark" style="font-size: 12px;">
+                        --/--/---- --:--:--</div>
                 </div>
 
-                <form action="{{ route('logout') }}" method="POST" id="logout-form" class="hidden">
-                    @csrf
-                </form>
+                <form action="{{ route('logout') }}" method="POST" id="logout-form" class="d-none">@csrf</form>
                 <button type="button"
-                    onclick="Swal.fire({
-                        title: 'Déconnexion',
-                        text: 'Voulez-vous vraiment vous déconnecter ?',
-                        icon: 'question',
-                        showCancelButton: true,
-                        confirmButtonColor: '#005b82',
-                        cancelButtonColor: '#64748b',
-                        confirmButtonText: 'OUI, ME DÉCONNECTER',
-                        cancelButtonText: 'ANNULER',
-                        background: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#161615' : '#fff',
-                        color: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#fff' : '#000'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            document.getElementById('logout-form').submit();
-                        }
-                    })"
-                    class="flex items-center gap-3 px-3 py-2 text-[13px] font-bold transition-all border-l-4 border-transparent text-red-500 hover:text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 w-full text-left">
-                    <i class="w-4 h-4" data-lucide="log-out"></i>
-                    <span class="sidebar-label transition-all duration-300">Déconnexion</span>
+                    class="btn btn-link btn-block text-danger font-weight-bold text-left px-4 py-3 border-top"
+                    onclick="confirmLogout()" style="text-decoration: none;">
+                    <i class="fas fa-sign-out-alt mr-2" style="font-size: 16px;"></i> Déconnexion
                 </button>
             </div>
-        </aside>
+        </nav>
+        <div id="sidebar-overlay" onclick="toggleSidebar()"></div>
 
-
-
-        <!-- Main Content Wrapper -->
-        <div class="flex-1 min-w-0 flex flex-col h-full overflow-hidden">
-            <!-- Main Header (Mobile Only) -->
-            <header
-                class="flex h-16 items-center justify-between border-b border-border bg-card-bg px-6 md:px-10 sticky top-0 z-[1998] md:hidden">
-                <button id="open-mobile-sidebar"
-                    class="p-2 bg-white dark:bg-white/5 rounded-lg border border-border dark:border-white/10 z-10">
-                    <i data-lucide="menu" class="w-5 h-5 dark:text-slate-300"></i>
-                </button>
-
-                <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <img src="{{ asset('storage/images/logo.png') }}" alt="Comptafriq Logo"
-                        class="h-20 w-auto object-contain pointer-events-auto dark:filter-none filter invert dark:brightness-110">
+        <div id="content">
+            <header class="main-header">
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-light mr-3" onclick="toggleSidebar()" type="button">
+                        <i class="fas fa-bars" style="font-size: 14px;"></i>
+                    </button>
+                    <h2 class="h5 m-0 font-headline">@yield('title')</h2>
                 </div>
-
-                <div class="w-10"></div>
+                <div class="header-right">
+                    <!-- Notifications retirées à la demande de l'utilisateur -->
+                </div>
             </header>
 
-            <!-- Scrollable Content Area - Enable full auto overflow for sticky headers -->
-            <main class="main-content flex-1 min-w-0 overflow-auto p-6 md:p-10 transition-all scroll-smooth relative">
-                @php
-                    $skipAutoHide = request()->routeIs('entreprise.setup');
-                @endphp
-
+            <div class="p-3 p-md-4">
+                {{-- Alert Management for Success --}}
                 @if (session('success'))
-                    <div class="alert-box mb-6 p-4 rounded-xl bg-green-500/10 border border-green-500/30 text-green-700 dark:text-green-400 flex items-center gap-3 animate-fade-up relative overflow-hidden">
-                        <i data-lucide="check-circle" class="w-5 h-5 flex-shrink-0"></i>
-                        <span class="flex-1 font-bold">{{ session('success') }}</span>
-                        <button onclick="this.parentElement.remove()"
-                            class="p-1 hover:bg-black/5 rounded-lg transition-colors">
-                            <i data-lucide="x" class="w-4 h-4"></i>
+                    <div class="alert alert-success alert-dismissible fade show mb-4 p-3 d-flex align-items-center animate-fade-up shadow-sm border-0" role="alert">
+                        <i class="fas fa-check-circle mr-3" style="font-size: 20px;"></i>
+                        <span class="flex-grow-1 font-weight-bold">{{ session('success') }}</span>
+                        <button type="button" class="close ml-3" data-dismiss="alert" aria-label="Close" style="outline: none;">
+                            <span aria-hidden="true">&times;</span>
                         </button>
-                        @if(!$skipAutoHide)
-                            <div class="alert-progress absolute bottom-0 left-0 h-0.5 bg-green-500 w-full transition-all"></div>
+                    </div>
+                @endif
+
+                {{-- Alert Management for Errors/List --}}
+                @if (session('error') || session('error_list'))
+                    <div class="alert alert-danger alert-dismissible fade show mb-4 p-3 animate-fade-up shadow-sm border-0" role="alert">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-exclamation-circle mr-3" style="font-size: 20px;"></i>
+                            <span class="font-weight-bold flex-grow-1">{{ session('error') ?? 'Erreur détectée' }}</span>
+                            <button type="button" class="close ml-3" data-dismiss="alert" aria-label="Close" style="outline: none;">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        @if (session('error_list'))
+                            <ul class="mb-0 ml-4 small font-weight-bold">
+                                @foreach (session('error_list') as $err)
+                                    <li>{{ $err }}</li>
+                                @endforeach
+                            </ul>
                         @endif
                     </div>
                 @endif
 
-                @if (session('error_list'))
-                    <div
-                        class="mb-6 p-5 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-700 flex flex-col gap-4 animate-fade-up">
-                        <div class="flex items-center gap-3">
-                            <div
-                                class="w-8 h-8 bg-rose-500 text-white flex items-center justify-center rounded-lg shadow-lg">
-                                <i data-lucide="x-circle" class="w-5 h-5"></i>
-                            </div>
-                            <span
-                                class="font-black uppercase text-xs tracking-widest flex-1">{{ session('error') ?? 'Des erreurs ont été détectées :' }}</span>
-                            <button onclick="this.parentElement.parentElement.remove()"
-                                class="p-2 hover:bg-rose-500/10 rounded-xl transition-all">
-                                <i data-lucide="x" class="w-4 h-4"></i>
-                            </button>
-                        </div>
-                        <ul class="list-disc list-inside text-[11px] font-bold space-y-1.5 ml-11">
-                            @foreach (session('error_list') as $error)
-                                <li class="opacity-90 italic">{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
-
-                @if (session('warnings'))
-                    <div
-                        class="mb-6 p-5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-700 flex flex-col gap-4 animate-fade-up">
-                        <div class="flex items-center gap-3">
-                            <div
-                                class="w-8 h-8 bg-amber-500 text-white flex items-center justify-center rounded-lg shadow-lg">
-                                <i data-lucide="alert-triangle" class="w-5 h-5"></i>
-                            </div>
-                            <span class="font-black uppercase text-xs tracking-widest flex-1">Attention :</span>
-                            <button onclick="this.parentElement.parentElement.remove()"
-                                class="p-2 hover:bg-amber-500/10 rounded-xl transition-all">
-                                <i data-lucide="x" class="w-4 h-4"></i>
-                            </button>
-                        </div>
-                        <ul class="list-disc list-inside text-[11px] font-bold space-y-1.5 ml-11">
-                            @foreach (session('warnings') as $warning)
-                                <li class="opacity-90 italic">{{ $warning }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
-
-                @if (session('error'))
-                    <div class="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-700 dark:text-red-400 flex items-center gap-3 animate-fade-up relative overflow-hidden">
-                        <i data-lucide="alert-circle" class="w-5 h-5 flex-shrink-0"></i>
-                        <span class="flex-1 font-bold">{{ session('error') }}</span>
-                        <button onclick="this.parentElement.remove()"
-                            class="p-1 hover:bg-black/5 rounded-lg transition-colors">
-                            <i data-lucide="x" class="w-4 h-4"></i>
-                        </button>
-                    </div>
-                @endif
-
                 @yield('content')
-            </main>
+            </div>
         </div>
     </div>
 
-    <script>
-        const sidebar = document.getElementById('sidebar');
-        const toggleBtn = document.getElementById('toggle-sidebar');
-        const toggleChevron = document.getElementById('toggle-chevron');
-        const openMobileBtn = document.getElementById('open-mobile-sidebar');
-        const closeMobileBtn = document.getElementById('close-mobile-sidebar');
-        const sidebarOverlay = document.getElementById('sidebar-overlay');
-        const body = document.body;
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
 
-        lucide.createIcons();
+    <script>
+        // Sidebar Persistence Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('content');
+            const sidebarState = localStorage.getItem('sidebarState');
+            
+            // On PC, if state is 'closed', apply active class
+            if (window.innerWidth > 992 && sidebarState === 'closed') {
+                sidebar.classList.add('active');
+                content.classList.add('active');
+            }
+            // On Mobile, if state is 'open', apply active class
+            if (window.innerWidth <= 992 && sidebarState === 'open') {
+                sidebar.classList.add('active');
+            }
+
+            // Auto-close on link click (to ensure next page loads closed)
+            document.querySelectorAll('#sidebar li a').forEach(link => {
+                link.addEventListener('click', () => {
+                    localStorage.setItem('sidebarState', 'closed');
+                });
+            });
+        });
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('content');
+            
+            sidebar.classList.toggle('active');
+            content.classList.toggle('active');
+            
+            // Save state
+            const isActive = sidebar.classList.contains('active');
+            if (window.innerWidth > 992) {
+                localStorage.setItem('sidebarState', isActive ? 'closed' : 'open');
+            } else {
+                localStorage.setItem('sidebarState', isActive ? 'open' : 'closed');
+            }
+        }
+
+        function confirmLogout() {
+            Swal.fire({
+                title: 'Déconnexion',
+                text: 'Voulez-vous vraiment vous déconnecter ?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#005b82',
+                confirmButtonText: 'OUI',
+                cancelButtonText: 'ANNULER'
+            }).then((result) => {
+                if (result.isConfirmed) document.getElementById('logout-form').submit();
+            });
+        }
 
         // High Precision Real-time Clock (DB Synced)
         let serverTimeOffset = 0;
-
         const fetchSystemDate = async () => {
             try {
-                const startTime = Date.now();
                 const response = await fetch('{{ route('accounting.system-date') }}');
                 const data = await response.json();
-
-                // Calculer le décalage entre le client et le serveur
-                const serverTime = new Date(data.datetime).getTime();
-                const clientTime = Date.now();
-                serverTimeOffset = serverTime - clientTime;
-
+                serverTimeOffset = new Date(data.datetime).getTime() - Date.now();
                 updateClockDisplay();
-            } catch (error) {
-                console.error('Erreur synchronisation horloge:', error);
+            } catch (e) {
+                console.error('Erreur horloge', e);
             }
         };
-
         const updateClockDisplay = () => {
             const display = document.getElementById('system-datetime-display');
             if (!display) return;
-
             const now = new Date(Date.now() + serverTimeOffset);
-
-            const day = String(now.getDate()).padStart(2, '0');
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const year = now.getFullYear();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-
-            display.innerText = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+            display.innerText =
+                `${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
         };
-
         fetchSystemDate();
         setInterval(updateClockDisplay, 1000);
-        // Resync avec le serveur toutes les 10 minutes
-        setInterval(fetchSystemDate, 600000);
 
-        // Function to apply collapsed state
-        const setSidebarState = (collapsed) => {
-            if (collapsed) {
-                sidebar.classList.replace('w-[260px]', 'w-[80px]');
-                sidebar.classList.add('sidebar-collapsed');
-                if (toggleBtn) toggleBtn.style.left = '64px';
-            } else {
-                sidebar.classList.replace('w-[80px]', 'w-[260px]');
-                sidebar.classList.remove('sidebar-collapsed');
-                if (toggleBtn) toggleBtn.style.left = '244px';
-            }
-            localStorage.setItem('sidebar-collapsed', collapsed);
-        };
-
-        // Web Sidebar Toggle
-        if (toggleBtn) {
-            toggleBtn.addEventListener('click', () => {
-                const currentlyCollapsed = sidebar.classList.contains('sidebar-collapsed');
-                setSidebarState(!currentlyCollapsed);
-            });
-        }
-
-        // Mobile Sidebar Toggle
-        const toggleMobile = (forceState) => {
-            const isOpen = forceState !== undefined ? forceState : !sidebar.classList.contains('mobile-open');
-
-            if (isOpen) {
-                sidebar.classList.add('mobile-open');
-                sidebarOverlay.classList.add('active');
-            } else {
-                sidebar.classList.remove('mobile-open');
-                sidebarOverlay.classList.remove('active');
-            }
-        };
-
-        if (openMobileBtn) openMobileBtn.addEventListener('click', () => toggleMobile(true));
-        if (closeMobileBtn) closeMobileBtn.addEventListener('click', () => toggleMobile(false));
-        if (sidebarOverlay) sidebarOverlay.addEventListener('click', () => toggleMobile(false));
-
-        // --- Système de Swipe Fluide (Optimisé) ---
-        let touchStartX = 0;
-        let touchCurrentX = 0;
-        let isSwiping = false;
-
-        sidebar.addEventListener('touchstart', e => {
-            if (window.innerWidth > 768 || !sidebar.classList.contains('mobile-open')) return;
-            touchStartX = e.touches[0].clientX;
-            isSwiping = true;
-            sidebar.style.transition = 'none'; // Désactive transition CSS
-            sidebarOverlay.style.transition = 'none';
-        }, {
-            passive: true
-        });
-
-        sidebar.addEventListener('touchmove', e => {
-            if (!isSwiping) return;
-            touchCurrentX = e.touches[0].clientX;
-            let deltaX = touchStartX - touchCurrentX;
-
-            if (deltaX > 0) { // On pousse vers la gauche
-                sidebar.style.transform = `translateX(${-deltaX}px)`;
-                let progress = Math.min(deltaX / 260, 1);
-                sidebarOverlay.style.opacity = (0.8 - (progress * 0.8))
-                    .toString(); // 0.8 est l'opacité max du black/80
-            }
-        }, {
-            passive: true
-        });
-
-        sidebar.addEventListener('touchend', e => {
-            if (!isSwiping) return;
-            isSwiping = false;
-
-            sidebar.style.transition = ''; // Restore CSS transitions
-            sidebarOverlay.style.transition = '';
-            sidebarOverlay.style.opacity = '';
-
-            let deltaX = touchStartX - touchCurrentX;
-            sidebar.style.transform = '';
-
-            if (deltaX > 70) { // Seuil de fermeture
-                toggleMobile(false);
-            }
-        }, {
-            passive: true
-        });
-
-        // Load Initial State
-        const savedState = localStorage.getItem('sidebar-collapsed');
-        if (savedState === 'true' && window.innerWidth > 768) {
-            setSidebarState(true);
-        }
-
-        // Déplacement du système de sticky headers ici pour une meilleure organisation
-        const mainContent = document.querySelector('.main-content');
-
-        const updateStickyHeaders = () => {
-            const tables = document.querySelectorAll('.sticky-thead');
-
-            tables.forEach(table => {
-                const thead = table.querySelector('thead');
-                const tableRect = table.getBoundingClientRect();
-                const mainRect = mainContent.getBoundingClientRect();
-
-                // Différence entre le haut du main et le haut du tableau
-                const offset = mainRect.top - tableRect.top;
-
-                if (offset > 0) {
-                    // Limiter pour ne pas sortir du tableau par le bas
-                    const stopPoint = tableRect.height - thead.offsetHeight - 5;
-                    const translateVal = Math.min(offset, stopPoint);
-                    thead.style.transform = `translateY(${translateVal}px)`;
-                } else {
-                    thead.style.transform = 'translateY(0px)';
-                }
-            });
-        };
-
-        if (mainContent) {
-            mainContent.addEventListener('scroll', updateStickyHeaders);
-            window.addEventListener('resize', updateStickyHeaders);
-            updateStickyHeaders();
-        }
-
-        /* --- Système de Drag-to-Scroll pour les tableaux (H & V) --- */
-        const initDragToScroll = () => {
-            const wrappers = document.querySelectorAll('.table-responsive');
-            const mainContent = document.querySelector('.main-content');
-
-            wrappers.forEach(wrapper => {
-                let isDown = false;
-                let startX, startY;
-                let scrollLeft, scrollTop;
-
-                const startDragging = (e) => {
-                    isDown = true;
-                    wrapper.style.cursor = 'grabbing';
-                    const pageX = e.pageX || e.touches[0].pageX;
-                    const pageY = e.pageY || e.touches[0].pageY;
-
-                    startX = pageX - wrapper.offsetLeft;
-                    startY = pageY - wrapper.offsetTop;
-
-                    scrollLeft = wrapper.scrollLeft;
-                    scrollTop = mainContent ? mainContent.scrollTop : 0;
-                };
-
-                const stopDragging = () => {
-                    isDown = false;
-                    wrapper.style.cursor = 'grab';
-                };
-
-                const moveDragging = (e) => {
-                    if (!isDown) return;
-                    e.preventDefault();
-
-                    const pageX = e.pageX || e.touches[0].pageX;
-                    const pageY = e.pageY || e.touches[0].pageY;
-
-                    const x = pageX - wrapper.offsetLeft;
-                    const y = pageY - wrapper.offsetTop;
-
-                    const walkX = (x - startX) * 2;
-                    const walkY = (y - startY) * 2;
-
-                    wrapper.scrollLeft = scrollLeft - walkX;
-                    if (mainContent) {
-                        mainContent.scrollTop = scrollTop - walkY;
-                    }
-                };
-
-                // Mouse Events
-                wrapper.addEventListener('mousedown', startDragging);
-                window.addEventListener('mouseup', stopDragging);
-                wrapper.addEventListener('mouseleave', stopDragging);
-                wrapper.addEventListener('mousemove', moveDragging);
-
-                // Touch Events
-                wrapper.addEventListener('touchstart', startDragging, {
-                    passive: true
-                });
-                wrapper.addEventListener('touchend', stopDragging);
-                wrapper.addEventListener('touchmove', moveDragging, {
-                    passive: false
-                });
-            });
-        };
-
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initDragToScroll);
-        } else {
-            initDragToScroll();
-        }
-
-        /* --- Navigation par Touches de Direction (Clavier) --- */
-        document.addEventListener('keydown', (e) => {
-            // Ne pas scroller si on est dans un champ de saisie ou qu'on interagit avec le menu
-            if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
-            if (e.target.closest('#sidebar')) return;
-
-            const scrollStep = 100; // Vitesse du scroll clavier
-            const mainContent = document.querySelector('.main-content');
-            const tables = document.querySelectorAll('.table-responsive');
-
-            // On ne gère manuellement que ce qui n'est pas "natif" ou mal géré
-            // Pour haut/bas, on ne scrolle le contenu que si aucune autre zone scrolable (comme le menu) n'est survolée
-
-            switch (e.key) {
-                case 'ArrowUp':
-                    if (mainContent) {
-                        e.preventDefault();
-                        mainContent.scrollTop -= scrollStep;
-                    }
-                    break;
-                case 'ArrowDown':
-                    if (mainContent) {
-                        e.preventDefault();
-                        mainContent.scrollTop += scrollStep;
-                    }
-                    break;
-                case 'ArrowLeft':
-                    if (tables.length > 0) {
-                        e.preventDefault();
-                        tables.forEach(table => table.scrollLeft -= scrollStep);
-                    }
-                    break;
-                case 'ArrowRight':
-                    if (tables.length > 0) {
-                        e.preventDefault();
-                        tables.forEach(table => table.scrollLeft += scrollStep);
-                    }
-                    break;
-            }
-        });
-
-        // Ré-initialiser globalement si besoin
-        window.reInitTables = initDragToScroll;
-
-        // Gestion générique des dropdowns (id finit par -dropdown-btn)
-        document.addEventListener('click', (e) => {
-            const btn = e.target.closest('[id$="-dropdown-btn"]');
-            if (btn) {
-                const menuId = btn.id.replace('-btn', '-menu');
-                const menu = document.getElementById(menuId);
-                if (menu) {
-                    menu.classList.toggle('hidden');
-                    // Fermer les autres menus
-                    document.querySelectorAll('[id$="-dropdown-menu"]').forEach(otherMenu => {
-                        if (otherMenu !== menu) otherMenu.classList.add('hidden');
-                    });
-                }
-            } else {
-                // Cliquer ailleurs ferme tous les menus
-                document.querySelectorAll('[id$="-dropdown-menu"]').forEach(menu => {
-                    if (!menu.contains(e.target)) menu.classList.add('hidden');
-                });
-            }
-        });
-        // Gestion globale des alertes (Auto-hide + Progress bar)
+        // Alert auto-hide with progress
         document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
             document.querySelectorAll('.alert-box').forEach(alert => {
                 const progress = alert.querySelector('.alert-progress');
                 if (progress) {
-                    // Animation de la barre de progression
                     progress.style.transition = 'width 3s linear';
+                    setTimeout(() => progress.style.width = '0%', 50);
                     setTimeout(() => {
-                        progress.style.width = '0%';
-                    }, 50);
-                    
-                    // Disparition de l'alerte
-                    setTimeout(() => {
-                        alert.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                        alert.style.transition = 'opacity 0.5s';
                         alert.style.opacity = '0';
-                        alert.style.transform = 'translateY(-10px)';
                         setTimeout(() => alert.remove(), 500);
                     }, 3000);
                 }

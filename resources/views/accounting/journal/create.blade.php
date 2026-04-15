@@ -3,128 +3,94 @@
 @section('title', 'Saisie d\'écriture')
 
 @section('content')
-    <div class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-5 gap-3">
         <div>
-            <h1 class="text-3xl font-bold text-text-main uppercase tracking-tight">Saisie d'écriture</h1>
-            <p class="text-sm text-text-secondary mt-1 font-bold italic">Enregistrez vos flux financiers avec précision</p>
+            <h1 class="h2 font-weight-bold text-dark mb-1" style="font-family: 'Manrope';">Saisie d'écriture</h1>
+            <p class="text-muted small font-weight-bold mb-0 italic">Enregistrez vos flux financiers avec précision</p>
         </div>
-        <div class="flex items-center gap-3">
-            <a href="{{ route('accounting.journal.index') }}"
-                class="px-5 py-2.5 bg-white border border-border text-text-secondary font-black rounded-xl hover:-translate-y-0.5 transition-all text-xs flex items-center gap-2 shadow-sm">
-                <i data-lucide="history" class="w-4 h-4"></i>
-                Historique
+        <div class="d-flex align-items-center">
+            <a href="{{ route('accounting.journal.index') }}" class="btn btn-white shadow-sm border font-weight-bold d-flex align-items-center px-4 mr-2" style="border-radius: 12px; font-size: 12px;">
+                <span class="material-symbols-outlined mr-2" style="font-size: 18px;">history</span> Historique
             </a>
-            <a href="{{ route('accounting.journal.create') }}"
-                class="px-5 py-2.5 bg-primary text-white font-semibold rounded-lg hover:opacity-90 transition-all text-xs flex items-center gap-2 shadow-sm">
-                <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                Nouvelle saisie
+            <a href="{{ route('accounting.journals-settings.index') }}" class="btn btn-primary font-weight-bold d-flex align-items-center px-4 shadow-sm" style="border-radius: 12px; font-size: 12px;">
+                <span class="material-symbols-outlined mr-2" style="font-size: 18px;">settings</span> Paramètres
             </a>
         </div>
     </div>
 
     <!-- Zone Import OCR -->
-    <div class="mb-8 p-4 md:p-6 bg-primary/5 border-2 border-dashed border-primary/30 rounded-3xl group hover:border-primary/60 transition-all relative overflow-hidden"
-        id="ocr-dropzone">
-        <div class="flex flex-col md:flex-row items-center gap-4 md:gap-6 relative z-10">
-            <div class="w-12 h-12 md:w-14 md:h-14 bg-primary text-white flex items-center justify-center rounded-2xl shadow-lg group-hover:scale-110 transition-transform cursor-pointer shrink-0"
-                id="ocr-icon-zone">
-                <i data-lucide="scan-text" class="w-6 h-6 md:w-7 md:h-7"></i>
+    <div class="mb-5 p-4 bg-light border-dashed-primary rounded-lg shadow-sm position-relative overflow-hidden" id="ocr-dropzone" style="border: 2px dashed rgba(0, 91, 130, 0.3); border-radius: 20px;">
+        <div class="d-flex flex-column flex-md-row align-items-center position-relative" style="z-index: 2;">
+            <div class="bg-primary text-white d-flex align-items-center justify-content-center mr-md-4 mb-3 mb-md-0 shadow-lg cursor-pointer transition-all hover-scale" id="ocr-icon-zone" style="width: 55px; height: 55px; border-radius: 15px;">
+                <span class="material-symbols-outlined" style="font-size: 28px;">document_scanner</span>
             </div>
-            <div class="flex-1 cursor-pointer text-center md:text-left" id="ocr-text-zone">
-                <h3 class="text-primary font-black uppercase tracking-tight text-base md:text-lg">Import Facture</h3>
-                <p class="text-primary/60 text-[11px] md:text-sm font-bold italic">Glissez une facture ou cliquez pour
-                    remplir les champs</p>
+            <div class="flex-grow-1 cursor-pointer text-center text-md-left mr-md-4" id="ocr-text-zone">
+                <h5 class="text-primary font-weight-bold text-uppercase mb-1" style="font-family: 'Manrope'; letter-spacing: 0.5px;">Import Facture par IA</h5>
+                <p class="text-muted small font-weight-bold italic mb-0">Glissez une facture ou cliquez pour remplir les champs automatiquement</p>
             </div>
 
-            <div class="flex items-center gap-1 bg-white border border-primary/20 rounded-xl p-1 shadow-sm shrink-0"
-                onclick="event.stopPropagation()">
-                <button type="button" id="btn-tesseract"
-                    class="ocr-service-btn px-2.5 py-1.5 md:px-3 md:py-1.5 rounded-lg text-[10px] md:text-xs font-black transition-all bg-primary text-white"
-                    data-service="tesseract">
-                    <i data-lucide="cpu" class="w-3 h-3 inline mr-1"></i> Local
+            <div class="d-flex align-items-center bg-white p-1 rounded-pill shadow-sm mb-3 mb-md-0">
+                <button type="button" id="btn-tesseract" class="ocr-service-btn btn btn-sm rounded-pill px-3 font-weight-bold btn-primary" data-service="tesseract" style="font-size: 10px;">
+                    <span class="material-symbols-outlined mr-1" style="font-size: 14px; vertical-align: middle;">memory</span> Local
                 </button>
-                <button type="button" id="btn-mindee"
-                    class="ocr-service-btn px-2.5 py-1.5 md:px-3 md:py-1.5 rounded-lg text-[10px] md:text-xs font-black transition-all text-primary/40 hover:text-primary"
-                    data-service="mindee">
-                    <i data-lucide="cloud" class="w-3 h-3 inline mr-1"></i> Mindee
+                <button type="button" id="btn-mindee" class="ocr-service-btn btn btn-sm rounded-pill px-3 font-weight-bold text-muted border-0" data-service="mindee" style="font-size: 10px;">
+                    <span class="material-symbols-outlined mr-1" style="font-size: 14px; vertical-align: middle;">cloud</span> Mindee
                 </button>
             </div>
 
-            <div id="ocr-status" class="hidden">
-                <div class="flex items-center gap-2 text-primary font-bold text-sm animate-pulse">
-                    <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>
-                    Analyse...
+            <div id="ocr-status" class="d-none ml-md-3">
+                <div class="d-flex align-items-center text-primary font-weight-bold small pulse">
+                    <div class="spinner-border spinner-border-sm mr-2" role="status"></div> Analyse...
                 </div>
             </div>
         </div>
-        <input type="file" id="ocr-file-input" class="hidden" accept="image/*,application/pdf">
+        <input type="file" id="ocr-file-input" class="d-none" accept="image/*,application/pdf">
     </div>
 
     <!-- Modal Debug OCR -->
-    <div id="ocr-debug-modal"
-        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col overflow-hidden">
-            <!-- Header -->
-            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                        <i data-lucide="bug" class="w-4 h-4 text-white"></i>
+    <div id="ocr-debug-modal" class="d-none position-fixed w-100 h-100" style="top:0; left:0; z-index: 2000; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px);">
+        <div class="d-flex align-items-center justify-content-center h-100 p-3">
+            <div class="card border-0 shadow-lg w-100" style="max-width: 800px; border-radius: 25px; overflow: hidden;">
+                <div class="card-header bg-white border-0 p-4 d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-primary text-white rounded-lg d-flex align-items-center justify-content-center mr-3" style="width: 40px; height: 40px;">
+                            <span class="material-symbols-outlined">bug_report</span>
+                        </div>
+                        <div>
+                            <h5 class="mb-0 font-weight-bold uppercase tracking-wider" style="font-size: 14px;">Debug OCR</h5>
+                            <p id="ocr-debug-service" class="mb-0 small text-muted font-weight-bold italic"></p>
+                        </div>
                     </div>
-                    <div>
-                        <h4 class="font-black text-text-main text-sm uppercase tracking-wider">Debug OCR</h4>
-                        <p id="ocr-debug-service" class="text-xs text-text-secondary font-bold italic"></p>
+                    <button class="btn btn-light rounded-circle d-flex align-items-center justify-content-center" onclick="document.getElementById('ocr-debug-modal').classList.add('d-none')" style="width: 40px; height: 40px;">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+                <div class="card-body p-4 overflow-auto" style="max-height: 70vh;">
+                    <p class="text-uppercase font-weight-bold text-muted mb-2" style="font-size: 10px; letter-spacing: 1px;">Données extraites</p>
+                    <div class="table-responsive mb-4 shadow-sm border rounded">
+                        <table class="table table-sm mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="border-0 px-3 py-2 small font-weight-bold uppercase">Champ</th>
+                                    <th class="border-0 px-3 py-2 small font-weight-bold uppercase">Valeur</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ocr-debug-table" class="small"></tbody>
+                        </table>
                     </div>
+                    
+                    <p class="text-uppercase font-weight-bold text-muted mb-2" style="font-size: 10px; letter-spacing: 1px;">Texte brut (Modifiable pour l'IA)</p>
+                    <textarea id="ocr-debug-rawtext-area" class="form-control font-family-mono mb-4 bg-light border-0 p-3 small" rows="5" style="border-radius: 12px;"></textarea>
+                    
+                    <p class="text-uppercase font-weight-bold text-muted mb-2" style="font-size: 10px; letter-spacing: 1px;">JSON complet</p>
+                    <pre id="ocr-debug-json" class="bg-dark text-success p-3 rounded small overflow-auto" style="max-height: 200px; border-radius: 12px;"></pre>
                 </div>
-                <button onclick="document.getElementById('ocr-debug-modal').classList.add('hidden')"
-                    class="text-slate-400 hover:text-slate-700 transition-colors">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-            </div>
-            <!-- Contenu scrollable -->
-            <div class="flex-1 overflow-y-auto p-6 space-y-4">
-                <!-- Tableau des champs parsés -->
-                <div>
-                    <p class="text-[10px] font-black uppercase tracking-widest text-text-secondary mb-2">Données extraites
-                    </p>
-                    <table class="w-full text-sm border border-slate-100 rounded-xl overflow-hidden">
-                        <thead class="bg-slate-50">
-                            <tr>
-                                <th
-                                    class="px-4 py-2 text-left text-[10px] font-black uppercase text-text-secondary tracking-widest">
-                                    Champ</th>
-                                <th
-                                    class="px-4 py-2 text-left text-[10px] font-black uppercase text-text-secondary tracking-widest">
-                                    Valeur</th>
-                            </tr>
-                        </thead>
-                        <tbody id="ocr-debug-table" class="divide-y divide-slate-100"></tbody>
-                    </table>
+                <div class="card-footer bg-light border-0 p-4 d-flex justify-content-between align-items-center">
+                    <button type="button" id="btn-ai-process-raw" onclick="processWithAI()" class="btn btn-dark font-weight-bold px-4 d-flex align-items-center" style="border-radius: 12px;">
+                        <span class="material-symbols-outlined mr-2 text-warning">auto_awesome</span> Générer via IA
+                    </button>
+                    <button onclick="document.getElementById('ocr-debug-modal').classList.add('d-none')" class="btn btn-outline-secondary font-weight-bold px-4" style="border-radius: 12px;">Fermer</button>
                 </div>
-                <!-- Texte brut -->
-                <div>
-                    <p class="text-[10px] font-black uppercase tracking-widest text-text-secondary mb-2">Texte brut extrait
-                        (Modifiable pour l'IA)</p>
-                    <textarea id="ocr-debug-rawtext-area"
-                        class="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 text-xs text-slate-700 whitespace-pre-wrap h-48 overflow-y-auto font-mono focus:border-primary outline-none transition-all"></textarea>
-                </div>
-                <!-- JSON complet -->
-                <div>
-                    <p class="text-[10px] font-black uppercase tracking-widest text-text-secondary mb-2">Réponse JSON
-                        complète</p>
-                    <pre id="ocr-debug-json"
-                        class="bg-slate-900 text-green-400 rounded-xl p-4 text-xs overflow-x-auto font-mono max-h-48 overflow-y-auto"></pre>
-                </div>
-            </div>
-            <div class="px-6 py-3 border-t border-slate-100 flex justify-between items-center bg-slate-50/50">
-                <button type="button" id="btn-ai-process-raw" onclick="processWithAI()"
-                    class="px-5 py-2.5 bg-slate-900 text-white rounded-xl text-xs font-black hover:bg-slate-800 transition-all flex items-center gap-2 shadow-md">
-                    <i data-lucide="sparkles" class="w-4 h-4 text-primary"></i>
-                    Magique : Appliquer l'IA
-                </button>
-                <button onclick="document.getElementById('ocr-debug-modal').classList.add('hidden')"
-                    class="px-5 py-2.5 bg-white border border-border text-text-secondary rounded-xl text-xs font-black hover:bg-slate-50 transition-all">
-                    Fermer
-                </button>
             </div>
         </div>
     </div>
@@ -133,132 +99,94 @@
         @csrf
 
         @if ($errors->any())
-            <div class="relative bg-rose-50 border border-rose-100 rounded-2xl p-5 mb-10 animate-fade-in no-print">
-                <button type="button" onclick="this.parentElement.remove()"
-                    class="absolute top-4 right-4 text-rose-300 hover:text-rose-600 transition-colors">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-                <ul class="space-y-1">
+            <div class="alert alert-danger border-0 shadow-sm p-4 mb-4" style="border-radius: 15px;">
+                <h6 class="font-weight-bold uppercase small mb-2"><span class="material-symbols-outlined align-middle mr-1" style="font-size: 18px;">warning</span> Erreurs détectées :</h6>
+                <ul class="mb-0 small font-weight-bold">
                     @foreach ($errors->all() as $error)
-                        <li class="text-xs text-rose-700 font-bold italic flex items-center gap-2">
-                            <span class="w-1 h-1 bg-rose-400 rounded-full"></span>
-                            {{ $error }}
-                        </li>
+                        <li>{{ $error }}</li>
                     @endforeach
                 </ul>
             </div>
         @endif
 
-        <div class="bg-card-bg border border-border rounded-3xl p-8 shadow-sm mb-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div>
-                    <label class="block text-[11px] font-bold text-text-secondary mb-2 uppercase tracking-wider">N°
-                        Pièce</label>
-                    <input type="text" id="piece-number" name="numero_piece" value="{{ $nextPieceNumber }}" readonly
-                        class="w-full bg-slate-50 border border-border rounded-xl px-4 py-3 text-sm font-black text-text-secondary cursor-not-allowed">
-                    <p id="archive-warning"
-                        class="hidden mt-1.5 text-[10px] font-bold text-amber-600 flex items-center gap-1">
-                        <span id="archive-warning-text">⚠️ Cette écriture sera archivée automatiquement (année
-                            différente)</span>
-                    </p>
-                </div>
-                <div>
-                    <label
-                        class="block text-[11px] font-bold text-text-secondary mb-2 uppercase tracking-wider">Journal</label>
-                    <select id="journal-select" name="journal_id" required
-                        class="w-full bg-white border border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all text-sm font-black text-text-main">
-                        @foreach ($journals as $journal)
-                            <option value="{{ $journal->id }}"
-                                {{ old('journal_id', $selectedJournalId) == $journal->id ? 'selected' : '' }}>
-                                {{ $journal->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label
-                        class="block text-[11px] font-bold text-text-secondary mb-2 uppercase tracking-wider">Date</label>
-                    <input type="date" id="entry-date" name="date" value="{{ old('date', date('Y-m-d')) }}"
-                        required placeholder="JJ/MM/AAAA"
-                        class="w-full bg-white border border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all text-sm font-black text-text-main">
-                </div>
-                <div>
-                    <label
-                        class="block text-[11px] font-bold text-text-secondary mb-2 uppercase tracking-wider">Libellé</label>
-                    <input type="text" name="libelle" placeholder="Ex: Achat fournitures..." required
-                        class="w-full bg-white border border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all text-sm font-black text-text-main"
-                        value="{{ old('libelle') }}">
+        <div class="card border-0 shadow-sm mb-4" style="border-radius: 20px;">
+            <div class="card-body p-4">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label class="small text-uppercase font-weight-bold text-muted mb-2">N° Pièce</label>
+                        <input type="text" id="piece-number" name="numero_piece" value="{{ $nextPieceNumber }}" readonly class="form-control font-weight-bold bg-light border-0" style="border-radius: 12px; height: 50px;">
+                        <p id="archive-warning" class="d-none mt-2 small font-weight-bold text-warning mb-0">
+                            <span id="archive-warning-text">⚠️ Archivage automatique détecté</span>
+                        </p>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="small text-uppercase font-weight-bold text-muted mb-2">Journal</label>
+                        <select id="journal-select" name="journal_id" required class="form-control font-weight-bold custom-select-premium" style="border-radius: 12px; height: 50px;">
+                            @foreach ($journals as $journal)
+                                <option value="{{ $journal->id }}" {{ old('journal_id', $selectedJournalId) == $journal->id ? 'selected' : '' }}>{{ $journal->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="small text-uppercase font-weight-bold text-muted mb-2">Date</label>
+                        <input type="date" id="entry-date" name="date" value="{{ old('date', date('Y-m-d')) }}" required class="form-control font-weight-bold" style="border-radius: 12px; height: 50px;">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="small text-uppercase font-weight-bold text-muted mb-2">Libellé Général</label>
+                        <textarea name="libelle" id="libelle-general" placeholder="Détails de l'opération..." required class="form-control font-weight-bold border-0 bg-light-soft rounded-lg small py-2" style="min-height: 80px; height: auto; resize: vertical;" rows="3">{{ old('libelle') }}</textarea>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="bg-card-bg border border-border rounded-3xl shadow-sm overflow-hidden mb-8">
-            <div class="bg-white/50 px-6 py-4 border-b border-border flex items-center justify-between">
-                <h3 class="text-xs font-black text-text-secondary uppercase tracking-widest italic">Lignes d'écritures</h3>
-                <button type="button" id="add-line"
-                    class="text-primary hover:opacity-80 font-black text-xs flex items-center gap-2 transition-all">
-                    <i data-lucide="plus" class="w-4 h-4"></i>
-                    Ajouter une ligne
+        <div class="card border-0 shadow-sm overflow-hidden mb-5" style="border-radius: 20px;">
+            <div class="card-header bg-white border-bottom p-4 d-flex align-items-center justify-content-between">
+                <h6 class="mb-0 font-weight-bold text-uppercase tracking-wider text-muted italic" style="font-size: 12px;">Lignes d'enregistrements</h6>
+                <button type="button" id="add-line" class="btn btn-link text-primary font-weight-bold p-0 d-flex align-items-center text-decoration-none h-zoom">
+                    <span class="material-symbols-outlined mr-1">add_circle</span> Ajouter une ligne
                 </button>
             </div>
 
             <div class="table-responsive">
-                <table class="w-full border-collapse min-w-[800px]">
-                    <thead>
-                        <tr class="text-text-secondary border-b border-border font-black italic">
-                            <th class="px-6 py-4 text-[10px] uppercase font-black tracking-widest text-left"
-                                style="width: 30%;">Compte</th>
-                            <th class="px-6 py-4 text-[10px] uppercase font-black tracking-widest text-right"
-                                style="width: 15%;">Débit</th>
-                            <th class="px-6 py-4 text-[10px] uppercase font-black tracking-widest text-right"
-                                style="width: 15%;">Crédit</th>
-                            <th class="px-6 py-4 text-[10px] uppercase font-black tracking-widest text-left">Libellé de
-                                ligne</th>
-                            <th class="px-6 py-4" style="width: 50px;"></th>
+                <table class="table table-borderless mb-0">
+                    <thead class="bg-light border-bottom">
+                        <tr>
+                            <th class="px-4 py-3 small font-weight-bold text-uppercase text-muted" style="width: 35%;">Compte</th>
+                            <th class="px-4 py-3 small font-weight-bold text-uppercase text-muted text-right" style="width: 15%; white-space: nowrap;">Débit</th>
+                            <th class="px-4 py-3 small font-weight-bold text-uppercase text-muted text-right" style="width: 15%; white-space: nowrap;">Crédit</th>
+                            <th class="px-4 py-3 small font-weight-bold text-uppercase text-muted">Libellé ligne</th>
+                            <th class="px-4 py-3" style="width: 60px;"></th>
                         </tr>
                     </thead>
-                    <tbody id="lines-body" class="divide-y divide-slate-100">
-                        @php
-                            $oldLines = old('lines', [null, null]); // Au moins 2 lignes
-                        @endphp
+                    <tbody id="lines-body" class="bg-white">
+                        @php $oldLines = old('lines', [null, null]); @endphp
                         @foreach ($oldLines as $index => $oldLine)
-                            <tr class="line-row hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
-                                <td class="px-4 py-3">
-                                    <select name="lines[{{ $index }}][sous_compte_id]" required
-                                        class="w-full bg-white dark:bg-white/5 border border-border rounded-xl px-3 py-2 text-sm font-bold focus:ring-2 focus:ring-primary outline-none select2-account">
+                            <tr class="line-row border-bottom">
+                                <td class="p-3">
+                                    <select name="lines[{{ $index }}][sous_compte_id]" required class="form-control font-weight-bold select2-account rounded-lg border-0 bg-light-soft" style="height: 45px;">
                                         <option value="">Choisir un sous-compte...</option>
                                         @foreach ($accounts->groupBy(fn($sc) => $sc->account->code_compte . ' - ' . $sc->account->libelle) as $parentLabel => $subAccounts)
                                             <optgroup label="{{ $parentLabel }}">
                                                 @foreach ($subAccounts as $sc)
-                                                    <option value="{{ $sc->id }}"
-                                                        {{ isset($oldLine['sous_compte_id']) && $oldLine['sous_compte_id'] == $sc->id ? 'selected' : '' }}>
-                                                        {{ $sc->numero_sous_compte }} - {{ $sc->libelle }}</option>
+                                                    <option value="{{ $sc->id }}" {{ isset($oldLine['sous_compte_id']) && $oldLine['sous_compte_id'] == $sc->id ? 'selected' : '' }}>{{ $sc->numero_sous_compte }} - {{ $sc->libelle }}</option>
                                                 @endforeach
                                             </optgroup>
                                         @endforeach
                                     </select>
                                 </td>
-                                <td class="px-4 py-3">
-                                    <input type="text" inputmode="decimal" name="lines[{{ $index }}][debit]"
-                                        class="debit-input w-full bg-white dark:bg-white/5 border border-border rounded-xl px-3 py-2 text-sm text-right font-black focus:ring-2 focus:ring-primary outline-none"
-                                        value="{{ isset($oldLine['debit']) && $oldLine['debit'] != 0 ? rtrim(rtrim(number_format((float) $oldLine['debit'], 2, '.', ''), '0'), '.') : '' }}"
-                                        placeholder="0">
+                                <td class="p-3">
+                                    <input type="text" inputmode="decimal" name="lines[{{ $index }}][debit]" class="debit-input form-control font-weight-bold text-right border-0 bg-light-soft rounded-lg" style="height: 45px;" value="{{ isset($oldLine['debit']) && $oldLine['debit'] != 0 ? rtrim(rtrim(number_format((float)$oldLine['debit'], 2, '.', ''), '0'), '.') : '' }}" placeholder="0">
                                 </td>
-                                <td class="px-4 py-3">
-                                    <input type="text" inputmode="decimal" name="lines[{{ $index }}][credit]"
-                                        class="credit-input w-full bg-white dark:bg-white/5 border border-border rounded-xl px-3 py-2 text-sm text-right font-black focus:ring-2 focus:ring-primary outline-none"
-                                        value="{{ isset($oldLine['credit']) && $oldLine['credit'] != 0 ? rtrim(rtrim(number_format((float) $oldLine['credit'], 2, '.', ''), '0'), '.') : '' }}"
-                                        placeholder="0">
+                                <td class="p-3">
+                                    <input type="text" inputmode="decimal" name="lines[{{ $index }}][credit]" class="credit-input form-control font-weight-bold text-right border-0 bg-light-soft rounded-lg" style="height: 45px;" value="{{ isset($oldLine['credit']) && $oldLine['credit'] != 0 ? rtrim(rtrim(number_format((float)$oldLine['credit'], 2, '.', ''), '0'), '.') : '' }}" placeholder="0">
                                 </td>
-                                <td class="px-4 py-3">
-                                    <textarea name="lines[{{ $index }}][libelle]" placeholder="Libellé spécifique (facultatif)" rows="1"
-                                        class="w-full bg-white dark:bg-white/5 border border-border rounded-xl px-3 py-2 text-sm font-bold focus:ring-2 focus:ring-primary outline-none resize-y min-h-[60px]">{{ $oldLine['libelle'] ?? '' }}</textarea>
+                                <td class="p-3">
+                                    <textarea name="lines[{{ $index }}][libelle]" placeholder="Facultatif" rows="2" class="form-control font-weight-bold border-0 bg-light-soft rounded-lg small py-2" style="min-height: 60px;">{{ $oldLine['libelle'] ?? '' }}</textarea>
                                 </td>
-                                <td class="px-4 py-3 text-center">
+                                <td class="p-3 text-center">
                                     @if ($index >= 2)
-                                        <button type="button"
-                                            class="text-rose-400 hover:text-rose-600 transition-colors p-1"
-                                            onclick="this.closest('tr').remove(); calculate();">
-                                            <i data-lucide="x" class="w-5 h-5"></i>
+                                        <button type="button" class="btn btn-link text-danger p-0" onclick="this.closest('tr').remove(); calculate();">
+                                            <span class="material-symbols-outlined">delete</span>
                                         </button>
                                     @endif
                                 </td>
@@ -268,56 +196,54 @@
                 </table>
             </div>
 
-            <div class="bg-slate-50/50 p-6 border-t border-slate-100">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-8">
-                    <div class="flex flex-wrap gap-10">
-                        <div>
-                            <div class="text-[10px] uppercase font-black text-text-secondary tracking-widest mb-1 italic">
-                                Total Débit</div>
-                            <div class="text-3xl font-black text-text-main"><span id="total-debit">0</span> <span
-                                    class="text-sm font-medium text-text-secondary opacity-60">XOF</span></div>
-                        </div>
-                        <div>
-                            <div class="text-[10px] uppercase font-black text-text-secondary tracking-widest mb-1 italic">
-                                Total Crédit</div>
-                            <div class="text-3xl font-black text-text-main"><span id="total-credit">0</span> <span
-                                    class="text-sm font-medium text-text-secondary opacity-60">XOF</span></div>
-                        </div>
-                        <div id="balance-container">
-                            <div class="text-[10px] uppercase font-black text-text-secondary tracking-widest mb-1 italic">
-                                État d'Équilibre</div>
-                            <div id="balance-status" class="text-sm font-black text-rose-500 uppercase tracking-widest">
-                                Déséquilibre: 0 XOF</div>
+            <div class="card-footer bg-light p-4">
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <div class="d-flex flex-nowrap align-items-center" style="gap: 3rem;">
+                            <div class="text-nowrap">
+                                <span class="small font-weight-bold text-muted text-uppercase d-block mb-1 italic" style="font-size: 10px;">Total Débit</span>
+                                <div class="h4 font-weight-bold mb-0 text-dark"><span id="total-debit">0</span> <span class="small text-muted opacity-50">XOF</span></div>
+                            </div>
+                            <div class="text-nowrap">
+                                <span class="small font-weight-bold text-muted text-uppercase d-block mb-1 italic" style="font-size: 10px;">Total Crédit</span>
+                                <div class="h4 font-weight-bold mb-0 text-dark"><span id="total-credit">0</span> <span class="small text-muted opacity-50">XOF</span></div>
+                            </div>
+                            <div id="balance-container" class="text-nowrap">
+                                <span class="small font-weight-bold text-muted text-uppercase d-block mb-1 italic" style="font-size: 10px;">État d'équilibre</span>
+                                <div id="balance-status" class="font-weight-bold text-danger uppercase small tracking-wider shadow-none">Déséquilibre détecté</div>
+                            </div>
                         </div>
                     </div>
-                    <button type="submit" id="submit-btn" disabled
-                        class="w-full md:w-auto px-5 py-2.5 bg-primary text-white font-black rounded-xl hover:bg-primary-light disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-xl flex items-center justify-center gap-2 uppercase tracking-widest text-xs">
-                        <i data-lucide="check-circle" class="w-5 h-5"></i>
-                        Valider l'écriture
-                    </button>
+                    <div class="col-lg-4 mt-3 mt-lg-0 d-flex justify-content-lg-end">
+                        <button type="submit" id="submit-btn" disabled class="btn btn-primary btn-lg font-weight-bold px-5 py-3 shadow-lg d-flex align-items-center justify-content-center" style="border-radius: 15px; text-transform: uppercase; letter-spacing: 1px; font-size: 13px;">
+                            <span class="material-symbols-outlined mr-2">check_circle</span> Valider l'Écriture
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </form>
+
+    <style>
+        .border-dashed-primary { border: 2px dashed rgba(0, 91, 130, 0.3) !important; }
+        .bg-light-soft { background-color: #f8f9fc !important; }
+        .hover-scale:hover { transform: scale(1.05); }
+        .h-zoom:hover { transform: scale(1.02); }
+        .font-family-mono { font-family: 'Courier New', Courier, monospace; }
+        .gap-4 { gap: 1.5rem !important; }
+        .magical-balance { color: #8B4513; font-weight: 900; }
+        .pulse { animation: pulse-animation 2s infinite; }
+        @keyframes pulse-animation { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        @media (max-width: 768px) {
+            .select2-container { min-width: 250px !important; }
+            .debit-input, .credit-input { min-width: 150px !important; }
+            textarea[name$="[libelle]"] { min-width: 300px !important; }
+            .line-row td { padding: 15px 10px !important; }
+        }
+    </style>
 @endsection
 
 @section('scripts')
-    <style>
-        .debit-input::placeholder,
-        .credit-input::placeholder {
-            color: #9ca3af !important;
-            /* Gris (slate-400) */
-            font-weight: 500;
-            opacity: 0.8;
-        }
-
-        .magical-balance {
-            color: #8B4513;
-            /* Retour au marron d'origine */
-            font-weight: 900;
-        }
-    </style>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             let lineCount = {{ count($oldLines) }};
@@ -328,8 +254,6 @@
             const submitBtn = document.getElementById('submit-btn');
 
             let equilibre_first = false;
-
-            // --- PERSISTENCE LOGIC (localStorage) ---
             const STORAGE_KEY = 'journal_draft_entry';
 
             function saveDraft() {
@@ -339,57 +263,28 @@
                     libelle: document.querySelector('input[name="libelle"]').value,
                     lines: []
                 };
-
                 document.querySelectorAll('.line-row').forEach(row => {
                     const scSelect = row.querySelector('select[name$="[sous_compte_id]"]');
                     const debitInput = row.querySelector('.debit-input');
                     const creditInput = row.querySelector('.credit-input');
                     const libelleArea = row.querySelector('textarea[name$="[libelle]"]');
-
-                    if (scSelect) {
-                        draft.lines.push({
-                            account_id: scSelect.value,
-                            debit: debitInput.value,
-                            credit: creditInput.value,
-                            libelle: libelleArea.value
-                        });
-                    }
+                    if (scSelect) draft.lines.push({ account_id: scSelect.value, debit: debitInput.value, credit: creditInput.value, libelle: libelleArea.value });
                 });
-
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
             }
 
             function loadDraft() {
                 const saved = localStorage.getItem(STORAGE_KEY);
                 if (!saved) return;
-
-                // Only load if the form is currently "fresh"
-                const currentLibelle = document.querySelector('input[name="libelle"]').value;
-                if (currentLibelle && currentLibelle.trim() !== "") return;
-
                 const draft = JSON.parse(saved);
-
                 if (draft.journal_id) document.querySelector('select[name="journal_id"]').value = draft.journal_id;
                 if (draft.date) document.querySelector('input[name="date"]').value = draft.date;
                 if (draft.libelle) document.querySelector('input[name="libelle"]').value = draft.libelle;
-
                 if (draft.lines && draft.lines.length > 0) {
-                    // Start from line 0
                     const rows = document.querySelectorAll('.line-row');
-
                     draft.lines.forEach((line, index) => {
-                        let row;
-                        if (index < rows.length) {
-                            row = rows[index];
-                        } else {
-                            // Add new line
-                            const addLineBtn = document.getElementById('add-line');
-                            if (addLineBtn) addLineBtn.click();
-                            row = document.querySelectorAll('.line-row')[index];
-                        }
-
+                        let row = index < rows.length ? rows[index] : (document.getElementById('add-line').click(), document.querySelectorAll('.line-row')[index]);
                         if (!row) return;
-
                         const scSelect = row.querySelector('select[name$="[sous_compte_id]"]');
                         if (scSelect) scSelect.value = line.account_id;
                         row.querySelector('.debit-input').value = line.debit;
@@ -401,575 +296,143 @@
             }
 
             function calculate() {
-                let totalDebit = 0;
-                let totalCredit = 0;
-
-                const debits = document.querySelectorAll('.debit-input');
-                const credits = document.querySelectorAll('.credit-input');
-
-                debits.forEach(input => {
-                    totalDebit += parseFloat(input.value || 0);
-                });
-                credits.forEach(input => {
-                    totalCredit += parseFloat(input.value || 0);
-                });
-
-                if (totalDebitEl) totalDebitEl.innerText = totalDebit.toLocaleString('fr-FR', {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 2
-                });
-                if (totalCreditEl) totalCreditEl.innerText = totalCredit.toLocaleString('fr-FR', {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 2
-                });
-
+                let totalDebit = 0, totalCredit = 0;
+                document.querySelectorAll('.debit-input').forEach(i => totalDebit += parseFloat(i.value || 0));
+                document.querySelectorAll('.credit-input').forEach(i => totalCredit += parseFloat(i.value || 0));
+                if (totalDebitEl) totalDebitEl.innerText = totalDebit.toLocaleString('fr-FR', { maximumFractionDigits: 2 });
+                if (totalCreditEl) totalCreditEl.innerText = totalCredit.toLocaleString('fr-FR', { maximumFractionDigits: 2 });
                 const diff = totalDebit - totalCredit;
                 const absDiff = Math.abs(diff);
-
-                debits.forEach(i => i.placeholder = "0");
-                credits.forEach(i => i.placeholder = "0");
-
+                document.querySelectorAll('.debit-input, .credit-input').forEach(i => i.placeholder = "0");
                 if (balanceStatusEl) {
                     if (absDiff < 0.001 && totalDebit > 0) {
-                        balanceStatusEl.innerHTML = "Écriture équilibrée ✅";
-                        balanceStatusEl.classList.remove('text-red-600');
-                        balanceStatusEl.classList.add('text-green-600');
-                        submitBtn.disabled = false;
-                        equilibre_first = true;
+                        balanceStatusEl.innerHTML = "Équilibrée ✅";
+                        balanceStatusEl.className = "font-weight-bold text-success uppercase small tracking-wider";
+                        submitBtn.disabled = false; equilibre_first = true;
                     } else {
                         let message = "Déséquilibre";
-                        if (totalDebit > 0 || totalCredit > 0) {
-                            const sideNeeded = (diff > 0) ? 'Crédit' : 'Débit';
-                            message += ` (${sideNeeded})`;
-                        }
-                        balanceStatusEl.innerHTML =
-                            `${message}: <span class="magical-balance">${absDiff.toLocaleString('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</span> F`;
-                        balanceStatusEl.classList.remove('text-green-600');
-                        balanceStatusEl.classList.add('text-red-600');
+                        if (totalDebit > 0 || totalCredit > 0) message += ` (${diff > 0 ? 'Crédit' : 'Débit'})`;
+                        balanceStatusEl.innerHTML = `${message}: <span class="magical-balance">${absDiff.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}</span> F`;
+                        balanceStatusEl.className = "font-weight-bold text-danger uppercase small tracking-wider";
                         submitBtn.disabled = true;
-
-                        const hintValue = absDiff.toLocaleString('fr-FR', {
-                            minimumFractionDigits: 0,
-                            maximumFractionDigits: 2
-                        });
-                        if (diff > 0) {
-                            credits.forEach(i => {
-                                if (!i.value || parseFloat(i.value) === 0) i.placeholder = hintValue;
-                            });
-                        } else if (diff < 0) {
-                            debits.forEach(i => {
-                                if (!i.value || parseFloat(i.value) === 0) i.placeholder = hintValue;
-                            });
-                        }
+                        const hintVal = absDiff.toLocaleString('fr-FR');
+                        if (diff > 0) document.querySelectorAll('.credit-input').forEach(i => { if (!i.value || parseFloat(i.value) === 0) i.placeholder = hintVal; });
+                        else if (diff < 0) document.querySelectorAll('.debit-input').forEach(i => { if (!i.value || parseFloat(i.value) === 0) i.placeholder = hintVal; });
                     }
                 }
                 return diff;
             }
 
-            function formatAmount(n) {
-                // Affiche l'entier si pas de décimale utile (80000 et non 80000.00)
-                return Number.isInteger(n) ? String(n) : parseFloat(n.toFixed(2)).toString();
-            }
-
-            function smartFillImbalance(input) {
-                if (equilibre_first) return;
-                if (parseFloat(input.value || 0) !== 0) return;
-                const diff = calculate();
-                const absDiff = Math.abs(diff);
-                if (absDiff < 0.01) return;
-
-                if ((input.classList.contains('debit-input') && diff < 0) ||
-                    (input.classList.contains('credit-input') && diff > 0)) {
-                    input.value = formatAmount(absDiff);
-                    input.classList.add('bg-primary/5', 'dark:bg-primary/10');
-                    setTimeout(() => input.classList.remove('bg-primary/5', 'dark:bg-primary/10'), 500);
-                    calculate();
-                }
-            }
-
             function sanitizeAmount(input) {
-                // Retire les virgules, n'autorise que chiffres et point
                 let v = input.value.replace(/,/g, '').replace(/[^0-9.]/g, '');
-                // Un seul point décimal max
-                const parts = v.split('.');
-                if (parts.length > 2) v = parts[0] + '.' + parts.slice(1).join('');
+                const parts = v.split('.'); if (parts.length > 2) v = parts[0] + '.' + parts.slice(1).join('');
                 if (input.value !== v) input.value = v;
             }
 
             function handleInput(e) {
-                const input = e.target;
-                sanitizeAmount(input);
-                const row = input.closest('tr');
-                const val = parseFloat(input.value || 0);
-
+                const input = e.target; sanitizeAmount(input);
+                const row = input.closest('tr'); const val = parseFloat(input.value || 0);
                 if (!equilibre_first && val > 0) {
-                    if (input.classList.contains('debit-input')) {
-                        row.querySelector('.credit-input').value = '';
-                    } else {
-                        row.querySelector('.debit-input').value = '';
-                    }
-
-                    // Logique d'ajout automatique de ligne
+                    if (input.classList.contains('debit-input')) row.querySelector('.credit-input').value = '';
+                    else row.querySelector('.debit-input').value = '';
                     const rows = document.querySelectorAll('.line-row');
-                    const lastRow = rows[rows.length - 1];
-                    if (row === lastRow) {
-                        document.getElementById('add-line').click();
-                    }
+                    if (row === rows[rows.length - 1]) document.getElementById('add-line').click();
                 }
-                calculate();
-                saveDraft();
+                calculate(); saveDraft();
             }
 
             function attachListeners(row) {
-                row.querySelectorAll('input').forEach(input => {
-                    input.addEventListener('input', handleInput);
-                    input.addEventListener('focus', function() {
-                        smartFillImbalance(this);
-                    });
-                });
-                row.querySelectorAll('select').forEach(select => {
-                    select.addEventListener('change', () => {
-                        calculate();
-                        saveDraft();
-                    });
-                });
-                row.querySelectorAll('textarea').forEach(area => {
-                    area.addEventListener('input', saveDraft);
-                });
+                row.querySelectorAll('input').forEach(i => { i.addEventListener('input', handleInput); i.addEventListener('focus', function() { if (!equilibre_first && !this.value) { const d = calculate(); const a = Math.abs(d); if (a > 0.01 && ((this.classList.contains('debit-input') && d < 0) || (this.classList.contains('credit-input') && d > 0))) { this.value = Number.isInteger(a) ? a : a.toFixed(2); calculate(); } } }); });
+                row.querySelectorAll('select').forEach(i => i.addEventListener('change', () => { calculate(); saveDraft(); }));
+                row.querySelectorAll('textarea').forEach(i => i.addEventListener('input', saveDraft));
             }
 
-            const addLineBtn = document.getElementById('add-line');
-            if (addLineBtn) {
-                addLineBtn.addEventListener('click', () => {
-                    const rows = document.querySelectorAll('.line-row');
-                    if (rows.length === 0) return;
-
-                    const firstRow = rows[0];
-                    const newRow = firstRow.cloneNode(true);
-                    const inputs = newRow.querySelectorAll('input, select, textarea');
-
-                    inputs.forEach(input => {
-                        const name = input.getAttribute('name');
-                        if (name) {
-                            input.setAttribute('name', name.replace(/\[\d+\]/, `[${lineCount}]`));
-                        }
-
-                        if (input.classList.contains('debit-input') || input.classList.contains(
-                                'credit-input')) {
-                            input.value = '';
-                        } else {
-                            input.value = '';
-                        }
-                    });
-
-                    const deleteCell = newRow.cells[newRow.cells.length - 1];
-                    deleteCell.innerHTML =
-                        '<button type="button" class="text-red-400 hover:text-red-600 transition-colors p-1" onclick="this.closest(\'tr\').remove(); calculate(); saveDraft();"><i data-lucide="x" class="w-5 h-5"></i></button>';
-
-                    body.appendChild(newRow);
-                    lineCount++;
-                    attachListeners(newRow);
-                    if (typeof lucide !== 'undefined') lucide.createIcons();
-                    calculate();
-                    saveDraft();
-                });
-            }
+            document.getElementById('add-line').addEventListener('click', () => {
+                const rows = document.querySelectorAll('.line-row'); if (rows.length === 0) return;
+                const newRow = rows[0].cloneNode(true);
+                newRow.querySelectorAll('input, select, textarea').forEach(i => { const n = i.getAttribute('name'); if (n) i.setAttribute('name', n.replace(/\[\d+\]/, `[${lineCount}]`)); i.value = ''; });
+                newRow.querySelector('td:last-child').innerHTML = '<button type="button" class="btn btn-link text-danger p-0" onclick="this.closest(\'tr\').remove(); calculate(); saveDraft();"><span class="material-symbols-outlined">delete</span></button>';
+                body.appendChild(newRow); lineCount++; attachListeners(newRow); calculate(); saveDraft();
+            });
 
             document.querySelectorAll('.line-row').forEach(attachListeners);
-
-            const dateInput = document.querySelector('input[name="date"]');
-            if (dateInput) {
-                dateInput.addEventListener('change', function() {
-                    const selectedDate = new Date(this.value);
-                    const today = new Date();
-                    today.setHours(0, 0, 0, 0);
-                    const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-
-                    if (selectedDate > lastDayOfMonth) {
-                        alert('La date ne peut pas dépasser le mois en cours.');
-                        this.value = today.toISOString().split('T')[0];
-                    }
-                    saveDraft();
-                    if (typeof refreshPieceNumber === 'function') refreshPieceNumber();
-                });
-            }
-
+            document.querySelector('input[name="date"]').addEventListener('change', function() { calculate(); saveDraft(); refreshPieceNumber(); });
+            document.querySelector('select[name="journal_id"]').addEventListener('change', function() { saveDraft(); refreshPieceNumber(); });
             document.querySelector('input[name="libelle"]').addEventListener('input', saveDraft);
+            document.getElementById('journalform').addEventListener('submit', () => localStorage.removeItem(STORAGE_KEY));
 
-            const journalSelect = document.querySelector('select[name="journal_id"]');
-            journalSelect.addEventListener('change', function() {
-                saveDraft();
-                if (typeof refreshPieceNumber === 'function') refreshPieceNumber();
-            });
-
-            // Clear storage on submit
-            document.getElementById('journalform').addEventListener('submit', function() {
-                localStorage.removeItem(STORAGE_KEY);
-            });
-
-            // --- OCR Logic ---
-            let lastOcrData = null;
-            const dropzone = document.getElementById('ocr-dropzone');
+            // OCR Logic
             const fileInput = document.getElementById('ocr-file-input');
             const ocrStatus = document.getElementById('ocr-status');
-
-            // Service actif (tesseract par défaut)
             let activeOcrService = 'tesseract';
 
-            // Gestion du toggle Tesseract / Mindee
-            document.querySelectorAll('.ocr-service-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    activeOcrService = this.dataset.service;
-                    document.querySelectorAll('.ocr-service-btn').forEach(b => {
-                        b.classList.remove('bg-primary', 'text-white');
-                        b.classList.add('text-primary/40', 'hover:text-primary');
-                    });
-                    this.classList.add('bg-primary', 'text-white');
-                    this.classList.remove('text-primary/40', 'hover:text-primary');
-                });
-            });
+            document.querySelectorAll('.ocr-service-btn').forEach(btn => btn.addEventListener('click', function() {
+                activeOcrService = this.dataset.service;
+                document.querySelectorAll('.ocr-service-btn').forEach(b => { b.className = "ocr-service-btn btn btn-sm rounded-pill px-3 font-weight-bold text-muted border-0"; });
+                this.className = "ocr-service-btn btn btn-sm rounded-pill px-3 font-weight-bold btn-primary";
+            }));
 
-            // Clic sur la zone ou l'icône/texte ouvre le fichier
-            document.getElementById('ocr-icon-zone').addEventListener('click', () => fileInput.click());
-            document.getElementById('ocr-text-zone').addEventListener('click', () => fileInput.click());
-
-            fileInput.addEventListener('change', function() {
-                if (this.files.length > 0) handleOcrUpload(this.files[0]);
-            });
-
-            dropzone.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                dropzone.classList.add('bg-primary/10', 'border-primary/50');
-            });
-
-            dropzone.addEventListener('dragleave', () => {
-                dropzone.classList.remove('bg-primary/10', 'border-primary/50');
-            });
-
-            dropzone.addEventListener('drop', (e) => {
-                e.preventDefault();
-                dropzone.classList.remove('bg-primary/10', 'border-primary/50');
-                if (e.dataTransfer.files.length > 0) handleOcrUpload(e.dataTransfer.files[0]);
-            });
+            document.getElementById('ocr-icon-zone').onclick = () => fileInput.click();
+            document.getElementById('ocr-text-zone').onclick = () => fileInput.click();
+            fileInput.onchange = function() { if (this.files.length) handleOcrUpload(this.files[0]); };
 
             function handleOcrUpload(file) {
-                const formData = new FormData();
-                formData.append('file', file);
-                formData.append('_token', '{{ csrf_token() }}');
-                formData.append('service', activeOcrService); // Tesseract ou Mindee
-
-                ocrStatus.classList.remove('hidden');
-
-                fetch('{{ route('accounting.journal.ocr_import') }}', {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.error) {
-                            Swal.fire({
-                                title: 'Erreur OCR',
-                                text: data.error,
-                                icon: 'error'
-                            });
-                        } else {
-                            // -----------------------------------------------
-                            // PHASE EXPLORATION : formulaire non rempli
-                            // On analyse d'abord les données disponibles
-                            // avant de décider quoi mapper où.
-                            // -----------------------------------------------
-                            // if (data.date)   document.querySelector('input[name="date"]').value = data.date;
-                            // if (data.libelle) document.querySelector('input[name="libelle"]').value = data.libelle;
-                            // if (data.amount) { ... }
-
-                            // Afficher toutes les données brutes dans la modal
-                            showOcrDebug(data);
-                        }
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        Swal.fire('Erreur', 'Impossible de contacter le service OCR.', 'error');
-                    })
-                    .finally(() => {
-                        ocrStatus.classList.add('hidden');
-                        fileInput.value = '';
-                    });
+                const fd = new FormData(); fd.append('file', file); fd.append('_token', '{{ csrf_token() }}'); fd.append('service', activeOcrService);
+                ocrStatus.classList.remove('d-none');
+                fetch('{{ route('accounting.journal.ocr_import') }}', { method: 'POST', body: fd })
+                    .then(r => r.json()).then(data => { if (data.error) Swal.fire('Erreur OCR', data.error, 'error'); else showOcrDebug(data); })
+                    .finally(() => { ocrStatus.classList.add('d-none'); fileInput.value = ''; });
             }
 
-            // --- Fonction Debug OCR ---
             function showOcrDebug(data) {
-                lastOcrData = data;
-                const tbody = document.getElementById('ocr-debug-table');
-                tbody.innerHTML = '';
-
-                let hasValidFields = false;
-
-                // -------------------------------------------------
-                // 1. Champs analysés par l'IA (On n'affiche que ce qui a été TROUVÉ)
-                // -------------------------------------------------
-                const skip = new Set(['raw_text', 'lignes', 'service', 'amount', 'libelle', 'mindee']);
-
-                // Cas spécial : Montant principal
-                if (data.amount) {
-                    hasValidFields = true;
-                    tbody.innerHTML += `
-                        <tr class="bg-primary/5 border-l-4 border-primary group">
-                            <td class="px-3 py-2 text-[10px] font-black text-primary uppercase tracking-wider">MONTANT TTC</td>
-                            <td class="px-3 py-2 text-sm font-black text-primary flex flex-wrap items-center justify-between gap-2">
-                                <span>${parseFloat(data.amount).toLocaleString()} XOF</span>
-                                <button onclick="fillField('amount', '${data.amount}')" class="bg-primary text-white px-3 py-2 md:px-2 md:py-1 rounded text-[10px] md:text-[9px] hover:scale-105 transition-transform uppercase font-black shadow-sm">
-                                    Injecter
-                                </button>
-                            </td>
-                        </tr>`;
-                }
-
-                Object.entries(data).forEach(([key, val]) => {
-                    if (skip.has(key)) return;
-                    const isValide = val !== null && val !== undefined && val !== '' && val !== '—';
-                    if (!isValide) return; // ON CACHE LES VIDES
-
-                    hasValidFields = true;
-                    tbody.innerHTML += `
-                        <tr class="hover:bg-slate-50 transition-colors group">
-                            <td class="px-3 py-2 text-[10px] font-black text-text-secondary uppercase tracking-wider w-1/3">${key.replace('_', ' ')}</td>
-                            <td class="px-3 py-2 text-xs flex flex-wrap items-center justify-between gap-2">
-                                <span class="font-bold text-text-main break-all">${val}</span>
-                                <div class="flex gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <button onclick="fillField('libelle', '${val.toString().replace(/'/g, "\\'")}')" class="p-1.5 bg-primary/5 md:bg-transparent hover:bg-primary/10 rounded text-primary transition-colors" title="Vers Libellé">
-                                        <i data-lucide="type" class="w-4 h-4 md:w-3 md:h-3"></i>
-                                    </button>
-                                    <button onclick="fillField('date', '${val.toString().replace(/'/g, "\\'")}')" class="p-1.5 bg-primary/5 md:bg-transparent hover:bg-primary/10 rounded text-primary transition-colors" title="Vers Date">
-                                        <i data-lucide="calendar" class="w-4 h-4 md:w-3 md:h-3"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>`;
-                });
-
-                if (!hasValidFields) {
-                    tbody.innerHTML =
-                        `<tr><td colspan="2" class="px-4 py-8 text-center text-xs text-slate-400 italic">Aucune donnée structurée détectée. Utilisez le texte brut ci-dessous.</td></tr>`;
-                }
-
-                // -------------------------------------------------
-                // 3. Texte brut dans le textarea (Modifiable)
-                // -------------------------------------------------
+                const tbody = document.getElementById('ocr-debug-table'); tbody.innerHTML = '';
+                if (data.amount) tbody.innerHTML += `<tr class="table-info font-weight-bold"><td>MONTANT TTC</td><td class="d-flex justify-content-between"><span>${parseFloat(data.amount).toLocaleString()} F</span> <button onclick="fillField('amount', '${data.amount}')" class="btn btn-primary btn-sm rounded-lg" style="font-size: 9px;">INJECTER</button></td></tr>`;
+                Object.entries(data).forEach(([k, v]) => { if (!['raw_text', 'lignes', 'amount', 'libelle', 'service'].includes(k) && v) tbody.innerHTML += `<tr><td class="text-uppercase font-weight-bold text-muted" style="font-size: 9px;">${k}</td><td class="d-flex justify-content-between small"><span>${v}</span> <div><button onclick="fillField('libelle', '${v}')" class="btn btn-light btn-sm p-1 mx-1" title="Libellé"><span class="material-symbols-outlined" style="font-size: 14px;">title</span></button><button onclick="fillField('date', '${v}')" class="btn btn-light btn-sm p-1" title="Date"><span class="material-symbols-outlined" style="font-size: 14px;">calendar_today</span></button></div></td></tr>`; });
                 document.getElementById('ocr-debug-rawtext-area').value = data.raw_text || '';
-
-                // -------------------------------------------------
-                // 4. JSON complet
-                // -------------------------------------------------
-                document.getElementById('ocr-debug-json').textContent =
-                    JSON.stringify(data, null, 2);
-
-                // Header
-                document.getElementById('ocr-debug-service').textContent =
-                    data.service === 'mindee' ? 'Mindee Cloud API' : 'Tesseract OCR local — Mode exploration';
-
-                // Affichage
-                document.getElementById('ocr-debug-modal').classList.remove('hidden');
-                if (typeof lucide !== 'undefined') lucide.createIcons();
+                document.getElementById('ocr-debug-json').textContent = JSON.stringify(data, null, 2);
+                document.getElementById('ocr-debug-service').textContent = data.service === 'mindee' ? 'Cloud API' : 'OCR Local Exploration';
+                document.getElementById('ocr-debug-modal').classList.remove('d-none');
             }
 
-            // --- Injection manuelle depuis Debug ---
-            window.fillField = function(target, value) {
-                if (!value || value === 'null') return;
-
-                if (target === 'date') {
-                    const input = document.querySelector('input[name="date"]');
-                    if (input) input.value = value;
-                } else if (target === 'libelle') {
-                    const input = document.querySelector('input[name="libelle"]');
-                    if (input) input.value = value;
-                } else if (target === 'amount') {
-                    const firstDebit = document.querySelector('.debit-input');
-                    if (firstDebit) {
-                        // Nettoyer la valeur si c'est un montant (enlever espaces, etc)
-                        const cleanValue = parseFloat(value.toString().replace(/[^0-9.]/g, ''));
-                        if (!isNaN(cleanValue)) {
-                            firstDebit.value = formatAmount(cleanValue);
-                            firstDebit.dispatchEvent(new Event('input'));
-                        }
-                    }
-                }
-
-                // Petit feedback visuel
-                Swal.fire({
-                    title: 'Injecté !',
-                    icon: 'success',
-                    toast: true,
-                    position: 'bottom-start',
-                    timer: 1500,
-                    showConfirmButton: false
-                });
+            window.fillField = (t, v) => {
+                if (t === 'date') document.querySelector('input[name="date"]').value = v;
+                else if (t === 'libelle') document.querySelector('input[name="libelle"]').value = v;
+                else if (t === 'amount') { const i = document.querySelector('.debit-input'); i.value = v; i.dispatchEvent(new Event('input')); }
+                Swal.fire({ toast: true, position: 'bottom-start', timer: 1000, showConfirmButton: false, title: 'Injecté !', icon: 'success' });
             };
 
-            // --- IA Process Logic ---
-            window.processWithAI = function() {
-                const rawText = document.getElementById('ocr-debug-rawtext-area').value;
-                if (!rawText || rawText.trim().length < 10) {
-                    Swal.fire('Erreur', 'Pas assez de texte à analyser.', 'warning');
-                    return;
-                }
-
-                // Close modals and show loader
-                document.getElementById('ocr-debug-modal').classList.add('hidden');
-
-                Swal.fire({
-                    title: 'L\'IA analyse...',
-                    html: 'Construction de l\'écriture comptable...',
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    }
-                });
-
-                fetch('{{ route('accounting.journal.ocr_ai_process') }}', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        },
-                        body: JSON.stringify({
-                            raw_text: rawText
-                        })
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        Swal.close();
-                        console.log('Gemini Data:', data); // Debug
-                        if (data.error) {
-                            Swal.fire('Erreur IA', data.error, 'error');
-                        } else {
-                            applyAISuggestions(data);
-                        }
-                    })
-                    .catch(err => {
-                        Swal.close();
-                        Swal.fire('Erreur', 'Impossible de contacter l\'IA.', 'error');
-                    });
+            window.processWithAI = () => {
+                const rt = document.getElementById('ocr-debug-rawtext-area').value;
+                if (!rt || rt.length < 10) return Swal.fire('Erreur', 'Pas assez de texte.', 'warning');
+                document.getElementById('ocr-debug-modal').classList.add('d-none');
+                Swal.fire({ title: 'Analyse IA...', html: 'Construction de l\'écriture...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+                fetch('{{ route('accounting.journal.ocr_ai_process') }}', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ raw_text: rt }) })
+                    .then(r => r.json()).then(data => { Swal.close(); if (data.error) Swal.fire('Erreur IA', data.error, 'error'); else applyAISuggestions(data); });
             };
 
             function applyAISuggestions(data) {
-                // Mapping des données générales
                 if (data.date) document.querySelector('input[name="date"]').value = data.date;
                 if (data.libelle) document.querySelector('input[name="libelle"]').value = data.libelle;
-
-                // On vide les lignes actuelles (sauf les 2 premières)
-                const rows = document.querySelectorAll('.line-row');
-                rows.forEach((row, i) => {
-                    if (i >= 2) row.remove();
+                document.querySelectorAll('.line-row').forEach((r, i) => { if (i >= 2) r.remove(); else { r.querySelector('select').value = ""; r.querySelector('.debit-input').value = ""; r.querySelector('.credit-input').value = ""; r.querySelector('textarea').value = ""; } });
+                if (data.lignes) data.lignes.forEach((l, i) => {
+                    let r = document.querySelectorAll('.line-row')[i] || (document.getElementById('add-line').click(), document.querySelectorAll('.line-row')[i]);
+                    const s = l.sous_compte || l.compte; if (s) { const o = Array.from(r.querySelector('select').options).find(opt => opt.text.includes(s) || opt.value == s); if (o) { r.querySelector('select').value = o.value; r.querySelector('select').dispatchEvent(new Event('change')); } }
+                    r.querySelector('.debit-input').value = l.debit || ""; r.querySelector('.credit-input').value = l.credit || "";
+                    r.querySelector('textarea').value = l.libelle || data.libelle || "";
                 });
-
-                // Reset first 2 lines
-                const firstRows = document.querySelectorAll('.line-row');
-                firstRows.forEach(row => {
-                    row.querySelector('select').value = "";
-                    row.querySelector('.debit-input').value = "";
-                    row.querySelector('.credit-input').value = "";
-                    row.querySelector('textarea').value = "";
-                });
-
-                // Remplissage des lignes IA
-                if (data.lignes && data.lignes.length > 0) {
-                    data.lignes.forEach((line, index) => {
-                        let row = document.querySelectorAll('.line-row')[index];
-                        if (!row) {
-                            document.getElementById('add-line').click();
-                            row = document.querySelectorAll('.line-row')[index];
-                        }
-
-                        // Trouver le compte le plus proche
-                        const searchAccount = line.sous_compte || line.compte || line.code;
-                        if (searchAccount) {
-                            const options = Array.from(row.querySelector('select').options);
-                            const bestMatch = options.find(opt =>
-                                opt.text.startsWith(searchAccount) ||
-                                opt.text.includes(searchAccount) ||
-                                opt.value == searchAccount
-                            );
-                            if (bestMatch) {
-                                row.querySelector('select').value = bestMatch.value;
-                                row.querySelector('select').dispatchEvent(new Event('change'));
-                            }
-                        }
-
-                        row.querySelector('.debit-input').value = line.debit || "";
-                        row.querySelector('.credit-input').value = line.credit || "";
-                        if (line.libelle) row.querySelector('textarea').value = line.libelle;
-                        else if (data.libelle) row.querySelector('textarea').value = data.libelle;
-                    });
-                }
-
-                calculate();
-                saveDraft();
-
-                Swal.fire({
-                    title: 'Écriture générée !',
-                    text: 'Vérifiez les comptes et les montants avant de valider.',
-                    icon: 'success',
-                    timer: 3000,
-                    timerProgressBar: true
-                });
+                calculate(); saveDraft();
             }
 
-            // Initial load
-            loadDraft();
-            calculate();
-
-            // ═══════════════════════════════════════════════════
-            // Rafraîchissement dynamique du N° de pièce
-            // ═══════════════════════════════════════════════════
-            const pieceNumberInput = document.getElementById('piece-number');
-            const archiveWarning = document.getElementById('archive-warning');
-
-            // On exporte en global pour l'appeler facilement d'en haut
-            window.refreshPieceNumber = function() {
-                const journalId = journalSelect ? journalSelect.value : null;
-                const date = dateInput ? dateInput.value : null;
-                if (!journalId || !date) return;
-
-                const fetchUrl =
-                    `{{ route('accounting.journal.next-piece-number', [], false) }}?journal_id=${journalId}&date=${date}`;
-
-                fetch(fetchUrl, {
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'Accept': 'application/json'
-                        },
-                        credentials: 'same-origin'
-                    })
-                    .then(r => r.json())
-                    .then(data => {
-                        if (pieceNumberInput) {
-                            pieceNumberInput.value = data.next_number;
-                            // Animation flash
-                            pieceNumberInput.classList.add('ring-2', 'ring-primary');
-                            setTimeout(() => pieceNumberInput.classList.remove('ring-2', 'ring-primary'),
-                                600);
-                        }
-                        if (archiveWarning) {
-                            if (data.will_be_archived) {
-                                const warningText = document.getElementById('archive-warning-text');
-                                if (warningText) {
-                                    warningText.innerText =
-                                        `⚠️ Cette écriture sera archivée automatiquement (année ${data.year})`;
-                                }
-                                archiveWarning.classList.remove('hidden');
-                            } else {
-                                archiveWarning.classList.add('hidden');
-                            }
-                        }
-                    })
-                    .catch(err => {
-                        console.error("Erreur mise à jour N° pièce:", err);
+            window.refreshPieceNumber = () => {
+                const j = document.getElementById('journal-select').value; const d = document.getElementById('entry-date').value;
+                fetch(`{{ route('accounting.journal.next-piece-number', [], false) }}?journal_id=${j}&date=${d}`)
+                    .then(r => r.json()).then(data => {
+                        const i = document.getElementById('piece-number'); i.value = data.next_number;
+                        const w = document.getElementById('archive-warning'); if (data.will_be_archived) { document.getElementById('archive-warning-text').innerText = `⚠️ Archivage auto (Année ${data.year})`; w.classList.remove('d-none'); } else w.classList.add('d-none');
                     });
             };
 
-            // Appel initial si un journal est déjà sélectionné
-            if (journalSelect && journalSelect.value) refreshPieceNumber();
+            loadDraft(); calculate(); refreshPieceNumber();
         });
     </script>
 @endsection

@@ -2,183 +2,233 @@
 
 @section('title', 'Profil Utilisateur')
 
+@section('styles')
+    <style>
+        .profile-page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+        }
+
+        .org-badge-top {
+            background: #f1f5f9;
+            color: var(--primary-color);
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 800;
+            font-size: 13px;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+        }
+
+        .profile-hero {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #003d57 100%);
+            border-radius: 25px;
+            padding: 40px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 91, 130, 0.1);
+            margin-bottom: 25px;
+        }
+
+        .profile-avatar {
+            width: 90px;
+            height: 90px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .profile-card {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            border: 1px solid #f1f5f9;
+            padding: 30px;
+            height: 100%;
+            position: relative;
+        }
+
+        .form-label-premium {
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #64748b;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .form-control-premium {
+            height: 52px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            padding: 0 18px;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            background: #f8fafc;
+        }
+
+        .form-control-premium:focus {
+            background: #fff;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(0, 91, 130, 0.05);
+        }
+
+        .btn-premium-save {
+            height: 52px;
+            border-radius: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+        }
+
+        .btn-premium-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f8fafc;
+        }
+
+        .detail-row:last-child { border-bottom: none; }
+    </style>
+@endsection
+
 @section('content')
-    <div class="w-full space-y-8 pb-10">
-        <!-- Header -->
+    @php
+        $user = auth()->user();
+        $entreprise = $user->entreprise;
+        $isAdmin = $user->role === 'admin';
+    @endphp
+
+    <div class="profile-page-header">
         <div>
-            <h1 class="text-4xl font-black text-text-main flex items-center gap-3 uppercase tracking-tight">
-                <i data-lucide="user-circle" class="w-10 h-10 text-primary"></i>
-                Mon Profil
-            </h1>
-            <p class="text-text-secondary font-medium mt-2">Gérez vos informations et sécurisez votre accès à la plateforme.
-            </p>
+            <h1 class="h3 font-weight-bold mb-1 text-dark" style="font-family: 'Manrope';">Mon Profil</h1>
+            <p class="text-muted small mb-0 font-weight-bold">Gérez vos informations et sécurisez votre accès.</p>
         </div>
+        @if($entreprise)
+            <div class="org-badge-top">
+                CODE : {{ $entreprise->code }}
+            </div>
+        @endif
+    </div>
 
-        <!-- Main Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-            <!-- Left Column: Summary & Quick Info -->
-            <div class="space-y-6">
-                <div class="bg-primary rounded-[2.5rem] p-8 text-white shadow-xl relative overflow-hidden">
-                    <div class="absolute -right-10 -bottom-10 opacity-10">
-                        <i data-lucide="user" class="w-48 h-48"></i>
-                    </div>
-                    <div class="relative z-10">
-                        <div
-                            class="w-20 h-20 bg-white/20 backdrop-blur-md rounded-3xl flex items-center justify-center text-3xl font-black mb-6">
-                            {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                        </div>
-                        <h2 class="text-2xl font-black mb-1">{{ auth()->user()->name }}</h2>
-                        <p class="text-white/80 font-bold text-sm mb-6">{{ auth()->user()->email }}</p>
-                        <span
-                            class="inline-block px-4 py-1.5 bg-white text-primary rounded-xl text-[10px] font-black uppercase tracking-widest">
-                            {{ ucfirst(auth()->user()->role) }}
-                        </span>
-                    </div>
+    <div class="row">
+        <!-- Sidebar Info -->
+        <div class="col-lg-4 mb-4">
+            <div class="profile-hero">
+                <div class="profile-avatar">
+                    <span class="material-symbols-outlined" style="font-size: 48px; color: white;">person</span>
                 </div>
-
-                <div class="bg-card-bg border border-border rounded-[2.5rem] p-8 shadow-sm">
-                    <h4 class="text-xs font-black text-text-main uppercase tracking-widest mb-6">Détails du compte</h4>
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center py-3">
-                            <span class="text-text-secondary text-sm font-bold">Inscrit le</span>
-                            <span
-                                class="text-text-main font-black text-xs">{{ auth()->user()->created_at->format('d/m/Y') }}</span>
-                        </div>
-                    </div>
-                </div>
-                
-                @php
-                    $user = auth()->user();
-                    $entreprise = $user->entreprise;
-                    $isAdmin = $user->role === 'admin';
-                @endphp
-
-                @if ($isAdmin && $entreprise)
-                    <!-- Section 3: Enterprise Info -->
-                    <div
-                        class="bg-card-bg border border-border rounded-[2.5rem] p-8 shadow-sm border-l-8 border-l-emerald-500">
-                        <div class="flex flex-col gap-4 mb-6">
-                            <h2 class="text-lg font-black text-text-main uppercase tracking-tight">Paramètres Entreprise
-                            </h2>
-                            <div
-                                class="self-start px-4 py-2 bg-emerald-500/10 text-emerald-600 rounded-xl border border-emerald-500/20 font-mono text-xs font-bold uppercase">
-                                Code: {{ $entreprise->code }}
-                            </div>
-                        </div>
-
-                        <div class="space-y-6">
-                            <div>
-                                <label
-                                    class="block text-[10px] font-black text-text-secondary uppercase tracking-widest mb-3">Nom
-                                    de l'organisation</label>
-                                <input type="text" id="editEntrepriseName" value="{{ $entreprise->name }}"
-                                    class="w-full px-5 py-3 bg-white dark:bg-black border border-border rounded-xl text-sm focus:border-primary transition-all font-bold">
-                            </div>
-                            <div class="flex justify-end pt-2">
-                                <button onclick="saveEntreprise()"
-                                    class="w-full py-3 bg-emerald-500 text-white font-black rounded-xl text-xs uppercase tracking-widest shadow-xl shadow-emerald-500/20 hover:scale-105 active:scale-95 transition-all">Mettre
-                                    à jour</button>
-                            </div>
-                        </div>
-                    </div>
-                @endif
+                <h2 class="h4 font-weight-bold mb-1">{{ $user->name }}</h2>
+                <p class="small font-weight-bold mb-0 opacity-80">{{ $user->email }}</p>
+                <span class="material-symbols-outlined position-absolute" style="right: -20px; bottom: -20px; font-size: 150px; opacity: 0.1;">manage_accounts</span>
             </div>
 
-            <!-- Right Column: Forms -->
-            <div class="lg:col-span-2 space-y-8">
-
-                <!-- Section 1: Personal Information -->
-                <div class="bg-card-bg border border-border rounded-[2.5rem] p-10 shadow-sm">
-                    <div class="flex items-center justify-between mb-8">
-                        <h2 class="text-xl font-black text-text-main uppercase tracking-tight">Informations Personnelles
-                        </h2>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                        <div>
-                            <label
-                                class="block text-[10px] font-black text-text-secondary uppercase tracking-widest mb-3">Nom
-                                complet</label>
-                            <input type="text" id="editName" value="{{ auth()->user()->name }}"
-                                class="w-full px-5 py-4 bg-white dark:bg-black border border-border rounded-2xl text-sm focus:border-primary transition-all font-bold">
-                        </div>
-                        <div>
-                            <label
-                                class="block text-[10px] font-black text-text-secondary uppercase tracking-widest mb-3">Email
-                                de contact</label>
-                            <input type="email" id="editEmail" value="{{ auth()->user()->email }}"
-                                class="w-full px-5 py-4 bg-white dark:bg-black border border-border rounded-2xl text-sm focus:border-primary transition-all font-bold">
-                        </div>
-                    </div>
-                    <div class="mt-8 flex justify-end">
-                        <button onclick="saveProfile()"
-                            class="px-8 py-4 bg-primary text-white font-black rounded-2xl text-xs uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all">Mettre
-                            à jour le profil</button>
+            <div class="profile-card mb-4">
+                <h6 class="form-label-premium mb-3">Récapitulatif</h6>
+                <div class="detail-row">
+                    <span class="small font-weight-bold text-muted uppercase">Privilège</span>
+                    <span class="badge badge-primary px-3 py-1 rounded-pill font-weight-bold text-uppercase" style="font-size: 10px; background: var(--primary-color);">{{ $user->role }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="small font-weight-bold text-muted uppercase">Statut</span>
+                    <span class="badge badge-success-light text-success font-weight-bold p-0">Actif</span>
+                </div>
+                <div class="detail-row">
+                    <span class="small font-weight-bold text-muted uppercase">Adhésion</span>
+                    <span class="small font-weight-bold text-dark">{{ $user->created_at->format('M Y') }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="small font-weight-bold text-muted uppercase">Dernière MaJ</span>
+                    <span class="small font-weight-bold text-dark">{{ $user->updated_at->format('d/m/Y') }}</span>
+                </div>
+            </div>
+            
+            @if ($isAdmin && $entreprise)
+                <div class="profile-card">
+                    <h6 class="form-label-premium mb-4">Organisation</h6>
+                    <div class="form-group mb-0">
+                        <label class="form-label-premium">Nom de l'entreprise</label>
+                        <input type="text" id="editEntrepriseName" value="{{ $entreprise->name }}" 
+                            data-original="{{ $entreprise->name }}" class="form-control form-control-premium">
+                        <p class="extra-small text-muted mt-2 mb-3">Utilisé pour vos documents officiels.</p>
+                        <button onclick="saveEntreprise()" class="btn btn-success btn-block btn-premium-save">Mettre à jour</button>
                     </div>
                 </div>
+            @endif
+        </div>
 
-                <!-- Section 2: Security (Password Change) -->
-                <div class="bg-card-bg border border-border rounded-[2.5rem] p-10 shadow-sm border-l-8 border-l-amber-500">
-                    <h2 class="text-xl font-black text-text-main uppercase tracking-tight mb-8">Sécurité & Accès</h2>
-                    <div class="grid grid-cols-1 gap-6">
-                        <div>
-                            <label
-                                class="block text-[10px] font-black text-text-secondary uppercase tracking-widest mb-3">Mot
-                                de passe actuel</label>
-                            <div class="relative">
-                                <input type="password" id="current_password" placeholder="••••••••"
-                                    class="w-full pl-5 pr-12 py-4 bg-white dark:bg-black border border-border rounded-2xl text-sm focus:border-primary transition-all font-bold">
-                                <button type="button" onclick="togglePassword('current_password', this)"
-                                    class="absolute right-4 top-1/2 -translate-y-1/2 text-text-secondary hover:text-primary transition-colors">
-                                    <i data-lucide="eye" class="w-5 h-5"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            <div>
-                                <label
-                                    class="block text-[10px] font-black text-text-secondary uppercase tracking-widest mb-3">Nouveau
-                                    mot de passe</label>
-                                <div class="relative">
-                                    <input type="password" id="new_password" placeholder="Minimum 8 caractères"
-                                        class="w-full pl-5 pr-12 py-4 bg-white dark:bg-black border border-border rounded-2xl text-sm focus:border-primary transition-all font-bold">
-                                    <button type="button" onclick="togglePassword('new_password', this)"
-                                        class="absolute right-4 top-1/2 -translate-y-1/2 text-text-secondary hover:text-primary transition-colors">
-                                        <i data-lucide="eye" class="w-5 h-5"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div>
-                                <label
-                                    class="block text-[10px] font-black text-text-secondary uppercase tracking-widest mb-3">Confirmation</label>
-                                <div class="relative">
-                                    <input type="password" id="new_password_confirmation"
-                                        placeholder="Répéter le mot de passe"
-                                        class="w-full pl-5 pr-12 py-4 bg-white dark:bg-black border border-border rounded-2xl text-sm focus:border-primary transition-all font-bold">
-                                    <button type="button" onclick="togglePassword('new_password_confirmation', this)"
-                                        class="absolute right-4 top-1/2 -translate-y-1/2 text-text-secondary hover:text-primary transition-colors">
-                                        <i data-lucide="eye" class="w-5 h-5"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+        <!-- Forms -->
+        <div class="col-lg-8">
+            <!-- Global Info -->
+            <div class="profile-card mb-4">
+                <h5 class="font-weight-bold mb-4" style="font-family: 'Manrope'; display: flex; align-items: center; gap: 10px;">
+                    <span class="material-symbols-outlined text-primary">contact_page</span>
+                    Informations Personnelles
+                </h5>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label-premium">Nom Complet</label>
+                        <input type="text" id="editName" value="{{ $user->name }}" 
+                            data-original="{{ $user->name }}" class="form-control form-control-premium">
                     </div>
-                    <div class="mt-8 flex justify-end">
-                        <button onclick="savePassword()"
-                            class="px-8 py-4 bg-amber-500 text-white font-black rounded-2xl text-xs uppercase tracking-widest shadow-xl shadow-amber-500/20 hover:scale-105 active:scale-95 transition-all">Changer
-                            le mot de passe</button>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label-premium">Email de contact</label>
+                        <input type="email" id="editEmail" value="{{ $user->email }}" 
+                            data-original="{{ $user->email }}" class="form-control form-control-premium">
                     </div>
                 </div>
-
-
-                <!-- Section 4: Critical Actions -->
-                <div class="pt-8 text-center">
-                    <button onclick="showDeleteModal()"
-                        class="text-[10px] font-black text-rose-500 uppercase tracking-[0.2em] hover:text-rose-700 transition-colors">
-                        Désactiver ou supprimer mon compte définitivement
-                    </button>
+                <div class="text-right mt-3">
+                    <button onclick="saveProfile()" class="btn btn-primary btn-premium-save px-5">Enregistrer les modifications</button>
                 </div>
+            </div>
+
+            <!-- Security -->
+            <div class="profile-card mb-4">
+                <h5 class="font-weight-bold mb-4" style="font-family: 'Manrope'; display: flex; align-items: center; gap: 10px;">
+                    <span class="material-symbols-outlined text-warning" style="color: #f59e0b !important;">lock</span>
+                    Sécurité & Accès
+                </h5>
+                <div class="form-group mb-4">
+                    <label class="form-label-premium">Mot de passe actuel</label>
+                    <input type="password" id="current_password" class="form-control form-control-premium" placeholder="••••••••">
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label-premium">Nouveau mot de passe</label>
+                        <input type="password" id="new_password" class="form-control form-control-premium" placeholder="Min. 8 caractères">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label-premium">Confirmation</label>
+                        <input type="password" id="new_password_confirmation" class="form-control form-control-premium" placeholder="Répéter">
+                    </div>
+                </div>
+                <div class="text-right mt-3">
+                    <button onclick="savePassword()" class="btn btn-warning btn-premium-save px-5 text-white">Changer le mot de passe</button>
+                </div>
+            </div>
+
+            <div class="text-center py-4">
+                <button onclick="showDeleteModal()" class="btn btn-link text-danger font-weight-bold small text-uppercase" style="letter-spacing: 1px;">Supprimer mon compte définitivement</button>
             </div>
         </div>
     </div>
@@ -187,61 +237,28 @@
 @section('scripts')
     <script>
         async function saveProfile() {
-            const nameInput = document.getElementById('editName');
-            const emailInput = document.getElementById('editEmail');
-            const name = nameInput.value;
-            const email = emailInput.value;
+            const elName = document.getElementById('editName');
+            const elEmail = document.getElementById('editEmail');
+            
+            const name = elName.value.trim();
+            const email = elEmail.value.trim();
 
-            if (name === nameInput.defaultValue && email === emailInput.defaultValue) {
-                Swal.fire({
-                    title: 'Aucun changement',
-                    text: 'Vos informations sont déjà à jour.',
-                    icon: 'info',
-                    timer: 2000,
-                    showConfirmButton: false,
-                    background: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#161615' : '#fff',
-                    color: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#fff' : '#000'
-                });
+            if (name === elName.getAttribute('data-original').trim() && email === elEmail.getAttribute('data-original').trim()) {
+                Swal.fire({ title: 'Information', text: 'Aucune modification détectée.', icon: 'info', timer: 1500, showConfirmButton: false });
                 return;
             }
 
             try {
                 const response = await fetch('{{ route('profile.update') }}', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                    },
-                    body: JSON.stringify({
-                        name,
-                        email
-                    })
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    body: JSON.stringify({ name, email })
                 });
-
                 const data = await response.json();
                 if (response.ok) {
-                    Swal.fire({
-                        title: 'Profil Mis à Jour',
-                        text: 'Vos informations ont été sauvegardées.',
-                        icon: 'success',
-                        timer: 2000,
-                        showConfirmButton: false,
-                        background: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#161615' :
-                            '#fff',
-                        color: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#fff' : '#000'
-                    }).then(() => window.location.reload());
-                } else {
-                    Swal.fire({
-                        title: 'Erreur',
-                        text: data.message || 'Mise à jour échouée',
-                        icon: 'error',
-                        background: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#161615' :
-                            '#fff',
-                    });
-                }
-            } catch (error) {
-                console.error('Erreur:', error);
-            }
+                    Swal.fire({ title: 'Profil mis à jour', icon: 'success', showConfirmButton: false, timer: 1500 }).then(() => window.location.reload());
+                } else { Swal.fire({ title: 'Erreur', text: data.message, icon: 'error' }); }
+            } catch (error) { console.error(error); }
         }
 
         async function savePassword() {
@@ -249,139 +266,50 @@
             const password = document.getElementById('new_password').value;
             const password_confirmation = document.getElementById('new_password_confirmation').value;
 
-            if (!current_password || !password || !password_confirmation) {
-                Swal.fire({
-                    title: 'Attention',
-                    text: 'Veuillez remplir tous les champs de sécurité.',
-                    icon: 'warning',
-                    background: '#fff'
-                });
-                return;
-            }
+            if (!current_password || !password) return;
 
             try {
                 const response = await fetch('{{ route('profile.password') }}', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                    },
-                    body: JSON.stringify({
-                        current_password,
-                        password,
-                        password_confirmation
-                    })
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    body: JSON.stringify({ current_password, password, password_confirmation })
                 });
-
                 const data = await response.json();
                 if (response.ok) {
-                    document.getElementById('current_password').value = '';
-                    document.getElementById('new_password').value = '';
-                    document.getElementById('new_password_confirmation').value = '';
-                    Swal.fire({
-                        title: 'Mot de passe changé',
-                        text: 'Votre sécurité a été mise à jour.',
-                        icon: 'success',
-                        timer: 2000,
-                        showConfirmButton: false,
-                        background: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#161615' :
-                            '#fff',
-                        color: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#fff' : '#000'
-                    });
-                } else {
-                    Swal.fire({
-                        title: 'Échec',
-                        text: data.message ||
-                            'Le mot de passe actuel est erroné ou les nouveaux ne correspondent pas.',
-                        icon: 'error',
-                        background: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#161615' :
-                            '#fff',
-                    });
-                }
-            } catch (error) {
-                console.error('Erreur:', error);
-            }
+                    Swal.fire({ title: 'Succès', text: 'Mot de passe modifié', icon: 'success' });
+                    document.querySelectorAll('input[type="password"]').forEach(i => i.value = '');
+                } else { Swal.fire({ title: 'Échec', text: data.message, icon: 'error' }); }
+            } catch (error) { console.error(error); }
         }
 
         async function saveEntreprise() {
-            const nameInput = document.getElementById('editEntrepriseName');
-            const name = nameInput.value;
+            const elName = document.getElementById('editEntrepriseName');
+            const name = elName.value.trim();
 
-            if (name === nameInput.defaultValue) {
-                Swal.fire({
-                    title: 'Aucun changement',
-                    text: 'Le nom de l\'organisation est déjà à jour.',
-                    icon: 'info',
-                    timer: 2000,
-                    showConfirmButton: false,
-                    background: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#161615' : '#fff',
-                    color: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#fff' : '#000'
-                });
+            if (name === elName.getAttribute('data-original').trim()) {
+                Swal.fire({ title: 'Information', text: 'Aucune modification détectée.', icon: 'info', timer: 1500, showConfirmButton: false });
                 return;
             }
 
             try {
-                const response = await fetch('{{ route('entreprise.update') }}', {                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                    },
-                    body: JSON.stringify({
-                        name
-                    })
+                const response = await fetch('{{ route('entreprise.update') }}', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    body: JSON.stringify({ name })
                 });
-
-                const data = await response.json();
                 if (response.ok) {
-                    Swal.fire({
-                        title: 'Entreprise mise à jour',
-                        icon: 'success',
-                        timer: 2000,
-                        showConfirmButton: false,
-                        background: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#161615' :
-                            '#fff',
-                        color: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#fff' : '#000'
-                    }).then(() => window.location.reload());
-                } else {
-                    Swal.fire({
-                        title: 'Erreur',
-                        text: data.message || 'Erreur',
-                        icon: 'error',
-                        background: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#161615' :
-                            '#fff'
-                    });
+                    Swal.fire({ title: 'Entreprise mise à jour', icon: 'success', timer: 1500, showConfirmButton: false }).then(() => window.location.reload());
                 }
-            } catch (error) {
-                console.error('Erreur:', error);
-            }
+            } catch (error) { console.error(error); }
         }
 
         function showDeleteModal() {
-            Swal.fire({
-                title: 'Action critique',
-                text: 'Pour supprimer votre compte, veuillez contacter le support à support@comptafriq.com.',
+            Swal.fire({ 
+                title: 'Action critique', 
+                text: 'La suppression de compte doit être effectuée par un administrateur système. Veuillez contacter le support.', 
                 icon: 'warning',
-                background: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#161615' : '#fff',
-                color: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#fff' : '#000'
+                confirmButtonColor: 'var(--primary-color)'
             });
         }
-
-        function togglePassword(inputId, btn) {
-            const input = document.getElementById(inputId);
-            const iconContainer = btn;
-
-            if (input.type === 'password') {
-                input.type = 'text';
-                iconContainer.innerHTML = '<i data-lucide="eye-off" class="w-5 h-5"></i>';
-            } else {
-                input.type = 'password';
-                iconContainer.innerHTML = '<i data-lucide="eye" class="w-5 h-5"></i>';
-            }
-            lucide.createIcons();
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
-        });
     </script>
 @endsection

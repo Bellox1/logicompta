@@ -1,71 +1,62 @@
 @extends('layouts.accounting')
 
-@section('title', 'Dashboard')
+@section('title', 'Tableau de bord')
 
 @section('content')
-    <div class="flex flex-col gap-8 text-black">
-
+    <div class="container-fluid p-0">
         {{-- Quick Actions Top Bar --}}
-        <div class="flex justify-end">
+        <div class="d-flex justify-content-end mb-3">
             <a href="{{ route('profile') }}"
-                class="bg-white text-primary font-black px-6 py-3 rounded-[1rem] flex items-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-sm border border-border shrink-0">
-                <i data-lucide="user" class="w-4 h-4"></i>
-                <span class="uppercase tracking-widest text-xs">Mon Profil</span>
+                class="btn btn-white bg-white shadow-sm border d-flex align-items-center px-4 py-2"
+                style="border-radius: 12px; transition: 0.3s; font-weight: 700; color: var(--primary-color);">
+                <span class="material-symbols-outlined mr-2" style="font-size: 18px;">account_circle</span>
+                <span class="text-uppercase tracking-wider" style="font-size: 11px;">Mon Profil</span>
             </a>
         </div>
 
-        {{-- Hero Header --}}
-        <div class="relative overflow-hidden bg-gradient-to-r from-primary to-primary-light p-8 text-white shadow-xl"
-            style="border-radius: 1.5rem !important;">
-            <div class="absolute inset-0 opacity-10 pointer-events-none">
-                <svg viewBox="0 0 400 200" class="w-full h-full">
-                    <circle cx="350" cy="50" r="120" fill="white" />
-                    <circle cx="50" cy="180" r="80" fill="white" />
+        {{-- Hero Header (Reduced height) --}}
+        <div class="position-relative overflow-hidden p-4 text-white shadow-sm mb-5"
+            style="background: linear-gradient(135deg, var(--primary-color) 0%, #004d8a 100%); border-radius: 18px;">
+            <div class="position-absolute" style="top: -40px; right: -40px; opacity: 0.1; pointer-events: none;">
+                <svg viewBox="0 0 200 200" width="200" height="200">
+                    <circle cx="100" cy="100" r="80" fill="white" />
                 </svg>
             </div>
-            <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <p class="text-xs font-bold uppercase tracking-widest text-slate-300 mb-1">Tableau de bord</p>
-                    <h1 class="text-3xl font-black">Bienvenue, {{ $user->name }} 👋</h1>
-                    <p class="text-slate-300 mt-1 text-sm">
-                        @if ($user->role == 'admin')
-                            🔑 Administateur
-                        @elseif($user->role == 'comptable')
-                            📊 Comptable
-                        @else
-                            👤 Utilisateur
-                        @endif
+
+            <div class="row align-items-center position-relative" style="z-index: 2;">
+                <div class="col-lg-8">
+                    <h1 class="h2 font-weight-bold mb-1" style="font-family: 'Manrope';">Bienvenue, <span style="color: #ffca28;">{{ $user->name }}</span> 👋</h1>
+                    <p class="mb-0 small" style="opacity: 0.9;">
+                        Connecté en tant que 
+                        <span class="badge badge-light px-2 py-1 text-primary ml-1" style="border-radius: 6px; font-size: 10px; text-transform: uppercase;">
+                            {{ $user->role == 'admin' ? 'Administrateur' : ($user->role == 'comptable' ? 'Comptable' : 'Utilisateur') }}
+                        </span>
                     </p>
                 </div>
-                <div class="flex w-full md:w-auto items-center mt-2 md:mt-0">
+                <div class="col-lg-4 mt-3 mt-lg-0">
                     @if ($user->entreprise)
                         <div onclick="showEnterpriseModal()"
-                            class="w-full md:w-auto flex items-center gap-3 sm:gap-6 bg-white/10 backdrop-blur-md px-4 sm:px-6 py-3 sm:py-4 rounded-2xl sm:rounded-3xl border border-white/20 shadow-2xl cursor-pointer hover:bg-white/20 transition-all group overflow-hidden">
-                            <div
-                                class="hidden sm:flex w-12 h-12 bg-white/20 rounded-2xl items-center justify-center text-white shrink-0 group-hover:scale-110 transition-transform">
-                                <i data-lucide="building-2" class="w-6 h-6"></i>
-                            </div>
-                            <div class="flex flex-col min-w-0 w-full">
-                                <span
-                                    class="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.1em] sm:tracking-[0.2em] text-slate-300 opacity-80 truncate">Structure
-                                    active (cliquer)</span>
-                                <h2 class="text-base sm:text-lg font-black tracking-tight leading-tight truncate">
-                                    {{ $user->entreprise->name }}</h2>
-                                @if ($user->role == 'admin')
-                                    <div class="flex items-center gap-2 sm:gap-3 mt-1 overflow-hidden w-full">
-                                        <code id="company-code"
-                                            onclick="event.stopPropagation(); copyToClipboard('{{ $user->entreprise->code }}', 'copy-btn-{{ $user->entreprise->id }}')"
-                                            class="text-[10px] sm:text-[11px] font-mono bg-black/20 px-2 py-0.5 rounded border border-white/10 text-white leading-none cursor-pointer hover:bg-black/40 transition-colors truncate">
-                                            Code/ID: {{ $user->entreprise->code }}
-                                        </code>
-                                        <button id="copy-btn-{{ $user->entreprise->id }}"
-                                            onclick="event.stopPropagation(); copyToClipboard('{{ $user->entreprise->code }}', this)"
-                                            class="p-1 hover:bg-white/20 rounded transition-all text-slate-300 hover:text-white shrink-0"
-                                            title="Copier le code">
-                                            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-                                        </button>
-                                    </div>
-                                @endif
+                            class="bg-white text-dark p-3 shadow-sm cursor-pointer hover-lift transition-all"
+                            style="border-radius: 14px; background: rgba(255,255,255,0.1) !important; border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(5px);">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-white text-primary rounded d-flex align-items-center justify-content-center mr-3"
+                                    style="width: 35px; height: 35px; flex-shrink: 0;">
+                                    <span class="material-symbols-outlined" style="font-size: 20px;">corporate_fare</span>
+                                </div>
+                                <div class="overflow-hidden">
+                                    <span class="text-uppercase font-weight-bold d-block text-white-50"
+                                        style="font-size: 8px; letter-spacing: 1px;">Espace Actif</span>
+                                    <h2 class="h6 mb-0 font-weight-bold text-white text-truncate">{{ $user->entreprise->name }}</h2>
+                                    @if ($user->role == 'admin')
+                                        <div class="d-flex align-items-center mt-1">
+                                            <code class="text-white-50 px-1 rounded small mr-1" 
+                                                  style="font-size: 9px; background: rgba(0,0,0,0.2);">#{{ $user->entreprise->code }}</code>
+                                            <span class="material-symbols-outlined text-white-50" 
+                                                  style="font-size: 12px; cursor: pointer;"
+                                                  onclick="event.stopPropagation(); navigator.clipboard.writeText('{{ $user->entreprise->code }}'); alert('Code copié !')">content_copy</span>
+                                        </div>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     @endif
@@ -74,239 +65,202 @@
         </div>
 
         {{-- Modules Grid --}}
-        <div>
-            <p class="text-xs uppercase font-bold tracking-widest text-text-secondary mb-6">Gestion & Pilotage</p>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-
-                {{-- 1. Paramétrage Journaux (Priorité Haute) --}}
-                <a href="{{ route('accounting.journals-settings.index') }}"
-                    class="group relative bg-[#004A99] rounded-[2rem] p-8 shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-500 overflow-hidden border-none text-white lg:col-span-1">
-                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <i data-lucide="settings-2" class="w-32 h-32 -mr-8 -mt-8 rotate-12"></i>
-                    </div>
-                    <div class="relative z-10">
-                        <div
-                            class="w-14 h-14 bg-white/20 text-white rounded-2xl flex items-center justify-center mb-6 group-hover:rotate-12 transition-transform">
-                            <i data-lucide="settings" class="w-7 h-7"></i>
-                        </div>
-                        <h3 class="text-xl font-black mb-2 uppercase tracking-tight">Paramètres Généraux</h3>
-                        <p class="text-sm text-white/80 leading-relaxed mb-6 font-medium">Configurez vos journaux et la
-                            structure comptable de votre entreprise.</p>
-                        <div class="flex items-center text-white font-black text-[10px] gap-2 uppercase tracking-[0.2em]">
-                            Gérer la structure <i data-lucide="chevron-right"
-                                class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
-                        </div>
-                    </div>
-                </a>
-
-                {{-- 2. Boîte Noire (Audit - Pour Admins) --}}
-                @if (Auth::user()->role === 'admin')
-                    <a href="{{ route('accounting.traceabilite.index') }}"
-                        class="group relative bg-rose-500 rounded-[2rem] p-8 shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-500 overflow-hidden border-none text-white">
-                        <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                            <i data-lucide="shield-alert" class="w-32 h-32 -mr-8 -mt-8 rotate-12"></i>
-                        </div>
-                        <div class="relative z-10">
-                            <div
-                                class="w-14 h-14 bg-white/20 text-white rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                                <i data-lucide="shield-check" class="w-7 h-7"></i>
+        <div class="mb-5">
+            <h5 class="text-uppercase font-weight-bold text-muted mb-4 d-flex align-items-center" style="font-size: 11px; letter-spacing: 2px;">
+                <span class="mr-3">Gestion & Pilotage</span>
+                <div class="flex-grow-1" style="height: 1px; background: #eee;"></div>
+            </h5>
+            <div class="row">
+                {{-- 1. Paramétrage --}}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <a href="{{ route('accounting.journals-settings.index') }}"
+                        class="card h-100 border-0 shadow-sm text-dark overflow-hidden text-decoration-none transition-all hover-transform"
+                        style="border-radius: 15px; border: 1px solid #f0f0f0 !important;">
+                        <div class="card-body p-4">
+                            <div class="bg-primary text-white rounded-lg d-flex align-items-center justify-content-center mb-4 shadow-sm"
+                                style="width: 45px; height: 45px; background-color: var(--primary-color) !important;">
+                                <span class="material-symbols-outlined">settings_suggest</span>
                             </div>
-                            <h3 class="text-xl font-black mb-2 uppercase tracking-tight">Boîte Noire</h3>
-                            <p class="text-sm text-white/80 leading-relaxed mb-6 font-medium">Traçabilité totale et
-                                récupération des données effacées par erreur.</p>
-                            <div
-                                class="flex items-center text-white font-black text-[10px] gap-2 uppercase tracking-[0.2em]">
-                                Ouvrir la sécurité <i data-lucide="terminal"
-                                    class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+                            <h3 class="h5 font-weight-bold mb-2">Paramètres</h3>
+                            <p class="small text-muted mb-4">Structure comptable et journaux.</p>
+                            <div class="d-flex align-items-center font-weight-bold text-uppercase text-primary"
+                                style="font-size: 10px; letter-spacing: 1px;">
+                                Ouvrir <span class="material-symbols-outlined ml-1" style="font-size: 16px;">arrow_forward</span>
                             </div>
                         </div>
                     </a>
+                </div>
+
+                {{-- 2. Boîte Noire --}}
+                @if (Auth::user()->role === 'admin')
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <a href="{{ route('accounting.traceabilite.index') }}"
+                            class="card h-100 border-0 shadow-sm text-dark overflow-hidden text-decoration-none transition-all hover-transform"
+                            style="border-radius: 15px; border: 1px solid #f0f0f0 !important;">
+                            <div class="card-body p-4">
+                                <div class="bg-dark text-white rounded-lg d-flex align-items-center justify-content-center mb-4 shadow-sm"
+                                    style="width: 45px; height: 45px; background-color: #1a1c2e !important;">
+                                    <span class="material-symbols-outlined">history_edu</span>
+                                </div>
+                                <h3 class="h5 font-weight-bold mb-2">Boîte Noire</h3>
+                                <p class="small text-muted mb-4">Traçabilité et sécurité.</p>
+                                <div class="d-flex align-items-center font-weight-bold text-uppercase text-dark"
+                                    style="font-size: 10px; letter-spacing: 1px;">
+                                    Consulter <span class="material-symbols-outlined ml-1" style="font-size: 16px;">terminal</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
                 @endif
 
                 {{-- 3. Journal --}}
-                <a href="{{ route('accounting.journal.index') }}"
-                    class="group relative bg-card-bg border border-border rounded-[2rem] p-8 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
-                    <div class="relative z-10">
-                        <div
-                            class="w-14 h-14 bg-primary/10 text-primary rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                            <i data-lucide="book-open" class="w-7 h-7"></i>
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <a href="{{ route('accounting.journal.index') }}"
+                        class="card h-100 border-0 shadow-sm text-dark overflow-hidden text-decoration-none transition-all hover-transform"
+                        style="border-radius: 15px; border: 1px solid #f0f0f0 !important;">
+                        <div class="card-body p-4">
+                            <div class="bg-primary text-white rounded-lg d-flex align-items-center justify-content-center mb-4 shadow-sm"
+                                style="width: 45px; height: 45px; background-color: var(--primary-color) !important;">
+                                <span class="material-symbols-outlined">menu_book</span>
+                            </div>
+                            <h3 class="h5 font-weight-bold mb-2">Journal de Saisie</h3>
+                            <p class="small text-muted mb-4">Écritures au quotidien.</p>
+                            <div class="d-flex align-items-center font-weight-bold text-uppercase text-primary"
+                                style="font-size: 10px; letter-spacing: 1px;">
+                                Accéder <span class="material-symbols-outlined ml-1" style="font-size: 16px;">arrow_forward</span>
+                            </div>
                         </div>
-                        <h3 class="text-xl font-bold text-text-main mb-2">Journal de Saisie</h3>
-                        <p class="text-sm text-text-secondary leading-relaxed mb-6">Enregistrez et consultez vos écritures
-                            au quotidien.</p>
-                        <div class="flex items-center text-primary font-bold text-sm gap-2 uppercase tracking-widest">
-                            Accéder <i data-lucide="arrow-right"
-                                class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
-                        </div>
-                    </div>
-                </a>
+                    </a>
+                </div>
 
                 {{-- 4. Grand Livre --}}
-                <a href="{{ route('accounting.ledger') }}"
-                    class="group relative bg-white dark:bg-[#161615] border border-border rounded-[2rem] p-8 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
-                    <div class="relative z-10">
-                        <div
-                            class="w-14 h-14 bg-indigo-500/10 text-indigo-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                            <i data-lucide="bar-chart-2" class="w-7 h-7"></i>
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <a href="{{ route('accounting.ledger') }}"
+                        class="card h-100 border-0 shadow-sm text-dark overflow-hidden text-decoration-none transition-all hover-transform"
+                        style="border-radius: 15px; border: 1px solid #f0f0f0 !important;">
+                        <div class="card-body p-4">
+                            <div class="bg-primary text-white rounded-lg d-flex align-items-center justify-content-center mb-4 shadow-sm"
+                                style="width: 45px; height: 45px; background-color: var(--primary-color) !important;">
+                                <span class="material-symbols-outlined">list_alt</span>
+                            </div>
+                            <h3 class="h5 font-weight-bold mb-2">Grand Livre</h3>
+                            <p class="small text-muted mb-4">Détails des comptes.</p>
+                            <div class="d-flex align-items-center font-weight-bold text-uppercase text-primary"
+                                style="font-size: 10px; letter-spacing: 1px;">
+                                Ouvrir <span class="material-symbols-outlined ml-1" style="font-size: 16px;">arrow_forward</span>
+                            </div>
                         </div>
-                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Grand Livre</h3>
-                        <p class="text-sm text-slate-700 leading-relaxed mb-6">Détails des comptes et historiques par
-                            numéro.</p>
-                        <div class="flex items-center text-indigo-600 font-bold text-sm gap-2 uppercase tracking-widest">
-                            Accéder <i data-lucide="arrow-right"
-                                class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
-                        </div>
-                    </div>
-                </a>
+                    </a>
+                </div>
 
                 {{-- 5. Balance --}}
-                <a href="{{ route('accounting.balance') }}"
-                    class="group relative bg-white dark:bg-[#161615] border border-border rounded-[2rem] p-8 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
-                    <div class="relative z-10">
-                        <div
-                            class="w-14 h-14 bg-emerald-500/10 text-emerald-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                            <i data-lucide="scale" class="w-7 h-7"></i>
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <a href="{{ route('accounting.balance') }}"
+                        class="card h-100 border-0 shadow-sm text-dark overflow-hidden text-decoration-none transition-all hover-transform"
+                        style="border-radius: 15px; border: 1px solid #f0f0f0 !important;">
+                        <div class="card-body p-4">
+                            <div class="bg-primary text-white rounded-lg d-flex align-items-center justify-content-center mb-4 shadow-sm"
+                                style="width: 45px; height: 45px; background-color: var(--primary-color) !important;">
+                                <span class="material-symbols-outlined">balance</span>
+                            </div>
+                            <h3 class="h5 font-weight-bold mb-2">Balance</h3>
+                            <p class="small text-muted mb-4">Équilibre des comptes.</p>
+                            <div class="d-flex align-items-center font-weight-bold text-uppercase text-primary"
+                                style="font-size: 10px; letter-spacing: 1px;">
+                                Consulter <span class="material-symbols-outlined ml-1" style="font-size: 16px;">arrow_forward</span>
+                            </div>
                         </div>
-                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Balance des Comptes</h3>
-                        <p class="text-sm text-slate-700 leading-relaxed mb-6">Vérifiez l'équilibre de votre comptabilité.
-                        </p>
-                        <div class="flex items-center text-emerald-600 font-bold text-sm gap-2 uppercase tracking-widest">
-                            Accéder <i data-lucide="arrow-right"
-                                class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
-                        </div>
-                    </div>
-                </a>
+                    </a>
+                </div>
 
-                {{-- 6. Bilan & Résultats --}}
-                <a href="{{ route('accounting.bilan') }}"
-                    class="group relative bg-slate-900 text-white rounded-[2rem] p-8 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden border-none col-span-1 md:col-span-2 lg:col-span-1">
-                    <div class="relative z-10">
-                        <div
-                            class="w-14 h-14 bg-white/10 text-white rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                            <i data-lucide="file-text" class="w-7 h-7"></i>
+                {{-- 6. Bilan --}}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <a href="{{ route('accounting.bilan') }}"
+                        class="card h-100 border-0 shadow-sm text-dark overflow-hidden text-decoration-none transition-all hover-transform"
+                        style="border-radius: 15px; border: 1px solid #f0f0f0 !important;">
+                        <div class="card-body p-4">
+                            <div class="bg-primary text-white rounded-lg d-flex align-items-center justify-content-center mb-4 shadow-sm"
+                                style="width: 45px; height: 45px; background-color: var(--primary-color) !important;">
+                                <span class="material-symbols-outlined">analytics</span>
+                            </div>
+                            <h3 class="h5 font-weight-bold mb-2">États Financiers</h3>
+                            <p class="small text-muted mb-4">Bilan & Résultats.</p>
+                            <div class="d-flex align-items-center font-weight-bold text-uppercase text-primary"
+                                style="font-size: 10px; letter-spacing: 1px;">
+                                Voir plus <span class="material-symbols-outlined ml-1" style="font-size: 16px;">arrow_forward</span>
+                            </div>
                         </div>
-                        <h3 class="text-xl font-bold mb-2">États Financiers</h3>
-                        <p class="text-sm text-slate-400 leading-relaxed mb-6">Consultez votre Bilan et votre Compte de
-                            Résultat.</p>
-                        <div class="flex items-center text-white font-bold text-sm gap-2 uppercase tracking-widest">
-                            Consulter <i data-lucide="arrow-right"
-                                class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
-                        </div>
-                    </div>
-                </a>
-
+                    </a>
+                </div>
             </div>
         </div>
 
-        {{-- Bandeau Alerte : pas d'entreprise --}}
+        {{-- Alerte si pas d'entreprise (Reduced size) --}}
         @if (!$user->entreprise)
-            <div class="animate-fade-up">
-                <div
-                    class="bg-primary/5 dark:bg-primary/10 border border-slate-300 dark:border-primary/50 rounded-[2.5rem] p-8">
-                    <div class="flex flex-col lg:flex-row lg:items-center gap-8">
-                        <div class="flex items-start gap-6 flex-1">
-                            <div
-                                class="w-16 h-16 bg-primary/10 text-primary rounded-2xl flex items-center justify-center flex-shrink-0">
-                                <i data-lucide="alert-circle" class="w-8 h-8"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-xl font-black text-text-main">Aucune entreprise associée</h3>
-                                <p class="text-text-secondary text-sm mt-1 leading-relaxed max-w-xl">
-                                    Démarez votre expérience complète en associant votre compte à une structure existante ou
-                                    en créant la vôtre.
-                                </p>
-                            </div>
-                        </div>
-                        <div class="flex flex-col sm:flex-row gap-4 flex-shrink-0">
-                            <form action="{{ route('accounting.entreprise.join') }}" method="POST" class="flex gap-2">
-                                @csrf
-                                <input type="text" name="code" placeholder="CODE..." required
-                                    class="pl-4 pr-4 py-3 border border-slate-200 rounded-2xl bg-white text-sm uppercase focus:outline-none focus:border-primary transition-all w-32 font-bold">
-                                <button type="submit"
-                                    class="px-6 py-3 bg-primary text-white font-black rounded-2xl text-xs uppercase tracking-widest">Rejoindre</button>
-                            </form>
-                            <a href="{{ url('/entreprise-setup?action=create') }}"
-                                class="px-6 py-3 bg-white border border-border text-text-main font-black rounded-2xl text-xs uppercase tracking-widest text-center">Créer</a>
-                        </div>
+            <div class="alert alert-light border shadow-sm p-4 mb-5" style="border-radius: 18px;">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h5 class="font-weight-bold mb-1">Aucune entreprise associée</h5>
+                        <p class="text-muted mb-0 small">Associez votre compte à une structure existante ou créez la vôtre.</p>
+                    </div>
+                    <div class="col-md-4 mt-3 mt-md-0 d-flex justify-content-md-end">
+                        <a href="{{ url('/entreprise-setup') }}" class="btn btn-primary font-weight-bold px-4 rounded-pill">Démarrer</a>
                     </div>
                 </div>
             </div>
         @endif
-
     </div>
 
-    {{-- Scripts et Modals inchangés --}}
+    {{-- Modal Entreprise --}}
     @if ($user->entreprises->count() > 0)
         <div id="enterprise-selection-modal"
-            class="{{ session()->has('active_entreprise_id') ? 'hidden' : '' }} fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-            <div class="bg-card-bg border border-border rounded-[2.5rem] w-full max-w-2xl overflow-hidden shadow-2xl">
-                <div class="p-8 border-b border-border bg-slate-50">
-                    <h2 class="text-2xl font-black text-text-main uppercase tracking-tighter">SÉLECTIONNEZ VOTRE ESPACE
-                    </h2>
-                </div>
-                <div class="p-8 max-h-[60vh] overflow-y-auto">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        @foreach ($user->entreprises as $entreprise)
-                            <form action="{{ route('accounting.entreprise.switch') }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="entreprise_id" value="{{ $entreprise->id }}">
-                                <button type="submit"
-                                    class="w-full group text-left p-6 rounded-3xl border {{ $user->entreprise && $user->entreprise->id == $entreprise->id ? 'border-primary bg-primary/5' : 'border-border' }} hover:border-primary transition-all flex items-start gap-4">
-                                    <div
-                                        class="w-12 h-12 bg-primary/10 text-primary rounded-2xl flex items-center justify-center">
-                                        <i data-lucide="building-2" class="w-6 h-6"></i>
-                                    </div>
-                                    <div class="flex-1">
-                                        <h4 class="font-black text-text-main uppercase text-sm">{{ $entreprise->name }}
-                                        </h4>
-                                        @if ($user->role == 'admin')
-                                            <p
-                                                class="text-xs text-text-secondary mt-1 uppercase font-mono tracking-tighter opacity-70">
-                                                Code: {{ $entreprise->code }}</p>
-                                        @endif
-                                        <span
-                                            class="inline-block mt-2 px-2 py-1 bg-slate-100 rounded text-[10px] font-bold uppercase text-slate-500">{{ $entreprise->pivot->role }}</span>
-                                    </div>
-                                </button>
-                            </form>
-                        @endforeach
-
-                        <!-- Carte Ajouter une Société -->
-                        <a href="{{ url('/entreprise-setup') }}"
-                            class="group p-6 rounded-3xl border border-dashed border-slate-300 hover:border-primary hover:bg-primary/5 transition-all flex items-start gap-4 cursor-pointer">
-                            <div
-                                class="w-12 h-12 bg-slate-100 text-slate-400 group-hover:bg-primary/10 group-hover:text-primary rounded-2xl flex items-center justify-center transition-colors">
-                                <i data-lucide="plus" class="w-6 h-6"></i>
-                            </div>
-                            <div class="flex-1">
-                                <h4 class="font-black text-slate-400 group-hover:text-primary uppercase text-sm">Ajouter
-                                    une Société</h4>
-                                <p class="text-[10px] text-slate-400 mt-1 uppercase font-bold tracking-tighter">Créer ou
-                                    rejoindre un espace</p>
-                            </div>
-                        </a>
+            class="modal fade {{ session()->has('active_entreprise_id') ? '' : 'show d-block' }}"
+            style="background: rgba(0,0,0,0.5); backdrop-filter: blur(5px);" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0" style="border-radius: 20px;">
+                    <div class="modal-header border-0 bg-light p-4">
+                        <h6 class="modal-title font-weight-bold text-uppercase">VOTRE ESPACE</h6>
+                        <button type="button" class="close" onclick="hideEnterpriseModal()">&times;</button>
                     </div>
-
-                    <!-- Le bandeau précédent a été retiré pour utiliser la carte unifiée -->
+                    <div class="modal-body p-4">
+                        <div class="list-group list-group-flush">
+                            @foreach ($user->entreprises as $entreprise)
+                                <form action="{{ route('accounting.entreprise.switch') }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="entreprise_id" value="{{ $entreprise->id }}">
+                                    <button type="submit"
+                                        class="list-group-item list-group-item-action border-0 mb-2 p-3 d-flex align-items-center {{ $user->entreprise && $user->entreprise->id == $entreprise->id ? 'bg-light font-weight-bold' : '' }}"
+                                        style="border-radius: 12px; transition: 0.2s;">
+                                        <span class="material-symbols-outlined mr-3 text-primary">corporate_fare</span>
+                                        <div class="flex-grow-1">
+                                            <div class="small">{{ $entreprise->name }}</div>
+                                            <div class="text-muted lowercase" style="font-size: 10px;">{{ $entreprise->pivot->role }}</div>
+                                        </div>
+                                        @if($user->entreprise && $user->entreprise->id == $entreprise->id)
+                                            <span class="material-symbols-outlined text-success" style="font-size: 18px;">check_circle</span>
+                                        @endif
+                                    </button>
+                                </form>
+                            @endforeach
+                            <a href="{{ url('/entreprise-setup') }}" class="btn btn-outline-primary btn-sm btn-block mt-3 rounded-pill py-2 font-weight-bold">
+                                + Nouvelle Société
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        </div>
     @endif
 
+    <style>
+        .hover-transform:hover { transform: translateY(-5px); transition: 0.3s; }
+        .hover-lift:hover { transform: scale(1.02); }
+    </style>
 @endsection
 
 @section('scripts')
     <script>
-        lucide.createIcons();
-
-        function showEnterpriseModal() {
-            document.getElementById('enterprise-selection-modal').classList.remove('hidden');
-        }
-
-        function copyToClipboard(text, btnOrId) {
-            navigator.clipboard.writeText(text);
-            alert('Code copié !');
-        }
+        function showEnterpriseModal() { $('#enterprise-selection-modal').removeClass('fade').addClass('d-block'); }
+        function hideEnterpriseModal() { $('#enterprise-selection-modal').addClass('fade').removeClass('d-block'); }
     </script>
 @endsection

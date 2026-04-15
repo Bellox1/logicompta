@@ -1,154 +1,142 @@
 <!DOCTYPE html>
-<html lang="fr" class="h-full">
-
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
-    <title>Comptafriq - Nouveau mot de passe</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Font: Arial -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'media',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Arial', 'sans-serif']
-                    },
-                    colors: {
-                        primary: '#005b82',
-                        'primary-light': '#004d99',
-                    }
-                }
-            }
-        }
-    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COMPTAFIQ - Nouveau mot de passe</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        :root { 
+            --primary-color: #0062cc; 
+            --primary-hover: #0056b3; 
+            --dark-blue: #161e2e;
+        }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f8f9fc; 
+            height: 100vh; 
+            overflow: hidden; 
             margin: 0;
-            padding: 0;
         }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .animate-fade-up {
-            animation: fadeInUp 0.4s ease-out forwards;
-        }
-
-        html, body {
-            overflow-x: hidden;
-            height: auto;
-            min-height: 100%;
-        }
-
-        .auth-container {
+        .auth-split-wrapper { display: flex; height: 100vh; }
+        .auth-banner-side { 
+            background: linear-gradient(135deg, #001a3a 0%, var(--primary-color) 100%);
+            width: 50%;
             display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+            align-items: center;
+            justify-content: center;
+            padding: 80px;
+            color: white;
+            position: relative;
         }
-
-        @media (min-width: 1024px) {
-            .auth-container {
-                flex-direction: row;
-                height: 100vh;
-                overflow: hidden;
-            }
+        .auth-form-side { 
+            width: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 60px; 
+            background: #fff; 
+        }
+        .form-container { width: 100%; max-width: 400px; }
+        
+        .form-control-premium {
+            height: 52px;
+            border-radius: 14px;
+            border: 1px solid #edf2f7;
+            padding-left: 45px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            background: #fdfdfd;
+        }
+        .form-control-premium:focus { 
+            border-color: var(--primary-color); 
+            box-shadow: 0 0 0 4px rgba(0, 98, 204, 0.08); 
+        }
+        .icon-field { 
+            position: absolute; 
+            left: 18px; 
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0; 
+            font-size: 16px; 
+            z-index: 5;
+        }
+        
+        .btn-reset-premium {
+            height: 52px;
+            border-radius: 14px;
+            background: var(--primary-color);
+            border: none;
+            color: white;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 13px;
+            box-shadow: 0 10px 20px rgba(0, 98, 204, 0.15);
+            transition: all 0.3s;
+        }
+        .btn-reset-premium:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 15px 30px rgba(0, 98, 204, 0.25); 
+            background: var(--primary-hover);
+        }
+        
+        @media (max-width: 991px) { 
+            .auth-banner-side { display: none; } 
+            .auth-form-side { width: 100%; padding: 40px 20px; } 
         }
     </style>
 </head>
-
-<body class="bg-slate-50 dark:bg-[#0a0f1e]">
-
-    <div class="auth-container">
-        {{-- ═══════════════════════ LEFT PANEL ═══════════════════════ --}}
-        <div class="hidden lg:flex w-1/2 relative flex-col items-center justify-center p-12 overflow-hidden"
-            style="background: linear-gradient(135deg, #001a3a 0%, #005b82 50%, #004d99 100%);">
-            
-            <div class="relative z-10 text-center max-w-md">
-                <div class="mb-10">
-                    <img src="{{ asset('storage/images/logo.png') }}" alt="Logo" class="w-56 mx-auto">
-                </div>
-                <h1 class="text-4xl font-black text-white tracking-tight mb-4">Mise à jour</h1>
-                <p class="text-slate-300 text-lg leading-relaxed mb-8">
-                    Choisissez un nouveau mot de passe fort pour sécuriser votre compte.
-                </p>
-                <div class="space-y-4">
-                    <div class="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-5 py-3">
-                        <i data-lucide="shield-check" class="w-5 h-5 text-green-400"></i>
-                        <span class="text-sm text-slate-300 font-bold">Sécurité renforcée</span>
-                    </div>
+<body>
+    <div class="auth-split-wrapper">
+        <div class="auth-banner-side">
+            <div class="text-center" style="max-width: 450px;">
+                <img src="{{ asset('storage/images/logo.png') }}" class="mb-5" style="max-height: 80px; filter: brightness(0) invert(1);">
+                <h1 class="font-weight-bold display-4 mb-4" style="font-family: 'Manrope'; letter-spacing: -1.5px;">Renouveau.</h1>
+                <p class="h5 opacity-75 font-weight-light mb-5">Choisissez un mot de passe robuste pour garantir l'intégrité de vos dossiers financiers sur COMPTAFIQ.</p>
+                <div class="d-inline-flex align-items-center bg-white border border-light px-4 py-2 rounded-pill shadow-sm" style="color: #2d3748;">
+                    <i class="fas fa-shield-halved text-success mr-2"></i>
+                    <span class="small font-weight-bold">Protection des données certifiée</span>
                 </div>
             </div>
         </div>
 
-        {{-- ═══════════════════════ RIGHT PANEL ═══════════════════════ --}}
-        <div class="w-full lg:w-1/2 flex items-center justify-center p-6 md:p-12 lg:overflow-y-auto">
-            <div class="w-full max-w-sm py-10">
-
-                {{-- Mobile Logo --}}
-                <div class="lg:hidden text-center mb-10 animate-fade-up">
-                    <img src="{{ asset('storage/images/logo.png') }}" alt="Logo" class="w-32 mx-auto filter brightness-100 dark:brightness-110">
+        <div class="auth-form-side">
+            <div class="form-container">
+                <div class="mb-5">
+                    <h2 class="font-weight-bold text-dark mb-1" style="font-family: 'Manrope';">Définir un nouveau MDP</h2>
+                    <p class="text-muted font-weight-bold small">Finalisez votre récupération en toute sécurité.</p>
                 </div>
 
-                {{-- Header --}}
-                <div class="mb-10 animate-fade-up" style="animation-delay: 0.1s;">
-                    <h2 class="text-4xl font-black text-slate-900 dark:text-white tracking-tight mb-2">Nouveau MDP</h2>
-                    <p class="text-slate-500 dark:text-slate-400 font-medium">Réinitialisez votre compte</p>
-                </div>
-
-                {{-- Form --}}
-                <form action="{{ route('reset-password.post') }}" method="POST" class="space-y-6 animate-fade-up" style="animation-delay: 0.2s;">
+                <form action="{{ route('reset-password.post') }}" method="POST">
                     @csrf
                     <input type="hidden" name="token" value="{{ $token }}">
                     <input type="hidden" name="email" value="{{ $email }}">
                     
-                    <div>
-                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Mot de passe</label>
-                        <div class="relative group">
-                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
-                                <i data-lucide="lock" class="w-5 h-5"></i>
-                            </span>
-                            <input type="password" name="password" required placeholder="Nouveau mot de passe"
-                                class="w-full bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white pl-12 pr-4 py-4 rounded-2xl text-base focus:outline-none focus:border-primary transition-all shadow-sm">
+                    <div class="form-group mb-4">
+                        <label class="small font-weight-bold text-muted text-uppercase tracking-widest" style="font-size: 10px;">Nouveau Mot de passe</label>
+                        <div class="position-relative">
+                            <i class="fas fa-lock-open icon-field"></i>
+                            <input type="password" name="password" class="form-control form-control-premium" placeholder="••••••••" required autofocus>
                         </div>
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Confirmation</label>
-                        <div class="relative group">
-                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
-                                <i data-lucide="shield-check" class="w-5 h-5"></i>
-                            </span>
-                            <input type="password" name="password_confirmation" required placeholder="Confirmez le mot de passe"
-                                class="w-full bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white pl-12 pr-4 py-4 rounded-2xl text-base focus:outline-none focus:border-primary transition-all shadow-sm">
+                    <div class="form-group mb-4">
+                        <label class="small font-weight-bold text-muted text-uppercase tracking-widest" style="font-size: 10px;">Confirmer le mot de passe</label>
+                        <div class="position-relative">
+                            <i class="fas fa-circle-check icon-field"></i>
+                            <input type="password" name="password_confirmation" class="form-control form-control-premium" placeholder="••••••••" required>
                         </div>
                     </div>
 
-                    <button type="submit"
-                        class="w-full py-4 bg-primary text-white font-black rounded-2xl hover:bg-primary-light transition-all shadow-lg shadow-primary/20 text-sm uppercase tracking-widest active:scale-[0.98]">
-                        Mettre à jour
-                    </button>
+                    <button type="submit" class="btn btn-reset-premium btn-block mt-4">Mettre à jour le mot de passe</button>
+                    
                 </form>
             </div>
         </div>
     </div>
-
-    <script>
-        lucide.createIcons();
-    </script>
 </body>
-
 </html>

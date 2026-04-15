@@ -1,302 +1,218 @@
 <!DOCTYPE html>
-<html lang="fr" class="h-full">
-
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
-    <title>Comptafriq - Inscription</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
-        rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'media',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif']
-                    },
-                    colors: {
-                        primary: '#005b82',
-                        'primary-light': '#004d99',
-                    }
-                }
-            }
-        }
-    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COMPTAFIQ - Inscription</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
+        :root { 
+            --primary-color: #0062cc; 
+            --primary-hover: #0056b3; 
+            --dark-blue: #161e2e;
+        }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f8f9fc; 
+            height: 100vh; 
+            overflow: hidden; 
             margin: 0;
-            padding: 0;
         }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .animate-fade-up {
-            animation: fadeInUp 0.4s ease-out forwards;
-        }
-
-        /* Prevent horizontal overflow */
-        html,
-        body {
-            overflow-x: hidden;
-            height: auto;
-            min-height: 100%;
-        }
-
-        .auth-container {
+        .auth-split-wrapper { display: flex; height: 100vh; }
+        .auth-banner-side { 
+            background: linear-gradient(135deg, var(--primary-color) 0%, #003e80 100%);
+            width: 50%;
             display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+            align-items: center;
+            justify-content: center;
+            padding: 80px;
+            color: white;
+            position: relative;
         }
-
-        @media (min-width: 1024px) {
-            .auth-container {
-                flex-direction: row;
-                height: 100vh;
-                overflow: hidden;
-            }
+        .auth-form-side { 
+            width: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 40px 60px; 
+            overflow-y: auto; 
+            background: #fff; 
         }
-
-        /* Strength meter transition */
-        .strength-bar {
-            transition: width 0.3s ease, background-color 0.3s ease;
+        .form-container { width: 100%; max-width: 440px; }
+        
+        .form-control-premium {
+            height: 52px;
+            border-radius: 14px;
+            border: 1px solid #edf2f7;
+            padding-left: 45px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            background: #fdfdfd;
+        }
+        .form-control-premium:focus { 
+            border-color: var(--primary-color); 
+            box-shadow: 0 0 0 4px rgba(0, 98, 204, 0.08); 
+            background: #fff;
+        }
+        .icon-field { 
+            position: absolute; 
+            left: 18px; 
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0; 
+            font-size: 16px; 
+            transition: 0.3s; 
+            z-index: 5;
+        }
+        
+        .btn-register-premium {
+            height: 52px;
+            border-radius: 14px;
+            background: var(--primary-color);
+            border: none;
+            color: white;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 13px;
+            box-shadow: 0 10px 20px rgba(0, 98, 204, 0.15);
+            transition: all 0.3s;
+        }
+        .btn-register-premium:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 15px 30px rgba(0, 98, 204, 0.25); 
+            background: var(--primary-hover); 
+        }
+        
+        .strength-meter-box { margin-top: 10px; height: 5px; background: #edf2f7; border-radius: 10px; overflow: hidden; }
+        .strength-bar { height: 100%; width: 0; transition: all 0.4s ease; }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            background: rgba(255,255,255,0.08);
+            padding: 15px 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .feature-item i { font-size: 18px; color: #4fd1c5; margin-right: 15px; }
+        
+        @media (max-width: 1100px) { .auth-banner-side { padding: 40px; } }
+        @media (max-width: 991px) { 
+            .auth-banner-side { display: none; } 
+            .auth-form-side { width: 100%; padding: 40px 20px; } 
+            body { overflow: auto; }
         }
     </style>
 </head>
-
-<body class="bg-slate-50 dark:bg-[#0a0f1e]">
-
-    <div class="auth-container">
-        {{-- ═══════════════════════ LEFT PANEL ═══════════════════════ --}}
-        <div class="hidden lg:flex w-1/2 relative flex-col items-center justify-center p-12 overflow-hidden bg-primary">
-
-            <div class="relative z-10 text-center max-w-md">
-                <div class="mb-10">
-                    <img src="{{ asset('storage/images/logo.png') }}" alt="Logo" class="w-56 mx-auto">
-                </div>
-                <h1 class="text-4xl font-black text-white tracking-tight mb-4">Rejoignez-nous</h1>
-                <p class="text-slate-300 text-lg leading-relaxed mb-8">
-                    Créez votre compte et gérez votre comptabilité en toute simplicité.
-                </p>
-                <div class="space-y-3">
-                    <div class="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-5 py-3 text-left">
-                        <i data-lucide="check-circle" class="w-5 h-5 text-green-400"></i>
-                        <span class="text-sm text-slate-300 font-bold">Journal & Saisie comptable</span>
+<body>
+    <div class="auth-split-wrapper">
+        <!-- Banner Side -->
+        <div class="auth-banner-side">
+            <div class="text-center" style="max-width: 500px;">
+                <img src="{{ asset('storage/images/logo.png') }}" class="mb-5" style="max-height: 90px; filter: brightness(0) invert(1);">
+                <h1 class="font-weight-bold display-4 mb-4" style="font-family: 'Manrope'; letter-spacing: -1.5px;">Rejoignez l'élite.</h1>
+                <p class="h5 opacity-75 font-weight-light mb-5">Prenez le contrôle total de votre comptabilité avec l'infrastructure la plus avancée du marché.</p>
+                
+                <div class="text-left mt-5">
+                    <div class="feature-item">
+                        <i class="fas fa-microchip"></i>
+                        <span class="font-weight-bold">Intelligence Artificielle OCR & Auto-classification</span>
                     </div>
-                    <div class="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-5 py-3 text-left">
-                        <i data-lucide="check-circle" class="w-5 h-5 text-green-400"></i>
-                        <span class="text-sm text-slate-300 font-bold">États de synthèse & Bilan</span>
-                    </div>
-                    <div class="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-5 py-3 text-left">
-                        <i data-lucide="check-circle" class="w-5 h-5 text-green-400"></i>
-                        <span class="text-sm text-slate-300 font-bold">Équipe illimitée</span>
+                    <div class="feature-item">
+                        <i class="fas fa-chart-line"></i>
+                        <span class="font-weight-bold">États financiers temps réel & Pilotage analytique</span>
                     </div>
                 </div>
             </div>
+            <i class="fas fa-user-plus position-absolute" style="bottom: -50px; right: -50px; font-size: 350px; opacity: 0.03;"></i>
         </div>
 
-        {{-- ═══════════════════════ RIGHT PANEL ═══════════════════════ --}}
-        <div class="w-full lg:w-1/2 flex items-center justify-center p-6 md:p-12 lg:overflow-y-auto">
-            <div class="w-full max-w-sm py-10">
-
-                {{-- Mobile Logo --}}
-                <div class="lg:hidden text-center mb-10 animate-fade-up">
-                    <img src="{{ asset('storage/images/logo.png') }}" alt="Logo"
-                        class="w-32 mx-auto filter brightness-100 dark:brightness-110">
+        <!-- Form Side -->
+        <div class="auth-form-side">
+            <div class="form-container">
+                <div class="mb-5">
+                    <h2 class="font-weight-bold text-dark mb-1" style="font-family: 'Manrope'; letter-spacing: -0.5px;">Création de votre espace.</h2>
+                    <p class="text-muted font-weight-bold small">C'est gratuit et ça ne prend que quelques secondes.</p>
                 </div>
 
-                {{-- Header --}}
-                <div class="mb-10 animate-fade-up" style="animation-delay: 0.1s;">
-                    <h2 class="text-4xl font-black text-slate-900 dark:text-white tracking-tight mb-2">Inscription</h2>
-                    <p class="text-slate-500 dark:text-slate-400 font-medium">Commencez dès aujourd'hui</p>
-                </div>
-
-                {{-- Alerts --}}
-                @if ($errors->any())
-                    <div
-                        class="mb-8 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-700 dark:text-red-400 animate-fade-up">
-                        <div class="flex items-center gap-3 mb-2">
-                            <i data-lucide="alert-circle" class="w-5 h-5 flex-shrink-0"></i>
-                            <span class="text-sm font-bold">Des erreurs sont survenues :</span>
-                        </div>
-                        <ul class="list-disc list-inside text-xs space-y-1 ml-8">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
+                @if($errors->any())
+                    <div class="alert alert-danger border-0 small font-weight-bold py-3 mb-4 rounded-xl shadow-sm" style="background: #fff5f5; color: #c53030;">
+                        <ul class="mb-0 pl-3">
+                            @foreach ($errors->all() as $error) <li>{{ $error }}</li> @endforeach
                         </ul>
                     </div>
                 @endif
 
-                {{-- Form --}}
-                <form action="{{ route('signup.post') }}" method="POST" class="space-y-6 animate-fade-up"
-                    style="animation-delay: 0.2s;">
+                <form action="{{ route('signup.post') }}" method="POST">
                     @csrf
-                    <div>
-                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Nom
-                            Complet</label>
-                        <div class="relative group">
-                            <span
-                                class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
-                                <i data-lucide="user" class="w-5 h-5"></i>
-                            </span>
-                            <input type="text" name="name" value="{{ old('name') }}" required
-                                placeholder="Votre nom complet"
-                                class="w-full bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white pl-12 pr-4 py-4 rounded-2xl text-base focus:outline-none focus:border-primary transition-all shadow-sm">
+                    <div class="form-group mb-4">
+                        <label class="small font-weight-bold text-muted text-uppercase tracking-widest" style="font-size: 10px;">Votre Nom Complet</label>
+                        <div class="position-relative">
+                            <i class="fas fa-user-circle icon-field"></i>
+                            <input type="text" name="name" value="{{ old('name') }}" class="form-control form-control-premium" placeholder="Ex: Jean Kouamé" required autofocus>
                         </div>
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Email</label>
-                        <div class="relative group">
-                            <span
-                                class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
-                                <i data-lucide="mail" class="w-5 h-5"></i>
-                            </span>
-                            <input type="email" name="email" value="{{ old('email') }}" required
-                                placeholder="votre@email.com"
-                                class="w-full bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white pl-12 pr-4 py-4 rounded-2xl text-base focus:outline-none focus:border-primary transition-all shadow-sm">
+                    <div class="form-group mb-4">
+                        <label class="small font-weight-bold text-muted text-uppercase tracking-widest" style="font-size: 10px;">Adresse Email Professionnelle</label>
+                        <div class="position-relative">
+                            <i class="fas fa-envelope icon-field"></i>
+                            <input type="email" name="email" value="{{ old('email') }}" class="form-control form-control-premium" placeholder="nom@entreprise.com" required>
                         </div>
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Mot de
-                            passe</label>
-                        <div class="relative group">
-                            <span
-                                class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
-                                <i data-lucide="lock" class="w-5 h-5"></i>
-                            </span>
-                            <input type="password" name="password" id="password" required
-                                placeholder="Minimum 8 caractères"
-                                class="w-full bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white pl-12 pr-12 py-4 rounded-2xl text-base focus:outline-none focus:border-primary transition-all shadow-sm">
-                            <button type="button" onclick="togglePassword('password', 'eye-icon-1')"
-                                class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors">
-                                <i data-lucide="eye" id="eye-icon-1" class="w-5 h-5"></i>
-                            </button>
+                    <div class="form-group mb-4">
+                        <label class="small font-weight-bold text-muted text-uppercase tracking-widest" style="font-size: 10px;">Mot de passe</label>
+                        <div class="position-relative">
+                            <i class="fas fa-lock icon-field"></i>
+                            <input type="password" name="password" id="password" class="form-control form-control-premium" placeholder="8+ caractères" required>
                         </div>
-
-                        {{-- Strength bar --}}
-                        <div class="mt-4 px-1">
-                            <div class="h-1.5 w-full bg-slate-100 dark:bg-white/10 rounded-full overflow-hidden">
-                                <div id="strength-bar" class="strength-bar h-full w-0 bg-red-500"></div>
-                            </div>
-                            <div id="strength-text"
-                                class="text-[10px] text-slate-500 mt-2 font-bold uppercase tracking-widest">Très faible
-                            </div>
+                        <div class="strength-meter-box">
+                            <div id="strength-bar" class="strength-bar bg-danger"></div>
                         </div>
                     </div>
 
-                    <div>
-                        <label
-                            class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Confirmation</label>
-                        <div class="relative group">
-                            <span
-                                class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
-                                <i data-lucide="shield-check" class="w-5 h-5"></i>
-                            </span>
-                            <input type="password" name="password_confirmation" id="password_confirmation" required
-                                placeholder="Confirmez le mot de passe"
-                                class="w-full bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white pl-12 pr-12 py-4 rounded-2xl text-base focus:outline-none focus:border-primary transition-all shadow-sm">
-                            <button type="button" onclick="togglePassword('password_confirmation', 'eye-icon-2')"
-                                class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors">
-                                <i data-lucide="eye" id="eye-icon-2" class="w-5 h-5"></i>
-                            </button>
+                    <div class="form-group mb-4">
+                        <label class="small font-weight-bold text-muted text-uppercase tracking-widest" style="font-size: 10px;">Confirmation du mot de passe</label>
+                        <div class="position-relative">
+                            <i class="fas fa-circle-check icon-field"></i>
+                            <input type="password" name="password_confirmation" id="password_confirmation" class="form-control form-control-premium" placeholder="Confirmer le mot de passe" required>
                         </div>
                     </div>
 
-                    <p class="text-xs text-center text-slate-400 dark:text-slate-500 leading-relaxed">
-                        En cliquant sur S'inscrire, vous acceptez nos
-                        <a href="#" class="text-primary font-bold hover:underline">Conditions d'Utilisation</a>
-                    </p>
-
-                    <button type="submit"
-                        class="w-full py-4 bg-primary text-white font-black rounded-2xl hover:bg-primary-light transition-all shadow-lg shadow-primary/20 text-sm uppercase tracking-widest active:scale-[0.98]">
-                        S'inscrire
-                    </button>
+                    <button type="submit" class="btn btn-register-premium btn-block mt-4 mb-4">CRÉER MON COMPTE</button>
+                    
+                    <p class="text-center small text-muted font-weight-medium">En vous inscrivant, vous acceptez nos <a href="#" class="text-primary font-weight-bold text-decoration-none">Conditions d'Utilisation</a></p>
+                    
+                    <div class="text-center mt-5 border-top pt-4">
+                        <p class="text-muted small font-weight-bold">Déjà utilisateur ? <a href="{{ route('login') }}" class="text-primary font-weight-bolder text-decoration-none">Se connecter ici</a></p>
+                    </div>
                 </form>
-
-                {{-- Footer --}}
-                <div class="mt-10 text-center animate-fade-up" style="animation-delay: 0.3s;">
-                    <p class="text-sm text-slate-500 dark:text-slate-400">
-                        Déjà un compte ?
-                        <a href="{{ route('login') }}"
-                            class="font-black text-primary hover:text-primary-light ml-1 underline transition-all">Se
-                            connecter</a>
-                    </p>
-                </div>
             </div>
         </div>
     </div>
 
     <script>
-        lucide.createIcons();
-
-        // Password Strength helper
-        const passwordInput = document.getElementById('password');
-        const strengthBar = document.getElementById('strength-bar');
-        const strengthText = document.getElementById('strength-text');
-
-        passwordInput.addEventListener('input', (e) => {
-            const val = e.target.value;
+        document.getElementById('password').addEventListener('input', function(e) {
+            let val = e.target.value;
+            let bar = document.getElementById('strength-bar');
             let score = 0;
-
             if (val.length >= 8) score += 25;
             if (/[A-Z]/.test(val)) score += 25;
             if (/[0-9]/.test(val)) score += 25;
             if (/[^A-Za-z0-9]/.test(val)) score += 25;
-
-            strengthBar.style.width = score + '%';
-
-            if (score <= 25) {
-                strengthBar.className = 'strength-bar h-full bg-red-500';
-                strengthText.innerText = 'Trés Faible';
-                strengthText.className = 'text-[10px] text-red-500 mt-2 font-bold uppercase tracking-widest';
-            } else if (score <= 50) {
-                strengthBar.className = 'strength-bar h-full bg-orange-500';
-                strengthText.innerText = 'Moyen';
-                strengthText.className = 'text-[10px] text-orange-500 mt-2 font-bold uppercase tracking-widest';
-            } else if (score <= 75) {
-                strengthBar.className = 'strength-bar h-full bg-yellow-500';
-                strengthText.innerText = 'Bon';
-                strengthText.className = 'text-[10px] text-yellow-500 mt-2 font-bold uppercase tracking-widest';
-            } else {
-                strengthBar.className = 'strength-bar h-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.4)]';
-                strengthText.innerText = 'Excellent';
-                strengthText.className = 'text-[10px] text-green-500 mt-2 font-bold uppercase tracking-widest';
-            }
+            
+            bar.style.width = score + '%';
+            if (score <= 25) { bar.className = 'strength-bar bg-danger'; }
+            else if (score <= 50) { bar.className = 'strength-bar bg-warning'; }
+            else if (score <= 75) { bar.className = 'strength-bar bg-info'; }
+            else { bar.className = 'strength-bar bg-success'; }
         });
-
-        // Toggle Password visibility
-        function togglePassword(inputId, iconId) {
-            const input = document.getElementById(inputId);
-            const icon = document.getElementById(iconId);
-
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.setAttribute('data-lucide', 'eye-off');
-            } else {
-                input.type = 'password';
-                icon.setAttribute('data-lucide', 'eye');
-            }
-            lucide.createIcons();
-        }
     </script>
 </body>
-
 </html>

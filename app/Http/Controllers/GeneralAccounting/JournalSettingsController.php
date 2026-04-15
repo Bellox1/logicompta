@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\GeneralAccounting\Journal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class JournalSettingsController extends Controller
 {
@@ -26,8 +27,23 @@ class JournalSettingsController extends Controller
     {
         $user = Auth::user();
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                function ($attribute, $value, $fail) use ($user) {
+                    $exists = Journal::where('entreprise_id', $user->entreprise_id)
+                        ->whereRaw('LOWER(name) = ?', [strtolower($value)])
+                        ->exists();
+
+                    if ($exists) {
+                        $fail('Un journal porte déjà ce nom, veuillez changer le nom.');
+                    }
+                }
+            ],
             'description' => 'nullable|string|max:255',
+        ], [
+            'name.required' => 'Le nom du journal est obligatoire.',
         ]);
 
         Journal::create([
@@ -62,8 +78,24 @@ class JournalSettingsController extends Controller
         }
         
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                function ($attribute, $value, $fail) use ($user, $id) {
+                    $exists = Journal::where('entreprise_id', $user->entreprise_id)
+                        ->where('id', '!=', $id)
+                        ->whereRaw('LOWER(name) = ?', [strtolower($value)])
+                        ->exists();
+
+                    if ($exists) {
+                        $fail('Un journal porte déjà ce nom, veuillez changer le nom.');
+                    }
+                }
+            ],
             'description' => 'nullable|string|max:255',
+        ], [
+            'name.required' => 'Le nom du journal est obligatoire.',
         ]);
 
         $journal->update([
@@ -82,16 +114,12 @@ class JournalSettingsController extends Controller
             abort(403, "Accès non autorisé.");
         }
 
-        // Seul l'admin (créateur) peut supprimer
-        if ($user->role !== 'admin') {
-            return back()->with('error', 'Impossible de supprimer, ceci est réservé uniquement au créateur de la société..');
-        }
-        
-        // Vérifier si le journal a des entrées
-        if ($journal->entries()->exists()) {
-            return back()->with('error', 'Impossible de supprimer un journal qui contient des écritures.');
+        // 1. Vérifier catégoriquement si le journal contient des écritures (Priorité absolue)
+        if ($journal->journalEntries()->exists()) {
+            return back()->with('error', 'Impossible de supprimer un journal qui contient déjà des écritures. Seuls les journaux vides peuvent être supprimés.');
         }
 
+        // Si le journal est vide, tout le monde peut le supprimer
         $journal->delete();
         return redirect()->route('accounting.journals-settings.index')->with('success', 'Journal supprimé.');
     }

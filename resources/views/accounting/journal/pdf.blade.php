@@ -3,17 +3,19 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Journal Comptable - {{ $user->entreprise->name ?? 'Logicompta' }}</title>
+    <title>Journal Comptable - {{ $user->entreprise->name ?? 'COMPTAFIQ' }}</title>
     <!-- Font: Arial -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Arial', 'sans-serif'], },
+                    fontFamily: {
+                        sans: ['Arial', 'sans-serif'],
+                    },
                     colors: {
-                        primary: '#005b82',
-                        'primary-light': '#0055aa',
+                        primary: '#0062cc',
+                        'primary-light': '#005599',
                     }
                 }
             }
@@ -82,7 +84,8 @@
     <div class="mb-8 border-b-2 border-slate-900 pb-6 flex justify-between items-end">
         <div>
             <h1 class="text-3xl font-black uppercase tracking-tighter text-slate-900">JOURNAL COMPTABLE GÉNÉRAL</h1>
-            <p class="text-sm font-bold text-slate-500 italic uppercase">{{ $user->entreprise->name ?? 'MA SOCIETE' }}</p>
+            <p class="text-sm font-bold text-slate-500 italic uppercase">{{ $user->entreprise->name ?? 'MA SOCIETE' }}
+            </p>
         </div>
         <div class="text-right text-xs font-medium text-slate-400">
             Édité le {{ now()->format('d/m/Y à H:i') }}
@@ -114,8 +117,10 @@
                         @endif
                         <td class="font-bold text-slate-700">{{ $line->sousCompte->numero_sous_compte ?? '???' }}</td>
                         <td>
-                            <div class="font-bold text-slate-900">{{ $line->sousCompte->libelle ?? 'Compte inconnu' }}</div>
-                            <div class="text-[10px] text-slate-500 italic">{{ $line->libelle ?: $entry->libelle }}</div>
+                            <div class="font-bold text-slate-900">{{ $line->sousCompte->libelle ?? 'Compte inconnu' }}
+                            </div>
+                            <div class="text-[10px] text-slate-500 italic">{{ $line->libelle ?: $entry->libelle }}
+                            </div>
                         </td>
                         <td class="text-right font-bold">
                             {{ $line->debit > 0 ? number_format($line->debit, 2, ',', ' ') : '-' }}</td>
@@ -132,9 +137,9 @@
     </table>
 
     <div class="mt-10 text-center text-[10px] text-slate-400 uppercase tracking-widest italic no-print opacity-50">
-        Document généré par Logicompta - Système de gestion comptable
+        Document généré par COMPTAFIQ - Système de gestion comptable
     </div>
-    
+
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
         lucide.createIcons();

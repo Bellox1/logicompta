@@ -15,8 +15,9 @@ class UserSeeder extends Seeder
     {
         User::create([
             'name' => 'Bellox Admin',
-            'email' => 'admin@logicompta.bj',
+            'email' => 'admin@COMPTAFIQ.bj',
             'password' => Hash::make('password'),
+            'role' => 'admin',
             'entreprise_id' => \App\Models\Entreprise::first(['*'])?->id,
         ]);
     }

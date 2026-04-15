@@ -2,113 +2,160 @@
 
 @section('title', "Archives $year")
 
+@section('styles')
+    <style>
+        .archive-card {
+            background: #fff;
+            border-radius: 24px;
+            border: 1px solid #f1f5f9;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .archive-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            border-color: #0062cc;
+        }
+
+        .icon-box-archive {
+            width: 64px;
+            height: 64px;
+            border-radius: 18px;
+            background: #f8fafc;
+            color: #0062cc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .archive-card:hover .icon-box-archive {
+            background: #0062cc;
+            color: white;
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .badge-secure {
+            background: #fffbeb;
+            color: #b45309;
+            padding: 8px 16px;
+            border-radius: 99px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            border: 1px solid #fef3c7;
+        }
+
+        .btn-view {
+            background: #f8fafc;
+            color: #1e293b;
+            border-top: 1px solid #f1f5f9;
+            padding: 20px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 11px;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-decoration: none !important;
+        }
+
+        .archive-card:hover .btn-view {
+            background: #0062cc;
+            color: white;
+        }
+    </style>
+@endsection
+
 @section('content')
-<div class="mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-    <div>
-        <a href="{{ route('accounting.archive.index') }}" class="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-primary mb-2 transition-colors">
-            <i data-lucide="arrow-left" class="w-4 h-4"></i>
-            RETOUR AUX ARCHIVES
-        </a>
-        <h1 class="text-3xl md:text-4xl font-black text-slate-800 tracking-tight">ARCHIVE EXERCICE {{ $year }}</h1>
-        <p class="text-sm text-slate-500 font-medium tracking-tight">Consultez l'historique scellé de l'année {{ $year }} ({{ $totalEntries }} écritures).</p>
-    </div>
-    <div class="flex items-center gap-2 text-[10px] font-black uppercase text-amber-600 bg-amber-50 border border-amber-200 px-4 py-2 rounded-full tracking-widest shadow-sm">
-        <i data-lucide="lock" class="w-3 h-3"></i> Données Scellées
-    </div>
-</div>
-
-<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-    <!-- Rapports de Journal -->
-    <div class="bg-white border border-border overflow-hidden group hover:border-primary transition-all shadow-sm">
-        <div class="px-8 py-8 h-full flex flex-col">
-            <div class="flex items-center gap-4 mb-6">
-                <div class="w-14 h-14 bg-primary text-white rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all shadow-md">
-                    <i data-lucide="book-open" class="w-7 h-7"></i>
-                </div>
-                <div>
-                    <h2 class="text-xl font-black text-slate-800 leading-none">JOURNAL ARCHIVÉ</h2>
-                    <p class="text-xs text-slate-400 uppercase font-black tracking-widest mt-1">Écritures comptables {{ $year }}</p>
-                </div>
-            </div>
-            <p class="text-sm text-slate-500 mb-8 flex-grow">
-                Accédez à l'intégralité des écritures du journal enregistrées durant l'année {{ $year }}. Toutes les écritures sont marquées comme archivées.
-            </p>
-            <a href="{{ $links['journal'] }}" 
-                class="flex items-center justify-between px-6 py-4 bg-primary text-white font-black text-xs uppercase tracking-widest hover:bg-primary/90 transition-all">
-                <span>Consulter le journal</span>
-                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+    <div class="mb-5">
+        <div class="d-flex align-items-center mb-3">
+            <a href="{{ route('accounting.archive.index') }}" class="btn btn-light btn-sm rounded-pill px-3 font-weight-bold d-inline-flex align-items-center text-muted border-0 mr-3">
+                <span class="material-symbols-outlined mr-1" style="font-size: 18px;">arrow_back</span> Retour Hub
             </a>
+            <div class="badge-secure">
+                <span class="material-symbols-outlined mr-1" style="font-size: 16px;">verified_user</span> Coffre Scellé
+            </div>
+        </div>
+        
+        <h1 class="h2 font-weight-bold text-dark mb-1 font-manrope uppercase">Archive Exercice {{ $year }}</h1>
+        <p class="text-muted small font-weight-bold italic mb-0">Rapports définitifs et écritures comptables certifiées ({{ number_format($totalEntries, 0, ',', ' ') }} lignes).</p>
+    </div>
+
+    <div class="row">
+        <!-- JOURNAL -->
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="archive-card">
+                <div class="p-4 flex-grow-1">
+                    <div class="icon-box-archive">
+                        <span class="material-symbols-outlined" style="font-size: 32px;">menu_book</span>
+                    </div>
+                    <h3 class="font-weight-bold h5 mb-3 font-manrope">Journal</h3>
+                    <p class="text-secondary small font-weight-bold italic mb-0">Historique chronologique complet des écritures scellées.</p>
+                </div>
+                <a href="{{ $links['journal'] }}" class="btn-view">
+                    Consulter <span class="material-symbols-outlined">arrow_forward</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- BALANCE -->
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="archive-card">
+                <div class="p-4 flex-grow-1">
+                    <div class="icon-box-archive">
+                        <span class="material-symbols-outlined" style="font-size: 32px;">balance</span>
+                    </div>
+                    <h3 class="font-weight-bold h5 mb-3 font-manrope">Balance</h3>
+                    <p class="text-secondary small font-weight-bold italic mb-0">Soldes créditeurs et débiteurs de tous les comptes.</p>
+                </div>
+                <a href="{{ $links['balance'] }}" class="btn-view">
+                    Consulter <span class="material-symbols-outlined">arrow_forward</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- BILAN -->
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="archive-card">
+                <div class="p-4 flex-grow-1">
+                    <div class="icon-box-archive">
+                        <span class="material-symbols-outlined" style="font-size: 32px;">account_balance</span>
+                    </div>
+                    <h3 class="font-weight-bold h5 mb-3 font-manrope">Bilan</h3>
+                    <p class="text-secondary small font-weight-bold italic mb-0">État patrimonial de clôture (Actif & Passif).</p>
+                </div>
+                <a href="{{ $links['bilan'] }}" class="btn-view">
+                    Consulter <span class="material-symbols-outlined">arrow_forward</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- RÉSULTAT -->
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="archive-card">
+                <div class="p-4 flex-grow-1">
+                    <div class="icon-box-archive">
+                        <span class="material-symbols-outlined" style="font-size: 32px;">analytics</span>
+                    </div>
+                    <h3 class="font-weight-bold h5 mb-3 font-manrope">Résultat</h3>
+                    <p class="text-secondary small font-weight-bold italic mb-0">Analyse détaillée du bénéfice ou de la perte.</p>
+                </div>
+                <a href="{{ $links['resultat'] }}" class="btn-view">
+                    Consulter <span class="material-symbols-outlined">arrow_forward</span>
+                </a>
+            </div>
         </div>
     </div>
-
-    <!-- Trial Balance -->
-    <div class="bg-white border border-border overflow-hidden group hover:border-primary transition-all shadow-sm">
-        <div class="px-8 py-8 h-full flex flex-col">
-            <div class="flex items-center gap-4 mb-6">
-                <div class="w-14 h-14 bg-primary text-white rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all shadow-md">
-                    <i data-lucide="scale" class="w-7 h-7"></i>
-                </div>
-                <div>
-                    <h2 class="text-xl font-black text-slate-800 leading-none">BALANCE GÉNÉRALE</h2>
-                    <p class="text-xs text-slate-400 uppercase font-black tracking-widest mt-1">Exercice {{ $year }}</p>
-                </div>
-            </div>
-            <p class="text-sm text-slate-500 mb-8 flex-grow">
-                Visualisez la balance de clôture de l'exercice {{ $year }}. Tous les comptes avec mouvements sont récapitulés.
-            </p>
-            <a href="{{ $links['balance'] }}" 
-                class="flex items-center justify-between px-6 py-4 bg-primary text-white font-black text-xs uppercase tracking-widest hover:bg-primary/90 transition-all">
-                <span>Consulter la balance</span>
-                <i data-lucide="chevron-right" class="w-4 h-4"></i>
-            </a>
-        </div>
-    </div>
-
-    <!-- Bilan -->
-    <div class="bg-white border border-border overflow-hidden group hover:border-primary transition-all shadow-sm">
-        <div class="px-8 py-8 h-full flex flex-col">
-            <div class="flex items-center gap-4 mb-6">
-                <div class="w-14 h-14 bg-primary text-white rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all shadow-md">
-                    <i data-lucide="landmark" class="w-7 h-7"></i>
-                </div>
-                <div>
-                    <h2 class="text-xl font-black text-slate-800 leading-none">BILAN ARCHIVÉ</h2>
-                    <p class="text-xs text-slate-400 uppercase font-black tracking-widest mt-1">Situation au 31/12/{{ $year }}</p>
-                </div>
-            </div>
-            <p class="text-sm text-slate-500 mb-8 flex-grow">
-                États financiers de clôture de l'année {{ $year }}. Actif, Passif et Capitaux propres tels qu'archivés.
-            </p>
-            <a href="{{ $links['bilan'] }}" 
-                class="flex items-center justify-between px-6 py-4 bg-primary text-white font-black text-xs uppercase tracking-widest hover:bg-primary/90 transition-all">
-                <span>Consulter le bilan</span>
-                <i data-lucide="chevron-right" class="w-4 h-4"></i>
-            </a>
-        </div>
-    </div>
-
-    <!-- Resultat -->
-    <div class="bg-white border border-border overflow-hidden group hover:border-primary transition-all shadow-sm">
-        <div class="px-8 py-8 h-full flex flex-col">
-            <div class="flex items-center gap-4 mb-6">
-                <div class="w-14 h-14 bg-primary text-white rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all shadow-md">
-                    <i data-lucide="bar-chart-3" class="w-7 h-7"></i>
-                </div>
-                <div>
-                    <h2 class="text-xl font-black text-slate-800 leading-none">COMPTE DE RÉSULTAT</h2>
-                    <p class="text-xs text-slate-400 uppercase font-black tracking-widest mt-1">Exercice {{ $year }}</p>
-                </div>
-            </div>
-            <p class="text-sm text-slate-500 mb-8 flex-grow">
-                Détail des charges et produits pour l'exercice {{ $year }} et calcul du résultat net final.
-            </p>
-            <a href="{{ $links['resultat'] }}" 
-                class="flex items-center justify-between px-6 py-4 bg-primary text-white font-black text-xs uppercase tracking-widest hover:bg-primary/90 transition-all">
-                <span>Consulter le résultat</span>
-                <i data-lucide="chevron-right" class="w-4 h-4"></i>
-            </a>
-        </div>
-    </div>
-</div>
-
 @endsection

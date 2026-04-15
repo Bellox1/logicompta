@@ -2,72 +2,115 @@
 
 @section('title', 'Aperçu de l\'import')
 
+@section('styles')
+    <style>
+        .preview-table thead th {
+            background: #f8fafc;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #64748b;
+            padding: 15px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .preview-table tbody td {
+            font-size: 13px;
+            padding: 15px;
+            font-weight: 600;
+            vertical-align: middle;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .status-badge {
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 5px 12px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .premium-card {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
+            overflow: hidden;
+        }
+
+        .error-row {
+            background-color: #fff1f2;
+            border-left: 4px solid #f43f5e;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+    </style>
+@endsection
+
 @section('content')
-<div class="px-6 sm:px-12 py-10 w-full max-w-[1600px] mx-auto min-h-screen flex flex-col">
-    <!-- HEADER -->
-    <div class="mb-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+    <div class="mb-5 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
         <div>
-            <h1 class="text-3xl font-bold text-slate-800 tracking-tight">Aperçu de l'import</h1>
-            <p class="text-sm text-slate-500 mt-1 uppercase font-bold tracking-widest">Vérifiez vos données avant validation</p>
+            <h1 class="h3 font-weight-bold text-dark mb-1" style="font-family: 'Manrope';">Aperçu de l'import</h1>
+            <p class="text-muted small font-weight-bold uppercase tracking-wider">Vérification de l'intégrité avant validation</p>
         </div>
-        <a href="{{ route('accounting.account.import') }}" class="px-6 py-3 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-all text-xs flex items-center gap-2 shadow-sm">
-            <i data-lucide="arrow-left" class="w-4 h-4"></i>
-            Changer de fichier
-        </a>
+        <div class="mt-3 mt-md-0">
+            <a href="{{ route('accounting.account.import') }}" class="btn btn-white btn-sm px-4 py-2 font-weight-bold border rounded-lg shadow-sm">
+                <span class="material-symbols-outlined align-middle mr-1" style="font-size: 18px;">arrow_back</span> CHANGER DE FICHIER
+            </a>
+        </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-        <!-- TABLEAU APERÇU -->
-        <div class="lg:col-span-9">
-            <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
+    <div class="row">
+        <div class="col-lg-9 mb-4">
+            <div class="premium-card">
+                <div class="table-responsive">
+                    <table class="table preview-table mb-0">
                         <thead>
-                            <tr class="bg-slate-50 text-slate-400 uppercase text-[10px] font-bold tracking-widest border-b border-slate-100">
-                                <th class="px-6 py-4 w-16">#</th>
-                                <th class="px-6 py-4">Numéro</th>
-                                <th class="px-6 py-4">Libellé</th>
-                                <th class="px-6 py-4">Compte Parent</th>
-                                <th class="px-6 py-4">Statut</th>
+                            <tr>
+                                <th style="width: 60px;">#</th>
+                                <th>NUMÉRO</th>
+                                <th>LIBELLÉ</th>
+                                <th>PARENT</th>
+                                <th>STATUT</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-50">
+                        <tbody>
                             @foreach($previewData as $row)
                                 @php $isError = str_starts_with($row['status'], 'error_'); @endphp
-                                <tr class="transition-colors @if($isError) bg-red-50 border-l-4 border-red-400 @else hover:bg-slate-50/50 @endif">
-                                    <td class="px-6 py-4 text-slate-400 font-mono text-[10px]">{{ $row['line'] }}</td>
-                                    <td class="px-6 py-4 font-bold text-slate-800 tracking-widest">{{ $row['numero'] }}</td>
-                                    <td class="px-6 py-4 font-semibold text-slate-600 text-sm">{{ $row['libelle'] }}</td>
-                                    <td class="px-6 py-4">
+                                <tr class="{{ $isError ? 'error-row' : '' }}">
+                                    <td class="text-muted font-mono small">{{ $row['line'] }}</td>
+                                    <td class="font-weight-bold text-primary">{{ $row['numero'] }}</td>
+                                    <td class="font-weight-bold text-dark">{{ $row['libelle'] }}</td>
+                                    <td>
                                         @if($row['parent'])
-                                            <span class="px-3 py-1 bg-primary/5 text-primary text-[10px] font-bold rounded-lg border border-primary/10">
-                                                {{ $row['parent'] }}
-                                            </span>
+                                            <span class="badge badge-light px-2 py-1 text-primary border font-weight-bold">{{ $row['parent'] }}</span>
                                         @else
-                                            <span class="text-red-500 text-[10px] font-bold uppercase tracking-tighter">Non détecté</span>
+                                            <span class="text-danger small font-weight-bold">INCONNU</span>
                                         @endif
                                     </td>
-                                    <td class="px-6 py-4">
+                                    <td>
                                         @switch($row['status'])
                                             @case('new')
-                                                <span class="flex items-center gap-2 text-green-600 font-bold uppercase text-[9px] tracking-widest">
-                                                    <div class="w-1.5 h-1.5 bg-green-500 rounded-full"></div> Nouveau
-                                                </span>
+                                                <span class="status-badge bg-success text-white">Nouveau</span>
                                                 @break
                                             @case('update')
-                                                <span class="flex items-center gap-2 text-primary font-bold uppercase text-[9px] tracking-widest">
-                                                    <div class="w-1.5 h-1.5 bg-primary rounded-full"></div> Existant
-                                                </span>
+                                                <span class="status-badge bg-primary text-white">Mise à jour</span>
                                                 @break
                                             @case('error_main')
-                                                <span class="flex items-center gap-2 text-red-600 font-bold uppercase text-[9px] tracking-widest bg-red-100 px-2 py-1 rounded-lg">
-                                                    <i data-lucide="alert-circle" class="w-3 h-3"></i> Compte Principal
-                                                </span>
+                                                <span class="status-badge bg-danger text-white">Compte Principal</span>
                                                 @break
                                             @case('error_no_parent')
-                                                <span class="flex items-center gap-2 text-red-600 font-bold uppercase text-[9px] tracking-widest bg-red-100 px-2 py-1 rounded-lg">
-                                                    <i data-lucide="alert-circle" class="w-3 h-3"></i> Parent Inconnu
-                                                </span>
+                                                <span class="status-badge bg-danger text-white">Parent Inconnu</span>
                                                 @break
                                         @endswitch
                                     </td>
@@ -79,53 +122,45 @@
             </div>
         </div>
 
-        <!-- ACTIONS -->
-        <div class="lg:col-span-3 flex flex-col gap-6">
-            <div class="bg-white border border-slate-200 rounded-2xl p-8 sticky top-8 shadow-sm flex flex-col gap-6">
-                <h3 class="text-[11px] font-bold uppercase tracking-widest text-slate-400 border-b border-slate-100 pb-4">Résumé de l'import</h3>
+        <div class="col-lg-3">
+            <div class="premium-card p-4 sticky-top" style="top: 20px;">
+                <h6 class="font-weight-bold text-uppercase text-muted small mb-4" style="letter-spacing: 1px;">Résumé de l'opération</h6>
                 
-                <div class="space-y-4">
-                    @php
-                        $newCount = collect($previewData)->where('status', 'new')->count();
-                        $updateCount = collect($previewData)->where('status', 'update')->count();
-                        $errorCount = collect($previewData)->whereIn('status', ['error_main', 'error_no_parent'])->count();
-                    @endphp
+                @php
+                    $newCount = collect($previewData)->where('status', 'new')->count();
+                    $updateCount = collect($previewData)->where('status', 'update')->count();
+                    $errorCount = collect($previewData)->whereIn('status', ['error_main', 'error_no_parent'])->count();
+                @endphp
 
-                    <div class="flex justify-between items-center">
-                        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">À créer</span>
-                        <span class="text-green-600 bg-green-50 px-3 py-1 rounded-lg font-bold text-xs">{{ $newCount }}</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">À mettre à jour</span>
-                        <span class="text-primary bg-primary/5 px-3 py-1 rounded-lg font-bold text-xs">{{ $updateCount }}</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Invalides</span>
-                        <span class="text-red-600 bg-red-50 px-3 py-1 rounded-lg font-bold text-xs">{{ $errorCount }}</span>
-                    </div>
+                <div class="summary-item">
+                    <span class="small font-weight-bold text-muted">À CRÉER</span>
+                    <span class="badge badge-success px-3">{{ $newCount }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="small font-weight-bold text-muted">À MAJ</span>
+                    <span class="badge badge-primary px-3">{{ $updateCount }}</span>
+                </div>
+                <div class="summary-item mb-4">
+                    <span class="small font-weight-bold text-muted">INVALIDES</span>
+                    <span class="badge badge-danger px-3">{{ $errorCount }}</span>
                 </div>
 
-                <div class="pt-6 border-t border-slate-100">
-                    <form action="{{ route('accounting.account.import.process') }}" method="POST">
-                        @csrf
-                        <button type="submit" 
-                            class="w-full py-4 bg-primary text-white font-bold rounded-xl hover:opacity-95 transition-all text-sm flex items-center justify-center gap-3 shadow-md">
-                            Confirmer l'import
-                            <i data-lucide="check" class="w-4 h-4"></i>
-                        </button>
-                    </form>
-                    
-                    @if($errorCount > 0)
-                        <div class="mt-4 p-4 bg-red-50 rounded-xl border border-red-100">
-                            <p class="text-[11px] text-red-600 font-semibold leading-relaxed text-center">
-                                <i data-lucide="alert-circle" class="w-3 h-3 inline-block mr-1"></i>
-                                {{ $errorCount }} ligne(s) invalide(s) seront ignorées.
-                            </p>
-                        </div>
-                    @endif
-                </div>
+                <form action="{{ route('accounting.account.import.process') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="btn btn-primary btn-block py-3 font-weight-bold rounded-xl shadow-lg text-uppercase" style="letter-spacing: 1px;">
+                        CONFIRMER L'IMPORT <span class="material-symbols-outlined align-middle ml-2" style="font-size: 18px;">check_circle</span>
+                    </button>
+                </form>
+
+                @if($errorCount > 0)
+                    <div class="mt-4 p-3 bg-light rounded-lg border-left border-danger">
+                        <p class="small text-danger font-weight-bold mb-0">
+                            <span class="material-symbols-outlined align-middle mr-1" style="font-size: 16px;">warning</span>
+                            {{ $errorCount }} ligne(s) invalide(s) seront ignorées.
+                        </p>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
-</div>
 @endsection

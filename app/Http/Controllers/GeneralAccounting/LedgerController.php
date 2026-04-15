@@ -19,6 +19,7 @@ class LedgerController extends Controller
         $entrepriseId = $user->entreprise_id;
 
         $accounts = Account::orderBy('code_compte', 'asc')->get()->groupBy('classe');
+        $account_id = $account_id ?: $request->query('account_id');
         $selectedAccount = $account_id ? Account::find($account_id, ['*']) : null;
         $selectedClass = $request->query('class');
         $mode = $request->query('mode', 'single');
@@ -101,6 +102,7 @@ class LedgerController extends Controller
         }
         $entrepriseId = $user->entreprise_id;
 
+        $account_id = $account_id ?: $request->query('account_id');
         $selectedAccount = $account_id ? Account::find($account_id) : null;
         $selectedClass = $request->query('class');
         $mode = $request->query('mode', 'single');

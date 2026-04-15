@@ -2,58 +2,104 @@
 
 @section('title', 'Compte de Résultat')
 
+@section('styles')
+    <style>
+        .resultat-card {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .header-charges { background: linear-gradient(135deg, #e11d48 0%, #9f1239 100%); color: white; }
+        .header-produits { background: linear-gradient(135deg, #059669 0%, #065f46 100%); color: white; }
+
+        .table-resultat thead th {
+            font-family: 'Manrope';
+            font-weight: 700;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #94a3b8;
+            border-bottom: 2px solid #f8f9fc;
+            padding: 15px 20px;
+        }
+
+        .table-resultat tbody td {
+            padding: 15px 20px;
+            vertical-align: middle;
+            border-bottom: 1px solid #f8f9fc;
+        }
+
+        .amount-val {
+            font-family: 'Inter';
+            font-weight: 800;
+            font-size: 14px;
+            white-space: nowrap !important;
+        }
+
+        .final-result-box {
+            background: #fff;
+            border-radius: 30px;
+            padding: 50px;
+            border: 2px solid #eee;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .final-result-box:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .profit-text { color: #059669; }
+        .loss-text { color: #e11d48; }
+
+        @media print { .no-print { display: none !important; } }
+    </style>
+@endsection
+
 @section('content')
     @if (request('show_archived') == '1' && request('start_date'))
-        <div
-            class="mb-6 bg-primary/10 border-l-4 border-primary p-4 flex items-center justify-between shadow-sm animate-fade-in no-print">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-primary text-white flex items-center justify-center rounded-xl">
-                    <i data-lucide="archive" class="w-5 h-5"></i>
+        <div class="alert alert-info border-0 shadow-sm d-flex align-items-center justify-content-between p-3 mb-4" style="border-radius: 12px; background: rgba(0, 91, 130, 0.05);">
+            <div class="d-flex align-items-center">
+                <div class="bg-primary text-white rounded-lg d-flex align-items-center justify-content-center mr-3" style="width: 45px; height: 45px;">
+                    <span class="material-symbols-outlined">archive</span>
                 </div>
                 <div>
-                    <h3 class="text-lg font-black text-text-main uppercase leading-none">Archives de l'exercice
-                        {{ date('Y', strtotime(request('start_date'))) }}</h3>
-                    <p class="text-xs text-text-secondary font-black uppercase tracking-widest mt-1">Données scellées et
-                        définitives</p>
+                    <h5 class="mb-0 font-weight-bold uppercase" style="font-size: 14px;">Archives {{ date('Y', strtotime(request('start_date'))) }}</h5>
+                    <p class="mb-0 text-muted small uppercase font-weight-bold tracking-wider">Données scellées et définitives</p>
                 </div>
             </div>
-            <a href="{{ route('accounting.archive.index') }}"
-                class="text-[10px] font-black uppercase text-primary bg-white border border-primary px-3 py-1.5 rounded-lg hover:bg-primary hover:text-white transition-all">
-                Retour au Hub
-            </a>
+            <a href="{{ route('accounting.archive.show', date('Y', strtotime(request('start_date')))) }}" class="btn btn-sm btn-outline-primary font-weight-bold px-3">Retour à l'année {{ date('Y', strtotime(request('start_date'))) }}</a>
         </div>
     @endif
 
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 no-print">
+    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-4 no-print">
         <div>
-            <h1 class="text-3xl font-black text-text-main uppercase tracking-tight">Compte de Résultat</h1>
-            <p class="text-sm text-text-secondary mt-1 font-bold tracking-widest uppercase">Performance de l'exercice au
-                {{ date('d/m/Y') }}</p>
+            <h1 class="h3 font-weight-bold mb-1 text-dark" style="font-family: 'Manrope';">Compte de Résultat</h1>
+            <p class="text-muted small mb-0 font-weight-bold">Analyse de la performance au {{ date('d/m/Y') }}</p>
         </div>
-        <div class="flex flex-wrap gap-4 no-print">
-            <div class="relative group">
-                <button id="resultat-actions-dropdown-btn"
-                    class="inline-flex items-center justify-center px-5 py-2.5 bg-slate-800 text-white font-bold shadow text-xs gap-3">
-                    <i data-lucide="download" class="w-4 h-4"></i>
-                    OPTIONS D'EXPORT
-                    <i data-lucide="chevron-down" class="w-3 h-3"></i>
+        <div class="mt-3 mt-md-0">
+            <div class="dropdown">
+                <button class="btn btn-dark font-weight-bold px-4 d-flex align-items-center rounded-pill" type="button" data-toggle="dropdown" style="font-size: 12px;">
+                    <span class="material-symbols-outlined mr-2" style="font-size: 20px;">download</span> OPTIONS D'EXPORT
                 </button>
-                <div id="resultat-actions-dropdown-menu"
-                    class="absolute right-0 mt-2 w-64 bg-card-bg border border-border shadow-xl z-[2000] hidden rounded-xl overflow-hidden">
-                    <a href="{{ route('accounting.resultat.pdf') }}" target="_blank"
-                        class="flex items-center gap-3 px-4 py-3 text-[11px] font-black text-text-main hover:bg-white/50 border-b border-border">
-                        <i data-lucide="file-text" class="w-4 h-4 text-red-600"></i>
-                        TÉLÉCHARGER PDF COMPLET
+                <div class="dropdown-menu dropdown-menu-right shadow border-0" style="border-radius: 15px;">
+                    <a class="dropdown-item py-3 font-weight-bold small" href="{{ route('accounting.resultat.pdf') }}" target="_blank">
+                        <i class="fas fa-file-pdf text-danger mr-2"></i> PDF Complet
                     </a>
-                    <button onclick="exportResultatToExcel('charges', 'Compte_Resultat_Charges')"
-                        class="flex items-center gap-3 px-4 py-3 text-[11px] font-black text-text-main hover:bg-white/50 border-b border-border w-full text-left">
-                        <i data-lucide="file-spreadsheet" class="w-4 h-4 text-green-600"></i>
-                        EXPORTER CHARGES (CSV)
+                    <button class="dropdown-item py-3 font-weight-bold small" onclick="exportResultatToExcel('charges', 'Compte_Resultat_Charges')">
+                        <i class="fas fa-file-csv text-rose mr-2"></i> Export Charges (CSV)
                     </button>
-                    <button onclick="exportResultatToExcel('produits', 'Compte_Resultat_Produits')"
-                        class="flex items-center gap-3 px-4 py-3 text-[11px] font-black text-text-main hover:bg-white/50 w-full text-left">
-                        <i data-lucide="file-spreadsheet" class="w-4 h-4 text-green-600"></i>
-                        EXPORTER PRODUITS (CSV)
+                    <button class="dropdown-item py-3 font-weight-bold small" onclick="exportResultatToExcel('produits', 'Compte_Resultat_Produits')">
+                        <i class="fas fa-file-csv text-success mr-2"></i> Export Produits (CSV)
                     </button>
                 </div>
             </div>
@@ -61,218 +107,148 @@
     </div>
 
     <!-- Filtre par période -->
-    <div class="mb-10 no-print">
-        <form action="{{ request()->url() }}" method="GET"
-            class="mb-10 grid grid-cols-1 md:flex md:flex-row md:items-end gap-5 bg-card-bg border border-border p-6 rounded-3xl shadow-sm no-print">
-            <div class="w-full md:flex-1">
-                <label
-                    class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-2 uppercase tracking-wider px-1">Période
-                    du</label>
-                <input type="date" name="start_date" value="{{ request('start_date') }}"
-                    class="w-full bg-bg border border-border px-4 py-3 text-sm font-bold outline-none focus:border-primary transition-all rounded-xl dark:text-white">
-            </div>
-            <div class="w-full md:flex-1">
-                <label
-                    class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-2 uppercase tracking-wider px-1">Au</label>
-                <input type="date" name="end_date" value="{{ request('end_date') }}"
-                    class="w-full bg-bg border border-border px-4 py-3 text-sm font-bold outline-none focus:border-primary transition-all rounded-xl dark:text-white">
-            </div>
-            <div class="w-full md:w-auto flex flex-col md:flex-row gap-3">
-                <button type="submit"
-                    class="w-full md:w-auto md:px-5 py-2.5 bg-primary text-white text-[11px] font-black uppercase tracking-[0.2em] hover:bg-primary-light transition-all shadow-lg flex items-center justify-center gap-3">
-                    <i data-lucide="refresh-cw" class="w-4 h-4"></i> Actualiser
-                </button>
-                @if (request()->hasAny(['start_date', 'end_date']))
-                    <a href="{{ request()->url() }}"
-                        class="w-full md:w-auto md:px-5 py-2.5 bg-white text-text-secondary text-[11px] font-black uppercase tracking-[0.2em] hover:bg-slate-50 transition-all flex items-center justify-center gap-2 border border-border shadow-sm rounded-xl">
-                        <i data-lucide="x" class="w-4 h-4"></i> Effacer
-                    </a>
-                @endif
+    <div class="bg-white border rounded-lg p-4 mb-5 shadow-sm no-print" style="border-radius: 20px;">
+        <form action="{{ request()->url() }}" method="GET">
+            <div class="row align-items-end">
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <label class="small font-weight-bold text-uppercase text-muted mb-2 tracking-wider">Période du</label>
+                    <input type="date" name="start_date" value="{{ request('start_date') }}" class="form-control font-weight-bold rounded-lg" style="height: 45px;">
+                </div>
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <label class="small font-weight-bold text-uppercase text-muted mb-2 tracking-wider">Au</label>
+                    <input type="date" name="end_date" value="{{ request('end_date') }}" class="form-control font-weight-bold rounded-lg" style="height: 45px;">
+                </div>
+                <div class="col-md-4 d-flex">
+                    <button type="submit" class="btn btn-primary shadow-sm font-weight-bold flex-grow-1 mr-2 d-flex align-items-center justify-content-center rounded-lg" style="height: 45px;">
+                        <span class="material-symbols-outlined mr-2" style="font-size: 20px;">sync</span> Actualiser
+                    </button>
+                    @if (request()->hasAny(['start_date', 'end_date']))
+                        <a href="{{ request()->url() }}" class="btn btn-light border font-weight-bold d-flex align-items-center justify-content-center rounded-lg" style="width: 50px; height: 45px;">
+                            <span class="material-symbols-outlined">close</span>
+                        </a>
+                    @endif
+                </div>
             </div>
         </form>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
-        <!-- SECTION CHARGES (CLASSE 6) -->
-        <div class="bg-card-bg border border-border rounded-3xl shadow-sm overflow-hidden flex flex-col">
-            <div class="bg-primary text-white px-6 py-6 flex items-center justify-between">
-                <h2 class="text-lg font-black uppercase tracking-[0.3em]">Charges</h2>
-                <div class="bg-white/10 px-4 py-1.5 rounded-xl text-[10px] uppercase font-black">Nature des dépenses</div>
-            </div>
-
-            <div class="table-responsive flex-1" id="resultat-charges">
-                <table class="w-full text-left border-collapse min-w-[600px] sticky-thead">
-                    <thead>
-                        <tr class="bg-white/50 text-[10px] uppercase font-black text-text-secondary border-b border-border">
-                            <th class="px-4 py-4 border-r border-border">Compte</th>
-                            <th class="px-4 py-4 border-r border-border">Intitulé</th>
-                            <th class="px-4 py-4 text-right">Montant</th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-xs">
-                        @forelse($charges['groups'] as $prefix => $group)
-                            @foreach ($group['accounts'] as $acc)
-                                <tr class="border-b border-border hover:bg-slate-50/50 transition-colors">
-                                    <td class="px-4 py-4 font-mono font-black text-text-main border-r border-border">
-                                        {{ $acc['code'] }}</td>
-                                    <td class="px-4 py-4 text-text-secondary border-r border-border font-black uppercase">
-                                        {{ $acc['libelle'] }}</td>
-                                    <td class="px-4 py-4 text-right font-black text-text-main whitespace-nowrap">
-                                        {{ number_format($acc['montant'], 2, ',', ' ') }}</td>
-                                </tr>
-                            @endforeach
-                            <!-- Sous Total Groupe -->
-                            <tr class="bg-slate-50/50 border-b border-slate-100 font-bold text-slate-500">
-                                <td colspan="2" class="px-4 py-2 border-r border-slate-200">Sous Total
-                                    {{ $group['prefix'] }}</td>
-                                <td class="px-4 py-2 text-right whitespace-nowrap">
-                                    {{ number_format($group['total'], 2, ',', ' ') }}</td>
-                            </tr>
-                        @empty
+    <div class="row mb-5">
+        <!-- CHARGES -->
+        <div class="col-lg-6 mb-4">
+            <div class="resultat-card shadow-sm">
+                <div class="header-charges p-4 d-flex align-items-center justify-content-between">
+                    <div>
+                        <h5 class="mb-0 font-weight-bold text-uppercase tracking-widest" style="font-size: 15px;">CHARGES</h5>
+                        <span class="small opacity-80 font-weight-bold text-uppercase" style="font-size: 9px;">Nature des dépenses</span>
+                    </div>
+                    <span class="material-symbols-outlined" style="font-size: 30px;">trending_down</span>
+                </div>
+                <div class="table-responsive flex-grow-1" id="resultat-charges">
+                    <table class="table table-resultat mb-0">
+                        <thead class="bg-light">
                             <tr>
-                                <td colspan="3" class="px-6 py-20 text-center">
-                                    <div class="flex flex-col items-center justify-center text-text-secondary/40">
-                                        <i data-lucide="file-warning" class="w-12 h-12 mb-4 opacity-20"></i>
-                                        <span class="text-[10px] font-black uppercase tracking-[0.3em]">Aucun mouvement de
-                                            charge enregistré</span>
-                                    </div>
-                                </td>
+                                <th>COMPTE</th>
+                                <th>INTITULÉ</th>
+                                <th class="text-right">MONTANT</th>
                             </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="p-6 bg-primary text-white flex justify-between items-center mt-auto border-t-4 border-white/20">
-                <span class="text-xs font-black uppercase tracking-[0.2em]">Total des Charges (VI)</span>
-                <span class="text-2xl font-black whitespace-nowrap">{{ number_format($totalCharges, 2, ',', ' ') }}
-                    F</span>
+                        </thead>
+                        <tbody class="small">
+                            @forelse($charges['groups'] as $prefix => $group)
+                                @foreach ($group['accounts'] as $acc)
+                                    <tr>
+                                        <td class="font-weight-bold text-dark">{{ $acc['code'] }}</td>
+                                        <td class="text-uppercase text-muted font-weight-bold">{{ $acc['libelle'] }}</td>
+                                        <td class="text-right amount-val">{{ number_format($acc['montant'], 2, ',', ' ') }}</td>
+                                    </tr>
+                                @endforeach
+                                <tr class="bg-light-soft font-weight-bold">
+                                    <td colspan="2" class="text-uppercase small italic text-muted">Sous-Total {{ $group['prefix'] }}</td>
+                                    <td class="text-right amount-val">{{ number_format($group['total'], 2, ',', ' ') }}</td>
+                                </tr>
+                            @empty
+                                <tr><td colspan="3" class="text-center py-5 text-muted">Aunuce charge trouvée</td></tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+                <div class="p-4 header-charges d-flex justify-content-between align-items-center">
+                    <span class="small font-weight-bold text-uppercase">Total Charges (VI)</span>
+                    <span class="h4 font-weight-bold mb-0 text-nowrap">{{ number_format($totalCharges, 2, ',', ' ') }} F</span>
+                </div>
             </div>
         </div>
 
-        <!-- SECTION PRODUITS (CLASSE 7) -->
-        <div class="bg-card-bg border border-border rounded-3xl shadow-sm overflow-hidden flex flex-col">
-            <div class="bg-primary text-white px-6 py-6 flex items-center justify-between">
-                <h2 class="text-lg font-black uppercase tracking-[0.3em]">Produits</h2>
-                <div class="bg-white/10 px-4 py-1.5 rounded-xl text-[10px] uppercase font-black">Nature des revenus</div>
-            </div>
-
-            <div class="table-responsive flex-1" id="resultat-produits">
-                <table class="w-full text-left border-collapse min-w-[600px] sticky-thead">
-                    <thead>
-                        <tr class="bg-white/50 text-[10px] uppercase font-black text-text-secondary border-b border-border">
-                            <th class="px-4 py-4 border-r border-border">Compte</th>
-                            <th class="px-4 py-4 border-r border-border">Intitulé</th>
-                            <th class="px-4 py-4 text-right">Montant</th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-xs">
-                        @forelse($produits['groups'] as $prefix => $group)
-                            @foreach ($group['accounts'] as $acc)
-                                <tr class="border-b border-border hover:bg-slate-50/50 transition-colors">
-                                    <td class="px-4 py-4 font-mono font-black text-text-main border-r border-border">
-                                        {{ $acc['code'] }}</td>
-                                    <td class="px-4 py-4 text-text-secondary border-r border-border font-black uppercase">
-                                        {{ $acc['libelle'] }}</td>
-                                    <td class="px-4 py-4 text-right font-black text-text-main whitespace-nowrap">
-                                        {{ number_format($acc['montant'], 2, ',', ' ') }}</td>
-                                </tr>
-                            @endforeach
-                            <!-- Sous Total Groupe -->
-                            <tr class="bg-slate-50/50 border-b border-slate-100 font-bold text-slate-500">
-                                <td colspan="2" class="px-4 py-2 border-r border-slate-200">Sous Total
-                                    {{ $group['prefix'] }}</td>
-                                <td class="px-4 py-2 text-right whitespace-nowrap">
-                                    {{ number_format($group['total'], 2, ',', ' ') }}</td>
-                            </tr>
-                        @empty
+        <!-- PRODUITS -->
+        <div class="col-lg-6 mb-4">
+            <div class="resultat-card shadow-sm">
+                <div class="header-produits p-4 d-flex align-items-center justify-content-between">
+                    <div>
+                        <h5 class="mb-0 font-weight-bold text-uppercase tracking-widest" style="font-size: 15px;">PRODUITS</h5>
+                        <span class="small opacity-80 font-weight-bold text-uppercase" style="font-size: 9px;">Nature des revenus</span>
+                    </div>
+                    <span class="material-symbols-outlined" style="font-size: 30px;">trending_up</span>
+                </div>
+                <div class="table-responsive flex-grow-1" id="resultat-produits">
+                    <table class="table table-resultat mb-0">
+                        <thead class="bg-light">
                             <tr>
-                                <td colspan="3" class="px-6 py-20 text-center">
-                                    <div class="flex flex-col items-center justify-center text-text-secondary/40">
-                                        <i data-lucide="file-warning" class="w-12 h-12 mb-4 opacity-20"></i>
-                                        <span class="text-[10px] font-black uppercase tracking-[0.3em]">Aucun mouvement de
-                                            produit enregistré</span>
-                                    </div>
-                                </td>
+                                <th>COMPTE</th>
+                                <th>INTITULÉ</th>
+                                <th class="text-right">MONTANT</th>
                             </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="p-6 bg-primary text-white flex justify-between items-center mt-auto border-t-4 border-white/20">
-                <span class="text-xs font-black uppercase tracking-[0.2em]">Total des Produits (VII)</span>
-                <span class="text-2xl font-black whitespace-nowrap">{{ number_format($totalProduits, 2, ',', ' ') }}
-                    F</span>
+                        </thead>
+                        <tbody class="small">
+                            @forelse($produits['groups'] as $prefix => $group)
+                                @foreach ($group['accounts'] as $acc)
+                                    <tr>
+                                        <td class="font-weight-bold text-dark">{{ $acc['code'] }}</td>
+                                        <td class="text-uppercase text-muted font-weight-bold">{{ $acc['libelle'] }}</td>
+                                        <td class="text-right amount-val">{{ number_format($acc['montant'], 2, ',', ' ') }}</td>
+                                    </tr>
+                                @endforeach
+                                <tr class="bg-light-soft font-weight-bold">
+                                    <td colspan="2" class="text-uppercase small italic text-muted">Sous-Total {{ $group['prefix'] }}</td>
+                                    <td class="text-right amount-val">{{ number_format($group['total'], 2, ',', ' ') }}</td>
+                                </tr>
+                            @empty
+                                <tr><td colspan="3" class="text-center py-5 text-muted">Aucun produit trouvé</td></tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+                <div class="p-4 header-produits d-flex justify-content-between align-items-center">
+                    <span class="small font-weight-bold text-uppercase">Total Produits (VII)</span>
+                    <span class="h4 font-weight-bold mb-0 text-nowrap">{{ number_format($totalProduits, 2, ',', ' ') }} F</span>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- RESULTAT FINAL -->
-    <div class="relative bg-card-bg border-4 border-primary rounded-[3rem] p-16 shadow-2xl overflow-hidden text-center">
-        <div class="absolute -right-10 -bottom-10 opacity-5 pointer-events-none">
-            <i data-lucide="{{ $profit >= 0 ? 'award' : 'alert-octagon' }}" class="w-64 h-64 text-primary"></i>
+    <!-- RÉSULTAT FINAL -->
+    <div class="final-result-box text-center shadow-sm">
+        <h5 class="text-uppercase font-weight-bold text-muted mb-4 tracking-widest" style="font-size: 11px;">RÉSULTAT NET DE L'EXERCICE</h5>
+        <div class="display-3 font-weight-bold mb-4 text-nowrap {{ $profit >= 0 ? 'profit-text' : 'loss-text' }}" style="font-family: 'Inter';">
+            {{ number_format(abs($profit), 2, ',', ' ') }} <span class="h4 font-weight-normal opacity-50">FCFA</span>
         </div>
-
-        <div class="relative z-10">
-            <h3 class="text-sm font-black uppercase tracking-[0.5em] mb-8 text-primary">RÉSULTAT NET DE L'EXERCICE</h3>
-            <div
-                class="text-5xl md:text-8xl font-black tracking-tighter mb-8 {{ $profit >= 0 ? 'text-green-700' : 'text-red-700' }} whitespace-nowrap overflow-hidden text-ellipsis shadow-sm">
-                {{ number_format(abs($profit), 2, ',', ' ') }} <span
-                    class="text-sm md:text-2xl font-normal opacity-40">FCFA</span>
-            </div>
-
-            <div class="mt-8 flex justify-center">
-                @if ($profit >= 0)
-                    <div
-                        class="inline-flex items-center px-10 py-4 bg-green-100 text-green-700 rounded-3xl font-black text-xs uppercase tracking-widest border-2 border-green-200">
-                        <i data-lucide="smile" class="w-6 h-6 mr-3"></i>
-                        BÉNÉFICE RÉALISÉ
-                    </div>
-                @else
-                    <div
-                        class="inline-flex items-center px-10 py-4 bg-red-100 text-red-700 rounded-3xl font-black text-xs uppercase tracking-widest border-2 border-red-200">
-                        <i data-lucide="frown" class="w-6 h-6 mr-3"></i>
-                        DÉFICIT CONSTATÉ
-                    </div>
-                @endif
-            </div>
-            <p class="mt-10 text-text-secondary font-black text-xs tracking-[0.2em] max-w-lg mx-auto uppercase opacity-60">
-                {{ $profit >= 0 ? 'La performance renforce les capitaux propres de l\'entité.' : 'Les charges excèdent les produits générés sur la période.' }}
-            </p>
+        <div class="d-flex justify-content-center">
+            @if ($profit >= 0)
+                <div class="badge badge-success px-4 py-3 rounded-pill d-flex align-items-center shadow-sm">
+                    <span class="material-symbols-outlined mr-2">sentiment_very_satisfied</span> BÉNÉFICE RÉALISÉ
+                </div>
+            @else
+                <div class="badge badge-danger px-4 py-3 rounded-pill d-flex align-items-center shadow-sm">
+                    <span class="material-symbols-outlined mr-2">sentiment_very_dissatisfied</span> DÉFICIT CONSTATÉ
+                </div>
+            @endif
         </div>
+        <p class="mt-4 text-muted small font-weight-bold italic px-md-5">
+            {{ $profit >= 0 ? 'Excellente performance ! Les revenus générés assurent la pérennité de l\'entreprise.' : 'Une analyse des charges s\'impose pour rétablir l\'équilibre financier.' }}
+        </p>
     </div>
 
-    <style>
-        @media print {
-            .no-print {
-                display: none !important;
-            }
-
-            body {
-                background: white !important;
-            }
-
-            .grid {
-                display: block !important;
-            }
-
-            .bg-card-bg {
-                border: 1px solid #eee !important;
-                margin-bottom: 2rem;
-            }
-
-            .bg-primary {
-                background-color: #005b82 !important;
-                color: white !important;
-                -webkit-print-color-adjust: exact;
-            }
-        }
-    </style>
 @endsection
 
 @section('scripts')
-    {{-- Données JSON pour exports propres --}}
     <script>
         const chargesJson = @json($charges);
         const produitsJson = @json($produits);
@@ -281,31 +257,20 @@
             const sep = ';';
             const q = (v) => '"' + String(v ?? '').replace(/"/g, '""') + '"';
             const fmt = (n) => parseFloat(n).toFixed(2).replace('.', ',');
-
             let rows = [];
-            // En-tête
             rows.push([q('COMPTE'), q('INTITULÉ'), q('MONTANT')].join(sep));
 
             const data = dataset === 'charges' ? chargesJson : produitsJson;
-
             for (const [prefix, group] of Object.entries(data.groups)) {
-                // Comptes du groupe
-                for (const acc of group.accounts) {
-                    rows.push([q(acc.code), q(acc.libelle), q(fmt(acc.montant))].join(sep));
-                }
-                // Sous-total du groupe
+                for (const acc of group.accounts) { rows.push([q(acc.code), q(acc.libelle), q(fmt(acc.montant))].join(sep)); }
                 rows.push([q('Sous Total ' + group.prefix), q(''), q(fmt(group.total))].join(sep));
-                rows.push(['', '', ''].join(sep)); // ligne vide
+                rows.push(['', '', ''].join(sep));
             }
-
-            // Total général
             const total = dataset === 'charges' ? chargesJson.total : produitsJson.total;
             rows.push([q('TOTAL'), q(''), q(fmt(total))].join(sep));
 
             const csvContent = '\uFEFF' + rows.join('\n');
-            const blob = new Blob([csvContent], {
-                type: 'text/csv;charset=utf-8;'
-            });
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
             link.setAttribute('download', filename + '_' + new Date().toISOString().slice(0, 10) + '.csv');

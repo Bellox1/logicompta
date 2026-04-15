@@ -5,13 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pièce Comptable {{ str_replace('PC-', '', $entry->numero_piece) }} -
-        {{ $user->entreprise->name ?? 'Logicompta' }}</title>
+        {{ $user->entreprise->name ?? 'COMPTAFIQ' }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Arial', 'sans-serif'], },
+                    fontFamily: {
+                        sans: ['Arial', 'sans-serif'],
+                    },
                     colors: {
                         primary: '#005b82',
                         'primary-light': '#0055aa',
@@ -36,7 +38,7 @@
                 margin: 0.5cm;
                 size: portrait;
             }
-            
+
             table {
                 min-width: 100% !important;
                 width: 100% !important;
@@ -77,8 +79,10 @@
 </head>
 
 <body class="bg-white p-2 md:p-8">
-    <div class="no-print mb-6 flex flex-col md:flex-row md:items-center justify-between gap-6 bg-slate-50 p-6 rounded-2xl border border-slate-200">
-        <p class="text-sm text-slate-600 font-medium italic text-center md:text-left">Aperçu avant impression. Sur téléphone, utilisez l'option "Enregistrer en PDF".</p>
+    <div
+        class="no-print mb-6 flex flex-col md:flex-row md:items-center justify-between gap-6 bg-slate-50 p-6 rounded-2xl border border-slate-200">
+        <p class="text-sm text-slate-600 font-medium italic text-center md:text-left">Aperçu avant impression. Sur
+            téléphone, utilisez l'option "Enregistrer en PDF".</p>
         <div class="flex justify-center gap-4">
             <button onclick="window.close()"
                 class="px-5 py-2.5 text-sm font-bold text-slate-600 hover:text-slate-900 border border-slate-300 rounded-xl hover:bg-white transition-all">Fermer</button>
@@ -91,21 +95,28 @@
     </div>
 
     <div class="w-full max-w-full overflow-hidden">
-        <div class="mb-8 border-b-2 border-slate-900 pb-6 flex flex-col md:flex-row md:justify-between md:items-end gap-4">
+        <div
+            class="mb-8 border-b-2 border-slate-900 pb-6 flex flex-col md:flex-row md:justify-between md:items-end gap-4">
             <div>
-                <span class="inline-block px-2 py-0.5 bg-primary text-white text-[9px] font-black rounded uppercase tracking-widest mb-2">Pièce Comptable</span>
-                <h1 class="text-3xl font-black uppercase tracking-tighter text-slate-900">N° {{ str_replace('PC-', '', $entry->numero_piece) }}</h1>
-                <p class="text-base font-bold text-slate-500 italic uppercase mt-1">{{ $user->entreprise->name ?? 'MA SOCIETE' }}</p>
+                <span
+                    class="inline-block px-2 py-0.5 bg-primary text-white text-[9px] font-black rounded uppercase tracking-widest mb-2">Pièce
+                    Comptable</span>
+                <h1 class="text-3xl font-black uppercase tracking-tighter text-slate-900">N°
+                    {{ str_replace('PC-', '', $entry->numero_piece) }}</h1>
+                <p class="text-base font-bold text-slate-500 italic uppercase mt-1">
+                    {{ $user->entreprise->name ?? 'MA SOCIETE' }}</p>
             </div>
             <div class="md:text-right">
                 <div class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Date</div>
-                <div class="text-xl font-black text-primary">{{ \Carbon\Carbon::parse($entry->date)->format('d/m/Y') }}</div>
+                <div class="text-xl font-black text-primary">{{ \Carbon\Carbon::parse($entry->date)->format('d/m/Y') }}
+                </div>
             </div>
         </div>
 
         <div class="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
-                <span class="block text-[9px] uppercase font-bold text-slate-400 mb-1 tracking-widest text-primary">Libellé</span>
+                <span
+                    class="block text-[9px] uppercase font-bold text-slate-400 mb-1 tracking-widest text-primary">Libellé</span>
                 <p class="text-sm font-semibold text-slate-800 italic">"{{ $entry->libelle }}"</p>
             </div>
             <div class="p-4 bg-slate-50 rounded-xl border border-slate-100 flex flex-col justify-center space-y-1">
@@ -131,12 +142,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($entry->lines as $line)
+                    @foreach ($entry->lines as $line)
                         <tr>
-                            <td class="font-bold text-primary text-center">{{ $line->sousCompte->numero_sous_compte ?? '???' }}</td>
+                            <td class="font-bold text-primary text-center">
+                                {{ $line->sousCompte->numero_sous_compte ?? '???' }}</td>
                             <td>
-                                <div class="font-bold text-slate-900 uppercase text-[10px]">{{ $line->sousCompte->libelle ?? 'Compte inconnu' }}</div>
-                                @if($line->libelle && $line->libelle != $entry->libelle)
+                                <div class="font-bold text-slate-900 uppercase text-[10px]">
+                                    {{ $line->sousCompte->libelle ?? 'Compte inconnu' }}</div>
+                                @if ($line->libelle && $line->libelle != $entry->libelle)
                                     <div class="text-[9px] text-slate-500 italic">{{ $line->libelle }}</div>
                                 @endif
                             </td>
@@ -149,7 +162,8 @@
                 </tbody>
                 <tfoot>
                     <tr class="total-row">
-                        <td colspan="2" class="text-right uppercase text-[9px] py-3 opacity-60">Totaux de l'écriture</td>
+                        <td colspan="2" class="text-right uppercase text-[9px] py-3 opacity-60">Totaux de l'écriture
+                        </td>
                         <td class="text-right text-sm text-primary font-black">
                             {{ number_format($entry->lines->sum('debit'), 2, ',', ' ') }}
                         </td>
@@ -163,7 +177,7 @@
 
         <div class="mt-10 pt-6 border-t border-slate-100 flex justify-between items-center italic">
             <div class="text-[8px] text-slate-400 uppercase tracking-widest">
-                Généré par Logicompta le {{ now()->format('d/m/Y') }}
+                Généré par COMPTAFIQ le {{ now()->format('d/m/Y') }}
             </div>
             <div class="text-[9px] text-slate-300 font-bold uppercase p-3 border border-slate-100 rounded-lg">
                 Cachet & Signature

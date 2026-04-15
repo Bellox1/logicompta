@@ -106,11 +106,12 @@ class AccountController extends Controller
         $user = Auth::user();
         $sousCompte = SousCompte::where('entreprise_id', $user->entreprise_id)->findOrFail($id);
 
-        // Seul l'admin (créateur) peut supprimer
-        if ($user->role !== 'admin') {
-            return back()->with('error', 'Impossible de supprimer, ceci est réservé uniquement au créateur de la société..');
+        // 1. Vérifier si le sous-compte est utilisé dans des écritures (Priorité absolue)
+        if ($sousCompte->entryLines()->exists()) {
+            return back()->with('error', 'Impossible de supprimer un sous-compte qui contient déjà des écritures comptables. Seuls les sous-comptes vides peuvent être supprimés.');
         }
-        
+
+        // Si le sous-compte est vide, tout le monde peut le supprimer
         $sousCompte->delete();
 
         return back()->with('success', 'Sous-compte supprimé avec succès.');

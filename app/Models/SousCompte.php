@@ -19,18 +19,6 @@ class SousCompte extends Model
     protected static function boot()
     {
         parent::boot();
-
-        static::deleting(function ($sousCompte) {
-            if (!$sousCompte->isForceDeleting()) {
-                // Supprimer les lignes (déclenche l'AuditTraceable de chaque ligne)
-                // Attention: en comptabilité c'est risqué, mais on suit la demande de traçabilité totale.
-                $sousCompte->entryLines()->get()->each->delete();
-            }
-        });
-
-        static::restoring(function ($sousCompte) {
-            $sousCompte->entryLines()->withTrashed()->get()->each->restore();
-        });
     }
 
     public function account(): \Illuminate\Database\Eloquent\Relations\BelongsTo

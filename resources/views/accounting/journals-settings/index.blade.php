@@ -2,85 +2,118 @@
 
 @section('title', 'Gestion des Journaux')
 
-@section('content')
-<div class="mb-8 flex flex-col md:flex-row md:justify-between md:items-center gap-5">
-    <div>
-        <h1 class="text-2xl md:text-3xl font-bold text-slate-800 mb-2">Gestion des Journaux</h1>
-        <p class="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em]">Configurez vos différents journaux comptables</p>
-    </div>
-    <div class="flex flex-col sm:flex-row gap-3 items-start">
-        <a href="{{ route('accounting.journal.create') }}" class="px-5 py-2.5 bg-white border border-border text-slate-700 font-bold rounded-xl hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm uppercase tracking-widest text-xs">
-            <i data-lucide="arrow-left" class="w-4 h-4"></i>
-            Retour Saisie
-        </a>
-        <a href="{{ route('accounting.journals-settings.create') }}" class="px-5 py-2.5 bg-primary text-white font-bold rounded-xl hover:bg-primary-light transition-all flex items-center gap-2 shadow-lg uppercase tracking-widest text-xs">
-            <i data-lucide="plus-circle" class="w-4 h-4"></i>
-            Nouveau Journal
-        </a>
-    </div>
-</div>
+@section('styles')
+    <style>
+        .journals-table thead th {
+            background: #f8fafc;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #64748b;
+            padding: 20px 25px;
+            border-bottom: 2px solid #f1f5f9;
+        }
 
-<div class="bg-card-bg border border-border rounded-xl md:rounded-2xl shadow-sm overflow-hidden">
-    <div class="table-responsive">
-        <table class="w-full min-w-[800px] text-left border-collapse">
-            <thead class="bg-slate-50 border-b border-border">
-            <tr>
-                <th class="px-8 py-5 text-xs font-bold uppercase tracking-widest text-slate-600">Nom du Journal</th>
-                <th class="px-8 py-5 text-xs font-bold uppercase tracking-widest text-slate-600">Description</th>
-                <th class="px-8 py-5 text-xs font-bold uppercase tracking-widest text-slate-600 text-center">Actions</th>
-            </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-100">
-            @forelse($journals as $journal)
-            <tr class="hover:bg-slate-50/50 transition-all">
-                <td class="px-8 py-6 font-normal text-slate-900 border-r border-slate-100">{{ $journal->name }}</td>
-                <td class="px-8 py-6 text-sm text-slate-500">{{ $journal->description ?: 'Aucune description' }}</td>
-                <td class="px-8 py-6">
-                    <div class="flex justify-center items-center gap-4">
-                        <a href="{{ route('accounting.journals-settings.edit', $journal->id) }}" class="p-2 text-primary hover:bg-primary/10 transition-colors rounded-xl" title="Modifier">
-                            <i data-lucide="edit-3" class="w-5 h-5"></i>
-                        </a>
-                        <form id="delete-form-{{ $journal->id }}" action="{{ route('accounting.journals-settings.destroy', $journal->id) }}" method="POST" class="inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="button" 
-                                onclick="Swal.fire({
-                                    title: 'Supprimer ce journal ?',
-                                    text: 'Cette action est irréversible.',
-                                    icon: 'warning',
-                                    showCancelButton: true,
-                                    confirmButtonColor: '#005b82',
-                                    cancelButtonColor: '#94a3b8',
-                                    confirmButtonText: 'Oui, supprimer',
-                                    cancelButtonText: 'Annuler'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        document.getElementById('delete-form-{{ $journal->id }}').submit();
-                                    }
-                                })"
-                                class="p-2 text-rose-500 hover:bg-rose-50 transition-colors rounded-xl" title="Supprimer">
-                                <i data-lucide="trash-2" class="w-5 h-5"></i>
-                            </button>
-                        </form>
-                    </div>
-                </td>
-            </tr>
-            @empty
-            <tr>
-                <td colspan="3" class="px-8 py-20 text-center">
-                    <i data-lucide="book-x" class="mx-auto w-12 h-12 text-slate-200 mb-4 opacity-50"></i>
-                    <p class="text-slate-400 font-medium">Aucun journal configuré.</p>
-                </td>
-            </tr>
-            @endforelse
-        </tbody>
-    </table>
-    </div>
-</div>
+        .journals-table tbody td {
+            padding: 20px 25px;
+            vertical-align: middle;
+            font-weight: 600;
+            color: #1e293b;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .premium-card {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
+            overflow: hidden;
+        }
+
+        .journal-badge {
+            background: rgba(0, 91, 130, 0.05);
+            color: var(--primary-color);
+            padding: 8px 15px;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 12px;
+            display: inline-block;
+        }
+    </style>
 @endsection
 
-@section('scripts')
-<script>
-    lucide.createIcons();
-</script>
+@section('content')
+    <div class="mb-5 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+        <div>
+            <h1 class="h3 font-weight-bold text-dark mb-1" style="font-family: 'Manrope';">Gestion des Journaux</h1>
+            <p class="text-muted small font-weight-bold uppercase tracking-wider">Configurez vos différents types de journaux comptables</p>
+        </div>
+        <div class="mt-3 mt-md-0 d-flex gap-2">
+            <a href="{{ route('accounting.journal.create') }}" class="btn btn-white btn-sm px-4 py-2 font-weight-bold border rounded-lg shadow-sm mr-2">
+                <span class="material-symbols-outlined align-middle mr-1" style="font-size: 18px;">arrow_back</span> RETOUR SAISIE
+            </a>
+            <a href="{{ route('accounting.journals-settings.create') }}" class="btn btn-primary btn-sm px-4 py-2 font-weight-bold rounded-lg shadow-sm">
+                <span class="material-symbols-outlined align-middle mr-1" style="font-size: 18px;">add_circle</span> NOUVEAU JOURNAL
+            </a>
+        </div>
+    </div>
+
+    <div class="premium-card">
+        <div class="table-responsive">
+            <table class="table journals-table mb-0">
+                <thead>
+                    <tr>
+                        <th>NOM DU JOURNAL</th>
+                        <th>DESCRIPTION</th>
+                        <th class="text-center">ACTIONS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($journals as $journal)
+                        <tr>
+                            <td style="width: 300px;">
+                                <div class="journal-badge">{{ $journal->name }}</div>
+                            </td>
+                            <td class="text-muted small">
+                                {{ $journal->description ?: 'Aucune description fournie pour ce journal.' }}
+                            </td>
+                            <td class="text-center">
+                                <div class="d-flex justify-content-center">
+                                    <a href="{{ route('accounting.journals-settings.edit', $journal->id) }}" class="btn btn-link text-primary p-2">
+                                        <span class="material-symbols-outlined" style="font-size: 22px;">edit_document</span>
+                                    </a>
+                                    <button type="button" 
+                                        onclick="Swal.fire({
+                                            title: 'Supprimer ce journal ?',
+                                            text: 'Cette action effacera définitivement le journal.',
+                                            icon: 'warning',
+                                            showCancelButton: true,
+                                            confirmButtonColor: '#005b82',
+                                            confirmButtonText: 'OUI, SUPPRIMER',
+                                            cancelButtonText: 'ANNULER'
+                                        }).then((result) => {
+                                            if (result.isConfirmed) document.getElementById('delete-form-{{ $journal->id }}').submit();
+                                        })"
+                                        class="btn btn-link text-danger p-2">
+                                        <span class="material-symbols-outlined" style="font-size: 22px;">delete</span>
+                                    </button>
+                                    <form id="delete-form-{{ $journal->id }}" action="{{ route('accounting.journals-settings.destroy', $journal->id) }}" method="POST" class="d-none">
+                                        @csrf @method('DELETE')
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="3" class="text-center py-5">
+                                <span class="material-symbols-outlined text-muted opacity-25 mb-3" style="font-size: 60px;">book_5</span>
+                                <p class="small font-weight-bold text-muted">Aucun journal trouvé dans la base</p>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
 @endsection

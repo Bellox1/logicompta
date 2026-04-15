@@ -2,288 +2,281 @@
 
 @section('title', 'Plan Comptable')
 
+@section('styles')
+    <style>
+        .account-table thead th {
+            background: #f8fafc;
+            border-top: none;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #64748b;
+            padding: 15px 25px;
+        }
+
+        .account-table tbody td {
+            padding: 15px 25px;
+            vertical-align: middle;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .classe-header {
+            background: #f1f5f9;
+            padding: 10px 25px;
+            font-weight: 800;
+            font-size: 11px;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .premium-card {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
+            overflow: hidden;
+        }
+
+        .search-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            max-width: 350px;
+        }
+
+        .search-container input::placeholder {
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        .modal-premium .modal-content {
+            border-radius: 25px;
+            border: none;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.1);
+        }
+
+        .modal-premium .modal-header {
+            border-bottom: 1px solid #f1f5f9;
+            padding: 25px 35px;
+        }
+
+        .modal-premium .modal-body {
+            padding: 35px;
+        }
+    </style>
+@endsection
+
 @section('content')
-    <div>
-        <div class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div>
-                <h1 class="text-3xl font-black text-text-main uppercase tracking-tight">Plan Comptable & Sous-comptes</h1>
-                <p class="text-sm text-text-secondary mt-1 font-bold">Consultez le référentiel SYSCOHADA et gérez vos
-                    sous-comptes personnalisés</p>
-            </div>
-            <div class="flex flex-col md:flex-row items-center gap-3">
-                <a href="{{ route('accounting.journals-settings.index') }}"
-                    class="w-full md:w-auto px-5 py-2.5 bg-white border border-border text-text-main font-black rounded-xl hover:-translate-y-0.5 transition-all text-xs flex items-center justify-center gap-2 shadow-sm uppercase scroll-smooth tracking-widest">
-                    <i data-lucide="settings-2" class="w-4 h-4 text-primary"></i>
-                    Configuration Journaux
-                </a>
+    <div class="mb-5 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+        <div>
+            <h1 class="h3 font-weight-bold text-dark mb-1" style="font-family: 'Manrope';">Plan Comptable & Sous-comptes</h1>
+            <p class="text-muted small font-weight-bold">Consultez le référentiel SYSCOHADA et gérez vos comptes auxiliaires.</p>
+        </div>
+        <div class="mt-3 mt-md-0">
+            <a href="{{ route('accounting.journals-settings.index') }}" class="btn btn-white btn-sm font-weight-bold px-3 py-2 border shadow-sm rounded-pill text-uppercase" style="font-size: 10px; letter-spacing: 1px;">
+                <span class="material-symbols-outlined align-middle mr-1" style="font-size: 18px;">settings</span> Configuration Journaux
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- PLAN COMPTABLE -->
+        <div class="col-xl-8 mb-4">
+            <div class="premium-card h-100 d-flex flex-column">
+                <div class="p-4 border-bottom d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+                    <h5 class="font-weight-bold text-dark mb-3 mb-md-0 d-flex align-items-center" style="font-family: 'Manrope';">
+                        <span class="material-symbols-outlined mr-2 text-primary">book</span> RÉFÉRENTIEL SYSCOHADA
+                    </h5>
+                    <div class="search-container w-100 px-3" style="background: #f1f5f9; border-radius: 10px; height: 40px; display: flex; align-items: center;">
+                        <span class="material-symbols-outlined" style="font-size: 20px; color: #64748b; flex-shrink: 0;">search</span>
+                        <input type="text" id="searchAccount" class="border-0 bg-transparent ml-2 flex-grow-1" style="box-shadow: none; font-size: 12px; font-weight: 600; outline: none; height: 100%;" placeholder="Rechercher dans le plan...">
+                    </div>
+                </div>
+
+                <div class="table-responsive flex-grow-1" style="max-height: 700px; overflow-y: auto;" id="account-list-container">
+                    <table class="table account-table mb-0">
+                        @foreach ($accounts as $classe => $classAccounts)
+                            <thead>
+                                <tr>
+                                    <th colspan="3" class="classe-header">CLASSE {{ $classe }}</th>
+                                </tr>
+                                <tr>
+                                    <th style="width: 100px;">N°</th>
+                                    <th>INTITULÉ</th>
+                                    <th class="text-right">ACTION</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($classAccounts as $account)
+                                    <tr class="account-row" data-search="{{ $account->code_compte }} {{ strtolower($account->libelle) }}">
+                                        <td class="font-weight-bold text-primary font-mono" style="width: 100px;">{{ $account->code_compte }}</td>
+                                        <td class="font-weight-bold text-dark text-truncate" style="max-width: 300px;">{{ $account->libelle }}</td>
+                                        <td class="text-right">
+                                            <button onclick="openSubAccountModal({{ $account->id }}, '{{ $account->code_compte }}', '{{ addslashes($account->libelle) }}')" 
+                                                class="btn btn-link text-primary font-weight-bold text-uppercase p-0" style="font-size: 10px; letter-spacing: 1px;">
+                                                <span class="material-symbols-outlined align-middle mr-1" style="font-size: 16px;">add_circle</span> Sous-compte
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        @endforeach
+                    </table>
+                </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
-            <!-- COLONNE GAUCHE: PLAN COMPTABLE -->
-            <div class="xl:col-span-2">
-                <div class="bg-card-bg border border-border rounded-3xl shadow-sm overflow-hidden h-full flex flex-col">
-                    <div class="p-6 border-b border-border flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div>
-                            <h2 class="text-lg font-black text-text-main flex items-center gap-2 uppercase tracking-widest">
-                                <i data-lucide="book-open" class="w-5 h-5 text-primary"></i>
-                                Référentiel SYSCOHADA
-                            </h2>
-                            <p class="text-[10px] text-text-secondary font-black uppercase tracking-wider">Plan comptable
-                                officiel</p>
-                        </div>
-                        <div class="relative max-w-xs w-full">
-                            <i data-lucide="search"
-                                class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
-                            <input type="text" id="searchAccount" placeholder="Rechercher par numéro ou intitulé..."
-                                class="w-full bg-bg border border-border pl-10 pr-4 py-2.5 text-xs font-bold rounded-xl outline-none focus:border-primary transition-all dark:text-white">
-                        </div>
-                    </div>
-
-                    <div class="overflow-y-auto custom-scrollbar" style="max-height: 800px;" id="account-list-container">
-                        @foreach ($accounts as $classe => $classAccounts)
-                            <div class="classe-group">
-                                <div class="bg-white px-6 py-2 border-y border-border sticky top-0 z-10">
-                                    <span
-                                        class="text-[10px] font-black text-text-secondary uppercase tracking-widest">Classe
-                                        {{ $classe }}</span>
-                                </div>
-                                <table class="w-full text-left">
-                                    <thead class="bg-slate-50 border-b border-border">
-                                        <tr class="text-[10px] uppercase font-black text-text-secondary tracking-widest">
-                                            <th class="px-6 py-2">Numéro</th>
-                                            <th class="px-6 py-2">Intitulé</th>
-                                            <th class="px-6 py-2 text-right">Sous-compte</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-slate-50 text-[13px]">
-                                        @foreach ($classAccounts as $account)
-                                            <tr class="hover:bg-slate-50/50 transition-colors account-row"
-                                                data-search="{{ $account->code_compte }} {{ strtolower($account->libelle) }}">
-                                                <td class="px-6 py-4 font-mono font-bold text-primary w-32">
-                                                    {{ $account->code_compte }}
-                                                </td>
-                                                <td class="px-6 py-4 font-black text-text-main truncate max-w-md">
-                                                    {{ $account->libelle }}
-                                                </td>
-                                                <td class="px-6 py-4 text-right whitespace-nowrap">
-                                                    <button
-                                                        onclick="openSubAccountModal({{ $account->id }}, '{{ $account->code_compte }}', '{{ addslashes($account->libelle) }}')"
-                                                        class="text-primary hover:text-primary-light font-black text-[11px] uppercase flex items-center gap-1.5 ml-auto transition-colors whitespace-nowrap">
-                                                        <i data-lucide="plus-circle" class="w-4 h-4"></i> Sous-compte
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
-
-            <!-- COLONNE DROITE: MES SOUS-COMPTES -->
-            <div class="xl:col-span-1">
-                <div class="bg-card-bg border border-border rounded-3xl shadow-sm overflow-hidden h-full flex flex-col">
-                    <div class="p-6 border-b border-border flex items-center justify-between">
-                        <div>
-                            <h2 class="text-lg font-black text-text-main flex items-center gap-2 uppercase tracking-widest">
-                                <i data-lucide="layers" class="w-5 h-5 text-primary"></i>
-                                Mes Sous-comptes
-                            </h2>
-                            <p class="text-[10px] text-text-secondary font-black uppercase tracking-wider">Interface de
-                                saisie</p>
-                        </div>
-                        <a href="{{ route('accounting.account.import') }}"
-                            class="px-5 py-2.5 bg-primary text-white font-bold rounded-lg hover:opacity-90 transition-all text-xs flex items-center justify-center gap-2">
-                            <i data-lucide="upload" class="w-4 h-4"></i> Importer
+        <!-- MES SOUS-COMPTES -->
+        <div class="col-xl-4 mb-4">
+            <div class="premium-card h-100 d-flex flex-column">
+                <div class="p-4 border-bottom">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="font-weight-bold text-dark mb-0 d-flex align-items-center" style="font-family: 'Manrope';">
+                            <span class="material-symbols-outlined mr-2 text-primary">layers</span> MES AUXILIAIRES
+                        </h5>
+                        <a href="{{ route('accounting.account.import') }}" class="btn btn-primary btn-sm px-3 font-weight-bold rounded-lg shadow-sm">
+                            <span class="material-symbols-outlined align-middle mr-1" style="font-size: 18px;">upload</span> Import
                         </a>
                     </div>
+                    <div class="search-container w-100 px-3" style="background: #f1f5f9; border-radius: 10px; height: 35px; display: flex; align-items: center;">
+                        <span class="material-symbols-outlined" style="font-size: 18px; color: #64748b; flex-shrink: 0;">person_search</span>
+                        <input type="text" id="searchSubAccount" class="border-0 bg-transparent ml-2 flex-grow-1" style="box-shadow: none; font-size: 11px; font-weight: 600; outline: none; height: 100%;" placeholder="Filtrer mes auxiliaires...">
+                    </div>
+                </div>
 
-                    <div class="p-0 max-h-[800px] overflow-y-auto">
-                        @if ($allSousComptes->count() > 0)
-                            <table class="w-full text-left">
-                                <thead
-                                    class="bg-slate-50 text-[10px] uppercase text-slate-400 font-bold tracking-widest border-b border-slate-100">
-                                    <tr>
-                                        <th class="px-4 py-3">Numéro</th>
-                                        <th class="px-4 py-3">Intitulé</th>
-                                        <th class="px-4 py-3 text-right">Actions</th>
+                <div class="flex-grow-1" style="max-height: 700px; overflow-y: auto;">
+                    @if ($allSousComptes->count() > 0)
+                        <table class="table account-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th style="width: 80px;">N°</th>
+                                    <th>LIBELLÉ</th>
+                                    <th class="text-right">ACT.</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($allSousComptes as $sc)
+                                    <tr class="sub-account-row" data-search="{{ $sc->numero_sous_compte }} {{ strtolower($sc->libelle) }}">
+                                        <td class="font-weight-bold text-primary font-mono small" style="white-space: nowrap;">{{ $sc->numero_sous_compte }}</td>
+                                        <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;">
+                                            <span class="font-weight-bold text-dark small">{{ $sc->libelle }}</span>
+                                            <span class="text-muted ml-1" style="font-size: 8px;">({{ $sc->account->code_compte }})</span>
+                                        </td>
+                                        <td class="text-right">
+                                            <div class="d-flex justify-content-end align-items-center">
+                                                <button onclick="openEditModal({{ $sc->id }}, '{{ $sc->numero_sous_compte }}', '{{ addslashes($sc->libelle) }}')" 
+                                                    class="btn btn-link text-muted p-1">
+                                                    <span class="material-symbols-outlined" style="font-size: 16px;">edit</span>
+                                                </button>
+                                                <button onclick="confirmDelete({{ $sc->id }})" class="btn btn-link text-muted p-1">
+                                                    <span class="material-symbols-outlined" style="font-size: 16px;">delete</span>
+                                                </button>
+                                                <form id="delete-form-{{ $sc->id }}" action="{{ route('accounting.account.destroy_sous_compte', $sc->id) }}" method="POST" class="d-none">
+                                                    @csrf @method('DELETE')
+                                                </form>
+                                            </div>
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody class="divide-y divide-slate-50 text-[13px]">
-                                    @foreach ($allSousComptes as $sc)
-                                        <tr class="hover:bg-slate-50/50 transition-colors">
-                                            <td class="px-4 py-4 font-mono font-bold text-primary">
-                                                {{ $sc->numero_sous_compte }}</td>
-                                            <td class="px-4 py-4 font-semibold text-slate-700">
-                                                {{ $sc->libelle }}
-                                                <div class="text-[9px] text-slate-400 font-bold uppercase mt-1">Parent:
-                                                    {{ $sc->account->code_compte }}</div>
-                                            </td>
-                                            <td class="px-4 py-4 text-right">
-                                                <div class="flex justify-end gap-1">
-                                                    <button
-                                                        onclick="openEditModal({{ $sc->id }}, '{{ $sc->numero_sous_compte }}', '{{ addslashes($sc->libelle) }}')"
-                                                        class="p-2 text-slate-400 hover:text-primary hover:bg-slate-50 rounded-lg transition-all">
-                                                        <i data-lucide="edit-3" class="w-4 h-4"></i>
-                                                    </button>
-                                                    <button type="button" onclick="confirmDelete({{ $sc->id }})"
-                                                        class="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all">
-                                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                                    </button>
-                                                    <form id="delete-form-{{ $sc->id }}"
-                                                        action="{{ route('accounting.account.destroy_sous_compte', $sc->id) }}"
-                                                        method="POST" class="hidden">
-                                                        @csrf @method('DELETE')
-                                                    </form>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        @else
-                            <div class="p-16 text-center">
-                                <div
-                                    class="bg-slate-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <i data-lucide="layers" class="w-8 h-8 text-slate-200"></i>
-                                </div>
-                                <p class="text-sm font-semibold text-slate-500">Aucun sous-compte</p>
-                                <p class="text-[10px] text-slate-400 mt-1 uppercase font-bold tracking-wider">Configurez vos
-                                    comptes auxiliaires</p>
-                            </div>
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Modals -->
-
-        <!-- Modal Ajouter Sous Compte -->
-        <div id="subAccountModal"
-            class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[9999] hidden items-center justify-center p-4">
-            <div
-                class="bg-card-bg rounded-3xl shadow-2xl max-w-md w-full relative overflow-hidden animate-in fade-in zoom-in duration-200 border border-border">
-                <div class="p-8 border-b border-border flex justify-between items-center bg-white/50">
-                    <h3 class="text-xl font-black text-text-main uppercase tracking-widest">Nouveau Sous-compte</h3>
-                    <button type="button" onclick="closeSubAccountModal()"
-                        class="text-text-secondary hover:text-rose-500 transition-colors">
-                        <i data-lucide="x" class="w-6 h-6"></i>
-                    </button>
-                </div>
-
-                <form action="{{ route('accounting.account.store_sous_compte') }}" method="POST" class="p-8">
-                    @csrf
-                    <input type="hidden" name="account_id" id="sub_account_compte_id">
-
-                    <div class="mb-6">
-                        <label class="block text-[11px] font-bold text-slate-400 mb-2 uppercase tracking-wider">Compte de
-                            rattachement</label>
-                        <div id="modal_compte_label"
-                            class="p-4 bg-slate-50 border border-slate-100 rounded-lg text-sm font-bold text-slate-600">
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @else
+                        <div class="p-5 text-center my-5">
+                            <span class="material-symbols-outlined text-muted opacity-25 mb-3" style="font-size: 60px;">list_alt</span>
+                            <p class="small font-weight-bold text-muted">Aucun sous-compte créé</p>
                         </div>
-                    </div>
-
-                    <div class="mb-6">
-                        <label class="block text-[11px] font-bold text-slate-400 mb-2 uppercase tracking-wider">Numéro
-                            personnalisé</label>
-                        <input type="text" name="numero_sous_compte" id="numero_sous_compte" required
-                            class="w-full bg-white border border-slate-200 p-4 text-sm font-bold rounded-lg outline-none focus:border-primary transition-all">
-                        <p class="text-[10px] text-slate-400 mt-2 font-medium">Doit être unique dans votre comptabilité.
-                        </p>
-                    </div>
-
-                    <div class="mb-8">
-                        <label class="block text-[11px] font-bold text-slate-400 mb-2 uppercase tracking-wider">Libellé
-                            descriptif</label>
-                        <input type="text" name="libelle" required placeholder="Ex: Client Dupuis, Banque BOA..."
-                            class="w-full bg-white border border-slate-200 p-4 text-sm font-semibold rounded-lg outline-none focus:border-primary transition-all">
-                    </div>
-
-                    <div class="flex flex-col gap-3 mt-4">
-                        <button type="submit"
-                            class="w-full bg-primary text-white py-2.5 rounded-lg font-bold hover:opacity-90 transition-all shadow-sm">
-                            Créer le sous-compte
-                        </button>
-                        <button type="button" onclick="closeSubAccountModal()"
-                            class="w-full py-2.5 font-bold text-slate-400 text-xs uppercase tracking-widest hover:text-slate-600 transition-all">
-                            Annuler
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Modal Editer Sous Compte -->
-        <div id="editSubAccountModal"
-            class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[9999] hidden items-center justify-center p-4">
-            <div
-                class="bg-white rounded-xl shadow-2xl max-w-md w-full relative overflow-hidden animate-in fade-in zoom-in duration-200">
-                <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-                    <h3 class="text-lg font-bold text-slate-800">Modifier le Sous-compte</h3>
-                    <button type="button" onclick="closeEditModal()"
-                        class="text-slate-400 hover:text-rose-500 transition-colors">
-                        <i data-lucide="x" class="w-5 h-5"></i>
-                    </button>
+                    @endif
                 </div>
-
-                <form id="editForm" method="POST" class="p-8">
-                    @csrf @method('PUT')
-
-                    <div class="mb-6">
-                        <label class="block text-[11px] font-bold text-slate-400 mb-2 uppercase tracking-wider">Numéro de
-                            Sous-compte</label>
-                        <input type="text" name="numero_sous_compte" id="edit_numero_sous_compte" required
-                            class="w-full bg-white border border-slate-200 p-4 text-sm font-bold rounded-lg outline-none focus:border-primary transition-all">
-                    </div>
-
-                    <div class="mb-8">
-                        <label class="block text-[11px] font-bold text-slate-400 mb-2 uppercase tracking-wider">Libellé du
-                            Sous-compte</label>
-                        <input type="text" name="libelle" id="edit_libelle" required
-                            class="w-full bg-white border border-slate-200 p-4 text-sm font-semibold rounded-lg outline-none focus:border-primary transition-all">
-                    </div>
-
-                    <div class="flex flex-col gap-3 mt-4">
-                        <button type="submit"
-                            class="w-full bg-primary text-white py-2.5 rounded-lg font-bold hover:opacity-90 transition-all shadow-sm">
-                            Mettre à jour
-                        </button>
-                        <button type="button" onclick="closeEditModal()"
-                            class="w-full py-2.5 font-bold text-slate-400 text-xs uppercase tracking-widest hover:text-slate-600 transition-all">
-                            Annuler
-                        </button>
-                    </div>
-                </form>
             </div>
         </div>
     </div>
 
+    <!-- MODAL AJOUT -->
+    <div class="modal fade modal-premium" id="subAccountModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header d-block text-center border-0 pb-0 position-relative">
+                    <button type="button" class="close position-absolute" data-dismiss="modal" style="right: 25px; top: 25px;">&times;</button>
+                    <h3 class="modal-title font-weight-bold text-dark" style="font-family: 'Manrope';">Nouveau Sous-compte</h3>
+                    <p class="text-muted small font-weight-bold">Configurez un compte auxiliaire personnalisé</p>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('accounting.account.store_sous_compte') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="account_id" id="sub_account_compte_id">
+                        
+                        <div class="form-group mb-4">
+                            <label class="small text-uppercase font-weight-bold text-muted">Rattachement</label>
+                            <div id="modal_compte_label" class="p-3 bg-light rounded-lg font-weight-bold border text-primary small"></div>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label class="small text-uppercase font-weight-bold text-muted">Numéro Personnalisé</label>
+                            <input type="text" name="numero_sous_compte" id="numero_sous_compte" class="form-control form-control-lg font-weight-bold rounded-xl border-2" required>
+                        </div>
+
+                        <div class="form-group mb-5">
+                            <label class="small text-uppercase font-weight-bold text-muted">Intitulé / Libellé</label>
+                            <input type="text" name="libelle" class="form-control form-control-lg font-weight-bold rounded-xl border-2" placeholder="Ex: Client ABC, Banque X..." required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block py-3 font-weight-bold rounded-xl shadow-lg">CRÉER LE SOUS-COMPTE</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL EDIT -->
+    <div class="modal fade modal-premium" id="editSubAccountModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header d-block text-center border-0 pb-0 position-relative">
+                    <button type="button" class="close position-absolute" data-dismiss="modal" style="right: 25px; top: 25px;">&times;</button>
+                    <h3 class="modal-title font-weight-bold text-dark" style="font-family: 'Manrope';">Modifier l'Auxiliaire</h3>
+                    <p class="text-muted small font-weight-bold">Mise à jour des informations du compte</p>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm" method="POST">
+                        @csrf @method('PUT')
+                        <div class="form-group mb-4">
+                            <label class="small text-uppercase font-weight-bold text-muted">Numéro</label>
+                            <input type="text" name="numero_sous_compte" id="edit_numero_sous_compte" class="form-control form-control-lg font-weight-bold rounded-xl border-2" required>
+                        </div>
+                        <div class="form-group mb-5">
+                            <label class="small text-uppercase font-weight-bold text-muted">Libellé</label>
+                            <input type="text" name="libelle" id="edit_libelle" class="form-control form-control-lg font-weight-bold rounded-xl border-2" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block py-3 font-weight-bold rounded-xl shadow-lg">ENREGISTRER LES MODIFICATIONS</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+@endsection
+
+@section('scripts')
     <script>
+        // Recherche Plan Comptable
         document.getElementById('searchAccount').addEventListener('input', function(e) {
             const search = e.target.value.toLowerCase();
             const rows = document.querySelectorAll('.account-row');
-            const groups = document.querySelectorAll('.classe-group');
-
             rows.forEach(row => {
                 const text = row.getAttribute('data-search');
-                if (text.includes(search)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
+                row.style.display = text.includes(search) ? '' : 'none';
             });
+        });
 
-            groups.forEach(group => {
-                const visibleRows = group.querySelectorAll('.account-row[style=""]');
-                if (visibleRows.length === 0 && search !== '') {
-                    group.style.display = 'none';
-                } else {
-                    group.style.display = '';
-                }
+        // Recherche Sous-comptes
+        document.getElementById('searchSubAccount').addEventListener('input', function(e) {
+            const search = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('.sub-account-row');
+            rows.forEach(row => {
+                const text = row.getAttribute('data-search');
+                row.style.display = text.includes(search) ? '' : 'none';
             });
         });
 
@@ -291,15 +284,7 @@
             document.getElementById('sub_account_compte_id').value = accountId;
             document.getElementById('modal_compte_label').innerText = accountCode + ' - ' + accountLabel;
             document.getElementById('numero_sous_compte').value = accountCode;
-
-            document.getElementById('subAccountModal').classList.remove('hidden');
-            document.getElementById('subAccountModal').classList.add('flex');
-            if (typeof lucide !== 'undefined') lucide.createIcons();
-        }
-
-        function closeSubAccountModal() {
-            document.getElementById('subAccountModal').classList.add('hidden');
-            document.getElementById('subAccountModal').classList.remove('flex');
+            $('#subAccountModal').modal('show');
         }
 
         function openEditModal(id, numero, libelle) {
@@ -307,15 +292,7 @@
             form.action = `/accounting/compte/sous-compte/${id}`;
             document.getElementById('edit_numero_sous_compte').value = numero;
             document.getElementById('edit_libelle').value = libelle;
-
-            document.getElementById('editSubAccountModal').classList.remove('hidden');
-            document.getElementById('editSubAccountModal').classList.add('flex');
-            if (typeof lucide !== 'undefined') lucide.createIcons();
-        }
-
-        function closeEditModal() {
-            document.getElementById('editSubAccountModal').classList.add('hidden');
-            document.getElementById('editSubAccountModal').classList.remove('flex');
+            $('#editSubAccountModal').modal('show');
         }
 
         function confirmDelete(id) {
@@ -325,17 +302,11 @@
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#005b82',
-                cancelButtonColor: '#94a3b8',
-                confirmButtonText: 'Oui, supprimer',
-                cancelButtonText: 'Annuler',
-                background: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#161615' : '#fff',
-                color: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#fff' : '#000'
+                confirmButtonText: 'OUI, SUPPRIMER',
+                cancelButtonText: 'ANNULER'
             }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById('delete-form-' + id).submit();
-                }
+                if (result.isConfirmed) document.getElementById('delete-form-' + id).submit();
             });
         }
     </script>
-    </div>
 @endsection

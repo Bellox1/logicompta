@@ -37,8 +37,17 @@ class JournalController extends Controller
         
         if ($request->query('show_archived') == '1') {
             $query->where('is_archived', true);
+            // Si on consulte les archives et qu'une année est précisée, on filtre dessus, 
+            // sinon on laisse l'utilisateur tout voir ou choisir sa période
+            if ($request->query('year')) {
+                $query->whereYear('date', $request->query('year'));
+            }
         } else {
             $query->where('is_archived', false);
+            // Par défaut, on ne montre QUE l'année en cours pour ne pas mélanger
+            $currentYear = date('Y');
+            $year = $request->query('year', $currentYear);
+            $query->whereYear('date', $year);
         }
 
         if ($request->start_date) {
@@ -58,15 +67,21 @@ class JournalController extends Controller
 
         $entries = $query->paginate(50)->withQueryString();
 
-        // Totaux globaux (toute la période filtrée, pas seulement la page)
-        // Les totaux sont également filtrés par le scope global du modèle JournalEntry (automatiquement appliqué via la jointure)
+        $currentYear = date('Y');
+        $activeYear = $request->query('year', $currentYear);
+
+        // Totaux globaux (filtrés par la même année que la liste)
         $totalsQuery = JournalEntryLine::query()
             ->join('journal_entries', 'journal_entries.id', '=', 'journal_entry_lines.journal_entry_id');
 
         if ($request->query('show_archived') == '1') {
             $totalsQuery->where('journal_entries.is_archived', true);
+            if ($request->query('year')) {
+                $totalsQuery->whereYear('journal_entries.date', $request->query('year'));
+            }
         } else {
             $totalsQuery->where('journal_entries.is_archived', false);
+            $totalsQuery->whereYear('journal_entries.date', $activeYear);
         }
         if ($request->start_date) {
             $totalsQuery->where('journal_entries.date', '>=', $request->start_date);
@@ -78,10 +93,10 @@ class JournalController extends Controller
         $globalTotalDebit  = $totalsQuery->sum('journal_entry_lines.debit');
         $globalTotalCredit = $totalsQuery->sum('journal_entry_lines.credit');
 
-        return view('accounting.journal.index', compact('entries', 'globalTotalDebit', 'globalTotalCredit'));
+        return view('accounting.journal.index', compact('entries', 'globalTotalDebit', 'globalTotalCredit', 'activeYear'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
         $user = Auth::user();
         if (!$user || !$user->entreprise_id) {
@@ -97,15 +112,62 @@ class JournalController extends Controller
             ->get();
         
         $currentYear = date('Y');
-        $latestEntry = JournalEntry::where('entreprise_id', $user->entreprise_id)
-            ->whereYear('date', $currentYear)
+        $selectedJournalId = $request->query('journal_id');
+        $defaultJournalId = $selectedJournalId ?: $journals->first()?->id;
+
+        // Numéro de pièce : calculé initialement pour le journal sélectionné (ou le 1er par défaut)
+        if ($defaultJournalId) {
+            $latestEntry = JournalEntry::where('entreprise_id', $user->entreprise_id)
+                ->where('journal_id', $defaultJournalId)
+                ->whereYear('date', $currentYear)
+                ->orderBy('id', 'desc')
+                ->first();
+            $nextNum = $latestEntry ? intval(preg_replace('/[^0-9]/', '', $latestEntry->numero_piece)) + 1 : 1;
+        } else {
+            $nextNum = 1;
+        }
+        $nextPieceNumber = str_pad($nextNum, 6, '0', STR_PAD_LEFT);
+
+        return view('accounting.journal.create', compact('journals', 'accounts', 'nextPieceNumber', 'selectedJournalId'));
+    }
+
+    /**
+     * AJAX : retourne le prochain numéro de pièce pour un journal + une année donnée
+     */
+    public function getNextPieceNumber(Request $request)
+    {
+        $user = Auth::user();
+        $journalId = $request->query('journal_id');
+        $date = $request->query('date', date('Y-m-d'));
+        $year = (int) date('Y', strtotime($date));
+
+        if (!$journalId || !$user) {
+            \Illuminate\Support\Facades\Log::warning("getNextPieceNumber: missing journal or user", ['j' => $journalId, 'user' => $user->id ?? null]);
+            return response()->json(['next_number' => '000001', 'year' => $year, 'will_be_archived' => false]);
+        }
+
+        $entrepriseId = session('active_entreprise_id') ?? $user->entreprises()->first()?->id;
+        
+        $latestEntry = JournalEntry::where('entreprise_id', $entrepriseId)
+            ->where('journal_id', $journalId)
+            ->whereYear('date', $year)
             ->orderBy('id', 'desc')
             ->first();
 
-        $nextNum = $latestEntry ? intval(preg_replace('/[^0-9]/', '', $latestEntry->numero_piece)) + 1 : 1;
-        $nextPieceNumber = str_pad($nextNum, 6, '0', STR_PAD_LEFT);
+        \Illuminate\Support\Facades\Log::info("getNextPieceNumber resolving", [
+            'entreprise_id' => $entrepriseId,
+            'journal_id' => $journalId,
+            'year' => $year,
+            'latest_found' => $latestEntry ? $latestEntry->numero_piece : 'none'
+        ]);
 
-        return view('accounting.journal.create', compact('journals', 'accounts', 'nextPieceNumber'));
+        $nextNum = $latestEntry ? intval(preg_replace('/[^0-9]/', '', $latestEntry->numero_piece)) + 1 : 1;
+
+        return response()->json([
+            'next_number' => str_pad($nextNum, 6, '0', STR_PAD_LEFT),
+            'year' => $year,
+            'will_be_archived' => ($year !== (int) date('Y')),
+        ]);
     }
 
     public function store(Request $request)
@@ -116,22 +178,19 @@ class JournalController extends Controller
         }
         $entrepriseId = $user->entreprise_id;
 
-        $minDate = now()->subDays(60)->startOfDay(); 
-        $maxDate = now()->addMonths(2)->endOfMonth();
-
         $request->validate([
             'journal_id' => 'required|exists:journals,id',
-            'date' => [
-                'required',
-                'date',
-                'after_or_equal:' . $minDate->format('Y-m-d'),
-                'before_or_equal:' . $maxDate->format('Y-m-d'),
-            ],
+            'date' => 'required|date',
             'libelle' => 'required|string|max:255',
             'lines' => 'required|array|min:2',
             'lines.*.sous_compte_id' => 'required|exists:sous_comptes,id',
             'lines.*.debit' => 'nullable|numeric|min:0',
             'lines.*.credit' => 'nullable|numeric|min:0',
+        ], [
+            'date.required' => 'La date est obligatoire.',
+            'date.date' => 'Le format de la date est incorrect.',
+            'libelle.required' => 'Le libellé de l\'écriture est obligatoire.',
+            'lines.min' => 'Une écriture doit comporter au moins deux lignes.',
         ]);
 
         $totalDebit = collect($request->lines)->sum('debit');
@@ -144,17 +203,33 @@ class JournalController extends Controller
         try {
             DB::beginTransaction();
 
-            $latestEntry = JournalEntry::where('entreprise_id', $entrepriseId)->orderBy('id', 'desc')->first();
+            // Déterminer l'année de l'écriture (basée sur la date comptable, pas created_at)
+            $entryYear = (int) date('Y', strtotime($request->date));
+            $isArchived = ($entryYear !== (int) date('Y'));
+
+            // Numéro de pièce : séquentiel par journal ET par année comptable
+            $latestEntry = JournalEntry::where('entreprise_id', $entrepriseId)
+                ->where('journal_id', $request->journal_id)
+                ->whereYear('date', $entryYear)
+                ->orderBy('id', 'desc')
+                ->first();
             $nextNum = $latestEntry ? intval(preg_replace('/[^0-9]/', '', $latestEntry->numero_piece)) + 1 : 1;
             $numeroPiece = str_pad($nextNum, 6, '0', STR_PAD_LEFT);
 
             $entry = JournalEntry::create([
-                'journal_id' => $request->journal_id,
-                'numero_piece' => $numeroPiece,
-                'date' => $request->date,
-                'libelle' => $request->libelle,
+                'journal_id'    => $request->journal_id,
+                'numero_piece'  => $numeroPiece,
+                'date'          => $request->date,
+                'libelle'       => $request->libelle,
                 'entreprise_id' => $entrepriseId,
+                'is_archived'   => $isArchived,
             ]);
+
+            if ($isArchived) {
+                $successMsg = 'Écriture enregistrée et archivée automatiquement (date en ' . $entryYear . ').';
+            } else {
+                $successMsg = 'Écriture enregistrée. Vous pouvez continuer la saisie dans ce journal.';
+            }
 
             foreach ($request->lines as $line) {
                 if (($line['debit'] ?? 0) > 0 || ($line['credit'] ?? 0) > 0) {
@@ -169,7 +244,8 @@ class JournalController extends Controller
             }
 
             DB::commit();
-            return redirect()->route('accounting.journal.index')->with('success', 'Écriture enregistrée.');
+            return redirect()->route('accounting.journal.create', ['journal_id' => $request->journal_id])
+                ->with('success', $successMsg);
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Erreur : ' . $e->getMessage())->withInput();
@@ -199,11 +275,11 @@ class JournalController extends Controller
         if ($entry->entreprise_id != $user->entreprise_id) abort(403);
 
         $journals = Journal::where(function($q) use ($user) {
-            $q->where('entreprise_id', $user->entreprise_id)
+            $q->where('entreprise_id', '=', $user->entreprise_id)
               ->orWhereNull('entreprise_id');
         })->get();
 
-        $accounts = SousCompte::where('entreprise_id', $user->entreprise_id)
+        $accounts = SousCompte::where('entreprise_id', '=', $user->entreprise_id)
             ->with('account')
             ->orderBy('numero_sous_compte')
             ->get();
@@ -259,6 +335,7 @@ class JournalController extends Controller
     {
         $user = Auth::user();
         $entry = JournalEntry::where('entreprise_id', $user->entreprise_id)->findOrFail($id);
+        
 
         // Seul l'admin (créateur) peut supprimer
         if ($user->role !== 'admin') {
@@ -267,4 +344,5 @@ class JournalController extends Controller
         $entry->delete();
         return redirect()->route('accounting.journal.index')->with('success', 'Suppression réussie.');
     }
+
 }

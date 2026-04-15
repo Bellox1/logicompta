@@ -8,9 +8,7 @@ use Illuminate\Support\Facades\Log;
 class GeminiService
 {
     protected $apiKey;
-    // On définit une liste de modèles pour le fallback automatique
     protected $models = [
-        'gemini-2.5-flash',
         'gemini-2.0-flash',
         'gemini-1.5-flash-latest'
     ];
@@ -20,9 +18,6 @@ class GeminiService
         $this->apiKey = config('services.gemini.key') ?? env('GEMINI_API_KEY');
     }
 
-    /**
-     * Traite le texte OCR pour générer une écriture comptable JSON avec résilience
-     */
     public function processOCR($ocrText)
     {
         if (empty($this->apiKey)) {
@@ -32,120 +27,74 @@ class GeminiService
         $truncatedText = mb_substr($ocrText, 0, 3000);
         $prompt = $this->getAccountingPrompt($truncatedText);
 
-        $maxAttempts = 3;
-        
-        // Boucle sur les modèles disponibles pour le fallback
         foreach ($this->models as $modelName) {
-            $baseUrl = "https://generativelanguage.googleapis.com/v1beta/models/{$modelName}:generateContent";
-            $url = $baseUrl . '?key=' . $this->apiKey;
+            $url = "https://generativelanguage.googleapis.com/v1beta/models/{$modelName}:generateContent?key=" . $this->apiKey;
             
-            $attempt = 0;
-            while ($attempt < $maxAttempts) {
-                try {
-                    $response = Http::timeout(30)->post($url, [
-                        'contents' => [
-                            [
-                                'parts' => [
-                                    ['text' => $prompt]
-                                ]
+            try {
+                $response = Http::timeout(30)->post($url, [
+                    'contents' => [
+                        [
+                            'parts' => [
+                                ['text' => $prompt]
                             ]
-                        ],
-                        'generationConfig' => [
-                            'temperature' => 0.1,
-                            'response_mime_type' => 'application/json',
                         ]
-                    ]);
+                    ],
+                    'generationConfig' => [
+                        'temperature' => 0.1,
+                        'response_mime_type' => 'application/json',
+                    ]
+                ]);
 
-                    // ✅ SUCCESS
-                    if ($response->successful()) {
-                        $data = $response->json();
-                        $content = $data['candidates'][0]['content']['parts'][0]['text'] ?? '';
-                        $content = preg_replace('/^```json\s*|\s*```$/i', '', trim($content));
+                if ($response->successful()) {
+                    $data = $response->json();
+                    $content = $data['candidates'][0]['content']['parts'][0]['text'] ?? '';
+                    $content = preg_replace('/^```json\s*|\s*```$/i', '', trim($content));
+                    
+                    Log::info("Gemini Fallback Success with model {$modelName}");
 
-                        Log::info("Gemini Success with model {$modelName}: " . $content);
-
-                        $decoded = json_decode($content, true);
-
-                        if (json_last_error() !== JSON_ERROR_NONE) {
-                            Log::error('JSON Error: ' . json_last_error_msg());
-                            throw new \Exception("Format IA invalide.");
-                        }
-
-                        return $decoded;
-                    }
-
-                    $status = $response->status();
-
-                    // 🔁 RETRY LOGIC (Surcharge ou Quota temporaire)
-                    if (in_array($status, [503, 429, 500])) {
-                        Log::warning("Gemini retry ($status) for $modelName - attempt $attempt");
-                        sleep(pow(2, $attempt)); // Backoff exponentiel (1s, 2s, 4s)
-                        $attempt++;
-                        continue; 
-                    }
-
-                    // ❌ AUTRE ERREUR (404, 400 etc.) -> On change de modèle
-                    Log::error("Gemini Error $status for $modelName: " . $response->body());
-                    break; // Sort de la boucle de retry pour essayer le modèle suivant
-
-                } catch (\Exception $e) {
-                    Log::error("Gemini Exception for $modelName: " . $e->getMessage());
-                    break; // On change de modèle
+                    return json_decode($content, true);
                 }
+            } catch (\Exception $e) {
+                Log::error("Gemini Fallback Error for $modelName: " . $e->getMessage());
             }
         }
 
-        throw new \Exception("Gemini indisponible ou quota épuisé après plusieurs tentatives sur tous les modèles.");
+        throw new \Exception("Gemini également indisponible ou quota épuisé.");
     }
 
     protected function getAccountingPrompt($ocrText)
     {
         return <<<PROMPT
-Tu es un expert comptable.
-
-À partir du texte OCR ci-dessous, tu dois générer une écriture comptable structurée.
+Tu es un expert comptable. À partir de l'OCR ci-dessous, génère une écriture comptable structurée au format JSON.
 
 RÈGLES OBLIGATOIRES :
-- Retourne UNIQUEMENT du JSON valide
 - Une facture = une écriture
-- Chaque écriture contient plusieurs lignes
-- Chaque ligne doit avoir : ligne, compte, sous_compte, debit, credit
+- colonnes : ligne, compte, sous_compte, debit, credit
 - Débit = Crédit (équilibré)
-- Si information manquante, utilise null ou 0
-- Ne jamais inventer de données
-- Utilise uniquement les comptes suivants :
-  57 = caisse
-  52 = banque
-  605 = achats carburant / charges
-  701 = ventes
-  31 = marchandises
-  22 = immobilisations
+- Retourne UNIQUEMENT du JSON valide
 
-STRUCTURE ATTENDUE :
-
+STRUCTURE JSON ATTENDUE :
 {
   "date": "YYYY-MM-DD",
-  "reference": "",
+  "reference": "NOM_FOURNISSEUR_NUMERO",
   "journal": "ACHAT|VENTE|CAISSE|BANQUE",
   "type": "achat|vente|autre",
-  "libelle": "",
+  "libelle": "Achat/Vente [Détail]",
   "total": 0,
   "lignes": [
     {
       "ligne": 1,
-      "compte": "605",
-      "sous_compte": "605001",
+      "compte": "racine",
+      "sous_compte": "compte_complet",
       "debit": 100,
       "credit": 0,
-      "libelle": "Achat carburant"
+      "libelle": "description"
     }
   ]
 }
 
 TEXTE OCR :
-<<<
 {$ocrText}
->>>
 PROMPT;
     }
 }
